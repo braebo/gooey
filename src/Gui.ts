@@ -1,5 +1,3 @@
-import './styles/gui.scss'
-
 import type { WindowManagerOptions } from './shared/WindowManager'
 import type { JavascriptStyleProperty } from './shared/css-types'
 import type { Theme, ThemeMode } from './styles/themer/types'
@@ -15,6 +13,7 @@ import type { Commit } from './UndoManager'
 import theme_default from './styles/themes/default'
 import theme_scout from './styles/themes/scout'
 import theme_flat from './styles/themes/flat'
+import style from './styles/gui.scss'
 
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager'
 import { deepMergeOpts } from './shared/deepMergeOpts'
@@ -34,6 +33,7 @@ import { state } from './shared/state'
 import { place } from './shared/place'
 import { Folder } from './Folder'
 import { o } from './shared/l'
+import { styled } from './shared/decorators/styled'
 
 //· Types ························································································¬
 
@@ -254,6 +254,7 @@ export const GUI_DEFAULTS = {
  * a gui.  You can create multiple root guis, but each gui
  * can only have one root.
  */
+@styled
 export class Gui {
 	__type = 'Gui' as const
 
@@ -261,6 +262,8 @@ export class Gui {
 	folder: Folder
 
 	declare elements: GuiElements
+
+	static style = style
 
 	/**
 	 * The initial options passed to the gui.
