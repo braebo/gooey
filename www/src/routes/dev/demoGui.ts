@@ -1,12 +1,13 @@
-import type { Params } from '../../../lib/components/orbs/params'
-import type { GuiPreset } from '../../../lib/gui/Gui'
+import type { Params } from '$lib/components/orbs/params'
+import type { GuiPreset } from 'gooey'
 
-import { ORBS_PRESETS } from '../../../lib/gui/demo/ORBS_PRESETS'
-import { stringify } from '../../../lib/utils/stringify'
-import { debrief } from '../../../lib/utils/debrief'
-import { state } from '../../../lib/utils/state'
-import { DEV } from '../../../lib/utils/env'
-import { Gui } from '../../../lib/gui/Gui'
+import { ORBS_PRESETS } from '$lib/components/orbs/ORBS_PRESETS'
+import { DEV } from 'esm-env'
+import { Gui } from 'gooey'
+
+import { stringify } from '$lib/utils/stringify'
+import { debrief } from '$lib/utils/debrief'
+import { state } from 'gooey'
 
 export const showCode = state(false)
 export const code = state('')
@@ -18,12 +19,12 @@ export function demoGui(params: Params) {
 		storage: {
 			key: 'fracgui',
 			position: true,
-			size: true,
+			size: true
 		},
-		presets: ORBS_PRESETS,
+		presets: ORBS_PRESETS
 	})
 
-	gui.folder.on('toggle', v => {
+	gui.folder.on('toggle', (v) => {
 		console.log(v)
 	})
 
@@ -32,11 +33,11 @@ export function demoGui(params: Params) {
 	f1.add('count', {
 		binding: {
 			target: params,
-			key: 'orbs',
+			key: 'orbs'
 		},
 		min: 1,
 		max: 150,
-		step: 1,
+		step: 1
 	})
 
 	// f1.bind({
@@ -54,7 +55,7 @@ export function demoGui(params: Params) {
 		//=>
 		min: 10,
 		max: window.innerWidth / 4,
-		step: 1,
+		step: 1
 	})
 	widthInput // InputNumber
 
@@ -62,11 +63,11 @@ export function demoGui(params: Params) {
 		title: 'height',
 		binding: {
 			target: params,
-			key: 'height',
+			key: 'height'
 		},
 		min: 10,
 		max: window.innerHeight / 8,
-		step: 1,
+		step: 1
 	})
 
 	const motionFolder = gui.addFolder('motion')
@@ -75,52 +76,52 @@ export function demoGui(params: Params) {
 		title: 'speed',
 		binding: {
 			target: params,
-			key: 'speed',
+			key: 'speed'
 		},
 		min: 0.0001,
 		max: 1,
-		step: 0.0001,
+		step: 0.0001
 	})
 
 	motionFolder.addNumber({
 		title: 'force x',
 		binding: {
 			target: params,
-			key: 'a1',
+			key: 'a1'
 		},
 		min: 0,
 		max: 3,
-		step: 0.001,
+		step: 0.001
 	})
 
 	motionFolder.addNumber({
 		title: 'force y',
 		binding: {
 			target: params,
-			key: 'a2',
+			key: 'a2'
 		},
 		min: 1,
 		max: 3,
-		step: 0.001,
+		step: 0.001
 	})
 
 	motionFolder.addNumber({
 		title: 'temporal drift',
 		binding: {
 			target: params,
-			key: 'drift',
+			key: 'drift'
 		},
 		min: -1,
 		max: 1,
-		step: 0.001,
+		step: 0.001
 	})
 
 	motionFolder.addSwitch({
 		title: 'modulate',
 		binding: {
 			target: params,
-			key: 'modulate',
-		},
+			key: 'modulate'
+		}
 	})
 
 	const appearanceFolder = gui.addFolder('appearance')
@@ -129,33 +130,33 @@ export function demoGui(params: Params) {
 		title: 'size',
 		binding: {
 			target: params,
-			key: 'size',
+			key: 'size'
 		},
 		min: 1,
 		max: 30,
-		step: 1,
+		step: 1
 	})
 
 	appearanceFolder.addNumber({
 		title: 'floop',
 		binding: {
 			target: params,
-			key: 'floop',
+			key: 'floop'
 		},
 		min: 0.001,
 		max: 0.5,
-		step: 0.001,
+		step: 0.001
 	})
 
 	appearanceFolder.addNumber({
 		title: 'brightness',
 		binding: {
 			target: params,
-			key: 'brightness',
+			key: 'brightness'
 		},
 		min: 0,
 		max: 1,
-		step: 0.01,
+		step: 0.01
 	})
 
 	appearanceFolder.addColor({
@@ -163,8 +164,8 @@ export function demoGui(params: Params) {
 		mode: 'hex8',
 		binding: {
 			target: params,
-			key: 'color',
-		},
+			key: 'color'
+		}
 	})
 
 	appearanceFolder.addColor({
@@ -172,8 +173,8 @@ export function demoGui(params: Params) {
 		mode: 'hsla',
 		binding: {
 			target: params,
-			key: 'accent',
-		},
+			key: 'accent'
+		}
 	})
 
 	const glowFolder = appearanceFolder.addFolder('glow')
@@ -182,33 +183,33 @@ export function demoGui(params: Params) {
 		title: 'glowR',
 		binding: {
 			target: params,
-			key: 'glowR',
+			key: 'glowR'
 		},
 		min: 0,
 		max: 20,
-		step: 0.01,
+		step: 0.01
 	})
 
 	glowFolder.addNumber({
 		title: 'glowG',
 		binding: {
 			target: params,
-			key: 'glowG',
+			key: 'glowG'
 		},
 		min: 0,
 		max: 20,
-		step: 0.01,
+		step: 0.01
 	})
 
 	glowFolder.addNumber({
 		title: 'glowB',
 		binding: {
 			target: params,
-			key: 'glowB',
+			key: 'glowB'
 		},
 		min: 0,
 		max: 20,
-		step: 0.01,
+		step: 0.01
 	})
 
 	function showActivePreset(v: GuiPreset) {
@@ -218,30 +219,30 @@ export function demoGui(params: Params) {
 					presets: gui.presetManager.presets.value.length,
 					activePreset: {
 						...v,
-						data: debrief(v.data, { siblings: 7, depth: 4 }),
-					},
+						data: debrief(v.data, { siblings: 7, depth: 4 })
+					}
 				},
-				2,
-			).replaceAll('"', ''),
+				2
+			).replaceAll('"', '')
 		)
 	}
 
 	gui.folder.evm.add(
-		showCode.subscribe(v => {
+		showCode.subscribe((v) => {
 			if (v) showActivePreset(gui.presetManager.activePreset.value)
-		}),
+		})
 	)
 
 	gui.folder.evm.add(
-		gui.presetManager.activePreset.subscribe(v => {
+		gui.presetManager.activePreset.subscribe((v) => {
 			if (showCode.value) showActivePreset(v)
-		}),
+		})
 	)
 
 	if (DEV) {
 		const devFolder = gui.addFolder('dev', {
 			closed: true,
-			saveable: false,
+			saveable: false
 		})
 
 		// setTimeout(() => {
@@ -257,13 +258,13 @@ export function demoGui(params: Params) {
 						text: 'log(this)',
 						onClick: () => {
 							console.log(gui)
-						},
+						}
 					},
 					{
 						text: 'show preset',
 						onClick: () => {
 							showCode.set(!showCode.value)
-						},
+						}
 					},
 					{
 						text: '🚫 storage',
@@ -277,11 +278,11 @@ export function demoGui(params: Params) {
 							whiteSpace: 'nowrap',
 							textOverflow: 'ellipsis',
 							filter: 'saturate(0)',
-							alignItems: 'center',
-						},
-					},
-				],
-			],
+							alignItems: 'center'
+						}
+					}
+				]
+			]
 		})
 	}
 
