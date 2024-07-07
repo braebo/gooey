@@ -120,7 +120,7 @@ export class PresetManager {
 
 		const active = this.activePreset.value
 
-		this.presets.update((presets) => {
+		this.presets.update(presets => {
 			if (!active) throw new Error('No preset found.')
 
 			if (active.id === this._defaultPresetId) {
@@ -130,7 +130,7 @@ export class PresetManager {
 			active.title = title
 			this.activePreset.set(active)
 
-			return presets.map((p) => (p.id === active.id ? active : p))
+			return presets.map(p => (p.id === active.id ? active : p))
 		})
 
 		this._refresh()
@@ -144,7 +144,7 @@ export class PresetManager {
 		let i = 0
 		let newTitle = title
 
-		while (presets.some((p) => p.title === newTitle)) {
+		while (presets.some(p => p.title === newTitle)) {
 			i++
 			newTitle = title + ` (${i})`
 		}
@@ -155,7 +155,7 @@ export class PresetManager {
 	private _resolveDefaultPreset(defaultPreset?: GuiPreset) {
 		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
 
-		defaultPreset ??= this.presets.value.find((p) => p.id === this._defaultPresetId)
+		defaultPreset ??= this.presets.value.find(p => p.id === this._defaultPresetId)
 		if (!defaultPreset) {
 			defaultPreset = this.gui.save(this._defaultPresetTitle, this._defaultPresetId)
 			this.presets.push(defaultPreset)
@@ -169,7 +169,7 @@ export class PresetManager {
 
 		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
 
-		await new Promise((r) => setTimeout(r, 0))
+		await new Promise(r => setTimeout(r, 0))
 
 		const presetsFolder = parentFolder.addFolder('presets', {
 			closed: false,
@@ -217,12 +217,12 @@ export class PresetManager {
 			const input = document.createElement('input')
 			input.type = 'file'
 			input.accept = '.json'
-			input.onchange = async (e) => {
+			input.onchange = async e => {
 				const file = (e.target as HTMLInputElement).files?.[0]
 				if (!file) return
 
 				const reader = new FileReader()
-				reader.onload = async (e) => {
+				reader.onload = async e => {
 					const text = e.target?.result as string
 					const data = JSON.parse(text)
 					if (Array.isArray(data)) {
@@ -268,10 +268,8 @@ export class PresetManager {
 						text: 'delete',
 						onClick: () => {
 							let index = undefined as number | undefined
-							this.presets.update((presets) => {
-								index = presets.findIndex(
-									(p) => p.id === this.activePreset.value.id,
-								)
+							this.presets.update(presets => {
+								index = presets.findIndex(p => p.id === this.activePreset.value.id)
 								presets.splice(index, 1)
 								return presets
 							})
@@ -495,14 +493,14 @@ export class PresetManager {
 
 		preset ??= this.gui.save(this._resolveUnusedTitle('preset'), nanoid())
 
-		const existing = this.presets.value.find((p) => p.id === preset.id)
+		const existing = this.presets.value.find(p => p.id === preset.id)
 		if (!existing) {
 			this._log.debug('pushing preset:', { preset, existing })
 			this.presets.push(preset)
 		} else {
 			this._log.debug('preset exists. replacing with:', { preset, existing })
-			this.presets.update((presets) => {
-				const index = presets.findIndex((p) => p.id === preset.id)
+			this.presets.update(presets => {
+				const index = presets.findIndex(p => p.id === preset.id)
 				presets[index] = preset
 				return presets
 			})
@@ -525,8 +523,8 @@ export class PresetManager {
 		}
 
 		const id = typeof preset === 'string' ? preset : preset.id
-		this.presets.update((presets) => {
-			const index = presets.findIndex((p) => p.id === id)
+		this.presets.update(presets => {
+			const index = presets.findIndex(p => p.id === id)
 
 			if (index === -1) {
 				throw new Error(r('Error deleting preset:') + ' Preset not found.')
@@ -651,7 +649,7 @@ export class PresetManager {
 	private _refresh() {
 		this._log.fn('_refresh').debug('Refreshing options and setting input.', { this: this })
 
-		this._presetsInput.options = this.presets.value.map((o) => ({ label: o.title, value: o }))
+		this._presetsInput.options = this.presets.value.map(o => ({ label: o.title, value: o }))
 		const activePreset = this.activePreset.value
 		this._presetsInput.set({ label: activePreset.title, value: activePreset })
 

@@ -240,17 +240,11 @@ export class Resizable {
 					height: this.node.offsetHeight,
 				})
 			} else {
-				if (
-					this.opts.corners.length ||
-					this.opts.sides.some((s) => s.match(/left|right/))
-				) {
+				if (this.opts.corners.length || this.opts.sides.some(s => s.match(/left|right/))) {
 					node.style.width = width + 'px'
 				}
 
-				if (
-					this.opts.corners.length ||
-					this.opts.sides.some((s) => s.match(/top|bottom/))
-				) {
+				if (this.opts.corners.length || this.opts.sides.some(s => s.match(/top|bottom/))) {
 					node.style.height = height + 'px'
 				}
 			}
@@ -279,8 +273,8 @@ export class Resizable {
 
 	createGrabbers() {
 		for (const [side, type] of [
-			...this.opts.sides.map((s) => [s, 'side']),
-			...this.opts.corners.map((c) => [c, 'corner']),
+			...this.opts.sides.map(s => [s, 'side']),
+			...this.opts.corners.map(c => [c, 'corner']),
 		]) {
 			const grabber = document.createElement('div')
 			grabber.classList.add(`${this.opts.classes.default}-${this.id}`)

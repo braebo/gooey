@@ -403,7 +403,7 @@ export class Color {
 
 		const [r, g, b, a = 255] = match
 			.slice(1)
-			.map((c) => parseHexInt(c.length === 1 ? `${c}${c}` : c))
+			.map(c => parseHexInt(c.length === 1 ? `${c}${c}` : c))
 
 		this.rgb = { r, g, b, a: +a / 255 }
 	}

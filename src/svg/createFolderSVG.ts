@@ -47,7 +47,7 @@ export function createFolderSvg(folder: Folder) {
 	}
 
 	function toCircs(ids: number[]) {
-		return ids.map((id) => circ(circs[id - 1])).join('\n')
+		return ids.map(id => circ(circs[id - 1])).join('\n')
 	}
 
 	const circMap: Record<number, number[]> = {

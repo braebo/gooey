@@ -56,7 +56,7 @@ export function serialize(stack: unknown[]) {
 
 		if (value instanceof Element) {
 			return `${value.tagName}.${Array.from(value.classList)
-				.filter((s) => !s.startsWith('s-'))
+				.filter(s => !s.startsWith('s-'))
 				.join('.')}#${value.id}`
 		}
 

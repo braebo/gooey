@@ -26,10 +26,10 @@ writeFileSync(join(here, 'gui-vars.scss'), css)
 
 const guiScss = readFileSync(join(here, 'gui.scss'), 'utf-8')
 	.split('\n')
-	.filter((line) => !line.trim().startsWith('//'))
+	.filter(line => !line.trim().startsWith('//'))
 	.join('\n')
 
-const counts = [test['base'], test['dark'], test['light']].map((vars) =>
+const counts = [test['base'], test['dark'], test['light']].map(vars =>
 	Object.entries(vars).reduce((acc, [k]) => {
 		const count = (guiScss.match(new RegExp(k, 'g')) || []).length
 

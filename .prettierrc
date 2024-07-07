@@ -1,4 +1,7 @@
 {
+	"htmlWhitespaceSensitivity": "strict",
+	"quoteProps": "as-needed",
+	"arrowParens": "avoid",
 	"trailingComma": "all",
 	"requirePragma": false,
 	"bracketSpacing": true,

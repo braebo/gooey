@@ -168,6 +168,6 @@ export function writable<T>(value: T, start: StartStopNotifier<T> = noop): Writa
  */
 export function get<T>(store: Readable<T>): T {
 	let value: T | undefined
-	subscribe_to_store(store, (_) => (value = _))()
+	subscribe_to_store(store, _ => (value = _))()
 	return value as T
 }

@@ -425,7 +425,7 @@ export abstract class Input<
 			const s = state<T>(opts.binding.target[opts.binding.key])
 
 			this._evm.add(
-				s.subscribe((v) => {
+				s.subscribe(v => {
 					opts.binding!.target[opts.binding!.key] = v
 				}),
 			)

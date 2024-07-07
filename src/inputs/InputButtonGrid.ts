@@ -131,7 +131,7 @@ export class InputButtonGrid extends Input<
 		const instanceGrid: ButtonGrid = []
 
 		const rows = grid.length
-		const cols = Math.max(...grid.map((row) => row.length))
+		const cols = Math.max(...grid.map(row => row.length))
 
 		// Remove all buttons.
 		for (const { element } of this.buttons.values()) {

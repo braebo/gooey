@@ -222,7 +222,7 @@ export class Logger {
 		this.buffer.push(
 			gr(str) +
 				dim('(') +
-				args.map((a) => gr(typeof a === 'object' ? stringify(a) : a)).join(', ') +
+				args.map(a => gr(typeof a === 'object' ? stringify(a) : a)).join(', ') +
 				dim(')'),
 		)
 		return this
@@ -284,7 +284,7 @@ export class Logger {
 			: (...args: any[]) => {
 					let messageConfig = messageConfigBase
 
-					args.forEach((argument) => {
+					args.forEach(argument => {
 						const type = typeof argument
 						switch (type) {
 							case 'bigint':
@@ -310,7 +310,7 @@ export class Logger {
 						`${title}`,
 						...restParts,
 						`color:initial;background:${bg};padding:0.1rem;${css}`,
-						...args.map((a) =>
+						...args.map(a =>
 							// Testing console goes nuts with large objects, so we tldr them.
 							// @ts-ignore
 							import.meta?.env?.VITEST ? tldr(a, { maxDepth: 1, maxSiblings: 1 }) : a,

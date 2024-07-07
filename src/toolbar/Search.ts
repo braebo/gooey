@@ -33,7 +33,7 @@ export class Search {
 			classes: ['fracgui-controller-text', 'fracgui-search-input', 'fracgui-cancel'],
 			parent: container,
 		})
-		this._evm.listen(input, 'input', (e) => this.search(e.target.value))
+		this._evm.listen(input, 'input', e => this.search(e.target.value))
 
 		const button = create('button', {
 			classes: ['fracgui-search-button', 'fracgui-cancel'],
