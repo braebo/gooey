@@ -1,6 +1,9 @@
 # gooey
 
-Another GUI library for the web.
+Yet another web gui.
+
+> Work in progress.
+
 
 ## Features
 
@@ -11,7 +14,7 @@ Another GUI library for the web.
 - [x] Fully Typed
 - [x] Draggable
 - [x] Resizable
-- [x] `bulkAdd` Method
+- [x] `addMany` for Bulk Generation
 - [x] Strong Type Inference
 - [x] Reset to Default buttons
 - [ ] Monitors
@@ -19,6 +22,7 @@ Another GUI library for the web.
 - [ ] Curve Editor
 - [ ] Plugins
 - [ ] Svelte Components
+
 
 ## Inputs
 
@@ -33,6 +37,65 @@ Another GUI library for the web.
 | 🚧      | Range    | `{ min, max }`                 |
 | 🚧      | Vector3  | `{ x, y, z }`                  |
 | 🚧      | Vector2  | `{ x, y }`                     |
+
+
+## Installation
+
+NPM
+
+```bash
+pnpm install gooey
+```
+
+or, [JSR](https://jsr.io/)
+
+```bash
+jsr add @braebo/gooey
+```
+
+
+## Usage
+
+Create a new `Gooey`.
+
+```typescript
+import { Gooey } from 'gooey'
+
+const gooey = new Gooey()
+```
+
+
+You can use the `addNumber` method directly to create a number input:
+
+```typescript
+const input = gooey.addNumber('count')
+
+input.on('change', console.log)
+```
+
+
+Or, use the generic `add` method, and it will infer the type of the input from the `value` property:
+
+```typescript
+const input = gooey.add('count', { value: 0 })
+
+input.on('change', v => console.log(v))
+```
+
+
+Add multiple inputs at once with `addMany`.
+
+```typescript
+gooey.addMany({
+  number: 0,
+  color: '#ff0000',
+  select: ['a', 'b', 'c'],
+  switch: true,
+  text: 'hello'
+})
+```
+
+### TODO - More docs...
 
 ## About
 
