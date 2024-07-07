@@ -3465,6 +3465,7 @@ declare class Gui {
     id: string;
     folder: Folder;
     elements: GuiElements;
+    static style: string;
     /**
      * The initial options passed to the gui.
      */
