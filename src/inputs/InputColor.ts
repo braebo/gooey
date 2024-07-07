@@ -115,7 +115,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 			this.state = state(this.initialValue.clone())
 
 			this._evm.add(
-				this.state.subscribe(v => {
+				this.state.subscribe((v) => {
 					opts.binding!.target[opts.binding!.key] = v
 				}),
 			)
@@ -170,7 +170,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 			this.commit({
 				to: v.rgba,
 				from: this.state.value.rgba,
-				setter: v => {
+				setter: (v) => {
 					this.state.value.set(v)
 					this.state.refresh()
 					this.refresh()
@@ -182,7 +182,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 			this.commit({
 				to: newColor.rgba,
 				from: this.state.value.rgba,
-				setter: v => {
+				setter: (v) => {
 					this.state.value.set(v)
 					this.state.refresh()
 					this.refresh()
@@ -360,7 +360,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 		this.unlock({
 			target: this,
 			to: this.state.value.rgba,
-			setter: v => {
+			setter: (v) => {
 				this.state.value.set(v)
 				this.state.refresh()
 				this._emit('change', this.state.value)

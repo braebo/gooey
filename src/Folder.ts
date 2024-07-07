@@ -38,6 +38,7 @@ export type BindingFactory<
 	TTargetKey extends keyof TTarget,
 > = (target: TTarget, key: TTargetKey, options: Partial<TOptions>) => TInput
 
+// prettier-ignore
 export type InferOptions<T> = T extends number
 	? NumberInputOptions
 	: T extends boolean
@@ -52,6 +53,7 @@ export type InferOptions<T> = T extends number
 						? TextInputOptions
 						: InputOptions
 
+// prettier-ignore
 export type InferInput<T> = T extends number
 	? InputNumber
 	: T extends boolean
@@ -396,7 +398,7 @@ export class Folder {
 
 		// Open/close the folder when the closed state changes.
 		this.evm.add(
-			this.closed.subscribe(v => {
+			this.closed.subscribe((v) => {
 				v ? this.close() : this.open()
 				this.evm.emit('toggle', v)
 			}),
@@ -469,7 +471,7 @@ export class Folder {
 	 * A flat array of all child folders of this folder (and their children, etc).
 	 */
 	get allChildren(): Folder[] {
-		return this.children.flatMap<Folder>(child => [child, ...child.allChildren])
+		return this.children.flatMap<Folder>((child) => [child, ...child.allChildren])
 	}
 
 	/**
@@ -513,7 +515,7 @@ export class Folder {
 			InternalFolderOptions
 
 		const folder = new Folder(opts)
-		folder.on('change', v => this.evm.emit('change', v))
+		folder.on('change', (v) => this.evm.emit('change', v))
 
 		this.children.push(folder)
 		this._createSvgs()
@@ -679,11 +681,11 @@ export class Folder {
 			closed: this.closed.value,
 			hidden: toFn(this._hidden)(),
 			children: this.children
-				.filter(c => c.title !== Gui.settingsFolderTitle && c.saveable)
-				.map(child => child.save()),
+				.filter((c) => c.title !== Gui.settingsFolderTitle && c.saveable)
+				.map((child) => child.save()),
 			inputs: Array.from(this.inputs.values())
-				.filter(i => i.opts.saveable)
-				.map(input => input.save()),
+				.filter((i) => i.opts.saveable)
+				.map((input) => input.save()),
 		}
 
 		return preset
@@ -701,12 +703,12 @@ export class Folder {
 		this.hidden = preset.hidden
 
 		for (const child of this.children) {
-			const data = preset.children?.find(f => f.id === child.presetId)
+			const data = preset.children?.find((f) => f.id === child.presetId)
 			if (data) child.load(data)
 		}
 
 		for (const input of this.inputs.values()) {
-			const data = preset.inputs.find(c => c.presetId === input.id)
+			const data = preset.inputs.find((c) => c.presetId === input.id)
 			if (data) input.load(data)
 		}
 	}

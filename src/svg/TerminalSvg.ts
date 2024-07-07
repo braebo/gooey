@@ -27,7 +27,7 @@ export class TerminalSvg {
 				delay: 1500,
 				placement: 'right',
 			},
-			onclick: e => {
+			onclick: (e) => {
 				e.stopPropagation()
 				e.preventDefault()
 				console.log(folder)

@@ -67,6 +67,7 @@ export function place(
 		options,
 	)
 
+	// prettier-ignore
 	const rect =
 		typeof node === 'string'
 			? select(node)[0]?.getBoundingClientRect()
@@ -76,6 +77,7 @@ export function place(
 
 	if (!rect) throw new Error('Invalid node: ' + node)
 
+	// prettier-ignore
 	const b =
 		bounds === 'window' && typeof window !== 'undefined'
 			? { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }

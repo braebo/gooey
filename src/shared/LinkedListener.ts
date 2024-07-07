@@ -33,10 +33,7 @@ export class LinkedListener {
 	private _once: boolean
 	private _disposed = false
 
-	constructor(
-		public cb: EventCallback | null,
-		options?: Partial<LinkedListenerOptions>,
-	) {
+	constructor(public cb: EventCallback | null, options?: Partial<LinkedListenerOptions>) {
 		this.head = this
 		this.ctx = options?.ctx ?? this
 		this._once = options?.once ?? false

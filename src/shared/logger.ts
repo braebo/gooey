@@ -280,7 +280,7 @@ export class Logger {
 		const log = !styled
 			? (...args: any[]) => {
 					console.log(`| ${callsite} |\n| ${title} |`, ...args)
-				}
+			  }
 			: (...args: any[]) => {
 					let messageConfig = messageConfigBase
 
@@ -318,7 +318,7 @@ export class Logger {
 						`color:#666;background:${bg};padding:0.1rem;${css};font-size:0.66rem;`,
 						options?.callsite ? `${callsite}` : '',
 					)
-				}
+			  }
 
 		if (!deferred) return log
 

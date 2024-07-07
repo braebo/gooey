@@ -47,7 +47,7 @@ export function createFolderSvg(folder: Folder) {
 	}
 
 	function toCircs(ids: number[]) {
-		return ids.map(id => circ(circs[id - 1])).join('\n')
+		return ids.map((id) => circ(circs[id - 1])).join('\n')
 	}
 
 	const circMap: Record<number, number[]> = {
@@ -239,14 +239,14 @@ export function animateConnector(folder: Folder, action: 'open' | 'close') {
 					from: length,
 					easing: 'cubic-bezier(.29,.1,.03,.94)',
 					to: '0',
-				} as const)
+			  } as const)
 			: ({
 					duration: 150,
 					delay: 0,
 					from: '0',
 					easing: 'cubic-bezier(.15,.84,.19,.98)',
 					to: length,
-				} as const)
+			  } as const)
 
 	const keyframes = [{ strokeDashoffset: from }, { strokeDashoffset: to }]
 

@@ -7,8 +7,6 @@ export function modKey(event: KeyboardEvent | PointerEvent) {
 	return isMac() ? event.metaKey : event.ctrlKey
 }
 
-
-
 export function modIcon() {
 	return isApple() ? MODIFIER_KEY_DATA.metaKey.mac.icon : MODIFIER_KEY_DATA.ctrlKey.windows.icon
 }

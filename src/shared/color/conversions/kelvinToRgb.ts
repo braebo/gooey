@@ -23,8 +23,8 @@ export function kelvinToRgb(kelvin: number): RgbColor {
 			temp < 20
 				? 0
 				: -254.76935184120902 +
-					0.8274096064007395 * (b = temp - 10) +
-					115.67994401066147 * Math.log(b)
+				  0.8274096064007395 * (b = temp - 10) +
+				  115.67994401066147 * Math.log(b)
 	} else {
 		r =
 			351.97690566805693 +

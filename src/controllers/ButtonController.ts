@@ -148,7 +148,7 @@ export class ButtonController {
 					id: opts.id ?? nanoid(8),
 					classes: ['fracgui-controller', 'fracgui-controller-button'],
 					parent: opts.parent,
-				})
+			  })
 
 		this.text = opts.text
 		this.active = opts.active

@@ -19,11 +19,7 @@ export class CopyButton {
 
 	tooltip: Tooltip
 
-	constructor(
-		public container: HTMLElement,
-		public text: () => string,
-		public message = 'Copy',
-	) {
+	constructor(public container: HTMLElement, public text: () => string, public message = 'Copy') {
 		const button = create('div', {
 			classes: ['copy-button'],
 			title: 'Copy',

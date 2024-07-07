@@ -183,6 +183,7 @@ export class Themer {
 			this.wrapper = opts.wrapper
 		}
 
+		// prettier-ignore
 		this.node =
 			node === 'document'
 				? document.documentElement

@@ -1,3 +1,4 @@
+// prettier-ignore
 export const defer =
 	typeof globalThis.requestIdleCallback !== 'undefined'
 		? globalThis.requestIdleCallback
@@ -5,6 +6,7 @@ export const defer =
 			? globalThis.requestAnimationFrame
 			: (fn: () => void) => setTimeout(fn, 0)
 
+// prettier-ignore
 export const cancelDefer =
 	typeof globalThis?.cancelIdleCallback !== 'undefined'
 		? globalThis.cancelIdleCallback

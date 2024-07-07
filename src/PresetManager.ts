@@ -57,11 +57,7 @@ export class PresetManager {
 	private _initialized = false
 	private _log: Logger
 
-	constructor(
-		public gui: Gui,
-		public parentFolder: Folder,
-		options: PresetManagerOptions,
-	) {
+	constructor(public gui: Gui, public parentFolder: Folder, options: PresetManagerOptions) {
 		this._log = new Logger(`PresetManager ${gui.folder.title}`, { fg: 'slateblue' })
 		this._log.fn('constructor').debug({ options, this: this })
 

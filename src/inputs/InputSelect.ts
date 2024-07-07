@@ -139,7 +139,7 @@ export class InputSelect<T = unknown> extends Input<
 		this.disabled = opts.disabled ?? false
 
 		this._evm.add(
-			this.state.subscribe(v => {
+			this.state.subscribe((v) => {
 				if (!this.select.bubble) return
 
 				if (this.targetObject) {
@@ -166,14 +166,14 @@ export class InputSelect<T = unknown> extends Input<
 		)
 
 		if (options.onChange) {
-			this._evm.on('change', v => {
+			this._evm.on('change', (v) => {
 				this._log.fn('calling options onChange').debug(v)
 				options.onChange?.(toLabeledOption(v))
 			})
 		}
 
 		// Bind our state to the select controller.
-		this.select.on('change', v => {
+		this.select.on('change', (v) => {
 			this._log.fn('select.onChange').debug(v)
 			if (this.#stopPropagation) return
 			// if (!this.bubble) return
@@ -225,7 +225,7 @@ export class InputSelect<T = unknown> extends Input<
 				)
 			}
 
-			return selectOptions.map(o => ({
+			return selectOptions.map((o) => ({
 				label: o[this.opts.labelKey!] as string,
 				value: o,
 			}))
@@ -335,7 +335,7 @@ export class InputSelect<T = unknown> extends Input<
 		}
 
 		const newOptions = this.options.filter(
-			o => !this.select.options.some(oo => oo.label === o.label),
+			(o) => !this.select.options.some((oo) => oo.label === o.label),
 		)
 
 		console.log(newOptions)

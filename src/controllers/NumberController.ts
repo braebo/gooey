@@ -19,11 +19,7 @@ export class NumberController<
 
 	private _log: Logger
 
-	constructor(
-		public input: TInput,
-		public opts: TOptions,
-		public parent?: HTMLElement,
-	) {
+	constructor(public input: TInput, public opts: TOptions, public parent?: HTMLElement) {
 		this._log = new Logger(`NumberController ${this.input.title}`, { fg: 'darkgoldenrod' })
 
 		this.element = create('input', {

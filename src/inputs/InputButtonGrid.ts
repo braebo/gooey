@@ -177,7 +177,7 @@ export class InputButtonGrid extends Input<
 						delay: 1000,
 					},
 					opts.tooltip,
-				)
+			  )
 			: undefined
 
 		opts.element = create('button', {

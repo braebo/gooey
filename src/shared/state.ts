@@ -40,6 +40,7 @@ type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true
 
 type UnionState<T> = { set: (value: T) => void } & Omit<PrimitiveState<T>, 'set'>
 
+// prettier-ignore
 export type State<T> =
 	IsUnion<T> extends true
 		? UnionState<T>
@@ -107,7 +108,7 @@ export function state<T>(defaultValue: T, options?: StateOptions<T>): State<T> {
 		? localStorageStore(options.key, defaultValue, {
 				debounce: options?.debounce,
 				onChange: options?.onChange,
-			})
+		  })
 		: writable(defaultValue)
 
 	function enhanceStore<S>(enhancer: (store: State<S>) => void) {
