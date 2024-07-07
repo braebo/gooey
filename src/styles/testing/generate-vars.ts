@@ -1,10 +1,10 @@
-import type { ColorTheme, ThemeMode } from '../styles/themer/types'
-import type { ThemeVars } from '../shared/css-custom-properties'
+import type { ColorTheme, ThemeMode } from '../themer/types'
+import type { ThemeVars } from '../../shared/css-custom-properties'
 
-import { VAR_PREFIX, GUI_VARS } from './GUI_VARS'
+import { VAR_PREFIX, GUI_VARS } from '../GUI_VARS'
 import { readFileSync, writeFileSync } from 'fs'
-import { hexToRgb } from '../shared/hexToRgb'
-import { entries } from '../shared/object'
+import { hexToRgb } from '../../shared/hexToRgb'
+import { entries } from '../../shared/object'
 import { join } from 'path'
 
 const j = (o: any) => JSON.stringify(o, null, 2).replaceAll(/"/g, '')
