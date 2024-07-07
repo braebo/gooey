@@ -243,6 +243,57 @@ type UnionState<T> = {
     set: (value: T) => void;
 } & Omit<PrimitiveState<T>, 'set'>;
 type State<T> = IsUnion<T> extends true ? UnionState<T> : T extends Array<infer U> ? ArrayState<U> : T extends Map<infer K, infer V> ? MapState<K, V> : T extends Set<infer U> ? SetState<U> : PrimitiveState<T>;
+interface StateOptions<T> extends Partial<Writable<T>> {
+    /**
+     * If provided, the store will be persisted to local storage
+     * under the specified key.
+     * @default undefined
+     */
+    key?: string;
+    /**
+     * If provided, localStorage updates will be debounced by
+     * the specified number of milliseconds. If both `debounce`
+     * and `throttle` are provided, `debounce` will take precedence.
+     */
+    debounce?: number;
+    /**
+     * Optional callback function that runs after the store is
+     * updated and all subscribers have been notified.
+     */
+    onChange?: (v: T) => void;
+}
+/**
+ * An advanced store factory with additional features:
+ *
+ * - Support for Maps, Sets, and Arrays (enabling methods like `.push` and `.add`).
+ * - A `.get` method for retrieving the current value of the store.
+ * - Optional `onChange` callback for adding side effects without subscribing.
+ * - Optional `key` argument for persisting the store to local storage.
+ *
+ * @param defaultValue - The default value of the store.
+ * @param options - {@link StateOptions}
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ * 	import { state } from 'fractils'
+ *
+ * 	const foo = state([1, 2, 3], { key: 'foo' }) // persisted to local storage
+ * 	foo.push(4)
+ * 	foo.push('5') // Type error
+ *
+ * 	const bar = state(new Map<string, number>())
+ * 	bar.setKey('count', 21) // `set` is taken, so we use `setKey` and `deleteKey`
+ *
+ * 	const baz = state(new Set<number>())
+ * 	baz.add(5)
+ * 	baz.push(6) // Type error
+ * </script>
+ *
+ * <h1>{$foo} {$bar} {$baz}</h1>
+ * ```
+ */
+declare function state<T>(defaultValue: T, options?: StateOptions<T>): State<T>;
 
 /**
  * A recorded "action" callback that can be re-played forwards or backwards.
@@ -1351,6 +1402,9 @@ declare class Color {
         isColor: boolean;
     };
 }
+declare function isColor(color: any): color is Color;
+declare function isColorFormat(color: any): color is ColorFormat;
+declare function parseColorFormat(color: ColorFormat | (string & {})): "number" | "HexString" | "Hex8String" | "RgbaString" | "HslaString" | "Color" | "RgbColor" | "HsvColor" | "HslColor" | undefined;
 
 interface ColorComponentsOptions {
     container?: HTMLDivElement;
@@ -3364,6 +3418,43 @@ interface GuiPreset {
     title: string;
     data: FolderPreset;
 }
+declare const GUI_STORAGE_DEFAULTS: GuiStorageOptions;
+declare const GUI_WINDOWMANAGER_DEFAULTS: {
+    readonly __type: "WindowManagerOptions";
+    readonly preserveZ: false;
+    readonly zFloor: 0;
+    readonly bounds: undefined;
+    readonly obstacles: undefined;
+    readonly resizable: {
+        readonly grabberSize: 9;
+        readonly color: "var(--bg-d)";
+        readonly sides: ["right", "left"];
+        readonly corners: [];
+    };
+    readonly draggable: {
+        readonly bounds: undefined;
+        readonly classes: {
+            readonly default: "fracgui-draggable";
+            readonly dragging: "fracgui-dragging";
+            readonly cancel: "fracgui-cancel";
+            readonly dragged: "fracgui-dragged";
+        };
+    };
+};
+declare const GUI_DEFAULTS: {
+    readonly __type: "GuiOptions";
+    readonly title: "gui";
+    readonly storage: false;
+    readonly closed: false;
+    readonly position: "top-right";
+    readonly margin: 16;
+    readonly container: "body";
+    readonly theme: "default";
+    readonly themeMode: "dark";
+    readonly themes: [Theme, Theme, Theme];
+    readonly resizable: true;
+    readonly draggable: true;
+};
 /**
  * The root Gui instance.  This is the entry point for creating
  * a gui.  You can create multiple root guis, but each gui
@@ -3484,4 +3575,4 @@ declare class Gui {
     dispose: () => void;
 }
 
-export { Folder, Gui };
+export { Color, type ColorMode$1 as ColorMode, type ColorValue, Folder, GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS, Gui, type GuiElements, type GuiOptions, type GuiPreset, type GuiStorageOptions, type State, isColor, isColorFormat, parseColorFormat, state };

@@ -21,6 +21,10 @@
 		// JSR
 		"noImplicitReturns": true,
 
+		// Decorators
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+
 		"outDir": "dist"
 	},
 	"include": ["src"]

@@ -1,42 +1,55 @@
+var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+
 // src/shared/deepMergeOpts.ts
 function deepMergeOpts(objects, options) {
   const [target, ...sources] = objects;
   const { concatArrays = true } = options ?? {};
-  return sources.reduce(
-    (acc, curr) => {
-      if (!curr) return acc;
-      const keys2 = Object.keys(curr);
-      for (let i = 0; i < keys2.length; i++) {
-        const k = keys2[i];
-        const v = acc[k];
-        const newV = curr[k];
-        if (Array.isArray(v) && Array.isArray(newV)) {
-          if (concatArrays) {
-            acc[k] = [.../* @__PURE__ */ new Set([...v, ...newV])];
-          } else {
-            acc[k] = newV;
-          }
-        } else if (v && typeof v === "object") {
-          if (newV !== true) {
-            if (newV && typeof newV === "object") {
-              if (typeof globalThis.window !== "undefined" && newV instanceof Element) {
-                acc[k] = newV;
-              } else {
-                acc[k] = deepMergeOpts([{ ...v }, newV], options);
-              }
-            } else if (newV || newV === false) {
-              acc[k] = newV;
-            }
-          }
-        } else if (newV !== void 0) {
+  return sources.reduce((acc, curr) => {
+    if (!curr) return acc;
+    const keys2 = Object.keys(curr);
+    for (let i = 0; i < keys2.length; i++) {
+      const k = keys2[i];
+      const v = acc[k];
+      const newV = curr[k];
+      if (Array.isArray(v) && Array.isArray(newV)) {
+        if (concatArrays) {
+          acc[k] = [
+            .../* @__PURE__ */ new Set([
+              ...v,
+              ...newV
+            ])
+          ];
+        } else {
           acc[k] = newV;
         }
+      } else if (v && typeof v === "object") {
+        if (newV !== true) {
+          if (newV && typeof newV === "object") {
+            if (typeof globalThis.window !== "undefined" && newV instanceof Element) {
+              acc[k] = newV;
+            } else {
+              acc[k] = deepMergeOpts([
+                {
+                  ...v
+                },
+                newV
+              ], options);
+            }
+          } else if (newV || newV === false) {
+            acc[k] = newV;
+          }
+        }
+      } else if (newV !== void 0) {
+        acc[k] = newV;
       }
-      return acc;
-    },
-    { ...target }
-  );
+    }
+    return acc;
+  }, {
+    ...target
+  });
 }
+__name(deepMergeOpts, "deepMergeOpts");
 
 // src/styles/themer/resolveTheme.ts
 function resolveTheme(def, vars = {}) {
@@ -72,11 +85,18 @@ function resolveTheme(def, vars = {}) {
   const theme = {
     title: def.title,
     prefix: def.prefix || "fractils",
-    vars: deepMergeOpts([{ color: color2 }, vars, def.vars]),
+    vars: deepMergeOpts([
+      {
+        color: color2
+      },
+      vars,
+      def.vars
+    ]),
     resolved: true
   };
   return theme;
 }
+__name(resolveTheme, "resolveTheme");
 
 // src/styles/themes/default.ts
 var default_default = resolveTheme({
@@ -185,7 +205,7 @@ var flat_default = resolveTheme({
 });
 
 // src/shared/collisions.ts
-var collisionClampX = (deltaX, nodeRect, obstacles) => {
+var collisionClampX = /* @__PURE__ */ __name((deltaX, nodeRect, obstacles) => {
   const { top, bottom, left, right } = nodeRect;
   if (deltaX > 0) {
     for (let i = 0; i < obstacles.length; i++) {
@@ -201,8 +221,8 @@ var collisionClampX = (deltaX, nodeRect, obstacles) => {
     }
   }
   return deltaX;
-};
-var collisionClampY = (deltaY, nodeRect, obstacles) => {
+}, "collisionClampX");
+var collisionClampY = /* @__PURE__ */ __name((deltaY, nodeRect, obstacles) => {
   const { top, bottom, left, right } = nodeRect;
   if (deltaY > 0) {
     for (let i = 0; i < obstacles.length; i++) {
@@ -218,18 +238,16 @@ var collisionClampY = (deltaY, nodeRect, obstacles) => {
     }
   }
   return deltaY;
-};
+}, "collisionClampY");
 
 // src/shared/nanoid.ts
 function nanoid(length = 21) {
-  return crypto.getRandomValues(new Uint8Array(length)).reduce(
-    (t, e) => t += (e &= 63) < 36 ? e.toString(36) : e < 62 ? (e - 26).toString(36).toUpperCase() : e > 62 ? "-" : "_",
-    ""
-  );
+  return crypto.getRandomValues(new Uint8Array(length)).reduce((t, e) => t += (e &= 63) < 36 ? e.toString(36) : e < 62 ? (e - 26).toString(36).toUpperCase() : e > 62 ? "-" : "_", "");
 }
+__name(nanoid, "nanoid");
 
 // src/shared/css-colors.ts
-var randomCSSColorName = () => CSS_COLOR_NAMES[Math.floor(Math.random() * CSS_COLOR_NAMES.length)];
+var randomCSSColorName = /* @__PURE__ */ __name(() => CSS_COLOR_NAMES[Math.floor(Math.random() * CSS_COLOR_NAMES.length)], "randomCSSColorName");
 var CSS_COLORS = Object.freeze({
   aliceblue: "#f0f8ff",
   antiquewhite: "#faebd7",
@@ -410,16 +428,20 @@ var CONSOLE_COLOR_CODES = {
   italic: "\x1B[3m",
   underline: "\x1B[4m"
 };
-var hexToRgb = (hex2) => {
+var hexToRgb = /* @__PURE__ */ __name((hex2) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex2);
-  return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : null;
-};
-var hex = (hexColor) => (str) => {
+  return result ? [
+    parseInt(result[1], 16),
+    parseInt(result[2], 16),
+    parseInt(result[3], 16)
+  ] : null;
+}, "hexToRgb");
+var hex = /* @__PURE__ */ __name((hexColor) => (str) => {
   const rgb = hexToRgb(hexColor);
   if (!rgb) return str;
   return `\x1B[38;2;${rgb[0]};${rgb[1]};${rgb[2]}m${str}\x1B[0m`;
-};
-var color = (colorName) => (str) => `${CONSOLE_COLOR_CODES[colorName]}${str}${CONSOLE_COLOR_CODES.reset}`;
+}, "hex");
+var color = /* @__PURE__ */ __name((colorName) => (str) => `${CONSOLE_COLOR_CODES[colorName]}${str}${CONSOLE_COLOR_CODES.reset}`, "color");
 var r = color("red");
 var g = color("green");
 var y = color("yellow");
@@ -431,10 +453,10 @@ var dim = color("dim");
 var o = hex("#ff7f50");
 
 // src/shared/stringify.ts
-var stringify = (input, indentation = 0) => {
+var stringify = /* @__PURE__ */ __name((input, indentation = 0) => {
   const stack = [];
   return JSON.stringify(input, serialize(stack), indentation);
-};
+}, "stringify");
 function serialize(stack) {
   const keys2 = [];
   return function(key, value) {
@@ -457,12 +479,15 @@ function serialize(stack) {
       return Array.from(value);
     }
     if (value instanceof Map) {
-      return Object.fromEntries(
-        Array.from(value.entries()).map(([k, v]) => {
-          const newStack = [...stack];
-          return [k, JSON.parse(JSON.stringify(v, serialize(newStack)))];
-        })
-      );
+      return Object.fromEntries(Array.from(value.entries()).map(([k, v]) => {
+        const newStack = [
+          ...stack
+        ];
+        return [
+          k,
+          JSON.parse(JSON.stringify(v, serialize(newStack)))
+        ];
+      }));
     }
     if (value instanceof Element) {
       return `${value.tagName}.${Array.from(value.classList).filter((s) => !s.startsWith("s-")).join(".")}#${value.id}`;
@@ -473,6 +498,7 @@ function serialize(stack) {
     return value;
   };
 }
+__name(serialize, "serialize");
 
 // ../../node_modules/.pnpm/esm-env@1.0.0/node_modules/esm-env/prod-ssr.js
 var BROWSER = false;
@@ -483,14 +509,7 @@ var defer = typeof globalThis.requestIdleCallback !== "undefined" ? globalThis.r
 var cancelDefer = typeof globalThis?.cancelIdleCallback !== "undefined" ? globalThis.cancelIdleCallback : typeof globalThis.cancelAnimationFrame !== "undefined" ? globalThis.cancelAnimationFrame : globalThis.clearTimeout;
 
 // src/shared/tldr.ts
-function tldr(object, {
-  maxDepth = 2,
-  maxLength = 30,
-  maxSiblings = 4,
-  preserveRootSiblings = false,
-  preserveFunctions = false,
-  preserveNumbers = false
-} = {}) {
+function tldr(object, { maxDepth = 2, maxLength = 30, maxSiblings = 4, preserveRootSiblings = false, preserveFunctions = false, preserveNumbers = false } = {}) {
   return parse(object);
   function parse(obj, depth = 0) {
     const seen = /* @__PURE__ */ new WeakSet();
@@ -528,8 +547,7 @@ function tldr(object, {
         const depthReached = depth > maxDepth;
         if (Array.isArray(obj)) {
           if (depthReached) return `[ ..${obj.length} ]`;
-          if (obj.length <= maxSiblings || depth === 0)
-            return obj.map((s) => parse(s, depth + 1));
+          if (obj.length <= maxSiblings || depth === 0) return obj.map((s) => parse(s, depth + 1));
           return [
             ...obj.slice(0, maxSiblings).map((s) => parse(s, depth)),
             `..${obj.length - maxSiblings} more`
@@ -540,24 +558,36 @@ function tldr(object, {
           return `{..${keyCount} ${keyCount === 1 ? "entry" : "entries"}}`;
         }
         if (keyCount <= maxSiblings || preserveRootSiblings && depth === 0) {
-          return Object.fromEntries(
-            Object.entries(obj).map(([k, v]) => [k, parse(v, depth + 1)])
-          );
+          return Object.fromEntries(Object.entries(obj).map(([k, v]) => [
+            k,
+            parse(v, depth + 1)
+          ]));
         }
-        return Object.fromEntries(
-          Object.entries(obj).slice(0, maxSiblings).concat([["..", `${keyCount - maxSiblings} more`]]).map(([k, v]) => [k, parse(v, depth + 1)])
-        );
+        return Object.fromEntries(Object.entries(obj).slice(0, maxSiblings).concat([
+          [
+            "..",
+            `${keyCount - maxSiblings} more`
+          ]
+        ]).map(([k, v]) => [
+          k,
+          parse(v, depth + 1)
+        ]));
       }
     }
     return obj;
   }
+  __name(parse, "parse");
 }
+__name(tldr, "tldr");
 
 // src/shared/logger.ts
 var ENABLED = DEV && // @ts-ignore
 import.meta?.env?.VITE_FRACTILS_LOG_LEVEL !== "off" && // @ts-ignore
 !(import.meta?.env?.VITEST && !import.meta?.env?.VITE_FRACTILS_LOG_VITEST);
 var Logger = class _Logger {
+  static {
+    __name(this, "Logger");
+  }
   static _BYPASS_STYLES = false;
   static _BYPASS_DEFER = true;
   title = "";
@@ -583,17 +613,17 @@ var Logger = class _Logger {
     return !_Logger._BYPASS_DEFER && this.options?.deferred;
   }
   /**
-   * Logs any args as well as any logs in the current buffer.
-   * @param args
-   */
-  log = (...args) => {
+  * Logs any args as well as any logs in the current buffer.
+  * @param args
+  */
+  log = /* @__PURE__ */ __name((...args) => {
     this.#logger(...args);
-  };
+  }, "log");
   /**
-   * Logs any args as well as any logs in the current buffer.
-   * @param args
-   */
-  dump = (...args) => {
+  * Logs any args as well as any logs in the current buffer.
+  * @param args
+  */
+  dump = /* @__PURE__ */ __name((...args) => {
     if (this.buffer.length) {
       if (args[0].match(/ⓘ|⚠|⛔|💀/)) {
         this.buffer.unshift(args.shift());
@@ -604,7 +634,7 @@ var Logger = class _Logger {
       this.#logger(...args);
     }
     this.buffer = [];
-  };
+  }, "dump");
   debug(...args) {
     if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === "debug") this.dump("\u{1F41E}", ...args);
     return this;
@@ -654,35 +684,31 @@ var Logger = class _Logger {
   }
   buffer = [];
   /**
-   * Replaces any sequentially repeating strings in the buffer with a single instance and a count.
-   */
+  * Replaces any sequentially repeating strings in the buffer with a single instance and a count.
+  */
   consolidateBuffer() {
     const buff = /* @__PURE__ */ new Map();
     for (const item of this.buffer) {
       buff.set(item, (buff.get(item) ?? 0) + 1);
     }
-    this.buffer = Array.from(buff).map(
-      ([item, count]) => count > 1 ? `${item}x${dim(`${count}`)}` : item
-    );
+    this.buffer = Array.from(buff).map(([item, count]) => count > 1 ? `${item}x${dim(`${count}`)}` : item);
   }
   /**
-   * Used to display the name of a method being called and the arguments it's being called with.
-   * @param str The name of the method being called.
-   * @param args The arguments being passed to the method.
-   * @returns The logger instance.
-   *
-   * @example
-   * ```typescript
-   * const log = new Logger('Foo')
-   * const bar = (a: number) => log.fn('bar', a)
-   * bar(1) // logs:
-   * ⓘ Foo bar(1)
-   * ```
-   */
+  * Used to display the name of a method being called and the arguments it's being called with.
+  * @param str The name of the method being called.
+  * @param args The arguments being passed to the method.
+  * @returns The logger instance.
+  *
+  * @example
+  * ```typescript
+  * const log = new Logger('Foo')
+  * const bar = (a: number) => log.fn('bar', a)
+  * bar(1) // logs:
+  * ⓘ Foo bar(1)
+  * ```
+  */
   fn(str, ...args) {
-    this.buffer.push(
-      gr(str) + dim("(") + args.map((a) => gr(typeof a === "object" ? stringify(a) : a)).join(", ") + dim(")")
-    );
+    this.buffer.push(gr(str) + dim("(") + args.map((a) => gr(typeof a === "object" ? stringify(a) : a)).join(", ") + dim(")"));
     return this;
   }
   static createLogger(title, options) {
@@ -705,10 +731,7 @@ var Logger = class _Logger {
     let restParts = [];
     if (rest.length) {
       for (const part of rest) {
-        restParts.push(
-          `color:#666;background:${bg};padding:0.1rem;filter:saturate(0.25);${css}`,
-          ` ${part}`
-        );
+        restParts.push(`color:#666;background:${bg};padding:0.1rem;filter:saturate(0.25);${css}`, ` ${part}`);
       }
       const i = restParts.indexOf(restParts.at(-1) ?? "");
       if (i >= 0) {
@@ -743,22 +766,14 @@ var Logger = class _Logger {
             messageConfig += "%o ";
         }
       });
-      console.log(
-        messageConfig + "%c%s",
-        `color:${fg};background:${bg};padding:0.1rem;${css}`,
-        `${title}`,
-        ...restParts,
-        `color:initial;background:${bg};padding:0.1rem;${css}`,
-        ...args.map(
-          (a) => (
-            // Testing console goes nuts with large objects, so we tldr them.
-            // @ts-ignore
-            import.meta?.env?.VITEST ? tldr(a, { maxDepth: 1, maxSiblings: 1 }) : a
-          )
-        ),
-        `color:#666;background:${bg};padding:0.1rem;${css};font-size:0.66rem;`,
-        options?.callsite ? `${callsite}` : ""
-      );
+      console.log(messageConfig + "%c%s", `color:${fg};background:${bg};padding:0.1rem;${css}`, `${title}`, ...restParts, `color:initial;background:${bg};padding:0.1rem;${css}`, ...args.map((a) => (
+        // Testing console goes nuts with large objects, so we tldr them.
+        // @ts-ignore
+        import.meta?.env?.VITEST ? tldr(a, {
+          maxDepth: 1,
+          maxSiblings: 1
+        }) : a
+      )), `color:#666;background:${bg};padding:0.1rem;${css};font-size:0.66rem;`, options?.callsite ? `${callsite}` : "");
     };
     if (!deferred) return log;
     return (...args) => defer(() => log(...args));
@@ -769,25 +784,39 @@ var Logger = class _Logger {
 function select(input, node) {
   if (typeof window === "undefined") return [];
   if (input === void 0) return [];
-  const elements = Array.isArray(input) ? input : [input];
+  const elements = Array.isArray(input) ? input : [
+    input
+  ];
   node ??= document.documentElement;
   return elements.flatMap((el) => {
     if (!el) return [];
-    if (el instanceof HTMLElement) return [el];
+    if (el instanceof HTMLElement) return [
+      el
+    ];
     if (el instanceof Document) {
-      return [document.documentElement];
+      return [
+        document.documentElement
+      ];
     }
     if (typeof el === "string") {
-      if (el === "document" || el === "window") return [document.documentElement];
+      if (el === "document" || el === "window") return [
+        document.documentElement
+      ];
       if (el.startsWith("#")) {
         const foundEl = document.getElementById(JSON.stringify(el).slice(1));
         if (foundEl) {
-          return [foundEl];
+          return [
+            foundEl
+          ];
         } else {
           if (DEV) {
             console.warn(`No element found width id: `, el);
             console.warn(`Make sure the selector is a child of the target node.`);
-            console.warn({ input, node, elements });
+            console.warn({
+              input,
+              node,
+              elements
+            });
           }
           return [];
         }
@@ -798,20 +827,26 @@ function select(input, node) {
       if (DEV) {
         console.warn(`No elements found for selector:`, el);
         console.warn(`Make sure the selector is a child of the target node.`);
-        console.warn({ input, node, elements });
+        console.warn({
+          input,
+          node,
+          elements
+        });
       }
       return [];
     }
     return Array.from(foundEls);
   });
 }
+__name(select, "select");
 
 // src/shared/store.ts
 function safe_not_equal(a, b2) {
   return a != a ? b2 == b2 : a !== b2 || a !== null && typeof a === "object" || typeof a === "function";
 }
-var noop = () => {
-};
+__name(safe_not_equal, "safe_not_equal");
+var noop = /* @__PURE__ */ __name(() => {
+}, "noop");
 function subscribe_to_store(store, run, invalidate) {
   if (store == null) {
     run(void 0);
@@ -821,6 +856,7 @@ function subscribe_to_store(store, run, invalidate) {
   const unsub = store.subscribe(run, invalidate);
   return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
 }
+__name(subscribe_to_store, "subscribe_to_store");
 var subscriber_queue = [];
 function writable(value, start = noop) {
   let stop = null;
@@ -843,14 +879,19 @@ function writable(value, start = noop) {
       }
     }
   }
+  __name(set, "set");
   function update(fn) {
     set(fn(
       /** @type {T} */
       value
     ));
   }
+  __name(update, "update");
   function subscribe(run, invalidate = noop) {
-    const subscriber = [run, invalidate];
+    const subscriber = [
+      run,
+      invalidate
+    ];
     subscribers.add(subscriber);
     if (subscribers.size === 1) {
       stop = start(set, update) || noop;
@@ -867,24 +908,31 @@ function writable(value, start = noop) {
       }
     };
   }
-  return { set, update, subscribe };
+  __name(subscribe, "subscribe");
+  return {
+    set,
+    update,
+    subscribe
+  };
 }
+__name(writable, "writable");
 function get(store) {
   let value;
   subscribe_to_store(store, (_) => value = _)();
   return value;
 }
+__name(get, "get");
 
 // src/shared/localStorageStore.ts
-var localStorageStore = (key, initial, options) => {
+var localStorageStore = /* @__PURE__ */ __name((key, initial, options) => {
   let currentValue = initial;
   const verbose = options?.verbose ?? DEV;
   const { set: setStore, ...readableStore } = writable(initial, () => {
     if (options?.browserOverride || BROWSER) {
       getAndSetFromLocalStorage();
-      const updateFromStorageEvents = (event) => {
+      const updateFromStorageEvents = /* @__PURE__ */ __name((event) => {
         if (event.key === key) getAndSetFromLocalStorage();
-      };
+      }, "updateFromStorageEvents");
       window.addEventListener("storage", updateFromStorageEvents);
       return () => window.removeEventListener("storage", updateFromStorageEvents);
     } else return () => {
@@ -893,21 +941,30 @@ var localStorageStore = (key, initial, options) => {
   let serialize2 = JSON.stringify;
   let deserialize = JSON.parse;
   const type = initial instanceof Map ? "Map" : initial instanceof Set ? "Set" : "";
-  const isMapOrSet = ["Map", "Set"].includes(type);
+  const isMapOrSet = [
+    "Map",
+    "Set"
+  ].includes(type);
   if (isMapOrSet) {
-    serialize2 = (value) => JSON.stringify(Array.from(value.entries()));
-    deserialize = (value) => {
+    serialize2 = /* @__PURE__ */ __name((value) => JSON.stringify(Array.from(value.entries())), "serialize");
+    deserialize = /* @__PURE__ */ __name((value) => {
       const parsed = JSON.parse(value);
       if (Array.isArray(parsed)) {
         if (initial instanceof Map) return new Map(parsed);
         if (initial instanceof Set) return new Set(parsed);
         return parsed;
       }
-      if (verbose) console.error(`Failed to deserialize ${type} from localStorageStore:`, { parsed, value, initial, key, options });
+      if (verbose) console.error(`Failed to deserialize ${type} from localStorageStore:`, {
+        parsed,
+        value,
+        initial,
+        key,
+        options
+      });
       return value;
-    };
+    }, "deserialize");
   }
-  const set = (value) => {
+  const set = /* @__PURE__ */ __name((value) => {
     currentValue = value;
     if (typeof value === "string" && value.startsWith('"') && value.endsWith('"')) {
       value = deserialize(value);
@@ -915,38 +972,41 @@ var localStorageStore = (key, initial, options) => {
     setStore(value);
     setItem(value);
     options?.onChange?.(value);
-  };
-  let setItem = (value) => {
+  }, "set");
+  let setItem = /* @__PURE__ */ __name((value) => {
     try {
       value = serialize2(value);
       localStorage.setItem(key, value);
     } catch (error) {
-      if (verbose)
-        console.error(`Failed to set localStorageStore value:`, { error, key, value });
+      if (verbose) console.error(`Failed to set localStorageStore value:`, {
+        error,
+        key,
+        value
+      });
     }
-  };
+  }, "setItem");
   if (options?.defer) {
     let setDeferId;
     const _ = setItem;
-    setItem = (value) => {
+    setItem = /* @__PURE__ */ __name((value) => {
       cancelDefer(setDeferId);
       setDeferId = defer(() => {
         _(value);
       });
-    };
+    }, "setItem");
   }
   if (options?.debounce) {
     let timeout = setTimeout ?? (() => void 0);
     let timeoutId;
     const _ = setItem;
-    setItem = (value) => {
+    setItem = /* @__PURE__ */ __name((value) => {
       clearTimeout(timeoutId);
       timeoutId = timeout(() => {
         _(value);
       }, options.debounce);
-    };
+    }, "setItem");
   }
-  const getAndSetFromLocalStorage = () => {
+  const getAndSetFromLocalStorage = /* @__PURE__ */ __name(() => {
     let localValue = null;
     localValue = localStorage.getItem(key) ?? null;
     if (localValue === null) {
@@ -958,17 +1018,24 @@ var localStorageStore = (key, initial, options) => {
         currentValue = parsed;
       } catch (e) {
         if (verbose) {
-          console.error(`Failed to parse localStorageStore value:`, { key, localValue });
+          console.error(`Failed to parse localStorageStore value:`, {
+            key,
+            localValue
+          });
           console.error(e);
         }
       }
     }
-  };
-  const update = (fn) => {
+  }, "getAndSetFromLocalStorage");
+  const update = /* @__PURE__ */ __name((fn) => {
     set(fn(currentValue));
+  }, "update");
+  return {
+    ...readableStore,
+    set,
+    update
   };
-  return { ...readableStore, set, update };
-};
+}, "localStorageStore");
 
 // src/shared/state.ts
 function state(defaultValue, options) {
@@ -979,10 +1046,14 @@ function state(defaultValue, options) {
   function enhanceStore(enhancer) {
     if (enhancer) enhancer(store);
   }
+  __name(enhanceStore, "enhanceStore");
   if (Array.isArray(defaultValue)) {
     enhanceStore((store2) => {
       store2.push = (item) => {
-        store2.update((arr) => [...arr, item]);
+        store2.update((arr) => [
+          ...arr,
+          item
+        ]);
       };
     });
   } else if (defaultValue instanceof Map) {
@@ -1031,26 +1102,34 @@ function state(defaultValue, options) {
     }
   };
 }
-function isState(v) {
-  return v.isState === true;
+__name(state, "state");
+function isState(v1) {
+  return v1.isState === true;
 }
+__name(isState, "isState");
 function fromState(state2) {
   return isState(state2) ? state2.value : state2;
 }
+__name(fromState, "fromState");
 
 // src/shared/clamp.ts
-var clamp = (value, min, max) => {
+var clamp = /* @__PURE__ */ __name((value, min, max) => {
   return Math.max(Math.min(value, max), min);
-};
+}, "clamp");
 
 // src/shared/resizable.ts
 var RESIZABLE_DEFAULTS = {
   __type: "ResizableOptions",
-  sides: ["right", "bottom"],
-  corners: ["bottom-right"],
+  sides: [
+    "right",
+    "bottom"
+  ],
+  corners: [
+    "bottom-right"
+  ],
   grabberSize: 6,
-  onResize: () => {
-  },
+  onResize: /* @__PURE__ */ __name(() => {
+  }, "onResize"),
   localStorageKey: void 0,
   visible: false,
   color: "var(--fg-d, #1d1d1d)",
@@ -1066,22 +1145,199 @@ var RESIZABLE_DEFAULTS = {
   disabled: false
 };
 var Resizable = class {
+  static {
+    __name(this, "Resizable");
+  }
+  node;
+  static type = "Resizable";
+  static initialized = false;
+  id;
+  opts;
+  disabled;
+  bounds;
+  obstacleEls;
+  size;
+  #activeGrabber;
+  #listeners;
+  #cleanupGrabListener;
+  #cornerGrabberSize;
+  #log;
   constructor(node, options) {
     this.node = node;
-    this.opts = deepMergeOpts([RESIZABLE_DEFAULTS, options], { concatArrays: false });
+    this.id = nanoid(8);
+    this.#activeGrabber = null;
+    this.#listeners = [];
+    this.#cleanupGrabListener = null;
+    this.clickOffset = {
+      x: 0,
+      y: 0
+    };
+    this.onGrab = (e) => {
+      if (this.disabled) return;
+      this.node.setPointerCapture(e.pointerId);
+      this.#activeGrabber = e.currentTarget;
+      this.#activeGrabber.classList.add(this.opts.classes.active);
+      document.body.classList.add(this.opts.classes.active);
+      this.obstacleEls = select(this.opts.obstacles);
+      const side = this.#activeGrabber.dataset["side"];
+      if (side.match(/top/)) this.clickOffset.y = e.clientY - this.rect.top;
+      if (side.match(/bottom/)) this.clickOffset.y = e.clientY - this.rect.bottom;
+      if (side.match(/left/)) this.clickOffset.x = e.clientX - this.rect.left;
+      if (side.match(/right/)) this.clickOffset.x = e.clientX - this.rect.right;
+      e.preventDefault();
+      e.stopPropagation();
+      this.#cleanupGrabListener?.();
+      document.addEventListener("pointermove", this.onMove);
+      this.#cleanupGrabListener = () => document.removeEventListener("pointermove", this.onMove);
+      this.#computedStyleValues();
+      document.addEventListener("pointerup", this.onUp, {
+        once: true
+      });
+    };
+    this.#minWidth = 0;
+    this.#maxWidth = 0;
+    this.#minHeight = 0;
+    this.#maxHeight = 0;
+    this.#boundsRect = {
+      left: -Infinity,
+      top: -Infinity,
+      right: Infinity,
+      bottom: Infinity
+    };
+    this.#computedStyleValues = () => {
+      const { minWidth, maxWidth, paddingLeft, paddingRight, borderLeftWidth, borderRightWidth, minHeight, maxHeight, paddingTop, paddingBottom, borderTopWidth, borderBottomWidth } = window.getComputedStyle(this.node);
+      const borderBoxX = parseFloat(paddingLeft) + parseFloat(paddingRight) + parseFloat(borderLeftWidth) + parseFloat(borderRightWidth);
+      const borderBoxY = parseFloat(paddingTop) + parseFloat(paddingBottom) + parseFloat(borderTopWidth) + parseFloat(borderBottomWidth);
+      this.#minWidth = Math.max((parseFloat(minWidth) || 0) + borderBoxX, 25);
+      this.#maxWidth = Math.min(parseFloat(maxWidth) || Infinity);
+      this.#minHeight = Math.max((parseFloat(minHeight) || 0) + borderBoxY, 25);
+      this.#maxHeight = Math.min(parseFloat(maxHeight) || Infinity);
+      this.#boundsRect = this.bounds.getBoundingClientRect();
+    };
+    this.resizeX = (x, borderleft) => {
+      let deltaX;
+      if (borderleft) {
+        deltaX = x - this.rect.left;
+        if (deltaX === 0) return this;
+        deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls);
+        if (this.#boundsRect) deltaX = Math.max(deltaX, this.#boundsRect.left - this.rect.left);
+        const newWidth = clamp(this.rect.width - deltaX, this.#minWidth, this.#maxWidth);
+        if (newWidth === this.#minWidth) deltaX = this.rect.width - newWidth;
+        this.translateX += deltaX;
+        this.node.style.setProperty("translate", `${this.translateX}px ${this.translateY}px`);
+        this.node.style.width = `${newWidth}px`;
+      } else {
+        deltaX = x - this.rect.right;
+        if (deltaX === 0) return this;
+        deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls);
+        if (this.#boundsRect) deltaX = Math.min(deltaX, this.#boundsRect.right - this.rect.right);
+        const newWidth = clamp(this.rect.width + deltaX, this.#minWidth, this.#maxWidth);
+        this.node.style.width = `${newWidth}px`;
+      }
+      return this;
+    };
+    this.resizeY = (y2, bordertop) => {
+      let deltaY;
+      if (bordertop) {
+        deltaY = y2 - this.rect.top;
+        if (deltaY != 0) {
+          deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls);
+          if (this.#boundsRect) deltaY = Math.max(deltaY, this.#boundsRect.top - this.rect.top);
+          const newHeight = clamp(this.rect.height - deltaY, this.#minHeight, this.#maxHeight);
+          if (newHeight === this.#minHeight) deltaY = this.rect.height - newHeight;
+          this.translateY += deltaY;
+          this.node.style.setProperty("translate", `${this.translateX}px ${this.translateY}px`);
+          this.node.style.height = `${newHeight}px`;
+        }
+      } else {
+        deltaY = y2 - this.rect.bottom;
+        if (deltaY !== 0) {
+          deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls);
+          if (this.#boundsRect) deltaY = Math.min(deltaY, this.#boundsRect.bottom - this.rect.bottom);
+          const newHeight = clamp(this.rect.height + deltaY, this.#minHeight, this.#maxHeight);
+          this.node.style.height = `${newHeight}px`;
+        }
+      }
+      return this;
+    };
+    this.onMove = (e) => {
+      if (!this.#activeGrabber) {
+        console.error("No active grabber");
+        return;
+      }
+      const x = e.clientX - this.clickOffset.x;
+      const y2 = e.clientY - this.clickOffset.y;
+      const { side } = this.#activeGrabber.dataset;
+      this.#log.fn("onMove").debug(side);
+      switch (side) {
+        case "top-left":
+          this.resizeY(y2, true).resizeX(x, true);
+          break;
+        case "top-right":
+          this.resizeY(y2, true).resizeX(x);
+          break;
+        case "bottom-right":
+          this.resizeY(y2).resizeX(x);
+          break;
+        case "bottom-left":
+          this.resizeY(y2).resizeX(x, true);
+          break;
+        case "top":
+          this.resizeY(y2, true);
+          break;
+        case "right":
+          this.resizeX(x);
+          break;
+        case "bottom":
+          this.resizeY(y2);
+          break;
+        case "left":
+          this.resizeX(x, true);
+          break;
+      }
+      this.node.dispatchEvent(new CustomEvent("resize"));
+      this.size.set({
+        width: this.node.offsetWidth,
+        height: this.node.offsetHeight
+      });
+      this.opts.onResize({
+        width: this.node.offsetWidth,
+        height: this.node.offsetHeight
+      });
+    };
+    this.onUp = () => {
+      this.#cleanupGrabListener?.();
+      document.body.classList.remove(this.opts.classes.active);
+      this.#activeGrabber?.classList.remove(this.opts.classes.active);
+      this.node.dispatchEvent(new CustomEvent("release"));
+    };
+    this.opts = deepMergeOpts([
+      RESIZABLE_DEFAULTS,
+      options
+    ], {
+      concatArrays: false
+    });
     this.disabled = this.opts.disabled;
     this.#log = new Logger("resizable", {
       fg: "GreenYellow",
       deferred: false
     });
-    this.#log.fn("constructor").info({ opts: this.opts, this: this });
+    this.#log.fn("constructor").info({
+      opts: this.opts,
+      this: this
+    });
     this.node.classList.add("fractils-resizable");
     this.#cornerGrabberSize = this.opts.grabberSize * 3;
     this.bounds = select(this.opts.bounds)[0] ?? globalThis.document?.documentElement;
     this.obstacleEls = select(this.opts.obstacles);
     this.generateStyles();
     const { offsetWidth: width, offsetHeight: height } = node;
-    this.size = state({ width, height }, { key: this.opts.localStorageKey });
+    this.size = state({
+      width,
+      height
+    }, {
+      key: this.opts.localStorageKey
+    });
     if (this.opts.localStorageKey) {
       const { width: width2, height: height2 } = this.size.value;
       if (width2 === 0 || height2 === 0) {
@@ -1109,27 +1365,20 @@ var Resizable = class {
       height: this.node.offsetHeight
     });
   }
-  static type = "Resizable";
-  static initialized = false;
-  id = nanoid(8);
-  opts;
-  disabled;
-  bounds;
-  obstacleEls;
-  size;
-  #activeGrabber = null;
-  #listeners = [];
-  #cleanupGrabListener = null;
-  #cornerGrabberSize;
-  #log;
   get boundsRect() {
     return this.bounds.getBoundingClientRect();
   }
   //? Create resize grabbers.
   createGrabbers() {
     for (const [side, type] of [
-      ...this.opts.sides.map((s) => [s, "side"]),
-      ...this.opts.corners.map((c2) => [c2, "corner"])
+      ...this.opts.sides.map((s) => [
+        s,
+        "side"
+      ]),
+      ...this.opts.corners.map((c2) => [
+        c2,
+        "corner"
+      ])
     ]) {
       const grabber = document.createElement("div");
       grabber.classList.add(`${this.opts.classes.default}-${this.id}`);
@@ -1141,27 +1390,8 @@ var Resizable = class {
       this.node.appendChild(grabber);
     }
   }
-  clickOffset = { x: 0, y: 0 };
-  onGrab = (e) => {
-    if (this.disabled) return;
-    this.node.setPointerCapture(e.pointerId);
-    this.#activeGrabber = e.currentTarget;
-    this.#activeGrabber.classList.add(this.opts.classes.active);
-    document.body.classList.add(this.opts.classes.active);
-    this.obstacleEls = select(this.opts.obstacles);
-    const side = this.#activeGrabber.dataset["side"];
-    if (side.match(/top/)) this.clickOffset.y = e.clientY - this.rect.top;
-    if (side.match(/bottom/)) this.clickOffset.y = e.clientY - this.rect.bottom;
-    if (side.match(/left/)) this.clickOffset.x = e.clientX - this.rect.left;
-    if (side.match(/right/)) this.clickOffset.x = e.clientX - this.rect.right;
-    e.preventDefault();
-    e.stopPropagation();
-    this.#cleanupGrabListener?.();
-    document.addEventListener("pointermove", this.onMove);
-    this.#cleanupGrabListener = () => document.removeEventListener("pointermove", this.onMove);
-    this.#computedStyleValues();
-    document.addEventListener("pointerup", this.onUp, { once: true });
-  };
+  clickOffset;
+  onGrab;
   get translateX() {
     return +this.node.dataset["translateX"] || 0;
   }
@@ -1177,149 +1407,19 @@ var Resizable = class {
   get rect() {
     return this.node.getBoundingClientRect();
   }
-  // Private computedStyleValues
-  #minWidth = 0;
-  #maxWidth = 0;
-  #minHeight = 0;
-  #maxHeight = 0;
-  #boundsRect = {
-    left: -Infinity,
-    top: -Infinity,
-    right: Infinity,
-    bottom: Infinity
-  };
-  #computedStyleValues = () => {
-    const {
-      minWidth,
-      maxWidth,
-      paddingLeft,
-      paddingRight,
-      borderLeftWidth,
-      borderRightWidth,
-      minHeight,
-      maxHeight,
-      paddingTop,
-      paddingBottom,
-      borderTopWidth,
-      borderBottomWidth
-    } = window.getComputedStyle(this.node);
-    const borderBoxX = parseFloat(paddingLeft) + parseFloat(paddingRight) + parseFloat(borderLeftWidth) + parseFloat(borderRightWidth);
-    const borderBoxY = parseFloat(paddingTop) + parseFloat(paddingBottom) + parseFloat(borderTopWidth) + parseFloat(borderBottomWidth);
-    this.#minWidth = Math.max((parseFloat(minWidth) || 0) + borderBoxX, 25);
-    this.#maxWidth = Math.min(parseFloat(maxWidth) || Infinity);
-    this.#minHeight = Math.max((parseFloat(minHeight) || 0) + borderBoxY, 25);
-    this.#maxHeight = Math.min(parseFloat(maxHeight) || Infinity);
-    this.#boundsRect = this.bounds.getBoundingClientRect();
-  };
-  resizeX = (x, borderleft) => {
-    let deltaX;
-    if (borderleft) {
-      deltaX = x - this.rect.left;
-      if (deltaX === 0) return this;
-      deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls);
-      if (this.#boundsRect) deltaX = Math.max(deltaX, this.#boundsRect.left - this.rect.left);
-      const newWidth = clamp(this.rect.width - deltaX, this.#minWidth, this.#maxWidth);
-      if (newWidth === this.#minWidth) deltaX = this.rect.width - newWidth;
-      this.translateX += deltaX;
-      this.node.style.setProperty("translate", `${this.translateX}px ${this.translateY}px`);
-      this.node.style.width = `${newWidth}px`;
-    } else {
-      deltaX = x - this.rect.right;
-      if (deltaX === 0) return this;
-      deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls);
-      if (this.#boundsRect)
-        deltaX = Math.min(deltaX, this.#boundsRect.right - this.rect.right);
-      const newWidth = clamp(this.rect.width + deltaX, this.#minWidth, this.#maxWidth);
-      this.node.style.width = `${newWidth}px`;
-    }
-    return this;
-  };
-  resizeY = (y2, bordertop) => {
-    let deltaY;
-    if (bordertop) {
-      deltaY = y2 - this.rect.top;
-      if (deltaY != 0) {
-        deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls);
-        if (this.#boundsRect)
-          deltaY = Math.max(deltaY, this.#boundsRect.top - this.rect.top);
-        const newHeight = clamp(this.rect.height - deltaY, this.#minHeight, this.#maxHeight);
-        if (newHeight === this.#minHeight) deltaY = this.rect.height - newHeight;
-        this.translateY += deltaY;
-        this.node.style.setProperty(
-          "translate",
-          `${this.translateX}px ${this.translateY}px`
-        );
-        this.node.style.height = `${newHeight}px`;
-      }
-    } else {
-      deltaY = y2 - this.rect.bottom;
-      if (deltaY !== 0) {
-        deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls);
-        if (this.#boundsRect)
-          deltaY = Math.min(deltaY, this.#boundsRect.bottom - this.rect.bottom);
-        const newHeight = clamp(this.rect.height + deltaY, this.#minHeight, this.#maxHeight);
-        this.node.style.height = `${newHeight}px`;
-      }
-    }
-    return this;
-  };
+  #minWidth;
+  #maxWidth;
+  #minHeight;
+  #maxHeight;
+  #boundsRect;
+  #computedStyleValues;
+  resizeX;
+  resizeY;
+  onMove;
+  onUp;
   /**
-   * This is where all the resizing logic happens.
-   */
-  onMove = (e) => {
-    if (!this.#activeGrabber) {
-      console.error("No active grabber");
-      return;
-    }
-    const x = e.clientX - this.clickOffset.x;
-    const y2 = e.clientY - this.clickOffset.y;
-    const { side } = this.#activeGrabber.dataset;
-    this.#log.fn("onMove").debug(side);
-    switch (side) {
-      case "top-left":
-        this.resizeY(y2, true).resizeX(x, true);
-        break;
-      case "top-right":
-        this.resizeY(y2, true).resizeX(x);
-        break;
-      case "bottom-right":
-        this.resizeY(y2).resizeX(x);
-        break;
-      case "bottom-left":
-        this.resizeY(y2).resizeX(x, true);
-        break;
-      case "top":
-        this.resizeY(y2, true);
-        break;
-      case "right":
-        this.resizeX(x);
-        break;
-      case "bottom":
-        this.resizeY(y2);
-        break;
-      case "left":
-        this.resizeX(x, true);
-        break;
-    }
-    this.node.dispatchEvent(new CustomEvent("resize"));
-    this.size.set({
-      width: this.node.offsetWidth,
-      height: this.node.offsetHeight
-    });
-    this.opts.onResize({
-      width: this.node.offsetWidth,
-      height: this.node.offsetHeight
-    });
-  };
-  onUp = () => {
-    this.#cleanupGrabListener?.();
-    document.body.classList.remove(this.opts.classes.active);
-    this.#activeGrabber?.classList.remove(this.opts.classes.active);
-    this.node.dispatchEvent(new CustomEvent("release"));
-  };
-  /**
-   * Creates the global stylesheet (but only once).
-   */
+  * Creates the global stylesheet (but only once).
+  */
   generateStyles() {
     this.#log.fn("generateStyles").debug("Generating global styles for", this);
     let css = (
@@ -1353,14 +1453,13 @@ var Resizable = class {
 				}
 			`;
     }
-    const cursor = (v) => !this.opts.cursors ? "" : `
-				cursor: ${v};`;
+    const cursor = /* @__PURE__ */ __name((v) => !this.opts.cursors ? "" : `
+				cursor: ${v};`, "cursor");
     const offset = this.opts.grabberSize / 2;
     const gradient = `transparent 20%, ${this.opts.color} 33%, ${this.opts.color} 66%, transparent 75%, transparent 100%`;
     const lengthPrcnt = 98;
-    if (this.opts.sides.includes("top"))
-      css += /*css*/
-      `
+    if (this.opts.sides.includes("top")) css += /*css*/
+    `
 			.${this.opts.classes.default}-top-${this.id} {
 				${cursor("ns-resize")}
 				top: ${-offset}px;
@@ -1372,9 +1471,8 @@ var Resizable = class {
 				background: linear-gradient(to bottom, ${gradient});
 			}
 		`;
-    if (this.opts.sides.includes("right"))
-      css += /*css*/
-      `
+    if (this.opts.sides.includes("right")) css += /*css*/
+    `
 			.${this.opts.classes.default}-right-${this.id} {
 				${cursor("ew-resize")}
 				right: ${-offset}px;
@@ -1386,9 +1484,8 @@ var Resizable = class {
 				background: linear-gradient(to left, ${gradient});
 			}
 		`;
-    if (this.opts.sides.includes("bottom"))
-      css += /*css*/
-      `
+    if (this.opts.sides.includes("bottom")) css += /*css*/
+    `
 			.${this.opts.classes.default}-bottom-${this.id} {
 				${cursor("ns-resize")}
 				bottom: ${-offset}px;
@@ -1400,9 +1497,8 @@ var Resizable = class {
 				background: linear-gradient(to top, ${gradient});
 			}
 		`;
-    if (this.opts.sides.includes("left"))
-      css += /*css*/
-      `
+    if (this.opts.sides.includes("left")) css += /*css*/
+    `
 				.${this.opts.classes.default}-left-${this.id} {
 					${cursor("ew-resize")}
 					left: ${-offset}px;
@@ -1422,7 +1518,7 @@ var Resizable = class {
       "bottom-left": "100% 0%",
       "bottom-right": "0% 0%"
     };
-    const corner = (corner2, cursorValue) => {
+    const corner = /* @__PURE__ */ __name((corner2, cursorValue) => {
       if (!this.opts.corners.includes(corner2)) return;
       const classname = `${this.opts.classes.default}-${corner2}-${this.id}`;
       const sides = corner2.replace(this.opts.classes.default, "").split("-");
@@ -1441,7 +1537,7 @@ var Resizable = class {
 					border-radius: 15%;
 				}
 			`;
-    };
+    }, "corner");
     corner("top-left", "nwse-resize");
     corner("top-right", "nesw-resize");
     corner("bottom-left", "nesw-resize");
@@ -1462,60 +1558,75 @@ var Resizable = class {
 function isDefined(value) {
   return value !== void 0;
 }
+__name(isDefined, "isDefined");
 function isString(value) {
   return typeof value === "string";
 }
+__name(isString, "isString");
 function isHTMLElement(value) {
   return value instanceof HTMLElement;
 }
+__name(isHTMLElement, "isHTMLElement");
 
 // src/shared/EventManager.ts
 var EventManager = class {
+  static {
+    __name(this, "EventManager");
+  }
   _unlisteners = /* @__PURE__ */ new Map();
   /**
-   * The event handlers for each registered custom event type, and their respective callbacks.
-   */
+  * The event handlers for each registered custom event type, and their respective callbacks.
+  */
   _handlers = /* @__PURE__ */ new Map();
   _listenerGroups = /* @__PURE__ */ new Map();
-  _log = new Logger("EventManager", { fg: "beige" });
+  _log = new Logger("EventManager", {
+    fg: "beige"
+  });
   constructor(events) {
     if (events) {
-      this.registerEvents([...events]);
+      this.registerEvents([
+        ...events
+      ]);
     }
   }
   /**
-   * Register new event type(s) for use via {@link on}.
-   */
+  * Register new event type(s) for use via {@link on}.
+  */
   registerEvents(events) {
     for (const event of events) {
       this._handlers.set(event, /* @__PURE__ */ new Map());
     }
   }
   /**
-   * Register a new event listener.
-   * @param event - The name of the event to listen for.
-   * @param callback - The callback function to execute when the event is fired.
-   * @returns The ID of the listener (for use via {@link unlisten} to remove the listener).
-   */
+  * Register a new event listener.
+  * @param event - The name of the event to listen for.
+  * @param callback - The callback function to execute when the event is fired.
+  * @returns The ID of the listener (for use via {@link unlisten} to remove the listener).
+  */
   on(event, callback) {
     this._log.fn("on").debug(this);
     if (!this._handlers.has(event)) {
       this._log.warn(`Event "${String(event)}" is not registered.`, this);
       return "";
     }
-    this._log.debug("new listener:", { event, callback });
+    this._log.debug("new listener:", {
+      event,
+      callback
+    });
     const id = nanoid();
     const listeners = this._handlers.get(event);
     listeners.set(id, callback);
     return id;
   }
   /**
-   * Emit an event to all registered listeners.
-   * @param event - The name of the event to emit.
-   * @param args - The arguments to pass to the event listeners.
-   */
+  * Emit an event to all registered listeners.
+  * @param event - The name of the event to emit.
+  * @param args - The arguments to pass to the event listeners.
+  */
   emit(event, ...args) {
-    this._log.fn("emit").debug({ event });
+    this._log.fn("emit").debug({
+      event
+    });
     const callbacks = this._handlers.get(event);
     if (callbacks) {
       for (const cb of callbacks.values()) {
@@ -1524,14 +1635,14 @@ var EventManager = class {
     }
   }
   /**
-   * Add an event listener to an HTMLElement that will be removed when {@link dispose} is called.
-   * @param element - The element to add the listener to.
-   * @param event - The event to listen for.
-   * @param callback - The callback function to execute when the event is fired.
-   * @param options - Optional event listener options.
-   * @param groupId - Optional group ID to add the listener to (for batch removal).
-   */
-  listen = (element, event, callback, options, groupId) => {
+  * Add an event listener to an HTMLElement that will be removed when {@link dispose} is called.
+  * @param element - The element to add the listener to.
+  * @param event - The event to listen for.
+  * @param callback - The callback function to execute when the event is fired.
+  * @param options - Optional event listener options.
+  * @param groupId - Optional group ID to add the listener to (for batch removal).
+  */
+  listen = /* @__PURE__ */ __name((element, event, callback, options, groupId) => {
     const id = nanoid();
     element.removeEventListener(event, callback, options);
     element.addEventListener(event, callback, options);
@@ -1540,25 +1651,25 @@ var EventManager = class {
     });
     if (groupId) this.group(groupId, id);
     return id;
-  };
+  }, "listen");
   /**
-   * Add a listener to the event manager without attaching it to an element.
-   * @param cb - The callback function to execute when the event is fired.
-   * @param groupId - Optional group ID to add the listener to (for batch
-   * removal via {@link clearGroup}).
-   * @returns The ID generated for the listener (for removal via {@link unlisten}).
-   */
-  add = (cb, groupId) => {
+  * Add a listener to the event manager without attaching it to an element.
+  * @param cb - The callback function to execute when the event is fired.
+  * @param groupId - Optional group ID to add the listener to (for batch
+  * removal via {@link clearGroup}).
+  * @returns The ID generated for the listener (for removal via {@link unlisten}).
+  */
+  add = /* @__PURE__ */ __name((cb, groupId) => {
     const id = nanoid();
     this._unlisteners.set(id, cb);
     if (groupId) this.group(groupId, id);
     return id;
-  };
+  }, "add");
   /**
-   * Add a listener to a group by id, enabling batch removal via {@link clearGroup}.
-   * @param groupId - The ID of the group to add the listener ID to.
-   * @param listenerId - The ID of the listener to add to the group.
-   */
+  * Add a listener to a group by id, enabling batch removal via {@link clearGroup}.
+  * @param groupId - The ID of the group to add the listener ID to.
+  * @param listenerId - The ID of the listener to add to the group.
+  */
   group(groupId, listenerId) {
     if (!this._listenerGroups.has(groupId)) {
       this._listenerGroups.set(groupId, /* @__PURE__ */ new Set());
@@ -1567,17 +1678,17 @@ var EventManager = class {
     return this;
   }
   /**
-   * Call the listener callback with the specified ID, then remove it.
-   * @param id - The ID of the listener to remove.
-   * @returns `true` if the listener was removed, `false` if it was not found.
-   */
+  * Call the listener callback with the specified ID, then remove it.
+  * @param id - The ID of the listener to remove.
+  * @returns `true` if the listener was removed, `false` if it was not found.
+  */
   unlisten(id) {
     this._unlisteners.get(id)?.();
     return this._unlisteners.delete(id);
   }
   /**
-   * Calls all cleanup callbacks and clears the event manager.
-   */
+  * Calls all cleanup callbacks and clears the event manager.
+  */
   clear() {
     for (const cb of this._unlisteners.values()) cb();
     this._unlisteners.clear();
@@ -1586,17 +1697,17 @@ var EventManager = class {
     return this;
   }
   /**
-   * Remove all registered event handlers.
-   */
+  * Remove all registered event handlers.
+  */
   clearHandlers() {
     for (const listeners of this._handlers.values()) listeners.clear();
     this._handlers.clear();
     return this;
   }
   /**
-   * Remove all listeners in a group by ID.
-   * @param groupId - The ID of the group to clear.
-   */
+  * Remove all listeners in a group by ID.
+  * @param groupId - The ID of the group to clear.
+  */
   clearGroup(groupId) {
     const group = this._listenerGroups.get(groupId);
     if (group) {
@@ -1610,8 +1721,8 @@ var EventManager = class {
     return this;
   }
   /**
-   * Removes all registered listeners.
-   */
+  * Removes all registered listeners.
+  */
   dispose() {
     this.clear();
     this.clearHandlers();
@@ -1619,7 +1730,7 @@ var EventManager = class {
 };
 
 // src/shared/getStyle.ts
-var getStyleMap = (element) => {
+var getStyleMap = /* @__PURE__ */ __name((element) => {
   if (typeof element !== "object") {
     throw new Error("element must be an object");
   }
@@ -1637,19 +1748,19 @@ var getStyleMap = (element) => {
     }
     return styleMap;
   }
-};
-var getStyle = (element, property) => {
+}, "getStyleMap");
+var getStyle = /* @__PURE__ */ __name((element, property) => {
   return getStyleMap(element).get(property);
-};
+}, "getStyle");
 
 // src/shared/persist.ts
 function persist(key, initialValue = void 0, quiet = !DEV) {
-  const bail = () => {
+  const bail = /* @__PURE__ */ __name(() => {
     if (typeof localStorage === "undefined") {
       if (!quiet) console.warn(`localStorage is not available for key "${key}"`);
       return true;
     } else return false;
-  };
+  }, "bail");
   return {
     get() {
       if (bail()) return initialValue;
@@ -1668,56 +1779,95 @@ function persist(key, initialValue = void 0, quiet = !DEV) {
     }
   };
 }
+__name(persist, "persist");
 
 // src/shared/place.ts
 function place(node, placement = "top-right", options) {
-  const { bounds, margin } = Object.assign(
-    {
-      bounds: void 0,
-      margin: 10
-    },
-    options
-  );
+  const { bounds, margin } = Object.assign({
+    bounds: void 0,
+    margin: 10
+  }, options);
   const rect = typeof node === "string" ? select(node)[0]?.getBoundingClientRect() : node instanceof Element ? node.getBoundingClientRect() : node;
   if (!rect) throw new Error("Invalid node: " + node);
-  const b2 = bounds === "window" && typeof window !== "undefined" ? { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight } : typeof bounds === "string" ? select(bounds)[0]?.getBoundingClientRect() : bounds ?? { x: 0, y: 0, width: 100, height: 100 };
+  const b2 = bounds === "window" && typeof window !== "undefined" ? {
+    x: 0,
+    y: 0,
+    width: window.innerWidth,
+    height: window.innerHeight
+  } : typeof bounds === "string" ? select(bounds)[0]?.getBoundingClientRect() : bounds ?? {
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100
+  };
   if (!b2) throw new Error("Invalid bounds: " + bounds);
-  const m2 = typeof margin === "number" ? { x: margin, y: margin } : margin;
+  const m2 = typeof margin === "number" ? {
+    x: margin,
+    y: margin
+  } : margin;
   if (!("x" in m2) || !("y" in m2)) {
     throw new Error("Invalid margin: " + JSON.stringify(m2));
   }
   switch (placement) {
     case "center":
     case "center-center":
-      return { x: b2.width / 2 - rect.width / 2, y: b2.height / 2 - rect.height / 2 };
+      return {
+        x: b2.width / 2 - rect.width / 2,
+        y: b2.height / 2 - rect.height / 2
+      };
     case "top-left":
     case "left-top":
-      return { x: m2.x, y: m2.y };
+      return {
+        x: m2.x,
+        y: m2.y
+      };
     case "top-center":
     case "center-top":
-      return { x: b2.width / 2 - rect.width / 2, y: m2.y };
+      return {
+        x: b2.width / 2 - rect.width / 2,
+        y: m2.y
+      };
     case "top-right":
     case "right-top":
-      return { x: b2.width - rect.width - m2.x, y: m2.y };
+      return {
+        x: b2.width - rect.width - m2.x,
+        y: m2.y
+      };
     case "bottom-left":
     case "left-bottom":
-      return { x: m2.x, y: b2.height - rect.height - m2.y };
+      return {
+        x: m2.x,
+        y: b2.height - rect.height - m2.y
+      };
     case "bottom-center":
     case "center-bottom":
-      return { x: b2.width / 2 - rect.width / 2, y: b2.height - rect.height - m2.y };
+      return {
+        x: b2.width / 2 - rect.width / 2,
+        y: b2.height - rect.height - m2.y
+      };
     case "bottom-right":
     case "right-bottom":
-      return { x: b2.width - rect.width - m2.x, y: b2.height - rect.height - m2.y };
+      return {
+        x: b2.width - rect.width - m2.x,
+        y: b2.height - rect.height - m2.y
+      };
     case "left-center":
     case "center-left":
-      return { x: m2.x, y: b2.height / 2 - rect.height / 2 };
+      return {
+        x: m2.x,
+        y: b2.height / 2 - rect.height / 2
+      };
     case "right-center":
     case "center-right":
-      return { x: b2.width - rect.width - m2.x, y: b2.height / 2 - rect.height / 2 };
+      return {
+        x: b2.width - rect.width - m2.x,
+        y: b2.height / 2 - rect.height / 2
+      };
     default:
       throw new Error("Invalid placement: " + placement);
   }
 }
+__name(place, "place");
 
 // src/shared/draggable.ts
 var DEFAULT_CLASSES = {
@@ -1733,33 +1883,324 @@ var DRAGGABLE_DEFAULTS = {
   userSelectNone: true,
   ignoreMultitouch: false,
   disabled: false,
-  position: { x: 0, y: 0 },
-  placementOptions: { margin: 0 },
+  position: {
+    x: 0,
+    y: 0
+  },
+  placementOptions: {
+    margin: 0
+  },
   cancel: void 0,
   handle: void 0,
   obstacles: void 0,
   classes: DEFAULT_CLASSES,
-  onDragStart: () => {
-  },
-  onDrag: () => {
-  },
-  onDragEnd: () => {
-  },
-  onCollision: () => {
-  },
+  onDragStart: /* @__PURE__ */ __name(() => {
+  }, "onDragStart"),
+  onDrag: /* @__PURE__ */ __name(() => {
+  }, "onDrag"),
+  onDragEnd: /* @__PURE__ */ __name(() => {
+  }, "onDragEnd"),
+  onCollision: /* @__PURE__ */ __name(() => {
+  }, "onCollision"),
   transform: void 0,
   localStorageKey: void 0
 };
 var Draggable = class {
+  static {
+    __name(this, "Draggable");
+  }
+  node;
+  static initialized = false;
+  opts;
+  /**
+  * Whether the draggable element is currently being dragged.
+  */
+  #active;
+  /**
+  * Disables user interaction with the draggable element.
+  */
+  disabled;
+  /**
+  * Used in  {@link update} to account for the difference between
+  * the node's position and the user's exact click position on the node.
+  */
+  clickOffset;
+  /**
+  * The distance between the pointer's position and the node's position.
+  */
+  clientToNodeOffset;
+  /**
+  * An internal representation of the {@link node|node's} bounding rectangle.
+  * Used for collision detection and animations.
+  */
+  rect;
+  /**
+  * The original value of `user-select` on the body element
+  * used to restore the original value after dragging when
+  * {@link DraggableOptions.userSelectNone|userSelectNone} is `true`.
+  */
+  #bodyOriginalUserSelectVal;
+  boundsEl;
+  handleEls;
+  cancelEls;
+  obstacleEls;
+  /**
+  * A rectangle representing the draggable element's boundary, if any.
+  */
+  bounds;
+  #leftBound;
+  #topBound;
+  #rightBound;
+  #bottomBound;
+  _storage;
+  _position;
+  /**
+  * Programmatically sets the position of the draggable element.
+  */
+  get position() {
+    return this._position;
+  }
+  set position(v) {
+    this._position = v;
+    this.moveTo(v);
+    this.updateLocalStorage();
+  }
+  /**
+  * Updates the {@link bounds} property to account for any changes in the
+  * DOM or this instance's {@link DraggableOptions.bounds|bounds} option.
+  */
+  #recomputeBounds;
+  /**
+  * @todo I think we can just remove this and let the user add their
+  * own event listeners if they want to target a specific element.
+  */
+  eventTarget;
+  /**
+  * An observable store that updates the draggable element's position.
+  */
+  positionStore;
+  /**
+  * Cleanup functions (removeEventLister / unsubscribe) to call in {@link dispose}.
+  */
+  #listeners;
+  #evm;
+  /**
+  * A callback to release the pointer capture using the
+  * {@link PointerEvent.pointerId | pointerId} and reset the cursor.
+  */
+  #releaseCapture;
+  /**
+  * Internal logger for infoging. Automatically bypassed in non-dev environments.
+  */
+  #log;
   constructor(node, options) {
     this.node = node;
+    this.#active = false;
+    this.disabled = false;
+    this.clickOffset = {
+      x: 0,
+      y: 0
+    };
+    this.clientToNodeOffset = {
+      x: 0,
+      y: 0
+    };
+    this.rect = {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0
+    };
+    this.#bodyOriginalUserSelectVal = "";
+    this.bounds = {
+      left: -Infinity,
+      top: -Infinity,
+      right: Infinity,
+      bottom: Infinity
+    };
+    this.#leftBound = -Infinity;
+    this.#topBound = -Infinity;
+    this.#rightBound = Infinity;
+    this.#bottomBound = Infinity;
+    this._position = {
+      x: 0,
+      y: 0
+    };
+    this.#listeners = /* @__PURE__ */ new Set();
+    this.#evm = new EventManager();
+    this.#releaseCapture = () => {
+    };
+    this.dragStart = (e) => {
+      if (this.disabled) return;
+      if (e.button === 2) return;
+      if (this.opts.ignoreMultitouch && !e.isPrimary) return;
+      if (e.composedPath().some((n) => n.classList?.contains(this.opts.classes.cancel))) {
+        return;
+      }
+      this.obstacleEls = select(this.opts.obstacles);
+      if (DEV) {
+        for (const el of this.obstacleEls) {
+          el.dataset["outline"] = el.style.outline;
+          el.style.outline = "2px dotted #f007";
+        }
+      }
+      if (isString(this.opts.handle) && isString(this.opts.cancel) && this.opts.handle === this.opts.cancel) {
+        throw new Error("`handle` selector can't be same as `cancel` selector");
+      }
+      if (this.#cancelElementContains(this.handleEls)) {
+        throw new Error("Element being dragged can't be a child of the element on which `cancel` is applied");
+      }
+      const eventTarget = e.composedPath()[0];
+      if (!this.handleEls.some((e2) => e2.contains(eventTarget) || e2.shadowRoot?.contains(eventTarget))) return;
+      if (this.#cancelElementContains([
+        eventTarget
+      ])) {
+        return;
+      }
+      this.#log.fn("dragStart").debug("Dragging initiated.");
+      e.stopPropagation();
+      this.eventTarget = this.handleEls.length === 1 ? this.node : this.handleEls.find((el) => el.contains(eventTarget));
+      this.#active = true;
+      if (this.canMoveX) this.clickOffset.x = e.clientX - this.x;
+      if (this.canMoveY) this.clickOffset.y = e.clientY - this.y;
+      const { top, right, bottom, left } = this.node.getBoundingClientRect();
+      this.rect = {
+        top,
+        right,
+        bottom,
+        left
+      };
+      if (this.bounds) this.clientToNodeOffset = {
+        x: e.clientX - left,
+        y: e.clientY - top
+      };
+      this.positionStore.set({
+        x: this.x,
+        y: this.y
+      });
+      this.#recomputeBounds();
+      this.#updateBounds();
+      this.node.dispatchEvent(new CustomEvent("grab"));
+      const { cursor } = getComputedStyle(this.node);
+      this.node.setPointerCapture(e.pointerId);
+      this.node.style.cursor = "grabbing";
+      this.#releaseCapture = () => {
+        this.node.style.cursor = cursor;
+      };
+      this.#fireSvelteDragStartEvent();
+      this.#fireUpdateEvent();
+    };
+    this.drag = (e) => {
+      if (!this.#active) return;
+      e.preventDefault();
+      e.stopPropagation();
+      this.node.classList.add(this.opts.classes.dragging);
+      this.node.classList.add(this.opts.classes.dragged);
+      const x = e.clientX - this.clickOffset.x;
+      const y2 = e.clientY - this.clickOffset.y;
+      const target = {
+        x,
+        y: y2
+      };
+      this.moveTo(target);
+      this.#fireSvelteDragEvent();
+    };
+    this.dragEnd = () => {
+      if (!this.#active) return;
+      if (DEV) {
+        for (const el of this.obstacleEls) {
+          el.style.outline = el.dataset["outline"] ?? "none";
+        }
+      }
+      this.node.classList.remove(this.opts.classes.dragging);
+      if (this.opts.userSelectNone) {
+        document.body.style.userSelect = this.#bodyOriginalUserSelectVal;
+      }
+      this.clickOffset = {
+        x: 0,
+        y: 0
+      };
+      this.clientToNodeOffset = {
+        x: 0,
+        y: 0
+      };
+      this._position = {
+        x: this.x,
+        y: this.y
+      };
+      this.#active = false;
+      this.#releaseCapture();
+      this.node.dispatchEvent(new CustomEvent("release"));
+      setTimeout(() => this.node.classList.remove(this.opts.classes.dragged), 0);
+      this.#fireSvelteDragEndEvent();
+      this.updateLocalStorage();
+    };
+    this.resize = () => {
+      this.#recomputeBounds();
+      this.#updateBounds();
+      this.moveTo(this.position);
+    };
+    this.#updateBounds = () => {
+      const styleLeft = parseFloat(this.node.style.left) || 0;
+      this.#leftBound = -styleLeft;
+      this.#rightBound = this.bounds.right - this.bounds.left - (this.rect.right - this.rect.left) - styleLeft;
+      const styleTop = parseFloat(this.node.style.top) || 0;
+      this.#topBound = -styleTop;
+      this.#bottomBound = this.bounds.bottom - this.bounds.top - styleTop - (this.rect.bottom - this.rect.top);
+      if (this.boundsEl) {
+        const styleMap = getStyleMap(this.boundsEl);
+        this.#leftBound -= parseFloat(styleMap.get("padding-left"));
+        this.#rightBound -= parseFloat(styleMap.get("padding-right"));
+        this.#topBound -= parseFloat(styleMap.get("padding-top"));
+        this.#bottomBound -= parseFloat(styleMap.get("padding-bottom"));
+      }
+    };
+    this.updateLocalStorage = () => {
+      if (!this.opts.localStorageKey) return;
+      this.#log.fn("updateLocalStorage").debug("Updating position in localStorage:", `{ x: ${this._position.x}, y: ${this._position.y} }`, this);
+      if (this._storage) {
+        this._storage.set(this._position);
+      }
+    };
+    this.clearLocalStorage = () => {
+      if (this._storage && this.opts.localStorageKey) {
+        localStorage.removeItem(this.opts.localStorageKey);
+      }
+    };
+    this.#cancelElementContains = (dragElements) => {
+      return this.cancelEls.some((cancelEl) => dragElements.some((el) => cancelEl.contains(el)));
+    };
+    this.#callEvent = (eventName, fn) => {
+      const data = this.eventData;
+      this.node.dispatchEvent(new CustomEvent(eventName, {
+        detail: data
+      }));
+      fn?.(data);
+    };
+    this.#fireSvelteDragStartEvent = () => {
+      this.#callEvent("dragstart", this.opts.onDragStart);
+    };
+    this.#fireSvelteDragEndEvent = () => {
+      this.#callEvent("dragend", this.opts.onDragEnd);
+    };
+    this.#fireSvelteDragEvent = () => {
+      this.#callEvent("drag", this.opts.onDrag);
+    };
+    this.#fireUpdateEvent = () => {
+      this.node.dispatchEvent(new CustomEvent("update", {
+        detail: this
+      }));
+    };
     this.opts = Object.assign({}, DRAGGABLE_DEFAULTS, options);
     this.#log = new Logger("draggable " + Array.from(this.node.classList).join("."), {
       fg: "SkyBlue"
     });
     this.#recomputeBounds = this.#resolveBounds(this.opts.bounds);
     this.opts.position = this.resolvePosition(this.opts.position);
-    this.#log.fn("constructor").debug({ opts: this.opts, this: this });
+    this.#log.fn("constructor").debug({
+      opts: this.opts,
+      this: this
+    });
     this.positionStore = writable(this.opts.position);
     this.node.classList.add(this.opts.classes.default);
     const startPosition = this.opts.position;
@@ -1774,122 +2215,38 @@ var Draggable = class {
     this.x = startPosition.x;
     this.y = startPosition.y;
     this.node.style.setProperty("touch-action", "none");
-    this.handleEls = this.opts.handle ? select(this.opts.handle, this.node) : [this.node];
+    this.handleEls = this.opts.handle ? select(this.opts.handle, this.node) : [
+      this.node
+    ];
     this.cancelEls = select(this.opts.cancel, this.node);
     this.obstacleEls = select(this.opts.obstacles);
     this.#evm.listen(this.node, "pointerdown", this.dragStart);
     this.#evm.listen(window, "pointerup", this.dragEnd);
     this.#evm.listen(window, "pointermove", this.drag);
     this.#evm.listen(window, "resize", this.resize);
-    this.#evm.add(
-      this.positionStore.subscribe(({ x, y: y2 }) => {
-        this.node.style.setProperty("translate", `${x}px ${y2}px 1px`);
-      })
-    );
+    this.#evm.add(this.positionStore.subscribe(({ x, y: y2 }) => {
+      this.node.style.setProperty("translate", `${x}px ${y2}px 1px`);
+    }));
     if (startPosition !== DRAGGABLE_DEFAULTS.position) {
       const { top, right, bottom, left } = this.node.getBoundingClientRect();
-      this.rect = { top, right, bottom, left };
+      this.rect = {
+        top,
+        right,
+        bottom,
+        left
+      };
       this.#recomputeBounds();
       this.#updateBounds();
       this.moveTo(startPosition);
-      this._position = { x: this.x, y: this.y };
+      this._position = {
+        x: this.x,
+        y: this.y
+      };
     }
   }
-  static initialized = false;
-  opts;
   /**
-   * Whether the draggable element is currently being dragged.
-   */
-  #active = false;
-  /**
-   * Disables user interaction with the draggable element.
-   */
-  disabled = false;
-  /**
-   * Used in  {@link update} to account for the difference between
-   * the node's position and the user's exact click position on the node.
-   */
-  clickOffset = { x: 0, y: 0 };
-  /**
-   * The distance between the pointer's position and the node's position.
-   */
-  clientToNodeOffset = {
-    x: 0,
-    y: 0
-  };
-  /**
-   * An internal representation of the {@link node|node's} bounding rectangle.
-   * Used for collision detection and animations.
-   */
-  rect = { top: 0, right: 0, bottom: 0, left: 0 };
-  /**
-   * The original value of `user-select` on the body element
-   * used to restore the original value after dragging when
-   * {@link DraggableOptions.userSelectNone|userSelectNone} is `true`.
-   */
-  #bodyOriginalUserSelectVal = "";
-  boundsEl;
-  handleEls;
-  cancelEls;
-  obstacleEls;
-  /**
-   * A rectangle representing the draggable element's boundary, if any.
-   */
-  bounds = {
-    left: -Infinity,
-    top: -Infinity,
-    right: Infinity,
-    bottom: Infinity
-  };
-  #leftBound = -Infinity;
-  #topBound = -Infinity;
-  #rightBound = Infinity;
-  #bottomBound = Infinity;
-  _storage;
-  _position = { x: 0, y: 0 };
-  /**
-   * Programmatically sets the position of the draggable element.
-   */
-  get position() {
-    return this._position;
-  }
-  set position(v) {
-    this._position = v;
-    this.moveTo(v);
-    this.updateLocalStorage();
-  }
-  /**
-   * Updates the {@link bounds} property to account for any changes in the
-   * DOM or this instance's {@link DraggableOptions.bounds|bounds} option.
-   */
-  #recomputeBounds;
-  /**
-   * @todo I think we can just remove this and let the user add their
-   * own event listeners if they want to target a specific element.
-   */
-  eventTarget;
-  /**
-   * An observable store that updates the draggable element's position.
-   */
-  positionStore;
-  /**
-   * Cleanup functions (removeEventLister / unsubscribe) to call in {@link dispose}.
-   */
-  #listeners = /* @__PURE__ */ new Set();
-  #evm = new EventManager();
-  /**
-   * A callback to release the pointer capture using the
-   * {@link PointerEvent.pointerId | pointerId} and reset the cursor.
-   */
-  #releaseCapture = () => {
-  };
-  /**
-   * Internal logger for infoging. Automatically bypassed in non-dev environments.
-   */
-  #log;
-  /**
-   * The x position of the draggable element's transform offset.
-   */
+  * The x position of the draggable element's transform offset.
+  */
   get x() {
     return +this.node.dataset["translateX"] || 0;
   }
@@ -1897,8 +2254,8 @@ var Draggable = class {
     this.node.dataset["translateX"] = String(v);
   }
   /**
-   * The y position of the draggable element's transform offset.
-   */
+  * The y position of the draggable element's transform offset.
+  */
   get y() {
     return +this.node.dataset["translateY"] || 0;
   }
@@ -1906,16 +2263,16 @@ var Draggable = class {
     this.node.dataset["translateY"] = String(v);
   }
   /**
-   * Whether the draggable element can move in the x direction,
-   * based on the {@link DraggableOptions.axis|axis} option.
-   */
+  * Whether the draggable element can move in the x direction,
+  * based on the {@link DraggableOptions.axis|axis} option.
+  */
   get canMoveX() {
     return /(both|x)/.test(this.opts.axis);
   }
   /**
-   * Whether the draggable element can move in the x direction,
-   * based on the {@link DraggableOptions.axis|axis} option.
-   */
+  * Whether the draggable element can move in the x direction,
+  * based on the {@link DraggableOptions.axis|axis} option.
+  */
   get canMoveY() {
     return /(both|y)/.test(this.opts.axis);
   }
@@ -1930,115 +2287,15 @@ var Draggable = class {
   get isControlled() {
     return !!this.opts.position;
   }
-  dragStart = (e) => {
-    if (this.disabled) return;
-    if (e.button === 2) return;
-    if (this.opts.ignoreMultitouch && !e.isPrimary) return;
-    if (e.composedPath().some((n) => n.classList?.contains(this.opts.classes.cancel))) {
-      return;
-    }
-    this.obstacleEls = select(this.opts.obstacles);
-    if (DEV) {
-      for (const el of this.obstacleEls) {
-        el.dataset["outline"] = el.style.outline;
-        el.style.outline = "2px dotted #f007";
-      }
-    }
-    if (isString(this.opts.handle) && isString(this.opts.cancel) && this.opts.handle === this.opts.cancel) {
-      throw new Error("`handle` selector can't be same as `cancel` selector");
-    }
-    if (this.#cancelElementContains(this.handleEls)) {
-      throw new Error(
-        "Element being dragged can't be a child of the element on which `cancel` is applied"
-      );
-    }
-    const eventTarget = e.composedPath()[0];
-    if (!this.handleEls.some(
-      (e2) => e2.contains(eventTarget) || e2.shadowRoot?.contains(eventTarget)
-    ))
-      return;
-    if (this.#cancelElementContains([eventTarget])) {
-      return;
-    }
-    this.#log.fn("dragStart").debug("Dragging initiated.");
-    e.stopPropagation();
-    this.eventTarget = this.handleEls.length === 1 ? this.node : this.handleEls.find((el) => el.contains(eventTarget));
-    this.#active = true;
-    if (this.canMoveX) this.clickOffset.x = e.clientX - this.x;
-    if (this.canMoveY) this.clickOffset.y = e.clientY - this.y;
-    const { top, right, bottom, left } = this.node.getBoundingClientRect();
-    this.rect = { top, right, bottom, left };
-    if (this.bounds) this.clientToNodeOffset = { x: e.clientX - left, y: e.clientY - top };
-    this.positionStore.set({ x: this.x, y: this.y });
-    this.#recomputeBounds();
-    this.#updateBounds();
-    this.node.dispatchEvent(new CustomEvent("grab"));
-    const { cursor } = getComputedStyle(this.node);
-    this.node.setPointerCapture(e.pointerId);
-    this.node.style.cursor = "grabbing";
-    this.#releaseCapture = () => {
-      this.node.style.cursor = cursor;
-    };
-    this.#fireSvelteDragStartEvent();
-    this.#fireUpdateEvent();
-  };
-  drag = (e) => {
-    if (!this.#active) return;
-    e.preventDefault();
-    e.stopPropagation();
-    this.node.classList.add(this.opts.classes.dragging);
-    this.node.classList.add(this.opts.classes.dragged);
-    const x = e.clientX - this.clickOffset.x;
-    const y2 = e.clientY - this.clickOffset.y;
-    const target = { x, y: y2 };
-    this.moveTo(target);
-    this.#fireSvelteDragEvent();
-  };
-  dragEnd = () => {
-    if (!this.#active) return;
-    if (DEV) {
-      for (const el of this.obstacleEls) {
-        el.style.outline = el.dataset["outline"] ?? "none";
-      }
-    }
-    this.node.classList.remove(this.opts.classes.dragging);
-    if (this.opts.userSelectNone) {
-      document.body.style.userSelect = this.#bodyOriginalUserSelectVal;
-    }
-    this.clickOffset = { x: 0, y: 0 };
-    this.clientToNodeOffset = { x: 0, y: 0 };
-    this._position = { x: this.x, y: this.y };
-    this.#active = false;
-    this.#releaseCapture();
-    this.node.dispatchEvent(new CustomEvent("release"));
-    setTimeout(() => this.node.classList.remove(this.opts.classes.dragged), 0);
-    this.#fireSvelteDragEndEvent();
-    this.updateLocalStorage();
-  };
-  resize = () => {
-    this.#recomputeBounds();
-    this.#updateBounds();
-    this.moveTo(this.position);
-  };
-  #updateBounds = () => {
-    const styleLeft = parseFloat(this.node.style.left) || 0;
-    this.#leftBound = -styleLeft;
-    this.#rightBound = this.bounds.right - this.bounds.left - (this.rect.right - this.rect.left) - styleLeft;
-    const styleTop = parseFloat(this.node.style.top) || 0;
-    this.#topBound = -styleTop;
-    this.#bottomBound = this.bounds.bottom - this.bounds.top - styleTop - (this.rect.bottom - this.rect.top);
-    if (this.boundsEl) {
-      const styleMap = getStyleMap(this.boundsEl);
-      this.#leftBound -= parseFloat(styleMap.get("padding-left"));
-      this.#rightBound -= parseFloat(styleMap.get("padding-right"));
-      this.#topBound -= parseFloat(styleMap.get("padding-top"));
-      this.#bottomBound -= parseFloat(styleMap.get("padding-bottom"));
-    }
-  };
+  dragStart;
+  drag;
+  dragEnd;
+  resize;
+  #updateBounds;
   /**
-   * Moves the {@link node|draggable element} to the specified position, adjusted
-   * for collisions with {@link obstacleEls obstacles} or {@link boundsRect bounds}.
-   */
+  * Moves the {@link node|draggable element} to the specified position, adjusted
+  * for collisions with {@link obstacleEls obstacles} or {@link boundsRect bounds}.
+  */
   moveTo(target) {
     this.#log.fn("moveTo").debug("Moving to:", target, this);
     if (this.canMoveX) {
@@ -2062,7 +2319,10 @@ var Draggable = class {
       }
     }
     if (!this.opts.transform) {
-      this.positionStore.set({ x: this.x, y: this.y });
+      this.positionStore.set({
+        x: this.x,
+        y: this.y
+      });
     } else {
       const customTransformResult = this.opts.transform?.({
         x: this.x,
@@ -2072,7 +2332,10 @@ var Draggable = class {
       });
       if (customTransformResult && "x" in customTransformResult && "y" in customTransformResult) {
         const { x, y: y2 } = customTransformResult;
-        this.positionStore.set({ x, y: y2 });
+        this.positionStore.set({
+          x,
+          y: y2
+        });
       }
     }
     this.#fireUpdateEvent();
@@ -2081,29 +2344,12 @@ var Draggable = class {
     this.#log.fn("update").debug("Updating position:", v, this);
     this.moveTo(v);
   }
+  updateLocalStorage;
+  clearLocalStorage;
   /**
-   * Updates the {@link position} property in local storage.
-   */
-  updateLocalStorage = () => {
-    if (!this.opts.localStorageKey) return;
-    this.#log.fn("updateLocalStorage").debug(
-      "Updating position in localStorage:",
-      `{ x: ${this._position.x}, y: ${this._position.y} }`,
-      this
-    );
-    if (this._storage) {
-      this._storage.set(this._position);
-    }
-  };
-  clearLocalStorage = () => {
-    if (this._storage && this.opts.localStorageKey) {
-      localStorage.removeItem(this.opts.localStorageKey);
-    }
-  };
-  /**
-   * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
-   * function that updates the {@link bounds} property when called.
-   */
+  * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
+  * function that updates the {@link bounds} property when called.
+  */
   #resolveBounds(opts) {
     if (!opts) return () => void 0;
     if (opts && typeof opts === "object" && ("left" in opts || "right" in opts || "top" in opts || "bottom" in opts)) {
@@ -2130,13 +2376,13 @@ var Draggable = class {
     return () => this.bounds = node.getBoundingClientRect();
   }
   /**
-   * Resolves a {@link DraggableOptions.position} option into an `{x,y}` vector
-   * depending on its type:
-   * - `undefined` -> {@link DRAGGABLE_DEFAULTS.position}
-   * - {@link Placement} -> {@link place}
-   * - `{x,y}` -> itself *(merged with {@link DRAGGABLE_DEFAULTS.position}*
-   * if it's a partial.)
-   */
+  * Resolves a {@link DraggableOptions.position} option into an `{x,y}` vector
+  * depending on its type:
+  * - `undefined` -> {@link DRAGGABLE_DEFAULTS.position}
+  * - {@link Placement} -> {@link place}
+  * - `{x,y}` -> itself *(merged with {@link DRAGGABLE_DEFAULTS.position}*
+  * if it's a partial.)
+  */
   resolvePosition(pos) {
     const defaultPos = DRAGGABLE_DEFAULTS.position;
     if (!pos) {
@@ -2149,7 +2395,10 @@ var Draggable = class {
       });
     }
     if (typeof pos === "object" && ("x" in pos || "y" in pos)) {
-      return { ...defaultPos, ...pos };
+      return {
+        ...defaultPos,
+        ...pos
+      };
     }
     throw new Error("Invalid position: " + JSON.stringify(pos), {
       cause: {
@@ -2158,26 +2407,12 @@ var Draggable = class {
       }
     });
   }
-  #cancelElementContains = (dragElements) => {
-    return this.cancelEls.some((cancelEl) => dragElements.some((el) => cancelEl.contains(el)));
-  };
-  #callEvent = (eventName, fn) => {
-    const data = this.eventData;
-    this.node.dispatchEvent(new CustomEvent(eventName, { detail: data }));
-    fn?.(data);
-  };
-  #fireSvelteDragStartEvent = () => {
-    this.#callEvent("dragstart", this.opts.onDragStart);
-  };
-  #fireSvelteDragEndEvent = () => {
-    this.#callEvent("dragend", this.opts.onDragEnd);
-  };
-  #fireSvelteDragEvent = () => {
-    this.#callEvent("drag", this.opts.onDrag);
-  };
-  #fireUpdateEvent = () => {
-    this.node.dispatchEvent(new CustomEvent("update", { detail: this }));
-  };
+  #cancelElementContains;
+  #callEvent;
+  #fireSvelteDragStartEvent;
+  #fireSvelteDragEndEvent;
+  #fireSvelteDragEvent;
+  #fireUpdateEvent;
   dispose() {
     this.#evm.dispose();
   }
@@ -2195,15 +2430,22 @@ function resolveOpts(maybeT, tDefaults) {
     return false;
   }
   if (typeof maybeT === "object") {
-    return deepMergeOpts([tDefaults, maybeT], { concatArrays: false });
+    return deepMergeOpts([
+      tDefaults,
+      maybeT
+    ], {
+      concatArrays: false
+    });
   }
   return maybeT;
 }
+__name(resolveOpts, "resolveOpts");
 
 // src/shared/WindowManager.ts
 function isObject(thing) {
   return typeof thing === "object" && thing !== null;
 }
+__name(isObject, "isObject");
 var WINDOWMANGER_STORAGE_DEFAULTS = {
   __type: "WindowManagerStorageOptions",
   key: "window-manager",
@@ -2222,35 +2464,44 @@ var WINDOWMANAGER_DEFAULTS = {
   localStorage: void 0
 };
 var WindowManager = class {
+  static {
+    __name(this, "WindowManager");
+  }
   /**
-   * A map of all windows managed by the instance.  The key is the window's id specified in the
-   * options for each window.
-   */
+  * A map of all windows managed by the instance.  The key is the window's id specified in the
+  * options for each window.
+  */
   windows = /* @__PURE__ */ new Map();
   /**
-   * The initial {@link WindowManagerOptions} provided.
-   */
+  * The initial {@link WindowManagerOptions} provided.
+  */
   opts;
-  _log = new Logger("WindowManager", { fg: "lightseagreen" });
+  _log = new Logger("WindowManager", {
+    fg: "lightseagreen"
+  });
   _evm = new EventManager();
   constructor(options) {
     options ??= WINDOWMANAGER_DEFAULTS;
     options.__type = "WindowManagerOptions";
     this.opts = Object.freeze(this._resolveOptions(options));
-    this._log.fn("constructor").info({ opts: this.opts, options, this: this });
+    this._log.fn("constructor").info({
+      opts: this.opts,
+      options,
+      this: this
+    });
   }
-  add = (node, options) => {
+  add = /* @__PURE__ */ __name((node, options) => {
     const instance = new WindowInstance(this, node, options);
     this.windows.set(instance.id, instance);
     const listenerId = this._evm.listen(node, "grab", this.select);
     return {
-      destroy: () => {
+      destroy: /* @__PURE__ */ __name(() => {
         instance.dispose();
         this.windows.delete(instance.id);
         this._evm.unlisten(listenerId);
-      }
+      }, "destroy")
     };
-  };
+  }, "add");
   update() {
     this.windows.forEach(({ resizableInstance, draggableInstance }) => {
       if (draggableInstance) draggableInstance.update();
@@ -2264,7 +2515,7 @@ var WindowManager = class {
     }
     return this;
   }
-  select = (e) => {
+  select = /* @__PURE__ */ __name((e) => {
     const target_node = e.currentTarget;
     const instance = this.windows.get(target_node.id);
     if (!instance) {
@@ -2274,13 +2525,9 @@ var WindowManager = class {
       const initialZ = target_node.style.getPropertyValue("z-index");
       target_node.style.setProperty("z-index", String(this.opts.zFloor + this.windows.size));
       if (target_node.dataset["keepZ"] === "true" || this.opts.preserveZ) {
-        addEventListener(
-          "pointerup",
-          () => target_node.style.setProperty("z-index", initialZ),
-          {
-            once: true
-          }
-        );
+        addEventListener("pointerup", () => target_node.style.setProperty("z-index", initialZ), {
+          once: true
+        });
       } else {
         this.windows.delete(instance.id);
         this.windows.set(instance.id, instance);
@@ -2288,7 +2535,7 @@ var WindowManager = class {
       }
     }
     return this;
-  };
+  }, "select");
   _resolveOptions(options, defaults = WINDOWMANAGER_DEFAULTS) {
     const opts = {};
     opts.zFloor = options?.zFloor ?? defaults.zFloor;
@@ -2328,11 +2575,7 @@ var WindowManager = class {
       if (options.localStorage === true) {
         opts.localStorage = WINDOWMANGER_STORAGE_DEFAULTS;
       } else if (typeof options.localStorage === "object") {
-        opts.localStorage = Object.assign(
-          {},
-          WINDOWMANGER_STORAGE_DEFAULTS,
-          options.localStorage
-        );
+        opts.localStorage = Object.assign({}, WINDOWMANGER_STORAGE_DEFAULTS, options.localStorage);
         if (isObject(opts.draggable)) {
           if (opts.localStorage.position === false) {
             opts.draggable.localStorageKey = void 0;
@@ -2348,8 +2591,8 @@ var WindowManager = class {
     return opts;
   }
   /**
-   * Dispose of the instance and all windows.
-   */
+  * Dispose of the instance and all windows.
+  */
   dispose() {
     this._log.fn("dispose").info(this);
     this._evm?.dispose();
@@ -2360,9 +2603,27 @@ var WindowManager = class {
   }
 };
 var WindowInstance = class {
+  static {
+    __name(this, "WindowInstance");
+  }
+  manager;
+  node;
+  draggableInstance;
+  resizableInstance;
+  id;
+  position;
+  size;
   constructor(manager, node, options) {
     this.manager = manager;
     this.node = node;
+    this.position = state({
+      x: 0,
+      y: 0
+    });
+    this.size = state({
+      width: 0,
+      height: 0
+    });
     this.id = node.id || options?.id || `wm-instance-${nanoid(8)}`;
     node.id ||= this.id;
     const opts = manager._resolveOptions(options, manager.opts);
@@ -2401,17 +2662,16 @@ var WindowInstance = class {
         resizeOpts.localStorageKey = resizeKeyParts.join("::");
       }
     }
-    this.draggableInstance = new Draggable(node, dragOpts || { disabled: true });
-    this.resizableInstance = new Resizable(node, resizeOpts || { disabled: true });
+    this.draggableInstance = new Draggable(node, dragOpts || {
+      disabled: true
+    });
+    this.resizableInstance = new Resizable(node, resizeOpts || {
+      disabled: true
+    });
     if (opts?.preserveZ) {
       node.dataset["keepZ"] = "true";
     }
   }
-  draggableInstance;
-  resizableInstance;
-  id;
-  position = state({ x: 0, y: 0 });
-  size = state({ width: 0, height: 0 });
   dispose() {
     this.resizableInstance?.dispose();
     this.draggableInstance?.dispose();
@@ -2426,6 +2686,7 @@ function entries(object) {
   }
   return Object.entries(object);
 }
+__name(entries, "entries");
 function keys(object) {
   if (typeof object !== "object" && object === null) {
     console.error("Error: Invalid object", object);
@@ -2433,6 +2694,7 @@ function keys(object) {
   }
   return Object.keys(object);
 }
+__name(keys, "keys");
 function values(object) {
   if (typeof object !== "object" && object === null) {
     console.error("Error: Invalid object", object);
@@ -2440,564 +2702,7 @@ function values(object) {
   }
   return Object.values(object);
 }
-
-// src/shared/css-custom-properties.ts
-function destructureVars(vars, _prefix) {
-  const flatVars = {};
-  function destructure(o2, prefix = "") {
-    for (const [k, v] of entries(o2)) {
-      if (typeof v === "object") {
-        destructure(v, `${prefix ? prefix + "-" : ""}${k}`);
-      } else {
-        flatVars[`${prefix ? prefix + "_" : ""}${k}`] = v;
-      }
-    }
-  }
-  destructure(vars);
-  return flatVars;
-}
-
-// src/shared/color/regex.ts
-var CSS_INTEGER = "[-\\+]?\\d+%?";
-var CSS_NUMBER = "[-\\+]?\\d*\\.\\d+%?";
-var CSS_UNIT = "(?:" + CSS_NUMBER + ")|(?:" + CSS_INTEGER + ")";
-var PERMISSIVE_MATCH_3 = "[\\s|\\(]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")\\s*\\)?";
-var PERMISSIVE_MATCH_4 = "[\\s|\\(]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")\\s*\\)?";
-var REGEX_FUNCTIONAL_RGB = new RegExp("rgb" + PERMISSIVE_MATCH_3);
-var REGEX_FUNCTIONAL_RGBA = new RegExp("rgba" + PERMISSIVE_MATCH_4);
-var REGEX_FUNCTIONAL_HSL = new RegExp("hsl" + PERMISSIVE_MATCH_3);
-var REGEX_FUNCTIONAL_HSLA = new RegExp("hsla" + PERMISSIVE_MATCH_4);
-var HEX_START = "^(?:#?|0x?)";
-var HEX_INT_SINGLE = "([0-9a-fA-F]{1})";
-var HEX_INT_DOUBLE = "([0-9a-fA-F]{2})";
-var REGEX_HEX_3 = new RegExp(
-  HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + "$"
-);
-var REGEX_HEX_4 = new RegExp(
-  HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + "$"
-);
-var REGEX_HEX_6 = new RegExp(
-  HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + "$"
-);
-var REGEX_HEX_8 = new RegExp(
-  HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + "$"
-);
-
-// src/shared/color/conversions/kelvinToRgb.ts
-function kelvinToRgb(kelvin) {
-  const temp = kelvin / 100;
-  let r2;
-  let g2;
-  let b2;
-  if (temp < 66) {
-    r2 = 255;
-    g2 = -155.25485562709179 - 0.44596950469579133 * (g2 = temp - 2) + 104.49216199393888 * Math.log(g2);
-    b2 = temp < 20 ? 0 : -254.76935184120902 + 0.8274096064007395 * (b2 = temp - 10) + 115.67994401066147 * Math.log(b2);
-  } else {
-    r2 = 351.97690566805693 + 0.114206453784165 * (r2 = temp - 55) - 40.25366309332127 * Math.log(r2);
-    g2 = 325.4494125711974 + 0.07943456536662342 * (g2 = temp - 50) - 28.0852963507957 * Math.log(g2);
-    b2 = 255;
-  }
-  return {
-    r: clamp(Math.floor(r2), 0, 255),
-    g: clamp(Math.floor(g2), 0, 255),
-    b: clamp(Math.floor(b2), 0, 255)
-  };
-}
-
-// src/shared/color/conversions/rgbToKelvin.ts
-var KELVIN_MIN = 2e3;
-var KELVIN_MAX = 4e4;
-function rgbToKelvin(rgb) {
-  const { r: r2, b: b2 } = rgb;
-  const eps = 0.4;
-  let minTemp = KELVIN_MIN;
-  let maxTemp = KELVIN_MAX;
-  let temp;
-  while (maxTemp - minTemp > eps) {
-    temp = (maxTemp + minTemp) * 0.5;
-    const rgb2 = kelvinToRgb(temp);
-    if (rgb2.b / rgb2.r >= b2 / r2) {
-      maxTemp = temp;
-    } else {
-      minTemp = temp;
-    }
-  }
-  return temp;
-}
-
-// src/shared/color/conversions/rgbToHsv.ts
-function rgbToHsv(rgb) {
-  const r2 = rgb.r / 255;
-  const g2 = rgb.g / 255;
-  const b2 = rgb.b / 255;
-  const max = Math.max(r2, g2, b2);
-  const min = Math.min(r2, g2, b2);
-  const delta = max - min;
-  let hue = 0;
-  let value = max;
-  let saturation = max === 0 ? 0 : delta / max;
-  switch (max) {
-    case min:
-      hue = 0;
-      break;
-    case r2:
-      hue = (g2 - b2) / delta + (g2 < b2 ? 6 : 0);
-      break;
-    case g2:
-      hue = (b2 - r2) / delta + 2;
-      break;
-    case b2:
-      hue = (r2 - g2) / delta + 4;
-      break;
-  }
-  return {
-    h: hue * 60 % 360,
-    s: clamp(saturation * 100, 0, 100),
-    v: clamp(value * 100, 0, 100)
-  };
-}
-
-// src/shared/color/conversions/hslToHsv.ts
-function hslToHsv(hsl) {
-  const l = hsl.l * 2;
-  const s = hsl.s * (l <= 100 ? l : 200 - l) / 100;
-  const saturation = l + s < 1e-9 ? 0 : 2 * s / (l + s);
-  return {
-    h: hsl.h,
-    s: clamp(saturation * 100, 0, 100),
-    v: clamp((l + s) / 2, 0, 100)
-  };
-}
-
-// src/shared/color/conversions/hsvToHsl.ts
-function hsvToHsl(hsv) {
-  const s = hsv.s / 100;
-  const v = hsv.v / 100;
-  const l = (2 - s) * v;
-  const divisor = l <= 1 ? l : 2 - l;
-  const saturation = divisor < 1e-9 ? 0 : s * v / divisor;
-  return {
-    h: hsv.h,
-    s: clamp(saturation * 100, 0, 100),
-    l: clamp(l * 50, 0, 100)
-  };
-}
-
-// src/shared/color/conversions/hsvToRgb.ts
-function hsvToRgb(hsv) {
-  const h = hsv.h / 60;
-  const s = hsv.s / 100;
-  const v = hsv.v / 100;
-  const i = Math.floor(h);
-  const f = h - i;
-  const p = v * (1 - s);
-  const q = v * (1 - f * s);
-  const t = v * (1 - (1 - f) * s);
-  const mod = i % 6;
-  const r2 = [v, q, p, p, t, v][mod];
-  const g2 = [t, v, v, q, p, p][mod];
-  const b2 = [p, p, t, v, v, q][mod];
-  return {
-    r: clamp(r2 * 255, 0, 255),
-    g: clamp(g2 * 255, 0, 255),
-    b: clamp(b2 * 255, 0, 255)
-  };
-}
-
-// src/shared/color/conversions/parseHexInt.ts
-function parseHexInt(str) {
-  if (str.length !== 2) throw new Error("Invalid hex string: " + str);
-  return parseInt(str, 16);
-}
-
-// src/shared/color/conversions/parseUnit.ts
-function parseUnit(str, max) {
-  const isPercentage = str.indexOf("%") > -1;
-  const num = parseFloat(str);
-  return isPercentage ? max / 100 * num : num;
-}
-
-// src/shared/color/conversions/intToHex.ts
-function intToHex(int) {
-  return int.toString(16).padStart(2, "0");
-}
-
-// src/shared/color/color.ts
-var DEFAULT_COLOR = { h: 0, s: 0, v: 0, a: 1 };
-var Color = class _Color {
-  isColor = true;
-  #hsva;
-  // The primary internal color value (source of truth).
-  #initialValue;
-  /**
-   * @param color - The initial color value.
-   * The value can be any valid color representation:
-   * - A hex string: '#5500ee' | '#5500eeff'
-   * - An rgba string: 'rgba(85, 0, 238, 1)' | 'rgba(85, 0, 238, 1.0)'
-   * - An hsla string: 'hsla(261, 100%, 47%, 1)' | 'hsla(261, 100%, 47%, 1.0)'
-   * - An {@link RgbvColor}: { r: 85, g: 0, b: 238, a: 1 }
-   * - An {@link HsvColor}: { h: 261, s: 100, v: 47, a: 1 }
-   * - An {@link HslColor}: { h: 261, s: 100, l: 47, a: 1 }
-   * - An {@link KelvinColor}: { kelvin: 6500 }
-   */
-  constructor(color2) {
-    this.#hsva = DEFAULT_COLOR;
-    if (color2) this.set(color2);
-    this.#initialValue = structuredClone(this.#hsva);
-    return this;
-  }
-  /**
-   * Sets the Color from any valid {@link ColorValue}.
-   */
-  set(color2) {
-    if (typeof color2 === "string") {
-      if (/^(?:#?|0x?)[0-9a-fA-F]{3,8}$/.test(color2)) {
-        this.hexString = color2;
-      } else if (/^rgba?/.test(color2)) {
-        this.rgbString = color2;
-      } else if (/^hsla?/.test(color2)) {
-        this.hslString = color2;
-      }
-    } else if (typeof color2 === "object") {
-      if (color2 instanceof _Color) {
-        this.hsva = color2.hsva;
-      } else if ("r" in color2 && "g" in color2 && "b" in color2) {
-        this.rgb = color2;
-      } else if ("h" in color2 && "s" in color2 && "v" in color2) {
-        this.hsv = color2;
-      } else if ("h" in color2 && "s" in color2 && "l" in color2) {
-        this.hsl = color2;
-      } else if ("kelvin" in color2) {
-        this.kelvin = color2.kelvin;
-      }
-    } else {
-      throw new Error("Invalid color value: " + color2);
-    }
-  }
-  /**
-   * Shortcut to set a specific channel value.
-   * @param format - hsv | hsl | rgb
-   * @param channel - Individual channel to set, for example, if format = hsl, chanel = h | s | l
-   * @param value - New value for the channel.
-   */
-  setChannel(format, channel, value) {
-    this[format] = { ...this[format], [channel]: value };
-  }
-  /**
-   * Reset color back to its initial value
-   */
-  reset() {
-    this.hsva = this.#initialValue;
-  }
-  /**
-   * Returns a new Color instance with the same values as this one.
-   */
-  clone() {
-    return new _Color(this);
-  }
-  /** i.e. `{ h: 261, s: 100, v: 47 }` */
-  get hsv() {
-    const { h, s, v } = this.#hsva;
-    return { h, s, v };
-  }
-  // All other setters go through this one.
-  set hsv(value) {
-    const oldValue = this.#hsva;
-    const mergedValue = { ...oldValue, ...value };
-    if (this.#hsva.h === mergedValue.h && this.#hsva.s === mergedValue.s && this.#hsva.v === mergedValue.v && this.#hsva.a === mergedValue.a) {
-      return;
-    }
-    this.#hsva = {
-      h: Math.round(mergedValue.h),
-      s: Math.round(mergedValue.s),
-      v: Math.round(mergedValue.v),
-      a: mergedValue.a
-    };
-  }
-  /** i.e. `{ h: 261, s: 100, v: 47, a: 1 }` */
-  get hsva() {
-    return structuredClone(this.#hsva);
-  }
-  set hsva(value) {
-    this.hsv = value;
-  }
-  /** The value of `H` in `HSVA`. */
-  get hue() {
-    return this.#hsva.h;
-  }
-  set hue(value) {
-    this.hsv = { h: value };
-  }
-  /** The value of `S` in `HSVA`. */
-  get saturation() {
-    return this.#hsva.s;
-  }
-  set saturation(value) {
-    this.hsv = { s: value };
-  }
-  /** The value of `V` in `HSVA`. */
-  get value() {
-    return this.#hsva.v;
-  }
-  set value(value) {
-    this.hsv = { v: value };
-  }
-  /** The value of `L` in `HSLA`. */
-  get lightness() {
-    return this.hsl.l;
-  }
-  set lightness(value) {
-    this.hsl = { ...this.hsl, l: value };
-  }
-  get alpha() {
-    return this.#hsva.a ?? 1;
-  }
-  set alpha(value) {
-    this.hsv = { ...this.hsv, a: value };
-  }
-  get kelvin() {
-    return rgbToKelvin(this.rgb);
-  }
-  set kelvin(value) {
-    this.rgb = kelvinToRgb(value);
-  }
-  get red() {
-    return this.rgb.r;
-  }
-  set red(value) {
-    this.rgb = { ...this.rgb, r: value };
-  }
-  /**
-   * A float version of the {@link red} channel value as a fraction of 1 (0-1 vs 0-255).
-   */
-  get r() {
-    return this.rgb.r / 255;
-  }
-  set r(value) {
-    this.red = value * 255;
-  }
-  get green() {
-    return this.rgb.g;
-  }
-  set green(value) {
-    this.rgb = { ...this.rgb, g: value };
-  }
-  /**
-   * A float version of the {@link green} channel value as a fraction of 1 (0-1 vs 0-255).
-   */
-  get g() {
-    return this.rgb.g / 255;
-  }
-  set g(value) {
-    this.green = value * 255;
-  }
-  get blue() {
-    return this.rgb.b;
-  }
-  set blue(value) {
-    this.rgb = { ...this.rgb, b: value };
-  }
-  /**
-   * A float version of the {@link blue} channel value as a fraction of 1 (0-1 vs 0-255).
-   */
-  get b() {
-    return this.rgb.b / 255;
-  }
-  set b(value) {
-    this.blue = value * 255;
-  }
-  /** i.e. `{ r: 85, g: 0, b: 238 }` */
-  get rgb() {
-    const { r: r2, g: g2, b: b2 } = hsvToRgb(this.#hsva);
-    return {
-      r: Math.round(r2),
-      g: Math.round(g2),
-      b: Math.round(b2)
-    };
-  }
-  set rgb(value) {
-    this.hsv = {
-      ...rgbToHsv(value),
-      a: "a" in value ? value.a : 1
-    };
-  }
-  /**
-   * A float version of {@link rgb} values as a fraction of 1 (0-1 vs 0-255).
-   */
-  get rgbf() {
-    return {
-      r: this.r,
-      g: this.g,
-      b: this.b
-    };
-  }
-  set rgbf(value) {
-    this.rgb = {
-      r: value.r,
-      g: value.g,
-      b: value.b
-    };
-  }
-  /** i.e. `'rgba(85, 0, 238, 1)'` */
-  get rgba() {
-    return { ...this.rgb, a: this.alpha };
-  }
-  set rgba(value) {
-    this.rgb = value;
-  }
-  /** i.e. `'hsl(261, 100%, 47%)'` */
-  get hsl() {
-    const { h, s, l } = hsvToHsl(this.#hsva);
-    return {
-      h: Math.round(h),
-      s: Math.round(s),
-      l: Math.round(l)
-    };
-  }
-  set hsl(value) {
-    this.hsv = {
-      ...hslToHsv(value),
-      a: "a" in value ? value.a : 1
-    };
-  }
-  /** i.e. `'hsla(261, 100%, 47%, 1)'` */
-  get hsla() {
-    return { ...this.hsl, a: this.alpha };
-  }
-  set hsla(value) {
-    this.hsl = value;
-  }
-  /** i.e. `'rgb(85, 0, 238)'` */
-  get rgbString() {
-    return `rgb(${this.rgb.r}, ${this.rgb.g}, ${this.rgb.b})`;
-  }
-  set rgbString(value) {
-    let match;
-    let r2;
-    let g2;
-    let b2;
-    let a = 1;
-    if (match = REGEX_FUNCTIONAL_RGB.exec(value)) {
-      r2 = parseUnit(match[1], 255);
-      g2 = parseUnit(match[2], 255);
-      b2 = parseUnit(match[3], 255);
-    } else if (match = REGEX_FUNCTIONAL_RGBA.exec(value)) {
-      r2 = parseUnit(match[1], 255);
-      g2 = parseUnit(match[2], 255);
-      b2 = parseUnit(match[3], 255);
-      a = parseUnit(match[4], 1);
-    } else {
-      throw new Error("Invalid rgb string: " + value);
-    }
-    this.rgb = { r: r2, g: g2, b: b2, a };
-  }
-  /** i.e. `'rgba(85, 0, 238, 1)'` */
-  get rgbaString() {
-    const rgba = this.rgba;
-    return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
-  }
-  set rgbaString(value) {
-    this.rgbString = value;
-  }
-  /**
-   * Hex string with an alpha channel, i.e. `'#5500eeff'`. Identical to {@link hex8String}.
-   */
-  get hex() {
-    return this.hex8String;
-  }
-  /** Hex string with no alpha channel, i.e. `'#5500ee'` */
-  get hexString() {
-    const rgb = this.rgb;
-    return `#${intToHex(rgb.r)}${intToHex(rgb.g)}${intToHex(rgb.b)}`;
-  }
-  set hexString(value) {
-    const match = value.match(REGEX_HEX_3) || value.match(REGEX_HEX_4) || value.match(REGEX_HEX_6) || value.match(REGEX_HEX_8);
-    if (!match) throw new Error("Invalid hex string");
-    const [r2, g2, b2, a = 255] = match.slice(1).map((c2) => parseHexInt(c2.length === 1 ? `${c2}${c2}` : c2));
-    this.rgb = { r: r2, g: g2, b: b2, a: +a / 255 };
-  }
-  get hex8() {
-    return this.hex8String;
-  }
-  /** i.e. `'#5500eeff'` */
-  get hex8String() {
-    const rgba = this.rgba;
-    return `#${intToHex(rgba.r)}${intToHex(rgba.g)}${intToHex(rgba.b)}${intToHex(Math.floor((rgba.a ?? 1) * 255))}`;
-  }
-  set hex8String(value) {
-    this.hexString = value;
-  }
-  /** i.e. `'rgb(85, 0, 238)'` */
-  get hslString() {
-    const hsl = this.hsl;
-    return `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
-  }
-  set hslString(value) {
-    const match = REGEX_FUNCTIONAL_HSL.exec(value) || REGEX_FUNCTIONAL_HSLA.exec(value);
-    if (!match) throw new Error("Invalid rgb string: " + value);
-    const [r2, g2, b2, a = 1] = match.slice(1).map((val, index) => parseUnit(val, index < 3 ? 255 : 1));
-    this.rgb = { r: r2, g: g2, b: b2, a };
-  }
-  /** i.e. `'hsla(261, 100%, 47%, 1)'` */
-  get hslaString() {
-    const hsla = this.hsla;
-    return `hsla(${hsla.h}, ${hsla.s}%, ${hsla.l}%, ${hsla.a})`;
-  }
-  set hslaString(value) {
-    this.hslString = value;
-  }
-  toString() {
-    return this.hex8String;
-  }
-  toJSON() {
-    return {
-      isColor: true,
-      ...this.rgba,
-      hex: this.hex8String
-    };
-  }
-};
-function isColor(color2) {
-  return !!color2.isColor;
-}
-function isColorFormat(color2) {
-  return typeof parseColorFormat(color2) !== "undefined";
-}
-function parseColorFormat(color2) {
-  if (typeof color2 === "string") {
-    if (color2.match(/^#?[0-9a-fA-F]{6}$/)) {
-      return "HexString";
-    } else if (color2.match(/^#?[0-9a-fA-F]{8}$/)) {
-      return "Hex8String";
-    } else if (color2.match(/^rgba?/)) {
-      return "RgbaString";
-    } else if (color2.match(/^hsla?/)) {
-      return "HslaString";
-    }
-  } else if (typeof color2 === "object") {
-    if (color2 instanceof Color) {
-      return "Color";
-    } else if ("r" in color2 && "g" in color2 && "b" in color2) {
-      return "RgbColor";
-    } else if ("h" in color2 && "s" in color2 && "v" in color2) {
-      return "HsvColor";
-    } else if ("h" in color2 && "s" in color2 && "l" in color2) {
-      return "HslColor";
-    } else if ("kelvin" in color2) {
-      return "number";
-    }
-  }
-  return void 0;
-}
-
-// src/shared/isType.ts
-function isType(value, type) {
-  if (typeof value !== "object" || value === null || ["object", "function"].includes(type)) {
-    return typeof value === type;
-  }
-  return "__type" in value && value["__type"] === type;
-}
+__name(values, "values");
 
 // src/shared/toFn.ts
 function toFn(v) {
@@ -3006,8 +2711,20 @@ function toFn(v) {
   }
   return () => v;
 }
+__name(toFn, "toFn");
 
 // src/shared/Tooltip.ts
+function _ts_decorate(decorators, target, key, desc) {
+  var c2 = arguments.length, r2 = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r2 = Reflect.decorate(decorators, target, key, desc);
+  else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r2 = (c2 < 3 ? d(r2) : c2 > 3 ? d(target, key, r2) : d(target, key)) || r2;
+  return c2 > 3 && r2 && Object.defineProperty(target, key, r2), r2;
+}
+__name(_ts_decorate, "_ts_decorate");
+function _ts_metadata(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+__name(_ts_metadata, "_ts_metadata");
 var TOOLTIP_DEFAULTS = {
   __type: "TooltipOptions",
   text: "",
@@ -3025,20 +2742,153 @@ var TOOLTIP_DEFAULTS = {
   style: void 0,
   hideOnClick: false
 };
-var Tooltip = @styled class {
+var Tooltip = class {
+  static {
+    __name(this, "Tooltip");
+  }
+  node;
+  __type;
   /**
-   * removeEventListener callbacks for listeners with particularly short lifecycles.
-   */
+  * The tooltip element itself.
+  */
+  element;
+  /**
+  * The parent element of the tooltip.
+  */
+  parent;
+  /**
+  * Whether the tooltip is currently showing.
+  */
+  showing;
+  opts;
+  _text;
+  _evm;
+  _animPositions;
+  _delayInTimer;
+  _delayOutTimer;
+  /**
+  * removeEventListener callbacks for listeners with particularly short lifecycles.
+  */
   // private _tempListeners = new Set<() => void>()
   constructor(node, options) {
     this.node = node;
-    const opts = deepMergeOpts([TOOLTIP_DEFAULTS, options]);
+    this.__type = "Tooltip";
+    this.showing = false;
+    this._evm = new EventManager();
+    this.show = () => {
+      if (this.showing) return;
+      if (!this.text) return;
+      clearTimeout(this._delayInTimer);
+      clearTimeout(this._delayOutTimer);
+      this._delayInTimer = setTimeout(async () => {
+        if (this.element) this.parent?.appendChild(this.element);
+        this.showing = true;
+        this.element?.animate([
+          {
+            opacity: "0",
+            transform: this._animPositions.from
+          },
+          {
+            opacity: "1",
+            transform: this._animPositions.to
+          }
+        ], {
+          duration: this.opts.animation.duration,
+          easing: this.opts.animation.easing,
+          fill: "forwards"
+        });
+        this._updatePosition();
+        this._maybeWatchAnchor();
+      }, this.opts.delay);
+    };
+    this.hide = () => {
+      clearTimeout(this._delayInTimer);
+      clearTimeout(this._delayOutTimer);
+      this._delayOutTimer = setTimeout(async () => {
+        if (this.showing) {
+          this.showing = false;
+          if (this._watcherId) {
+            this._evm.unlisten(this._watcherId);
+          }
+          await this.element?.animate([
+            {
+              opacity: "1",
+              transform: this._animPositions.to
+            },
+            {
+              opacity: "0",
+              transform: this._animPositions.from
+            }
+          ], {
+            duration: this.opts.animation.durationOut,
+            easing: this.opts.animation.easing,
+            fill: "forwards"
+          }).finished;
+          this.unmount();
+        }
+      }, this.opts.delayOut);
+    };
+    this._mounted = false;
+    this._updatePosition = (e) => {
+      if (!this.element) return;
+      const tooltipRect = this.element.getBoundingClientRect();
+      if (this.element.innerHTML !== this.text) {
+        this.element.innerHTML = String(this.text);
+      }
+      if (e?.type === "pointermove") {
+        this._mouse = {
+          x: e.clientX,
+          y: e.clientY
+        };
+      }
+      const anchor = this._getAnchorRects();
+      if (!anchor) return;
+      let left = 0;
+      let top = 0;
+      const baseOffset = 4;
+      this.element.classList.add("fractils-tooltip-" + this.placement);
+      switch (this.placement) {
+        case "top":
+          left = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
+          top = anchor.y.top + window.scrollY - tooltipRect.height - baseOffset;
+          break;
+        case "bottom":
+          left = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
+          top = anchor.y.top + window.scrollY + anchor.y.height + baseOffset;
+          break;
+        case "left":
+          left = anchor.x.left + window.scrollX - tooltipRect.width - baseOffset;
+          top = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
+          break;
+        case "right":
+          left = anchor.x.left + window.scrollX + anchor.x.width + baseOffset;
+          top = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
+          break;
+      }
+      const parentRect = this.parent?.getBoundingClientRect();
+      if (!parentRect) return;
+      this.element.style.left = `calc(${left - parentRect.left}px + ${this.opts.offsetX})`;
+      this.element.style.top = `calc(${top - parentRect.top}px + ${this.opts.offsetY})`;
+    };
+    this._mouse = {
+      x: 0,
+      y: 0
+    };
+    this._watchingAnchor = false;
+    this._watchingFinished = false;
+    this._watchTimeout = void 0;
+    const opts = deepMergeOpts([
+      TOOLTIP_DEFAULTS,
+      options
+    ]);
     this.opts = opts;
     this.placement = opts.placement;
     this._text = toFn(opts.text);
     this.parent = options?.parent ?? document.getElementById("svelte") ?? document.body;
     this.element = create("div", {
-      classes: ["fractils-tooltip"],
+      classes: [
+        "fractils-tooltip"
+      ],
       innerHTML: String(this._text()),
       style: options?.style
     });
@@ -3057,25 +2907,6 @@ var Tooltip = @styled class {
       else this.refresh();
     });
   }
-  __type = "Tooltip";
-  /**
-   * The tooltip element itself.
-   */
-  element;
-  /**
-   * The parent element of the tooltip.
-   */
-  parent;
-  /**
-   * Whether the tooltip is currently showing.
-   */
-  showing = false;
-  opts;
-  _text;
-  _evm = new EventManager();
-  _animPositions;
-  _delayInTimer;
-  _delayOutTimer;
   refresh() {
     if (!this.element) return;
     this.element.innerHTML = String(this.text);
@@ -3085,8 +2916,8 @@ var Tooltip = @styled class {
     clearTimeout(this._delayOutTimer);
   }
   /**
-   * The text to display in the tooltip.  Assigning a new value will update the tooltip text.
-   */
+  * The text to display in the tooltip.  Assigning a new value will update the tooltip text.
+  */
   get text() {
     return this._text();
   }
@@ -3102,16 +2933,28 @@ var Tooltip = @styled class {
     this.opts.placement = v;
     switch (v) {
       case "top":
-        this._animPositions = { from: "translateY(4px)", to: "translateY(0)" };
+        this._animPositions = {
+          from: "translateY(4px)",
+          to: "translateY(0)"
+        };
         break;
       case "bottom":
-        this._animPositions = { from: "translateY(-4px)", to: "translateY(0)" };
+        this._animPositions = {
+          from: "translateY(-4px)",
+          to: "translateY(0)"
+        };
         break;
       case "left":
-        this._animPositions = { from: "translateX(4px)", to: "translateX(0)" };
+        this._animPositions = {
+          from: "translateX(4px)",
+          to: "translateX(0)"
+        };
         break;
       case "right":
-        this._animPositions = { from: "translateX(-4px)", to: "translateX(0)" };
+        this._animPositions = {
+          from: "translateX(-4px)",
+          to: "translateX(0)"
+        };
     }
   }
   get offsetX() {
@@ -3128,64 +2971,13 @@ var Tooltip = @styled class {
     this.opts.offsetY = v;
     this._updatePosition();
   }
+  show;
+  hide;
   /**
-   * Animates the tooltip into view.
-   */
-  show = () => {
-    if (this.showing) return;
-    if (!this.text) return;
-    clearTimeout(this._delayInTimer);
-    clearTimeout(this._delayOutTimer);
-    this._delayInTimer = setTimeout(async () => {
-      if (this.element) this.parent?.appendChild(this.element);
-      this.showing = true;
-      this.element?.animate(
-        [
-          { opacity: "0", transform: this._animPositions.from },
-          { opacity: "1", transform: this._animPositions.to }
-        ],
-        {
-          duration: this.opts.animation.duration,
-          easing: this.opts.animation.easing,
-          fill: "forwards"
-        }
-      );
-      this._updatePosition();
-      this._maybeWatchAnchor();
-    }, this.opts.delay);
-  };
-  /**
-   * Animates the tooltip out of view.
-   */
-  hide = () => {
-    clearTimeout(this._delayInTimer);
-    clearTimeout(this._delayOutTimer);
-    this._delayOutTimer = setTimeout(async () => {
-      if (this.showing) {
-        this.showing = false;
-        if (this._watcherId) {
-          this._evm.unlisten(this._watcherId);
-        }
-        await this.element?.animate(
-          [
-            { opacity: "1", transform: this._animPositions.to },
-            { opacity: "0", transform: this._animPositions.from }
-          ],
-          {
-            duration: this.opts.animation.durationOut,
-            easing: this.opts.animation.easing,
-            fill: "forwards"
-          }
-        ).finished;
-        this.unmount();
-      }
-    }, this.opts.delayOut);
-  };
-  /**
-   * Whether the tooltip is currently mounted to the DOM.
-   * @internal
-   */
-  _mounted = false;
+  * Whether the tooltip is currently mounted to the DOM.
+  * @internal
+  */
+  _mounted;
   mount() {
     if (this._mounted) return;
     this._mounted = true;
@@ -3196,51 +2988,11 @@ var Tooltip = @styled class {
     this._mounted = false;
     if (this.element) this.parent?.removeChild(this.element);
   }
-  _updatePosition = (e) => {
-    if (!this.element) return;
-    const tooltipRect = this.element.getBoundingClientRect();
-    if (this.element.innerHTML !== this.text) {
-      this.element.innerHTML = String(this.text);
-    }
-    if (e?.type === "pointermove") {
-      this._mouse = {
-        x: e.clientX,
-        y: e.clientY
-      };
-    }
-    const anchor = this._getAnchorRects();
-    if (!anchor) return;
-    let left = 0;
-    let top = 0;
-    const baseOffset = 4;
-    this.element.classList.add("fractils-tooltip-" + this.placement);
-    switch (this.placement) {
-      case "top":
-        left = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
-        top = anchor.y.top + window.scrollY - tooltipRect.height - baseOffset;
-        break;
-      case "bottom":
-        left = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
-        top = anchor.y.top + window.scrollY + anchor.y.height + baseOffset;
-        break;
-      case "left":
-        left = anchor.x.left + window.scrollX - tooltipRect.width - baseOffset;
-        top = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
-        break;
-      case "right":
-        left = anchor.x.left + window.scrollX + anchor.x.width + baseOffset;
-        top = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
-        break;
-    }
-    const parentRect = this.parent?.getBoundingClientRect();
-    if (!parentRect) return;
-    this.element.style.left = `calc(${left - parentRect.left}px + ${this.opts.offsetX})`;
-    this.element.style.top = `calc(${top - parentRect.top}px + ${this.opts.offsetY})`;
-  };
+  _updatePosition;
   // todo - mobile touch events support?
-  _mouse = { x: 0, y: 0 };
+  _mouse;
   _getAnchorRects() {
-    const getRect = (anchor) => {
+    const getRect = /* @__PURE__ */ __name((anchor) => {
       if (!anchor) return this.node?.getBoundingClientRect();
       switch (typeof anchor) {
         case "string": {
@@ -3282,51 +3034,51 @@ var Tooltip = @styled class {
           return this.node?.getBoundingClientRect();
         }
       }
-    };
+    }, "getRect");
     const rect = getRect(this.opts.anchor);
     if (rect === "separate") {
       const x = getRect(this.opts.anchor.x);
       const y2 = getRect(this.opts.anchor.y);
       if (!x || !y2) return void 0;
-      return { x, y: y2 };
+      return {
+        x,
+        y: y2
+      };
     }
     if (!rect) return void 0;
-    return { x: rect, y: rect };
+    return {
+      x: rect,
+      y: rect
+    };
   }
   _watcherId;
   /**
-   * Determines if the tooltip should watch any anchors for movement.
-   */
+  * Determines if the tooltip should watch any anchors for movement.
+  */
   _maybeWatchAnchor() {
-    const maybeWatch = (el) => {
+    const maybeWatch = /* @__PURE__ */ __name((el) => {
       if (!el) return;
       const anchor = el instanceof HTMLElement ? el : this.node?.querySelector(el) ?? document.querySelector(el);
-      const watchAnchor = () => {
+      const watchAnchor = /* @__PURE__ */ __name(() => {
         if (anchor) {
           this._watch(anchor);
         }
-      };
+      }, "watchAnchor");
       if (anchor) {
         if (this._watcherId) {
           this._evm.unlisten(this._watcherId);
         }
-        this._watcherId = this._evm.listen(
-          anchor,
-          "transitionrun",
-          watchAnchor,
-          {},
-          "anchor"
-        );
+        this._watcherId = this._evm.listen(anchor, "transitionrun", watchAnchor, {}, "anchor");
       }
-    };
-    const getAnchor = (anchor) => {
+    }, "maybeWatch");
+    const getAnchor = /* @__PURE__ */ __name((anchor) => {
       if (anchor instanceof HTMLElement) {
         return anchor;
       } else if (typeof anchor === "string") {
         return anchor === "node" ? this.node : anchor === "mouse" ? null : anchor;
       }
       return null;
-    };
+    }, "getAnchor");
     if (this.opts.anchor && typeof this.opts.anchor === "object" && "x" in this.opts.anchor && "y" in this.opts.anchor) {
       const anchorX = getAnchor(this.opts.anchor.x);
       const anchorY = getAnchor(this.opts.anchor.y);
@@ -3340,30 +3092,30 @@ var Tooltip = @styled class {
       maybeWatch(getAnchor(this.opts.anchor));
     }
   }
-  _watchingAnchor = false;
-  _watchingFinished = false;
-  _watchTimeout = void 0;
+  _watchingAnchor;
+  _watchingFinished;
+  _watchTimeout;
   /**
-   * Keeps the tooltip position in sync with the anchor when an anchor's
-   * transform is in transition while the tooltip is showing.
-   * @todo - watch animation events too?
-   */
+  * Keeps the tooltip position in sync with the anchor when an anchor's
+  * transform is in transition while the tooltip is showing.
+  * @todo - watch animation events too?
+  */
   _watch(el) {
     if (this._watchingAnchor) {
       return;
     }
     this._watchingFinished = false;
     this._watchingAnchor = true;
-    const complete = () => {
+    const complete = /* @__PURE__ */ __name(() => {
       this._watchingFinished = true;
       this._watchingAnchor = false;
       this.element?.style.setProperty("transition-duration", "0.1s");
       if (timeout) el.removeEventListener("transitionend", timeout);
-    };
-    const timeout = () => {
+    }, "complete");
+    const timeout = /* @__PURE__ */ __name(() => {
       if (this._watchingFinished) return;
       complete();
-    };
+    }, "timeout");
     if (!this.showing) {
       complete();
       return;
@@ -3442,7 +3194,15 @@ var Tooltip = @styled class {
 	`
   );
 };
-var tooltip = (node, options) => {
+Tooltip = _ts_decorate([
+  styled,
+  _ts_metadata("design:type", Function),
+  _ts_metadata("design:paramtypes", [
+    Object,
+    typeof Partial === "undefined" ? Object : Partial
+  ])
+], Tooltip);
+var tooltip = /* @__PURE__ */ __name((node, options) => {
   const tt = new Tooltip(node, options);
   return {
     update(opts) {
@@ -3453,12 +3213,13 @@ var tooltip = (node, options) => {
       tt.dispose();
     }
   };
-};
+}, "tooltip");
 function tickLoop(cb) {
   requestAnimationFrame(() => {
     if (!cb()) tickLoop(cb);
   });
 }
+__name(tickLoop, "tickLoop");
 
 // src/shared/create.ts
 function create(tagname, options) {
@@ -3518,23 +3279,23 @@ function create(tagname, options) {
   }
   return el;
 }
+__name(create, "create");
 function maybeAddOpenInEditorEventListener(stack, el) {
   const file = parseFileFromStack(stack);
   if (file) {
-    el.addEventListener(
-      "contextmenu",
-      (e) => {
-        if (e.metaKey && e.altKey) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log(e.target);
-          openFileInEditor(file);
-        }
-      },
-      { capture: false }
-    );
+    el.addEventListener("contextmenu", (e) => {
+      if (e.metaKey && e.altKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log(e.target);
+        openFileInEditor(file);
+      }
+    }, {
+      capture: false
+    });
   }
 }
+__name(maybeAddOpenInEditorEventListener, "maybeAddOpenInEditorEventListener");
 function openFileInEditor(file) {
   const url = "/__open-in-editor?file=" + file;
   fetch(url).then((response) => {
@@ -3543,6 +3304,7 @@ function openFileInEditor(file) {
     console.error("Failed to open file in editor:", error);
   });
 }
+__name(openFileInEditor, "openFileInEditor");
 function parseFileFromStack(stack) {
   const stackLine = stack?.split("\n")[2].trim();
   const url_regex = /http:\/\/[^ )]+/;
@@ -3558,6 +3320,7 @@ function parseFileFromStack(stack) {
   }
   return null;
 }
+__name(parseFileFromStack, "parseFileFromStack");
 
 // src/shared/decorators/styled.ts
 function styled(constructor) {
@@ -3582,12 +3345,30 @@ function styled(constructor) {
     }
   };
 }
+__name(styled, "styled");
 
 // src/svg/RenameSVG.ts
-var RenameSVG = @styled class {
+function _ts_decorate2(decorators, target, key, desc) {
+  var c2 = arguments.length, r2 = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r2 = Reflect.decorate(decorators, target, key, desc);
+  else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r2 = (c2 < 3 ? d(r2) : c2 > 3 ? d(target, key, r2) : d(target, key)) || r2;
+  return c2 > 3 && r2 && Object.defineProperty(target, key, r2), r2;
+}
+__name(_ts_decorate2, "_ts_decorate");
+function _ts_metadata2(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+__name(_ts_metadata2, "_ts_metadata");
+var RenameSVG = class {
+  static {
+    __name(this, "RenameSVG");
+  }
   class = "fracgui-icon-rename";
   element;
-  classes = [this.class, "fracgui-icon"];
+  classes = [
+    this.class,
+    "fracgui-icon"
+  ];
   constructor() {
     this.element = create("div", {
       classes: this.classes,
@@ -3694,13 +3475,47 @@ var RenameSVG = @styled class {
     `
   );
 };
+RenameSVG = _ts_decorate2([
+  styled,
+  _ts_metadata2("design:type", Function),
+  _ts_metadata2("design:paramtypes", [])
+], RenameSVG);
+
+// src/shared/isType.ts
+function isType(value, type) {
+  if (typeof value !== "object" || value === null || [
+    "object",
+    "function"
+  ].includes(type)) {
+    return typeof value === type;
+  }
+  return "__type" in value && value["__type"] === type;
+}
+__name(isType, "isType");
 
 // src/svg/SaveSVG.ts
-var SaveSVG = @styled class {
+function _ts_decorate3(decorators, target, key, desc) {
+  var c2 = arguments.length, r2 = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r2 = Reflect.decorate(decorators, target, key, desc);
+  else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r2 = (c2 < 3 ? d(r2) : c2 > 3 ? d(target, key, r2) : d(target, key)) || r2;
+  return c2 > 3 && r2 && Object.defineProperty(target, key, r2), r2;
+}
+__name(_ts_decorate3, "_ts_decorate");
+function _ts_metadata3(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+__name(_ts_metadata3, "_ts_metadata");
+var SaveSVG = class {
+  static {
+    __name(this, "SaveSVG");
+  }
   element;
   constructor() {
     this.element = create("div", {
-      classes: ["fracgui-icon-save", "fracgui-icon"],
+      classes: [
+        "fracgui-icon-save",
+        "fracgui-icon"
+      ],
       innerHTML: (
         /*html*/
         `
@@ -3784,14 +3599,120 @@ var SaveSVG = @styled class {
     `
   );
 };
+SaveSVG = _ts_decorate3([
+  styled,
+  _ts_metadata3("design:type", Function),
+  _ts_metadata3("design:paramtypes", [])
+], SaveSVG);
 
 // src/PresetManager.ts
 var PresetManager = class {
+  static {
+    __name(this, "PresetManager");
+  }
+  gui;
+  parentFolder;
+  __type;
+  __version;
+  defaultPreset;
+  activePreset;
+  presets;
+  folder;
+  _defaultPresetId;
+  _defaultPresetTitle;
+  _presetSnapshot;
+  _presetsInput;
+  _manageInput;
+  _renamePresetButton;
+  _initialized;
+  _log;
   constructor(gui, parentFolder, options) {
     this.gui = gui;
     this.parentFolder = parentFolder;
-    this._log = new Logger(`PresetManager ${gui.folder.title}`, { fg: "slateblue" });
-    this._log.fn("constructor").debug({ options, this: this });
+    this.__type = Object.freeze("PresetManager");
+    this.__version = Object.freeze("1.0.0");
+    this._defaultPresetId = "fracgui-default-preset";
+    this._defaultPresetTitle = "default";
+    this._initialized = false;
+    this._toggleRename = () => {
+      if (this._presetsInput.select.elements.selected.getAttribute("contenteditable")) {
+        this._handleRename();
+      } else {
+        this._enableRename();
+      }
+    };
+    this._blurLatch = false;
+    this._enableRename = (cursorToEnd = true) => {
+      this._log.fn("_enableRename").debug({
+        this: this
+      });
+      const el = this._presetsInput.select.elements.selected;
+      if (el.classList.contains("disabled")) {
+        this._log.warn("Cannot rename default preset.");
+        return;
+      }
+      if (this._blurLatch) {
+        this._blurLatch = false;
+        clearTimeout(this._blurLatchTimer);
+        return;
+      }
+      this._renamePresetButton.element.classList.add("active");
+      this._presetsInput.select.disableClicks = true;
+      el.setAttribute("contenteditable", "true");
+      el.focus();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      if (cursorToEnd) {
+        range.collapse(false);
+      }
+      const sel = window.getSelection();
+      sel?.removeAllRanges();
+      sel?.addRange(range);
+      this.folder.evm.listen(el, "blur", this._handleRename, {}, "preset-manager-rename");
+      this.folder.evm.listen(window, "keydown", this._handleKeydown, {}, "preset-manager-rename");
+    };
+    this._handleRename = (e) => {
+      this._log.fn("_disableRename").debug({
+        e,
+        this: this
+      });
+      this._presetsInput.select.disableClicks = false;
+      this._presetsInput.select.elements.selected.removeAttribute("contenteditable");
+      this._renamePresetButton.element.classList.remove("active");
+      this.folder.evm.clearGroup("preset-manager-rename");
+      if (e?.type === "blur") {
+        this._blurLatch = true;
+        clearTimeout(this._blurLatchTimer);
+        setTimeout(() => {
+          this._blurLatch = false;
+        }, 300);
+        const text = e.target?.textContent ?? "";
+        if (text !== this.activePreset.value.title) {
+          this._renamePreset(text);
+        }
+      }
+    };
+    this._handleKeydown = (e) => {
+      this._log.fn("_handleKeydown").debug({
+        key: e.key,
+        e,
+        this: this
+      });
+      if (e.key === "Enter") {
+        e.preventDefault();
+        this._handleRename();
+      }
+      if (e.key === "Escape") {
+        this._handleRename();
+      }
+    };
+    this._log = new Logger(`PresetManager ${gui.folder.title}`, {
+      fg: "slateblue"
+    });
+    this._log.fn("constructor").debug({
+      options,
+      this: this
+    });
     this.opts = options;
     this.opts.localStorageKey ??= "fracgui::presets";
     this.activePreset = state(this.opts.defaultPreset ?? {}, {
@@ -3810,20 +3731,6 @@ var PresetManager = class {
       });
     }
   }
-  __type = Object.freeze("PresetManager");
-  __version = Object.freeze("1.0.0");
-  defaultPreset;
-  activePreset;
-  presets;
-  folder;
-  _defaultPresetId = "fracgui-default-preset";
-  _defaultPresetTitle = "default";
-  _presetSnapshot;
-  _presetsInput;
-  _manageInput;
-  _renamePresetButton;
-  _initialized = false;
-  _log;
   opts;
   get defaultPresetIsActive() {
     return this.activePreset.value.id === this._defaultPresetId;
@@ -3838,14 +3745,20 @@ var PresetManager = class {
     return this;
   }
   /**
-   * Set the active preset.
-   */
+  * Set the active preset.
+  */
   set(value) {
-    this._log.fn("set").debug({ value, this: this });
+    this._log.fn("set").debug({
+      value,
+      this: this
+    });
     this.activePreset.set(value);
   }
   _renamePreset(title) {
-    this._log.fn("_renamePreset").debug({ this: this, title });
+    this._log.fn("_renamePreset").debug({
+      this: this,
+      title
+    });
     if (!this._isInitialized()) throw new Error("PresetManager not initialized.");
     const active = this.activePreset.value;
     this.presets.update((presets) => {
@@ -3860,7 +3773,10 @@ var PresetManager = class {
     this._refresh();
   }
   _resolveUnusedTitle(title) {
-    this._log.fn("resolveUnusedTitle").debug({ this: this, title });
+    this._log.fn("resolveUnusedTitle").debug({
+      this: this,
+      title
+    });
     if (!this._isInitialized()) throw new Error("PresetManager not initialized.");
     const presets = this.presets.value;
     let i = 0;
@@ -3881,7 +3797,11 @@ var PresetManager = class {
     return defaultPreset;
   }
   async addGui(parentFolder, defaultPreset) {
-    this._log.fn("add").debug({ this: this, parentFolder, defaultPreset });
+    this._log.fn("add").debug({
+      this: this,
+      parentFolder,
+      defaultPreset
+    });
     if (!this._isInitialized()) throw new Error("PresetManager not initialized.");
     await new Promise((r2) => setTimeout(r2, 0));
     const presetsFolder = parentFolder.addFolder("presets", {
@@ -3903,9 +3823,11 @@ var PresetManager = class {
     if (!this.activePreset.value.id) {
       throw new Error("No active preset id.");
     }
-    const download = (preset) => {
+    const download = /* @__PURE__ */ __name((preset) => {
       const title = Array.isArray(preset) ? this.gui.folder.title + " presets" : preset.title;
-      const blob = new Blob([JSON.stringify(preset, null, 2)], {
+      const blob = new Blob([
+        JSON.stringify(preset, null, 2)
+      ], {
         type: "application/json"
       });
       const url = URL.createObjectURL(blob);
@@ -3914,8 +3836,8 @@ var PresetManager = class {
       a.download = `${title}.json`;
       a.click();
       URL.revokeObjectURL(url);
-    };
-    const upload = () => {
+    }, "download");
+    const upload = /* @__PURE__ */ __name(() => {
       const input = document.createElement("input");
       input.type = "file";
       input.accept = ".json";
@@ -3946,41 +3868,37 @@ var PresetManager = class {
         reader.readAsText(file);
       };
       input.click();
-    };
-    const createIcon = (name, contents) => (
+    }, "upload");
+    const createIcon = /* @__PURE__ */ __name((name, contents) => (
       /*html*/
       `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="fracgui-icon fracgui-icon-${name}">${contents}</svg>`
-    );
+    ), "createIcon");
     this._manageInput = presetsFolder.addButtonGrid({
       value: [
         [
           {
             text: "update",
             id: "update",
-            onClick: () => {
+            onClick: /* @__PURE__ */ __name(() => {
               const { id, title } = this.activePreset.value;
               const current = this.gui.save(title, id);
               this.put(current);
-            },
-            disabled: () => this.defaultPresetIsActive
+            }, "onClick"),
+            disabled: /* @__PURE__ */ __name(() => this.defaultPresetIsActive, "disabled")
           },
           {
             text: "delete",
-            onClick: () => {
+            onClick: /* @__PURE__ */ __name(() => {
               let index = void 0;
               this.presets.update((presets) => {
-                index = presets.findIndex(
-                  (p) => p.id === this.activePreset.value.id
-                );
+                index = presets.findIndex((p) => p.id === this.activePreset.value.id);
                 presets.splice(index, 1);
                 return presets;
               });
-              this.activePreset.set(
-                this.presets.value[index ?? 0] ?? this.defaultPreset
-              );
+              this.activePreset.set(this.presets.value[index ?? 0] ?? this.defaultPreset);
               this._refresh();
-            },
-            disabled: () => this.defaultPresetIsActive
+            }, "onClick"),
+            disabled: /* @__PURE__ */ __name(() => this.defaultPresetIsActive, "disabled")
           },
           {
             text: createIcon(
@@ -3995,13 +3913,14 @@ var PresetManager = class {
               placement: "bottom",
               hideOnClick: true
             },
-            style: { maxWidth: "1.5rem", padding: "0.3rem" },
-            onClick: () => {
-              navigator.clipboard?.writeText(
-                JSON.stringify(this.activePreset.value, null, 2)
-              );
+            style: {
+              maxWidth: "1.5rem",
+              padding: "0.3rem"
             },
-            disabled: () => this.defaultPresetIsActive
+            onClick: /* @__PURE__ */ __name(() => {
+              navigator.clipboard?.writeText(JSON.stringify(this.activePreset.value, null, 2));
+            }, "onClick"),
+            disabled: /* @__PURE__ */ __name(() => this.defaultPresetIsActive, "disabled")
           },
           {
             text: createIcon(
@@ -4016,8 +3935,11 @@ var PresetManager = class {
               placement: "bottom",
               hideOnClick: true
             },
-            style: { maxWidth: "1.5rem", padding: "0.3rem" },
-            onClick: async ({ button }) => {
+            style: {
+              maxWidth: "1.5rem",
+              padding: "0.3rem"
+            },
+            onClick: /* @__PURE__ */ __name(async ({ button }) => {
               button.disabled = true;
               try {
                 const text = await navigator.clipboard.readText();
@@ -4032,8 +3954,8 @@ var PresetManager = class {
                 console.error(e);
               }
               button.disabled = false;
-            },
-            disabled: () => this.defaultPresetIsActive
+            }, "onClick"),
+            disabled: /* @__PURE__ */ __name(() => this.defaultPresetIsActive, "disabled")
           },
           {
             text: createIcon(
@@ -4048,11 +3970,14 @@ var PresetManager = class {
               placement: "bottom",
               hideOnClick: true
             },
-            style: { maxWidth: "1.5rem", padding: "0.3rem" },
-            onClick: () => {
-              download(this.activePreset.value);
+            style: {
+              maxWidth: "1.5rem",
+              padding: "0.3rem"
             },
-            disabled: () => this.defaultPresetIsActive
+            onClick: /* @__PURE__ */ __name(() => {
+              download(this.activePreset.value);
+            }, "onClick"),
+            disabled: /* @__PURE__ */ __name(() => this.defaultPresetIsActive, "disabled")
           },
           {
             text: createIcon(
@@ -4066,13 +3991,15 @@ var PresetManager = class {
               delay: 0,
               placement: "bottom",
               hideOnClick: true
-              // offsetY: '0.1rem',
             },
-            style: { maxWidth: "1.5rem", padding: "0.3rem" },
-            onClick: () => {
+            style: {
+              maxWidth: "1.5rem",
+              padding: "0.3rem"
+            },
+            onClick: /* @__PURE__ */ __name(() => {
               download(this.presets.value);
-            },
-            disabled: () => this.presets.value.length <= 1
+            }, "onClick"),
+            disabled: /* @__PURE__ */ __name(() => this.presets.value.length <= 1, "disabled")
           },
           {
             id: "upload",
@@ -4087,16 +4014,19 @@ var PresetManager = class {
               placement: "bottom",
               hideOnClick: true
             },
-            style: { maxWidth: "1.5rem", padding: "0.3rem" },
-            onClick: () => {
+            style: {
+              maxWidth: "1.5rem",
+              padding: "0.3rem"
+            },
+            onClick: /* @__PURE__ */ __name(() => {
               upload();
-            }
+            }, "onClick")
           }
         ]
       ],
       order: 1,
       resettable: false,
-      disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1
+      disabled: /* @__PURE__ */ __name(() => this.defaultPresetIsActive && this.presets.value.length === 1, "disabled")
     });
     this._presetsInput = presetsFolder.addSelect({
       __type: "SelectInputOptions",
@@ -4106,10 +4036,13 @@ var PresetManager = class {
       order: -1,
       value: this.activePreset.value,
       resettable: false,
-      disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1
+      disabled: /* @__PURE__ */ __name(() => this.defaultPresetIsActive && this.presets.value.length === 1, "disabled")
     });
     this._presetsInput.on("change", ({ value }) => {
-      this._log.fn("_presetsInput.on(change)").debug({ value, this: this });
+      this._log.fn("_presetsInput.on(change)").debug({
+        value,
+        this: this
+      });
       this.gui.load(value);
       this.activePreset.set(value);
       this._refreshInputs();
@@ -4143,13 +4076,13 @@ var PresetManager = class {
       placement: "bottom",
       // offsetY: '0.1rem',
       hideOnClick: true,
-      text: () => {
+      text: /* @__PURE__ */ __name(() => {
         if (this._renamePresetButton.element.classList.contains("active")) {
           return ``;
         } else {
           return this.defaultPresetIsActive ? `Can't rename default preset` : `Rename`;
         }
-      }
+      }, "text")
     });
     this._presetsInput.listen(this._renamePresetButton.element, "click", this._toggleRename);
     this._presetsInput.elements.content.prepend(this._renamePresetButton.element);
@@ -4158,9 +4091,9 @@ var PresetManager = class {
     return presetsFolder;
   }
   /**
-   * Updates a preset if it exists, adds it as a new preset if not, or creates a new one from the
-   * current state and adds it if none is provided.
-   */
+  * Updates a preset if it exists, adds it as a new preset if not, or creates a new one from the
+  * current state and adds it if none is provided.
+  */
   put(preset) {
     this._log.fn("saveNewPreset");
     if (!this._isInitialized()) {
@@ -4172,10 +4105,16 @@ var PresetManager = class {
     preset ??= this.gui.save(this._resolveUnusedTitle("preset"), nanoid());
     const existing = this.presets.value.find((p) => p.id === preset.id);
     if (!existing) {
-      this._log.debug("pushing preset:", { preset, existing });
+      this._log.debug("pushing preset:", {
+        preset,
+        existing
+      });
       this.presets.push(preset);
     } else {
-      this._log.debug("preset exists. replacing with:", { preset, existing });
+      this._log.debug("preset exists. replacing with:", {
+        preset,
+        existing
+      });
       this.presets.update((presets) => {
         const index = presets.findIndex((p) => p.id === preset.id);
         presets[index] = preset;
@@ -4187,10 +4126,13 @@ var PresetManager = class {
     this._enableRename();
   }
   /**
-   * Delete a preset.
-   */
+  * Delete a preset.
+  */
   delete(preset) {
-    this._log.fn("deletePreset").debug({ this: this, preset });
+    this._log.fn("deletePreset").debug({
+      this: this,
+      preset
+    });
     if (!this._isInitialized()) {
       throw new Error("PresetManager not initialized.");
     }
@@ -4208,94 +4150,47 @@ var PresetManager = class {
   _isInitialized() {
     return this._initialized;
   }
-  _toggleRename = () => {
-    if (this._presetsInput.select.elements.selected.getAttribute("contenteditable")) {
-      this._handleRename();
-    } else {
-      this._enableRename();
-    }
-  };
+  _toggleRename;
   /**
-   * When the rename button is active, clicking it to disable triggers a blur event which
-   * disables it immediately before the click event is triggered, re-enabling it.
-   *
-   * The latch and timer prevent that from happening.
-   */
-  _blurLatch = false;
+  * When the rename button is active, clicking it to disable triggers a blur event which
+  * disables it immediately before the click event is triggered, re-enabling it.
+  *
+  * The latch and timer prevent that from happening.
+  */
+  _blurLatch;
   _blurLatchTimer;
   /**
-   * Disables the dropdown, making the select's text editable.
-   */
-  _enableRename = (cursorToEnd = true) => {
-    this._log.fn("_enableRename").debug({ this: this });
-    const el = this._presetsInput.select.elements.selected;
-    if (el.classList.contains("disabled")) {
-      this._log.warn("Cannot rename default preset.");
-      return;
-    }
-    if (this._blurLatch) {
-      this._blurLatch = false;
-      clearTimeout(this._blurLatchTimer);
-      return;
-    }
-    this._renamePresetButton.element.classList.add("active");
-    this._presetsInput.select.disableClicks = true;
-    el.setAttribute("contenteditable", "true");
-    el.focus();
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    if (cursorToEnd) {
-      range.collapse(false);
-    }
-    const sel = window.getSelection();
-    sel?.removeAllRanges();
-    sel?.addRange(range);
-    this.folder.evm.listen(el, "blur", this._handleRename, {}, "preset-manager-rename");
-    this.folder.evm.listen(window, "keydown", this._handleKeydown, {}, "preset-manager-rename");
-  };
-  _handleRename = (e) => {
-    this._log.fn("_disableRename").debug({ e, this: this });
-    this._presetsInput.select.disableClicks = false;
-    this._presetsInput.select.elements.selected.removeAttribute("contenteditable");
-    this._renamePresetButton.element.classList.remove("active");
-    this.folder.evm.clearGroup("preset-manager-rename");
-    if (e?.type === "blur") {
-      this._blurLatch = true;
-      clearTimeout(this._blurLatchTimer);
-      setTimeout(() => {
-        this._blurLatch = false;
-      }, 300);
-      const text = e.target?.textContent ?? "";
-      if (text !== this.activePreset.value.title) {
-        this._renamePreset(text);
-      }
-    }
-  };
-  _handleKeydown = (e) => {
-    this._log.fn("_handleKeydown").debug({ key: e.key, e, this: this });
-    if (e.key === "Enter") {
-      e.preventDefault();
-      this._handleRename();
-    }
-    if (e.key === "Escape") {
-      this._handleRename();
-    }
-  };
+  * Disables the dropdown, making the select's text editable.
+  */
+  _enableRename;
+  _handleRename;
+  _handleKeydown;
   _refreshInputs() {
     const disableRename = this.defaultPresetIsActive;
     this._renamePresetButton.element.classList.toggle("disabled", disableRename);
     this._renamePresetButton.element.toggleAttribute("disabled", disableRename);
     this._manageInput.refresh();
-    this._log.fn("_refreshInputs").debug({ disableRename, this: this });
+    this._log.fn("_refreshInputs").debug({
+      disableRename,
+      this: this
+    });
   }
   /**
-   * Refresh the presets input.
-   */
+  * Refresh the presets input.
+  */
   _refresh() {
-    this._log.fn("_refresh").debug("Refreshing options and setting input.", { this: this });
-    this._presetsInput.options = this.presets.value.map((o2) => ({ label: o2.title, value: o2 }));
+    this._log.fn("_refresh").debug("Refreshing options and setting input.", {
+      this: this
+    });
+    this._presetsInput.options = this.presets.value.map((o2) => ({
+      label: o2.title,
+      value: o2
+    }));
     const activePreset = this.activePreset.value;
-    this._presetsInput.set({ label: activePreset.title, value: activePreset });
+    this._presetsInput.set({
+      label: activePreset.title,
+      value: activePreset
+    });
     this._refreshInputs();
   }
   dispose() {
@@ -4344,8 +4239,12 @@ function partition(array, predicate) {
       right.push(element);
     }
   }
-  return [left, right];
+  return [
+    left,
+    right
+  ];
 }
+__name(partition, "partition");
 
 // src/shared/hexToRgb.ts
 function hexToRgb2(hex2) {
@@ -4353,8 +4252,13 @@ function hexToRgb2(hex2) {
   const r2 = bigint >> 16 & 255;
   const g2 = bigint >> 8 & 255;
   const b2 = bigint & 255;
-  return [r2, g2, b2].join(", ");
+  return [
+    r2,
+    g2,
+    b2
+  ].join(", ");
 }
+__name(hexToRgb2, "hexToRgb");
 
 // src/styles/themer/Themer.ts
 var THEMER_DEFAULTS = {
@@ -4367,39 +4271,42 @@ var THEMER_DEFAULTS = {
   vars: {}
 };
 var Themer = class {
+  static {
+    __name(this, "Themer");
+  }
   /**
-   * The element to theme.
-   */
+  * The element to theme.
+  */
   node;
   /**
-   * The currently active theme.  When `theme.set` is called, the new theme
-   * passed in is automatically applied.
-   */
+  * The currently active theme.  When `theme.set` is called, the new theme
+  * passed in is automatically applied.
+  */
   theme;
   /**
-   * All themes available to the themer.
-   */
+  * All themes available to the themer.
+  */
   themes;
   /**
-   * The title of the currently active {@link theme}.
-   *
-   * When {@link ThemerOptions.persistent} is `true`, this value is
-   * saved to localStorage and used to restore the theme on page load.
-   */
+  * The title of the currently active {@link theme}.
+  *
+  * When {@link ThemerOptions.persistent} is `true`, this value is
+  * saved to localStorage and used to restore the theme on page load.
+  */
   activeThemeTitle;
   /**
-   * The current mode ('light', 'dark', or 'system').
-   *
-   * When this state value is re-assigned with `mode.set`, the current theme
-   * is automatically updated.
-   *
-   * When {@link ThemerOptions.persistent} is `true`, this value is saved
-   * to localStorage and used to restore the mode on page load.
-   */
+  * The current mode ('light', 'dark', or 'system').
+  *
+  * When this state value is re-assigned with `mode.set`, the current theme
+  * is automatically updated.
+  *
+  * When {@link ThemerOptions.persistent} is `true`, this value is saved
+  * to localStorage and used to restore the mode on page load.
+  */
   mode;
   /**
-   * If provided, theme css vars will be added to the wrapper.
-   */
+  * If provided, theme css vars will be added to the wrapper.
+  */
   wrapper;
   _initialized = false;
   _persistent;
@@ -4408,20 +4315,27 @@ var Themer = class {
   _targets = /* @__PURE__ */ new Set();
   _log;
   constructor(node = "document", options) {
-    const opts = deepMergeOpts([THEMER_DEFAULTS, options]);
+    const opts = deepMergeOpts([
+      THEMER_DEFAULTS,
+      options
+    ]);
     this._key = String(opts.localStorageKey);
     if (opts.wrapper) {
       this.wrapper = opts.wrapper;
     }
     this.node = node === "document" ? document.documentElement : typeof node === "string" ? select(node)[0] ?? document.documentElement : node;
-    this._log = new Logger(`themer ${this.node.classList[0]}`, { fg: "DarkCyan" });
-    this._log.fn(g("constructor")).info({ node, opts, this: this });
+    this._log = new Logger(`themer ${this.node.classList[0]}`, {
+      fg: "DarkCyan"
+    });
+    this._log.fn(g("constructor")).info({
+      node,
+      opts,
+      this: this
+    });
     this.theme = state(resolveTheme(opts.theme, opts.vars));
-    this.themes = state(
-      opts.themes.map((t) => {
-        return resolveTheme(t, opts.vars);
-      })
-    );
+    this.themes = state(opts.themes.map((t) => {
+      return resolveTheme(t, opts.vars);
+    }));
     this.activeThemeTitle = state(opts.theme.title, {
       key: this._key + "::activeTheme"
     });
@@ -4435,14 +4349,19 @@ var Themer = class {
     });
     this._persistent = opts.persistent ?? true;
     this.#addSub(this.theme, (v) => {
-      this._log.fn(o("theme.subscribe")).debug({ v, this: this });
+      this._log.fn(o("theme.subscribe")).debug({
+        v,
+        this: this
+      });
       if (this._initialized) {
         this.activeThemeTitle.set(v.title);
         this.applyTheme();
       }
     });
     this.#addSub(this.mode, (v) => {
-      this._log.fn(o("mode.subscribe")).debug("v", v, { this: this });
+      this._log.fn(o("mode.subscribe")).debug("v", v, {
+        this: this
+      });
       if (typeof v === "undefined") throw new Error("Mode is undefined.");
       if (this._initialized) this.applyTheme();
     });
@@ -4457,19 +4376,25 @@ var Themer = class {
   init() {
     const themes = this.themes.value;
     const theme = this.theme.value;
-    this._log.fn(c("init")).debug({ theme: this.theme, this: this });
+    this._log.fn(c("init")).debug({
+      theme: this.theme,
+      this: this
+    });
     if (typeof document === "undefined") return;
     if (this._initialized) return this;
     this._initialized = true;
     if (!themes.find((t) => t.title === theme.title)) {
-      this.create(theme, { overwrite: true, save: false });
+      this.create(theme, {
+        overwrite: true,
+        save: false
+      });
     }
     this.load()?.applyTheme();
     return this;
   }
   /**
-   * The active theme's variables based on the current mode.
-   */
+  * The active theme's variables based on the current mode.
+  */
   get modeColors() {
     return this.theme.value.vars.color[this.activeMode];
   }
@@ -4477,11 +4402,14 @@ var Themer = class {
     return this.theme.value.vars.color.base;
   }
   get allColors() {
-    return { ...this.baseColors, ...this.modeColors };
+    return {
+      ...this.baseColors,
+      ...this.modeColors
+    };
   }
   /**
-   * The current mode, taking into account the system preferences.
-   */
+  * The current mode, taking into account the system preferences.
+  */
   get activeMode() {
     const _mode = this.mode.value;
     const mode = typeof _mode === "object" && "value" in _mode ? _mode.value : _mode;
@@ -4500,10 +4428,14 @@ var Themer = class {
     return "dark";
   }
   /**
-   * Adds a new theme to the Themer and optionally saves it to localStorage.
-   */
-  create = (newTheme, options) => {
-    this._log.fn(c("addTheme")).debug({ newTheme, options, this: this });
+  * Adds a new theme to the Themer and optionally saves it to localStorage.
+  */
+  create = /* @__PURE__ */ __name((newTheme, options) => {
+    this._log.fn(c("addTheme")).debug({
+      newTheme,
+      options,
+      this: this
+    });
     const theme = structuredClone(newTheme);
     const overwrite = options?.overwrite ?? false;
     const save = options?.save ?? true;
@@ -4528,9 +4460,12 @@ var Themer = class {
     }
     if (save) this.save();
     return this;
-  };
+  }, "create");
   delete(themeOrTitle) {
-    this._log.fn(c("deleteTheme")).debug({ themeOrTitle, this: this });
+    this._log.fn(c("deleteTheme")).debug({
+      themeOrTitle,
+      this: this
+    });
     const themeTitle = typeof themeOrTitle === "string" ? themeOrTitle : themeOrTitle.title;
     const themes = this.themes.value;
     const theme = themes.find((t) => t.title === themeTitle);
@@ -4551,20 +4486,27 @@ var Themer = class {
     return this;
   }
   /**
-   * Resolves a {@link Theme} by title.
-   */
+  * Resolves a {@link Theme} by title.
+  */
   getTheme(themeTitle) {
     return this.themes.value.find((t) => t.title === themeTitle);
   }
   /**
-   * Applies the current theme to the document.
-   */
-  applyTheme = (targets) => {
-    this._log.fn(c("applyTheme")).debug({ theme: this.theme.value.title, targets: this._targets, this: this });
+  * Applies the current theme to the document.
+  */
+  applyTheme = /* @__PURE__ */ __name((targets) => {
+    this._log.fn(c("applyTheme")).debug({
+      theme: this.theme.value.title,
+      targets: this._targets,
+      this: this
+    });
     if (!("document" in globalThis)) return;
     const theme = this.theme.value;
     if (!theme) {
-      this._log.error("theme not found").debug({ theme, this: this });
+      this._log.error("theme not found").debug({
+        theme,
+        this: this
+      });
       throw new Error(`Theme not found.`);
     }
     this.#applyStyleProps(theme, targets);
@@ -4573,10 +4515,10 @@ var Themer = class {
     this.wrapper?.setAttribute("theme", theme.title);
     this.wrapper?.setAttribute("mode", this.activeMode);
     return this;
-  };
+  }, "applyTheme");
   /**
-   * Updates Themer state from JSON.
-   */
+  * Updates Themer state from JSON.
+  */
   fromJSON(json) {
     const isNewTheme = this.theme.value.title !== json.activeTheme;
     let theme = json.themes.find((t) => t.title === json.activeTheme);
@@ -4596,8 +4538,8 @@ var Themer = class {
     }
   }
   /**
-   * Serializes the current Themer state to JSON.
-   */
+  * Serializes the current Themer state to JSON.
+  */
   toJSON() {
     return {
       themes: this.themes.value,
@@ -4606,11 +4548,13 @@ var Themer = class {
     };
   }
   /**
-   * Loads Themer state from localStorage.
-   * @returns The JSON that was loaded (if found).
-   */
-  load = () => {
-    this._log.fn(c("load")).debug({ this: this });
+  * Loads Themer state from localStorage.
+  * @returns The JSON that was loaded (if found).
+  */
+  load = /* @__PURE__ */ __name(() => {
+    this._log.fn(c("load")).debug({
+      this: this
+    });
     if (this._persistent && "localStorage" in globalThis) {
       const json = localStorage.getItem(this._key + "::themer");
       if (json) {
@@ -4618,13 +4562,15 @@ var Themer = class {
       }
     }
     return this;
-  };
+  }, "load");
   /**
-   * Saves the current Themer state to localStorage.
-   * @returns The JSON that was saved.
-   */
+  * Saves the current Themer state to localStorage.
+  * @returns The JSON that was saved.
+  */
   save() {
-    this._log.fn(c("save")).debug({ this: this });
+    this._log.fn(c("save")).debug({
+      this: this
+    });
     if (!("localStorage" in globalThis)) return;
     if (!this._persistent) return;
     const json = this.toJSON();
@@ -4635,35 +4581,47 @@ var Themer = class {
         localStorage.setItem(`${this._key}themer`, JSON.stringify(json));
       }
     } catch (error) {
-      console.error(r("Error") + ": Failed to save to localStorage.", { error, this: this });
+      console.error(r("Error") + ": Failed to save to localStorage.", {
+        error,
+        this: this
+      });
       throw new Error(`Failed to save to localStorage.`);
     }
     return json;
   }
   /**
-   * Removes the current Themer state from localStorage.
-   */
+  * Removes the current Themer state from localStorage.
+  */
   clear() {
-    this._log.fn(c("clear")).debug({ this: this });
+    this._log.fn(c("clear")).debug({
+      this: this
+    });
     if (!("localStorage" in globalThis)) return;
     localStorage.removeItem(`${this._key}themer`);
-    this.themes.set([defaultTheme_default]);
+    this.themes.set([
+      defaultTheme_default
+    ]);
     this.theme.set(defaultTheme_default);
     this.mode.set("system");
   }
   addTarget(target) {
     this._targets.add(target);
-    this.applyTheme([target]);
+    this.applyTheme([
+      target
+    ]);
   }
   /**
-   * Generates CSS custom properties from a theme config.
-   * @param config - The theme config to generate CSS from.
-   * @returns A string of CSS custom properties.
-   * @internal
-   */
-  #applyStyleProps = (themeConfig, targets = this._targets) => {
+  * Generates CSS custom properties from a theme config.
+  * @param config - The theme config to generate CSS from.
+  * @returns A string of CSS custom properties.
+  * @internal
+  */
+  #applyStyleProps = /* @__PURE__ */ __name((themeConfig, targets = this._targets) => {
     const config = themeConfig;
-    this._log.fn(c("applyStyleProps")).debug({ config, this: this });
+    this._log.fn(c("applyStyleProps")).debug({
+      config,
+      this: this
+    });
     const themeColors = config.vars.color[this.activeMode];
     if (!themeColors) {
       this._log.error("`theme` not found in `config`.", {
@@ -4704,7 +4662,7 @@ var Themer = class {
         target.style.setProperty(`--${config.prefix}-${k}`, v);
       }
     }
-  };
+  }, "#applyStyleProps");
   dispose() {
     for (const unsub of this._unsubs) {
       unsub();
@@ -4719,6 +4677,24 @@ var settings_icon_default = `<svg class="settings-icon fracgui-cancel" xmlns="ht
   <circle class="dot-left" fill="currentColor" cx="4" cy="13" r="3" />
   <circle class="dot-center" fill="currentColor" cx="13" cy="13" r="3" />
 </svg>`;
+
+// src/shared/css-custom-properties.ts
+function destructureVars(vars, _prefix) {
+  const flatVars = {};
+  function destructure(o2, prefix = "") {
+    for (const [k, v] of entries(o2)) {
+      if (typeof v === "object") {
+        destructure(v, `${prefix ? prefix + "-" : ""}${k}`);
+      } else {
+        flatVars[`${prefix ? prefix + "_" : ""}${k}`] = v;
+      }
+    }
+  }
+  __name(destructure, "destructure");
+  destructure(vars);
+  return flatVars;
+}
+__name(destructureVars, "destructureVars");
 
 // src/styles/GUI_VARS.ts
 var VAR_PREFIX = "fracgui";
@@ -4784,7 +4760,9 @@ var GUI_VARS_STRUCTURED = {
     toolbar: {
       icon: {
         color: `var(--${VAR_PREFIX}-bg-d)`,
-        dim: { color: `var(--${VAR_PREFIX}-bg-c)` }
+        dim: {
+          color: `var(--${VAR_PREFIX}-bg-c)`
+        }
       }
     },
     controller: {
@@ -4802,9 +4780,15 @@ var GUI_VARS_STRUCTURED = {
     },
     input: {
       height: "2rem",
-      "section-1": { width: "clamp(6rem, 30%, 12rem)" },
-      "section-2": { width: "4rem" },
-      "section-3": { width: "100%" },
+      "section-1": {
+        width: "clamp(6rem, 30%, 12rem)"
+      },
+      "section-2": {
+        width: "4rem"
+      },
+      "section-3": {
+        width: "100%"
+      },
       "font-size": `'clamp(0.75rem, 3vw, 0.9rem)'`,
       container: {
         color: `var(--${VAR_PREFIX}-fg-d)`,
@@ -4856,16 +4840,19 @@ var GUI_VARS = {
 
 // src/UndoManager.ts
 var UndoManager = class {
+  static {
+    __name(this, "UndoManager");
+  }
   pointer = -1;
   maxHistory = 50;
   stack = [];
   /**
-   * Ignores's all commits while `true`.
-   */
+  * Ignores's all commits while `true`.
+  */
   lockedExternally = false;
   /**
-   * Ignores's all commits while `true`.
-   */
+  * Ignores's all commits while `true`.
+  */
   _lockedInternally = false;
   constructor() {
   }
@@ -4885,7 +4872,7 @@ var UndoManager = class {
       this.pointer--;
     }
   }
-  undo = () => {
+  undo = /* @__PURE__ */ __name(() => {
     if (this.pointer === -1) {
       return;
     }
@@ -4897,8 +4884,8 @@ var UndoManager = class {
       commit.target.set(commit.from);
     }
     this.pointer--;
-  };
-  redo = () => {
+  }, "undo");
+  redo = /* @__PURE__ */ __name(() => {
     if (this.pointer + 1 > this.stack.length - 1) {
       return;
     }
@@ -4910,7 +4897,7 @@ var UndoManager = class {
       commit.target.set(commit.to);
     }
     this.pointer++;
-  };
+  }, "redo");
   clear() {
     this.stack = [];
     this.pointer = -1;
@@ -4920,8 +4907,8 @@ var UndoManager = class {
 // src/controllers/ButtonController.ts
 var BUTTON_INPUT_DEFAULTS = {
   __type: "ButtonControllerOptions",
-  text: () => "click me",
-  onClick: () => void 0,
+  text: /* @__PURE__ */ __name(() => "click me", "text"),
+  onClick: /* @__PURE__ */ __name(() => void 0, "onClick"),
   id: void 0,
   disabled: false,
   style: void 0,
@@ -4931,24 +4918,39 @@ var BUTTON_INPUT_DEFAULTS = {
   parent: void 0
 };
 var ButtonController = class _ButtonController {
+  static {
+    __name(this, "ButtonController");
+  }
   __type = "ButtonController";
   static is(v) {
     return v?.__type === "ButtonController" && v instanceof _ButtonController;
   }
   _text;
-  _active = () => false;
-  _disabled = () => false;
+  _active = /* @__PURE__ */ __name(() => false, "_active");
+  _disabled = /* @__PURE__ */ __name(() => false, "_disabled");
   element;
-  _evm = new EventManager(["change", "refresh", "click"]);
+  _evm = new EventManager([
+    "change",
+    "refresh",
+    "click"
+  ]);
   on = this._evm.on.bind(this._evm);
-  _log = new Logger("ButtonController", { fg: "coral" });
+  _log = new Logger("ButtonController", {
+    fg: "coral"
+  });
   parent;
   constructor(options) {
     const opts = Object.assign({}, BUTTON_INPUT_DEFAULTS, options);
-    this._log.fn("constructor").debug({ opts, this: this });
+    this._log.fn("constructor").debug({
+      opts,
+      this: this
+    });
     this.element = opts.element ? opts.element : create("button", {
       id: opts.id ?? nanoid(8),
-      classes: ["fracgui-controller", "fracgui-controller-button"],
+      classes: [
+        "fracgui-controller",
+        "fracgui-controller-button"
+      ],
       parent: opts.parent
     });
     this.text = opts.text;
@@ -4975,9 +4977,9 @@ var ButtonController = class _ButtonController {
     this.element.classList.toggle("active", this._active());
   }
   /**
-   * Set this to `true` to disable the button.  If a function is assigned, it will be called
-   * whenever the button is refreshed.
-   */
+  * Set this to `true` to disable the button.  If a function is assigned, it will be called
+  * whenever the button is refreshed.
+  */
   get disabled() {
     return this._disabled();
   }
@@ -4987,38 +4989,43 @@ var ButtonController = class _ButtonController {
     this._disabled() ? this.disable() : this.enable();
   }
   /**
-   * Update the button with new options.
-   */
+  * Update the button with new options.
+  */
   set(options) {
     Object.assign(this, options);
     this._evm.emit("change", this);
     this.refresh();
   }
-  click = (e) => {
-    this._log.fn("click").debug({ this: this });
-    this._evm.emit("click", { e, button: this });
+  click = /* @__PURE__ */ __name((e) => {
+    this._log.fn("click").debug({
+      this: this
+    });
+    this._evm.emit("click", {
+      e,
+      button: this
+    });
     this.refresh();
-  };
-  enable = () => {
+  }, "click");
+  enable = /* @__PURE__ */ __name(() => {
     if (this.disabled) return this.disabled = false;
     this.element.classList.remove("disabled");
     this.element.removeAttribute("disabled");
     return this;
-  };
-  disable = () => {
+  }, "enable");
+  disable = /* @__PURE__ */ __name(() => {
     if (!this.disabled) return this.disabled = true;
     this.element.classList.add("disabled");
     this.element.setAttribute("disabled", "true");
     return this;
-  };
-  refresh = () => {
+  }, "disable");
+  refresh = /* @__PURE__ */ __name(() => {
     this.element.toggleAttribute("disabled", this.disabled);
     this.element.classList.toggle("disabled", this.disabled);
     this.element.innerHTML = this.text;
     this.element.classList.toggle("active", this.active);
     this._evm.emit("refresh");
     return this;
-  };
+  }, "refresh");
   dispose() {
     this.element.remove();
     this._evm.dispose();
@@ -5039,17 +5046,97 @@ var INPUT_TYPE_MAP = Object.freeze({
 var INPUT_TYPES = Object.freeze(keys(INPUT_TYPE_MAP));
 var INPUT_OPTION_TYPES = Object.freeze(values(INPUT_TYPE_MAP));
 var Input = class {
+  static {
+    __name(this, "Input");
+  }
+  folder;
+  opts;
+  /**
+  * Unique identifier for the input. Also used for saving and loading presets.
+  * @default `<folder_title>:<input_type>:<input_title>`
+  */
+  id;
+  /**
+  * Whether the input was initialized with a bind target/key.
+  * @default false
+  */
+  bound;
+  /**
+  * All HTMLElement's created by this input.
+  */
+  elements;
+  /**
+  * Whether the controllers should bubble their events up to the input and it's listeners.
+  * If false, the next update will be silent, after which the flag will be reset to true.
+  */
+  bubble;
+  _title;
+  _index;
+  // #firstUpdate = true
+  _disabled;
+  _hidden;
+  /**
+  * Prevents the input from registering commits to undo history until
+  * {@link unlock} is called.
+  */
+  _undoLock;
+  /**
+  * The commit object used to store the initial value of the input when
+  * {@link lock} is called.
+  */
+  lockCommit;
+  /**
+  * The input's {@link EventManager}.
+  */
+  _dirty;
+  _evm;
+  listen;
+  on;
+  __log;
   constructor(options, folder) {
     this.folder = folder;
+    this.bound = false;
+    this.elements = {
+      controllers: {}
+    };
+    this.bubble = false;
+    this._title = "";
+    this._undoLock = false;
+    this.lockCommit = {};
+    this._evm = new EventManager([
+      "change",
+      "refresh"
+    ]);
+    this.listen = this._evm.listen.bind(this._evm);
+    this.on = this._evm.on.bind(this._evm);
+    this.lock = (from = this.state.value) => {
+      this._undoLock = true;
+      this.lockCommit.from = from;
+      this.__log.fn(o("lock")).debug("lockCommit:", this.lockCommit);
+    };
+    this.unlock = (commit) => {
+      this.__log.fn(o("unlock")).debug("commit", {
+        commit,
+        lockCommit: this.lockCommit
+      });
+      commit ??= {};
+      commit.target ??= this;
+      commit.to ??= this.state.value;
+      commit.from ??= this.lockCommit.from;
+      this._undoLock = false;
+      this.commit(commit);
+    };
     this.opts = options;
     this.opts.saveable ??= true;
     this.opts.resettable ??= true;
     this.id = this.opts.presetId ?? `${folder.presetId}_${this.opts.title}__${this.opts.__type}`;
-    this.__log = new Logger(
-      `SuperInput${this.opts.__type.replaceAll(/Options|Input/g, "")} ${this.opts.title}`,
-      { fg: "skyblue" }
-    );
-    this.__log.fn("super constructor").debug({ options, this: this });
+    this.__log = new Logger(`SuperInput${this.opts.__type.replaceAll(/Options|Input/g, "")} ${this.opts.title}`, {
+      fg: "skyblue"
+    });
+    this.__log.fn("super constructor").debug({
+      options,
+      this: this
+    });
     this._title = this.opts.title ?? "";
     this._disabled = toFn(this.opts.disabled ?? false);
     this._hidden = toFn(this.opts.hidden ?? false);
@@ -5057,27 +5144,37 @@ var Input = class {
     this._index += 1;
     this._dirty = () => this.value !== this.initialValue;
     this.elements.container = create("div", {
-      classes: ["fracgui-input-container"],
+      classes: [
+        "fracgui-input-container"
+      ],
       parent: this.folder.elements.content
     });
     if (!this.title) {
       this.element.style.setProperty("--fracgui-input-section-1_width", "0px");
     }
     this.elements.drawerToggle = create("div", {
-      classes: ["fracgui-input-drawer-toggle"],
+      classes: [
+        "fracgui-input-drawer-toggle"
+      ],
       parent: this.elements.container
     });
     this.elements.title = create("div", {
-      classes: ["fracgui-input-title"],
+      classes: [
+        "fracgui-input-title"
+      ],
       parent: this.elements.container,
       textContent: this.title
     });
     this.elements.content = create("div", {
-      classes: ["fracgui-input-content"],
+      classes: [
+        "fracgui-input-content"
+      ],
       parent: this.elements.container
     });
     this.elements.resetBtn = create("div", {
-      classes: ["fracgui-input-reset-btn"],
+      classes: [
+        "fracgui-input-reset-btn"
+      ],
       // parent: this.elements.content,
       parent: this.elements.title,
       tooltip: {
@@ -5085,13 +5182,15 @@ var Input = class {
         placement: "left",
         delay: 0
       },
-      onclick: () => {
+      onclick: /* @__PURE__ */ __name(() => {
         this.__log.fn("reset").debug("resetting to initial value", this.initialValue);
         this.set(this.initialValue);
-      }
+      }, "onclick")
     });
     this.elements.drawer = create("div", {
-      classes: ["fracgui-input-drawer"],
+      classes: [
+        "fracgui-input-drawer"
+      ],
       parent: this.elements.content
     });
     this._evm.listen(this.elements.drawerToggle, "click", () => {
@@ -5104,57 +5203,12 @@ var Input = class {
       this.index = this.index;
     });
   }
-  opts;
-  /**
-   * Unique identifier for the input. Also used for saving and loading presets.
-   * @default `<folder_title>:<input_type>:<input_title>`
-   */
-  id;
-  /**
-   * Whether the input was initialized with a bind target/key.
-   * @default false
-   */
-  bound = false;
-  /**
-   * All HTMLElement's created by this input.
-   */
-  elements = {
-    controllers: {}
-  };
-  /**
-   * Whether the controllers should bubble their events up to the input and it's listeners.
-   * If false, the next update will be silent, after which the flag will be reset to true.
-   */
-  bubble = false;
-  _title = "";
-  _index;
-  // #firstUpdate = true
-  _disabled;
-  _hidden;
-  /**
-   * Prevents the input from registering commits to undo history until
-   * {@link unlock} is called.
-   */
-  _undoLock = false;
-  /**
-   * The commit object used to store the initial value of the input when
-   * {@link lock} is called.
-   */
-  lockCommit = {};
-  /**
-   * The input's {@link EventManager}.
-   */
-  _dirty;
-  _evm = new EventManager(["change", "refresh"]);
-  listen = this._evm.listen.bind(this._evm);
-  on = this._evm.on.bind(this._evm);
-  __log;
   get value() {
     return this.state.value;
   }
   /**
-   * The title displayed on this Input's label.
-   */
+  * The title displayed on this Input's label.
+  */
   get title() {
     return this._title;
   }
@@ -5163,9 +5217,9 @@ var Input = class {
     this.elements.title.textContent = v;
   }
   /**
-   * The main Element.  Usually a container div for the rest of the Input's
-   * {@link Input.elements|`elements`}.
-   */
+  * The main Element.  Usually a container div for the rest of the Input's
+  * {@link Input.elements|`elements`}.
+  */
   get element() {
     return this.elements.container;
   }
@@ -5180,9 +5234,9 @@ var Input = class {
     return this.folder.gui?._undoManager;
   }
   /**
-   * Whether the input is disabled.  A function can be used to dynamically determine the
-   * disabled state.
-   */
+  * Whether the input is disabled.  A function can be used to dynamically determine the
+  * disabled state.
+  */
   get disabled() {
     return this._disabled();
   }
@@ -5191,8 +5245,8 @@ var Input = class {
     this._disabled() ? this.disable() : this.enable();
   }
   /**
-   * Completely hides the Input from view when set to `true`.
-   */
+  * Completely hides the Input from view when set to `true`.
+  */
   get hidden() {
     return this.elements.container.classList.contains("hidden");
   }
@@ -5201,20 +5255,18 @@ var Input = class {
     this.elements.container.classList.toggle("hidden", this._hidden());
   }
   /**
-   * Wether the current state value differs from the initial state value.
-   * @internal
-   */
+  * Wether the current state value differs from the initial state value.
+  * @internal
+  */
   get dirty() {
     return this._dirty();
   }
   resolveState(opts) {
     if (opts.binding) {
       const s = state(opts.binding.target[opts.binding.key]);
-      this._evm.add(
-        s.subscribe((v) => {
-          opts.binding.target[opts.binding.key] = v;
-        })
-      );
+      this._evm.add(s.subscribe((v) => {
+        opts.binding.target[opts.binding.key] = v;
+      }));
       return s;
     } else {
       return state(opts.value);
@@ -5225,8 +5277,8 @@ var Input = class {
     return isState(value) ? value.value : value;
   }
   /**
-   * Called from subclasses at the end of their `set` method to emit the `change` event.
-   */
+  * Called from subclasses at the end of their `set` method to emit the `change` event.
+  */
   _emit(event, v = this.state.value) {
     if (this.opts.resettable) {
       this.elements.resetBtn.classList.toggle("dirty", this._dirty());
@@ -5238,29 +5290,17 @@ var Input = class {
     return this;
   }
   /**
-   * Prevents the input from registering undo history, storing the initial
-   * for the eventual commit in {@link unlock}.
-   */
-  lock = (from = this.state.value) => {
-    this._undoLock = true;
-    this.lockCommit.from = from;
-    this.__log.fn(o("lock")).debug("lockCommit:", this.lockCommit);
-  };
+  * Prevents the input from registering undo history, storing the initial
+  * for the eventual commit in {@link unlock}.
+  */
+  lock;
   /**
-   * Unlocks commits and saves the current commit stored in lock.
-   */
-  unlock = (commit) => {
-    this.__log.fn(o("unlock")).debug("commit", { commit, lockCommit: this.lockCommit });
-    commit ??= {};
-    commit.target ??= this;
-    commit.to ??= this.state.value;
-    commit.from ??= this.lockCommit.from;
-    this._undoLock = false;
-    this.commit(commit);
-  };
+  * Unlocks commits and saves the current commit stored in lock.
+  */
+  unlock;
   /**
-   * Commits a change to the input's value to the undo manager.
-   */
+  * Commits a change to the input's value to the undo manager.
+  */
   commit(commit) {
     commit.from ??= this.state.value;
     commit.target ??= this;
@@ -5272,23 +5312,23 @@ var Input = class {
     this.undoManager?.commit(commit);
   }
   /**
-   * Enables the input and any associated controllers.
-   */
+  * Enables the input and any associated controllers.
+  */
   enable() {
     this._disabled = toFn(false);
     return this;
   }
   /**
-   * Disables the input and any associated controllers. A disabled input's state can't be
-   * changed or interacted with.
-   */
+  * Disables the input and any associated controllers. A disabled input's state can't be
+  * changed or interacted with.
+  */
   disable() {
     this._disabled = toFn(true);
     return this;
   }
   /**
-   * Refreshes the value of any controllers to match the current input state.
-   */
+  * Refreshes the value of any controllers to match the current input state.
+  */
   refresh(v = this.state.value) {
     if (!this.opts.resettable) return;
     if (this.opts.binding) {
@@ -5326,7 +5366,7 @@ var Input = class {
   dispose() {
     this.__log.fn("dispose").debug(this);
     this._evm.dispose();
-    const rm = (elOrObj) => {
+    const rm = /* @__PURE__ */ __name((elOrObj) => {
       if (elOrObj instanceof HTMLElement || elOrObj instanceof SVGElement) {
         elOrObj.remove();
       } else if (typeof elOrObj === "object") {
@@ -5334,7 +5374,7 @@ var Input = class {
           rm(elOrObj[k]);
         }
       }
-    };
+    }, "rm");
     rm(this.elements);
   }
 };
@@ -5342,8 +5382,15 @@ var Input = class {
 // src/inputs/InputButtonGrid.ts
 var BUTTONGRID_INPUT_DEFAULTS = {
   __type: "ButtonGridInputOptions",
-  value: [[{ text: "", onClick: () => {
-  } }]],
+  value: [
+    [
+      {
+        text: "",
+        onClick: /* @__PURE__ */ __name(() => {
+        }, "onClick")
+      }
+    ]
+  ],
   style: {
     gap: "0.5em"
   },
@@ -5351,6 +5398,9 @@ var BUTTONGRID_INPUT_DEFAULTS = {
   resettable: false
 };
 var InputButtonGrid = class extends Input {
+  static {
+    __name(this, "InputButtonGrid");
+  }
   __type = "InputButtonGrid";
   initialValue = {};
   state = state({});
@@ -5360,12 +5410,22 @@ var InputButtonGrid = class extends Input {
   constructor(options, folder) {
     const opts = Object.assign({}, BUTTONGRID_INPUT_DEFAULTS, options);
     super(opts, folder);
-    this._evm.registerEvents(["click"]);
+    this._evm.registerEvents([
+      "click"
+    ]);
     this.initialValue = opts.value;
-    this._log = new Logger(`InputButtonGrid ${opts.title}`, { fg: "cyan" });
-    this._log.fn("constructor").debug({ opts, this: this });
+    this._log = new Logger(`InputButtonGrid ${opts.title}`, {
+      fg: "cyan"
+    });
+    this._log.fn("constructor").debug({
+      opts,
+      this: this
+    });
     const container = create("div", {
-      classes: ["fracgui-input", "fracgui-input-buttongrid-container"],
+      classes: [
+        "fracgui-input",
+        "fracgui-input-buttongrid-container"
+      ],
       parent: this.elements.content
     });
     this.elements.controllers = {
@@ -5379,11 +5439,11 @@ var InputButtonGrid = class extends Input {
     this._evm.on("click", () => callback(this.state.value));
   }
   /**
-   * Converts a {@link ButtonGridArrays} into a a grid of {@link HTMLButtonElement}
-   * elements, and
-   *
-   * - appends them to the {@link InputButtonGrid.elements.controllers.container}
-   */
+  * Converts a {@link ButtonGridArrays} into a a grid of {@link HTMLButtonElement}
+  * elements, and
+  *
+  * - appends them to the {@link InputButtonGrid.elements.controllers.container}
+  */
   toGrid(grid) {
     const instanceGrid = [];
     const rows = grid.length;
@@ -5394,9 +5454,13 @@ var InputButtonGrid = class extends Input {
     this.buttons.clear();
     for (let i = 0; i < rows; i++) {
       const row = create("div", {
-        classes: ["fracgui-controller-buttongrid-row"],
+        classes: [
+          "fracgui-controller-buttongrid-row"
+        ],
         parent: this.elements.controllers.container,
-        style: { gap: "0.5em" }
+        style: {
+          gap: "0.5em"
+        }
       });
       instanceGrid[i] = [];
       for (let j = 0; j < cols; j++) {
@@ -5417,13 +5481,10 @@ var InputButtonGrid = class extends Input {
   }
   addButton(opts, id, i, j) {
     const text = toFn(opts.text);
-    const tooltip2 = opts.tooltip ? Object.assign(
-      {
-        placement: "top",
-        delay: 1e3
-      },
-      opts.tooltip
-    ) : void 0;
+    const tooltip2 = opts.tooltip ? Object.assign({
+      placement: "top",
+      delay: 1e3
+    }, opts.tooltip) : void 0;
     opts.element = create("button", {
       id,
       classes: [
@@ -5463,7 +5524,9 @@ var InputButtonGrid = class extends Input {
     this.refresh();
   }
   refresh() {
-    this._log.fn("refresh").debug({ this: this });
+    this._log.fn("refresh").debug({
+      this: this
+    });
     for (const btn of this.buttons.values()) {
       btn.refresh();
     }
@@ -5509,6 +5572,9 @@ var SWITCH_INPUT_DEFAULTS = {
   }
 };
 var InputSwitch = class extends Input {
+  static {
+    __name(this, "InputSwitch");
+  }
   __type = "InputSwitch";
   state;
   initialValue;
@@ -5516,41 +5582,53 @@ var InputSwitch = class extends Input {
   constructor(options, folder) {
     const opts = Object.assign({}, SWITCH_INPUT_DEFAULTS, options);
     super(opts, folder);
-    this.#log = new Logger(`InputSwitch ${opts.title}`, { fg: "cyan" });
-    this.#log.fn("constructor").debug({ opts, this: this });
+    this.#log = new Logger(`InputSwitch ${opts.title}`, {
+      fg: "cyan"
+    });
+    this.#log.fn("constructor").debug({
+      opts,
+      this: this
+    });
     if (opts.binding) {
       this.initialValue = opts.binding.target[opts.binding.key];
       this.state = state(!!this.initialValue);
-      this._evm.add(
-        this.state.subscribe((v) => {
-          opts.binding.target[opts.binding.key] = v;
-        })
-      );
+      this._evm.add(this.state.subscribe((v) => {
+        opts.binding.target[opts.binding.key] = v;
+      }));
     } else {
       this.initialValue = opts.value;
       this.state = state(!!opts.value);
     }
     const container = create("div", {
-      classes: ["fracgui-input-switch-container"],
+      classes: [
+        "fracgui-input-switch-container"
+      ],
       parent: this.elements.content
     });
     const input = create("button", {
-      classes: ["fracgui-controller", "fracgui-controller-switch"],
+      classes: [
+        "fracgui-controller",
+        "fracgui-controller-switch"
+      ],
       parent: container,
       tooltip: {
-        text: () => {
+        text: /* @__PURE__ */ __name(() => {
           return (this.state.value ? opts.labels?.false.verb : opts.labels?.true.verb) || "";
-        },
+        }, "text"),
         anchor: ".fracgui-controller-switch-thumb",
         delay: 750
       }
     });
     const thumb = create("div", {
-      classes: ["fracgui-controller-switch-thumb"],
+      classes: [
+        "fracgui-controller-switch-thumb"
+      ],
       parent: input
     });
     const stateText = create("div", {
-      classes: ["fracgui-controller-switch-state-text"],
+      classes: [
+        "fracgui-controller-switch-state-text"
+      ],
       parent: container,
       innerText: this.state.value ? opts.labels?.true.state : opts.labels?.false.state,
       style: {
@@ -5567,7 +5645,10 @@ var InputSwitch = class extends Input {
     this._evm.add(this.state.subscribe(this.refresh.bind(this)));
   }
   set(v = !this.state.value) {
-    this.#log.fn("set").debug({ v, this: this });
+    this.#log.fn("set").debug({
+      v,
+      this: this
+    });
     if (typeof v === "boolean") {
       this.undoManager?.commit({
         // @ts-expect-error - ¯\_(ツ)_/¯
@@ -5577,15 +5658,16 @@ var InputSwitch = class extends Input {
       });
       this.state.set(v);
     } else {
-      throw new Error(
-        `InputBoolean.set() received an invalid value: ${JSON.stringify(v)} (${typeof v})`
-      );
+      throw new Error(`InputBoolean.set() received an invalid value: ${JSON.stringify(v)} (${typeof v})`);
     }
     this._emit("change", v);
     return this;
   }
   refresh(v = this.state.value) {
-    this.#log.fn("refresh").debug({ v, this: this });
+    this.#log.fn("refresh").debug({
+      v,
+      this: this
+    });
     if (this.disabled) return this;
     this.elements.controllers.input.classList.toggle("active", v);
     this.elements.controllers.input?.tooltip?.refresh();
@@ -5611,14 +5693,17 @@ var InputSwitch = class extends Input {
 // src/inputs/InputButton.ts
 var BUTTON_INPUT_DEFAULTS2 = {
   __type: "ButtonInputOptions",
-  text: () => "click me"
+  text: /* @__PURE__ */ __name(() => "click me", "text")
 };
 var InputButton = class extends Input {
+  static {
+    __name(this, "InputButton");
+  }
   __type = "InputButton";
   initialValue = {};
   state = state({});
-  onClick = () => {
-  };
+  onClick = /* @__PURE__ */ __name(() => {
+  }, "onClick");
   button;
   _log;
   constructor(options, folder) {
@@ -5626,20 +5711,29 @@ var InputButton = class extends Input {
       __type: "ButtonInputOptions"
     });
     super(opts, folder);
-    this._evm.registerEvents(["change", "refresh", "click"]);
-    this._log = new Logger(`InputButton ${opts.title}`, { fg: "cyan" });
-    this._log.fn("constructor").debug({ opts, this: this });
+    this._evm.registerEvents([
+      "change",
+      "refresh",
+      "click"
+    ]);
+    this._log = new Logger(`InputButton ${opts.title}`, {
+      fg: "cyan"
+    });
+    this._log.fn("constructor").debug({
+      opts,
+      this: this
+    });
     if (opts.value) this.onClick = opts.value;
     else if (opts.onClick) this.onClick = opts.onClick;
     else {
       if (DEV) {
-        console.error(
-          `${this.title} created with no onClick function. Use the 'value' or 'onClick' property to assign one.`
-        );
+        console.error(`${this.title} created with no onClick function. Use the 'value' or 'onClick' property to assign one.`);
       }
     }
     const container = create("div", {
-      classes: ["fracgui-input-button-container"],
+      classes: [
+        "fracgui-input-button-container"
+      ],
       parent: this.elements.content
     });
     this.button = new ButtonController({
@@ -5661,10 +5755,13 @@ var InputButton = class extends Input {
     this.button.text = v;
   }
   /**
-   * Manually calls the {@link onClick} function.
-   */
+  * Manually calls the {@link onClick} function.
+  */
   click() {
-    this.button.click({ ...new MouseEvent("click"), target: this.button.element });
+    this.button.click({
+      ...new MouseEvent("click"),
+      target: this.button.element
+    });
   }
   enable() {
     this.button.enable();
@@ -5677,17 +5774,17 @@ var InputButton = class extends Input {
     return this;
   }
   /**
-   * Overwrites the
-   */
-  set = (v) => {
+  * Overwrites the
+  */
+  set = /* @__PURE__ */ __name((v) => {
     if (ButtonController.is(v)) {
       v;
       this.state.set(v);
     }
-  };
+  }, "set");
   /**
-   * Refreshes the button text.
-   */
+  * Refreshes the button text.
+  */
   refresh() {
     this.button.refresh();
     super.refresh();
@@ -5701,7 +5798,7 @@ var InputButton = class extends Input {
 
 // src/shared/decorators/disableable-class-decorator.ts
 function disableable(constructor) {
-  let disabled = () => false;
+  let disabled = /* @__PURE__ */ __name(() => false, "disabled");
   return class extends constructor {
     get disabled() {
       return disabled();
@@ -5712,19 +5809,24 @@ function disableable(constructor) {
     }
   };
 }
+__name(disableable, "disableable");
 
 // src/shared/scrollParent.ts
-var isScrollable = (node) => {
+var isScrollable = /* @__PURE__ */ __name((node) => {
   if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
     return false;
   }
   const style = getComputedStyle(node);
-  return ["overflow", "overflow-x", "overflow-y"].some((propertyName) => {
+  return [
+    "overflow",
+    "overflow-x",
+    "overflow-y"
+  ].some((propertyName) => {
     const value = style.getPropertyValue(propertyName);
     return value === "auto" || value === "scroll";
   });
-};
-var getScrollParent = (node) => {
+}, "isScrollable");
+var getScrollParent = /* @__PURE__ */ __name((node) => {
   let currentParent = node.parentElement;
   while (currentParent) {
     if (isScrollable(currentParent)) {
@@ -5733,53 +5835,67 @@ var getScrollParent = (node) => {
     currentParent = currentParent.parentElement;
   }
   return document.scrollingElement || document.documentElement;
-};
+}, "getScrollParent");
 
 // src/controllers/Select.ts
-var Select = @disableable class {
+function _ts_decorate4(decorators, target, key, desc) {
+  var c2 = arguments.length, r2 = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r2 = Reflect.decorate(decorators, target, key, desc);
+  else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r2 = (c2 < 3 ? d(r2) : c2 > 3 ? d(target, key, r2) : d(target, key)) || r2;
+  return c2 > 3 && r2 && Object.defineProperty(target, key, r2), r2;
+}
+__name(_ts_decorate4, "_ts_decorate");
+function _ts_metadata4(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+__name(_ts_metadata4, "_ts_metadata");
+var Select = class {
+  static {
+    __name(this, "Select");
+  }
   __type = "Select";
   element;
   _opts;
   elements;
   /**
-   * All options in the select controller.
-   */
+  * All options in the select controller.
+  */
   options;
   /**
-   * A map of all options by their (internally generated) id.
-   */
+  * A map of all options by their (internally generated) id.
+  */
   optionMap = /* @__PURE__ */ new Map();
   /**
-   * Whether the dropdown is currently visible.
-   */
+  * Whether the dropdown is currently visible.
+  */
   expanded = false;
   /**
-   * The initial selected option.
-   */
+  * The initial selected option.
+  */
   initialValue;
   /**
-   * The initial options array.
-   */
+  * The initial options array.
+  */
   initialOptions;
   /**
-   * When true, clicking clicks will be ignored.
-   */
+  * When true, clicking clicks will be ignored.
+  */
   disableClicks = false;
   /**
-   * Used to prevent infinite loops when updating internally.
-   */
+  * Used to prevent infinite loops when updating internally.
+  */
   bubble = true;
   /**
-   * The currently selected option.
-   */
+  * The currently selected option.
+  */
   _selected;
   /**
-   * The currently selected option preserved when hot-swapping on:hover.
-   */
+  * The currently selected option preserved when hot-swapping on:hover.
+  */
   _currentSelection;
   /**
-   * The parent element that the selected element is scrolling in.
-   */
+  * The parent element that the selected element is scrolling in.
+  */
   _scrollParent;
   _evm = new EventManager([
     "change",
@@ -5789,8 +5905,8 @@ var Select = @disableable class {
     "close"
   ]);
   /**
-   * Used to subscribe to {@link SelectInputEvents}.
-   */
+  * Used to subscribe to {@link SelectInputEvents}.
+  */
   on = this._evm.on.bind(this._evm);
   _log;
   constructor(options) {
@@ -5802,19 +5918,27 @@ var Select = @disableable class {
     };
     this._opts = opts;
     if (options?.title) {
-      this._log = new Logger(`Select ${options.title}`, { fg: "burlywood" });
+      this._log = new Logger(`Select ${options.title}`, {
+        fg: "burlywood"
+      });
     } else {
-      this._log = new Logger("Select", { fg: "blueviolet" });
+      this._log = new Logger("Select", {
+        fg: "blueviolet"
+      });
     }
     this._selected = this._currentSelection = this.initialValue = this._opts.selected;
     this.options = this.initialOptions = this._opts.options;
     const container = create("div", {
-      classes: ["fracgui-controller-select-container"],
+      classes: [
+        "fracgui-controller-select-container"
+      ],
       parent: options.container
     });
     this.element = container;
     const selected = create("div", {
-      classes: ["fracgui-controller-select-selected"],
+      classes: [
+        "fracgui-controller-select-selected"
+      ],
       parent: container,
       textContent: String(this.getLabel(this.selected))
     });
@@ -5824,7 +5948,11 @@ var Select = @disableable class {
       }
       this.toggle();
     });
-    const dropdown = create("div", { classes: ["fracgui-controller-select-dropdown"] });
+    const dropdown = create("div", {
+      classes: [
+        "fracgui-controller-select-dropdown"
+      ]
+    });
     this.elements = {
       container,
       selected,
@@ -5835,11 +5963,14 @@ var Select = @disableable class {
       this.add(option);
     }
     this.disabled = this._opts.disabled;
-    this._log.fn("constructor").debug({ opts: this._opts, this: this });
+    this._log.fn("constructor").debug({
+      opts: this._opts,
+      this: this
+    });
   }
   /**
-   * The currently selected option. Assigning a new value will update the UI.
-   */
+  * The currently selected option. Assigning a new value will update the UI.
+  */
   get selected() {
     return this._selected;
   }
@@ -5862,14 +5993,16 @@ var Select = @disableable class {
     }
   }
   /**
-   * Adds an option to the select controller.
-   * @param option The option to add.
-   * @returns The id of the added option.
-   */
+  * Adds an option to the select controller.
+  * @param option The option to add.
+  * @returns The id of the added option.
+  */
   add(option) {
     const opt = toLabeledOption(option);
     const el = create("div", {
-      classes: ["fracgui-controller-select-option"],
+      classes: [
+        "fracgui-controller-select-option"
+      ],
       parent: this.elements.dropdown,
       innerText: opt.label
     });
@@ -5880,24 +6013,40 @@ var Select = @disableable class {
       element: el
     });
     this.elements.options.push(el);
-    this._log.fn("add").debug({ option, added: this.optionMap.get(id), id, this: this });
+    this._log.fn("add").debug({
+      option,
+      added: this.optionMap.get(id),
+      id,
+      this: this
+    });
     return this;
   }
   /**
-   * Removes an option from the select controller by id.
-   */
+  * Removes an option from the select controller by id.
+  */
   remove(id, autoSelectFallback = false) {
     const found = this.optionMap.get(id);
     if (!found) {
-      console.error({ this: this });
+      console.error({
+        this: this
+      });
       throw new Error("No option found in map for id: " + id);
     }
     const btn = found;
-    this._log.fn("remove").debug({ btn, id, this: this });
+    this._log.fn("remove").debug({
+      btn,
+      id,
+      this: this
+    });
     if (autoSelectFallback && JSON.stringify(this.selected.value) === JSON.stringify(btn.option.value)) {
       const nextIndex = this.options.indexOf(btn.option) + 1;
       const fallback = this.options[nextIndex % this.options.length];
-      this._log.fn("remove").debug("Auto-selecting fallback btn", { fallback, btn, id, this: this });
+      this._log.fn("remove").debug("Auto-selecting fallback btn", {
+        fallback,
+        btn,
+        id,
+        this: this
+      });
       this.select(fallback, false);
     }
     this.elements.options = this.elements.options.filter((el) => el !== btn.element);
@@ -5906,31 +6055,39 @@ var Select = @disableable class {
     this.optionMap.delete(id);
   }
   /**
-   * Removes all options and their elements.
-   */
+  * Removes all options and their elements.
+  */
   clear() {
-    this._log.fn("clear").debug({ this: this });
+    this._log.fn("clear").debug({
+      this: this
+    });
     for (const id of this.optionMap.keys()) {
       this.remove(id, false);
     }
     this.options = [];
     this.optionMap.clear();
   }
-  select = (v, bubble = true) => {
+  select = /* @__PURE__ */ __name((v, bubble = true) => {
     if (this.disabled) {
       return this;
     }
-    this._log.fn("select").debug("v", v, { this: this });
+    this._log.fn("select").debug("v", v, {
+      this: this
+    });
     if (v instanceof Event) {
       const target = v.target;
       const id = target.dataset["optionId"];
       if (typeof id !== "string") {
-        console.error({ target });
+        console.error({
+          target
+        });
         throw new Error("No option id found on select click");
       }
       const option = this.optionMap.get(id);
       if (!option) {
-        console.error({ target });
+        console.error({
+          target
+        });
         throw new Error("No option found in map");
       }
       for (const [, { element }] of this.optionMap) {
@@ -5950,32 +6107,36 @@ var Select = @disableable class {
       }
     }
     return this;
-  };
+  }, "select");
   /**
-   * Updates the UI to reflect the current state of the source.
-   */
-  refresh = () => {
-    this._log.fn("refresh").debug({ this: this });
+  * Updates the UI to reflect the current state of the source.
+  */
+  refresh = /* @__PURE__ */ __name(() => {
+    this._log.fn("refresh").debug({
+      this: this
+    });
     this.elements.selected.innerHTML = this.selected.label;
     return this;
-  };
+  }, "refresh");
   /**
-   * Toggles the dropdown's visibility.
-   */
-  toggle = () => {
-    this._log.fn("toggle").debug({ this: this });
+  * Toggles the dropdown's visibility.
+  */
+  toggle = /* @__PURE__ */ __name(() => {
+    this._log.fn("toggle").debug({
+      this: this
+    });
     if (this.expanded) {
       this._evm.emit("cancel");
       this.close();
     } else {
       this.open();
     }
-  };
+  }, "toggle");
   // private _groupId = nanoid()
   /**
-   * Shows the dropdown.
-   */
-  open = () => {
+  * Shows the dropdown.
+  */
+  open = /* @__PURE__ */ __name(() => {
     this.expanded = true;
     this._opts.input.folder.gui.wrapper.appendChild(this.elements.dropdown);
     this.elements.dropdown.classList.add("expanded");
@@ -5989,10 +6150,14 @@ var Select = @disableable class {
       this._currentSelection = this.selected;
       for (const [, { option, element }] of this.optionMap) {
         element.classList.toggle("selected", option.label === this.selected.label);
-        const select2 = () => {
-          this._log.fn("on(mouseenter)").debug("currentSelection", { option, element, this: this });
+        const select2 = /* @__PURE__ */ __name(() => {
+          this._log.fn("on(mouseenter)").debug("currentSelection", {
+            option,
+            element,
+            this: this
+          });
           this.select(option);
-        };
+        }, "select");
         this._evm.listen(element, "mouseenter", select2, {}, "dropdown");
       }
     }
@@ -6000,34 +6165,25 @@ var Select = @disableable class {
     setTimeout(() => {
       this.elements.dropdown.style.pointerEvents = "all";
     }, 200);
-  };
+  }, "open");
   /**
-   * Positions the dropdown to the selected element.
-   */
-  updatePosition = () => {
+  * Positions the dropdown to the selected element.
+  */
+  updatePosition = /* @__PURE__ */ __name(() => {
     if (!this.expanded) return;
     this.elements.dropdown.style.setProperty("width", "unset");
     this.elements.dropdown.style.setProperty("top", "unset");
     const { dropdown, selected } = this.elements;
     const guiScrollTop = this._opts.input.folder.root.elements.content.scrollTop;
     const { top, left } = selected.getBoundingClientRect();
-    this.elements.dropdown.style.setProperty(
-      "width",
-      `${Math.max(selected.offsetWidth, dropdown.offsetWidth)}px`
-    );
-    this.elements.dropdown.style.setProperty(
-      "top",
-      `${top + selected.offsetHeight - guiScrollTop}px`
-    );
-    this.elements.dropdown.style.setProperty(
-      "left",
-      `${left + selected.offsetWidth / 2 - dropdown.offsetWidth / 2}px`
-    );
-  };
+    this.elements.dropdown.style.setProperty("width", `${Math.max(selected.offsetWidth, dropdown.offsetWidth)}px`);
+    this.elements.dropdown.style.setProperty("top", `${top + selected.offsetHeight - guiScrollTop}px`);
+    this.elements.dropdown.style.setProperty("left", `${left + selected.offsetWidth / 2 - dropdown.offsetWidth / 2}px`);
+  }, "updatePosition");
   /**
-   * Hides the dropdown.
-   */
-  close = () => {
+  * Hides the dropdown.
+  */
+  close = /* @__PURE__ */ __name(() => {
     this.expanded = false;
     this.elements.dropdown.classList.remove("expanded");
     this.elements.selected.classList.remove("active");
@@ -6037,23 +6193,23 @@ var Select = @disableable class {
     setTimeout(() => {
       this.elements.dropdown.remove();
     }, 200);
-  };
+  }, "close");
   /**
-   * Closes the dropdown if the escape key was pressed.  If {@link selectOnHover}
-   * is enabled, the current selection will be re-selected to restore the original
-   * value.
-   */
-  _closeOnEscape = (e) => {
+  * Closes the dropdown if the escape key was pressed.  If {@link selectOnHover}
+  * is enabled, the current selection will be re-selected to restore the original
+  * value.
+  */
+  _closeOnEscape = /* @__PURE__ */ __name((e) => {
     if (e.key === "Escape") {
       this._cancel();
     }
-  };
-  _clickOutside = (e) => {
+  }, "_closeOnEscape");
+  _clickOutside = /* @__PURE__ */ __name((e) => {
     const path = e.composedPath();
     if (!path.includes(this.elements.selected) && !path.includes(this.elements.dropdown)) {
       this._cancel();
     }
-  };
+  }, "_clickOutside");
   _cancel() {
     this.close();
     if (this._opts.selectOnHover) {
@@ -6082,12 +6238,23 @@ var Select = @disableable class {
     this._evm.dispose();
   }
 };
+Select = _ts_decorate4([
+  disableable,
+  _ts_metadata4("design:type", Function),
+  _ts_metadata4("design:paramtypes", [
+    typeof SelectInputOptions === "undefined" ? Object : SelectInputOptions
+  ])
+], Select);
 function isLabeledOption(v) {
   return typeof v === "object" && Object.keys(v).length === 2 && "label" in v && "value" in v;
 }
+__name(isLabeledOption, "isLabeledOption");
 function toLabeledOption(v) {
   if (isLabeledOption(v)) return v;
-  if (["string", "number"].includes(typeof v)) {
+  if ([
+    "string",
+    "number"
+  ].includes(typeof v)) {
     return {
       label: String(v),
       value: v
@@ -6106,17 +6273,19 @@ function toLabeledOption(v) {
       value: v
     };
   }
-  console.error(
-    "Invalid option:",
-    v,
-    ". Please provide a named option ({ label: string, value: T })and place your value in the `value` property."
-  );
-  throw new Error("Missing label:" + JSON.stringify(v), { cause: { v } });
+  console.error("Invalid option:", v, ". Please provide a named option ({ label: string, value: T })and place your value in the `value` property.");
+  throw new Error("Missing label:" + JSON.stringify(v), {
+    cause: {
+      v
+    }
+  });
 }
+__name(toLabeledOption, "toLabeledOption");
 function fromLabeledOption(v) {
   function rtrn(v2) {
     return v2;
   }
+  __name(rtrn, "rtrn");
   if (isLabeledOption(v)) return rtrn(v.value);
   if (isState(v)) {
     const t = v.value;
@@ -6128,13 +6297,28 @@ function fromLabeledOption(v) {
   }
   return v;
 }
+__name(fromLabeledOption, "fromLabeledOption");
 
 // src/inputs/InputSelect.ts
+function _ts_decorate5(decorators, target, key, desc) {
+  var c2 = arguments.length, r2 = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r2 = Reflect.decorate(decorators, target, key, desc);
+  else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r2 = (c2 < 3 ? d(r2) : c2 > 3 ? d(target, key, r2) : d(target, key)) || r2;
+  return c2 > 3 && r2 && Object.defineProperty(target, key, r2), r2;
+}
+__name(_ts_decorate5, "_ts_decorate");
+function _ts_metadata5(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+__name(_ts_metadata5, "_ts_metadata");
 var SELECT_INPUT_DEFAULTS = {
   __type: "SelectInputOptions",
   options: []
 };
-var InputSelect = @disableable class extends Input {
+var InputSelect = class extends Input {
+  static {
+    __name(this, "InputSelect");
+  }
   __type = "InputSelect";
   initialValue;
   state;
@@ -6151,16 +6335,16 @@ var InputSelect = @disableable class extends Input {
     return this.resolveOptions(this.#options);
   }
   /**
-   * The select controller instance.
-   */
+  * The select controller instance.
+  */
   select;
   /**
-   * A latch for event propagation. Toggled off everytime an event aborted.
-   */
+  * A latch for event propagation. Toggled off everytime an event aborted.
+  */
   #stopPropagation = true;
   /**
-   * The currently selected option as a labeled option.
-   */
+  * The currently selected option as a labeled option.
+  */
   labeledSelection;
   _log;
   constructor(options, folder) {
@@ -6168,9 +6352,19 @@ var InputSelect = @disableable class extends Input {
       __type: "SelectInputOptions"
     });
     super(opts, folder);
-    this._evm.registerEvents(["preview", "open", "close", "cancel"]);
-    this._log = new Logger(`InputSelect ${opts.title}`, { fg: "slategrey" });
-    this._log.fn("constructor").debug({ opts, this: this });
+    this._evm.registerEvents([
+      "preview",
+      "open",
+      "close",
+      "cancel"
+    ]);
+    this._log = new Logger(`InputSelect ${opts.title}`, {
+      fg: "slategrey"
+    });
+    this._log.fn("constructor").debug({
+      opts,
+      this: this
+    });
     opts.value ??= opts.binding?.initial ?? fromState(this.targetValue);
     this.initialValue = this.resolveInitialValue(opts);
     this.labeledSelection = {
@@ -6180,7 +6374,9 @@ var InputSelect = @disableable class extends Input {
     this.#options = this.opts.options;
     this.state = state(this.initialValue);
     const container = create("div", {
-      classes: ["fracgui-input-select-container"],
+      classes: [
+        "fracgui-input-select-container"
+      ],
       parent: this.elements.content
     });
     this.select = new Select({
@@ -6196,25 +6392,26 @@ var InputSelect = @disableable class extends Input {
       select: this.select.elements
     };
     this.disabled = opts.disabled ?? false;
-    this._evm.add(
-      this.state.subscribe((v) => {
-        if (!this.select.bubble) return;
-        if (this.targetObject) {
-          if (isState(this.targetValue)) {
-            this._log.fn("updating binding").debug({ from: this.targetValue.value, to: v.value });
-            this.targetValue.set(v.value);
-          } else {
-            this.targetValue = v.value;
-          }
+    this._evm.add(this.state.subscribe((v) => {
+      if (!this.select.bubble) return;
+      if (this.targetObject) {
+        if (isState(this.targetValue)) {
+          this._log.fn("updating binding").debug({
+            from: this.targetValue.value,
+            to: v.value
+          });
+          this.targetValue.set(v.value);
+        } else {
+          this.targetValue = v.value;
         }
-        if (this.#stopPropagation) {
-          this.#stopPropagation = false;
-          this._log.fn("state.subscribe").debug("Stopped propagation.  Subscribers will not be notified.");
-          return;
-        }
-        this.set(v);
-      })
-    );
+      }
+      if (this.#stopPropagation) {
+        this.#stopPropagation = false;
+        this._log.fn("state.subscribe").debug("Stopped propagation.  Subscribers will not be notified.");
+        return;
+      }
+      this.set(v);
+    }));
     if (options.onChange) {
       this._evm.on("change", (v) => {
         this._log.fn("calling options onChange").debug(v);
@@ -6240,18 +6437,19 @@ var InputSelect = @disableable class extends Input {
       this._emit("cancel");
     });
     this._dirty = () => this.value.label !== this.initialValue.label;
-    this._log.fn("constructor").debug({ this: this });
+    this._log.fn("constructor").debug({
+      this: this
+    });
   }
   resolveOptions(providedOptions) {
     function isLabeledOptionsArray(v) {
       return isLabeledOption(v[0]);
     }
+    __name(isLabeledOptionsArray, "isLabeledOptionsArray");
     let selectOptions = toFn(providedOptions)();
     if (!isLabeledOptionsArray(selectOptions)) {
       if (!this.opts.labelKey) {
-        throw new Error(
-          "Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label."
-        );
+        throw new Error("Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label.");
       }
       return selectOptions.map((o2) => ({
         label: o2[this.opts.labelKey],
@@ -6265,9 +6463,7 @@ var InputSelect = @disableable class extends Input {
     const v = fromState(value);
     if (!isLabeledOption(v)) {
       if (!opts.labelKey) {
-        throw new Error(
-          "Cannot resolve initial value.  Please provide a `labelKey` or use labeled options."
-        );
+        throw new Error("Cannot resolve initial value.  Please provide a `labelKey` or use labeled options.");
       }
       return {
         label: v[opts.labelKey],
@@ -6314,8 +6510,8 @@ var InputSelect = @disableable class extends Input {
     }
   }
   /**
-   * Selects the given {@link LabeledOption} and updates the ui.
-   */
+  * Selects the given {@link LabeledOption} and updates the ui.
+  */
   set(value) {
     this._log.fn("set").debug(value);
     this.#stopPropagation = true;
@@ -6336,15 +6532,16 @@ var InputSelect = @disableable class extends Input {
     super.disable();
     return this;
   }
-  refresh = () => {
+  refresh = /* @__PURE__ */ __name(() => {
     const v = this.state.value;
-    this._log.fn("refresh").debug({ v, this: this });
+    this._log.fn("refresh").debug({
+      v,
+      this: this
+    });
     if (!this.labeledSelection) {
       throw new Error("Failed to find labeled selection.");
     }
-    const newOptions = this.options.filter(
-      (o2) => !this.select.options.some((oo) => oo.label === o2.label)
-    );
+    const newOptions = this.options.filter((o2) => !this.select.options.some((oo) => oo.label === o2.label));
     console.log(newOptions);
     for (const option of newOptions) {
       this.select.add(option);
@@ -6352,14 +6549,22 @@ var InputSelect = @disableable class extends Input {
     this.select.select(this.labeledSelection, false);
     super.refresh();
     return this;
-  };
+  }, "refresh");
   dispose() {
     super.dispose();
   }
 };
+InputSelect = _ts_decorate5([
+  disableable,
+  _ts_metadata5("design:type", Function),
+  _ts_metadata5("design:paramtypes", [
+    typeof Partial === "undefined" ? Object : Partial,
+    typeof Folder === "undefined" ? Object : Folder
+  ])
+], InputSelect);
 
 // src/svg/chevronSvg.ts
-var svgChevron = () => {
+var svgChevron = /* @__PURE__ */ __name(() => {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("width", "24");
   svg.setAttribute("height", "24");
@@ -6373,16 +6578,26 @@ var svgChevron = () => {
   path.setAttribute("d", "m18 15-6-6-6 6");
   svg.appendChild(path);
   return svg;
-};
+}, "svgChevron");
 
 // src/controllers/NumberButtonsController.ts
 var NumberButtonsController = class {
+  static {
+    __name(this, "NumberButtonsController");
+  }
+  input;
+  opts;
+  parent;
+  elements;
   constructor(input, opts, parent) {
     this.input = input;
     this.opts = opts;
     this.parent = parent;
+    this.elements = {};
     this.elements.container = create("div", {
-      classes: ["fracgui-input-number-buttons-container"],
+      classes: [
+        "fracgui-input-number-buttons-container"
+      ],
       parent
     });
     this.elements.increment = create("div", {
@@ -6408,14 +6623,13 @@ var NumberButtonsController = class {
     this.elements.decrement.appendChild(upsideDownChevron);
     input.listen(this.elements.decrement, "pointerdown", this.rampChangeDown.bind(this));
   }
-  elements = {};
   rampChange(direction = 1) {
     const step = "step" in this.opts ? this.opts.step : 1;
     let delay = 300;
     let stop = false;
     let delta = 0;
     let timeout;
-    const change = () => {
+    const change = /* @__PURE__ */ __name(() => {
       clearTimeout(timeout);
       if (stop) return;
       delta += delay;
@@ -6425,14 +6639,18 @@ var NumberButtonsController = class {
       }
       this.input.set(this.input.state.value + step * direction);
       timeout = setTimeout(change, delay);
-    };
-    const stopChanging = () => {
+    }, "change");
+    const stopChanging = /* @__PURE__ */ __name(() => {
       stop = true;
       window.removeEventListener("pointerup", stopChanging);
       window.removeEventListener("pointercancel", stopChanging);
-    };
-    window.addEventListener("pointercancel", stopChanging, { once: true });
-    window.addEventListener("pointerup", stopChanging, { once: true });
+    }, "stopChanging");
+    window.addEventListener("pointercancel", stopChanging, {
+      once: true
+    });
+    window.addEventListener("pointerup", stopChanging, {
+      once: true
+    });
     change();
   }
   rampChangeUp() {
@@ -6446,45 +6664,54 @@ var NumberButtonsController = class {
 // src/shared/ua.ts
 function getUserAgent(request) {
   if (typeof globalThis.navigator === "undefined" && !request) {
-    console.error(
-      "Error getting user-agent: Request object is required on the server, but was not provided."
-    );
+    console.error("Error getting user-agent: Request object is required on the server, but was not provided.");
   }
   return request?.headers.get("user-agent") || globalThis.navigator?.userAgent;
 }
+__name(getUserAgent, "getUserAgent");
 function isPlatform(platform, request) {
   const ua = getUserAgent(request);
   return !!ua?.match(platform);
 }
+__name(isPlatform, "isPlatform");
 function isMac(request) {
   return isPlatform(/mac/i, request) && !isMobile(request);
 }
+__name(isMac, "isMac");
 function isApple(request) {
   return isMac(request) || isIOS(request) || isIPad(request) || isIPadOS(request) || isIPad(request);
 }
+__name(isApple, "isApple");
 function isMobile(request) {
   return isAndroid(request) || isIOS(request) || isIPad(request);
 }
+__name(isMobile, "isMobile");
 function isIOS(request) {
   return isPlatform(/iphone/i, request);
 }
+__name(isIOS, "isIOS");
 function isIPadOS(request) {
   return isIPad(request);
 }
+__name(isIPadOS, "isIPadOS");
 function isIPad(request) {
   return isPlatform(/ipad/i, request);
 }
+__name(isIPad, "isIPad");
 function isAndroid(request) {
   return isPlatform(/android/i, request);
 }
+__name(isAndroid, "isAndroid");
 
 // src/shared/keys.ts
 function modKey(event) {
   return isMac() ? event.metaKey : event.ctrlKey;
 }
+__name(modKey, "modKey");
 function modIcon() {
   return isApple() ? MODIFIER_KEY_DATA.metaKey.mac.icon : MODIFIER_KEY_DATA.ctrlKey.windows.icon;
 }
+__name(modIcon, "modIcon");
 var MODIFIER_KEY_DATA = {
   metaKey: {
     mac: {
@@ -6558,14 +6785,123 @@ var MODIFIER_KEY_DATA = {
 
 // src/controllers/NumberController.ts
 var NumberController = class {
+  static {
+    __name(this, "NumberController");
+  }
+  input;
+  opts;
+  parent;
+  element;
+  dragEnabled;
+  dragging;
+  hovering;
+  delta;
+  _log;
   constructor(input, opts, parent) {
     this.input = input;
     this.opts = opts;
     this.parent = parent;
-    this._log = new Logger(`NumberController ${this.input.title}`, { fg: "darkgoldenrod" });
+    this.dragEnabled = false;
+    this.dragging = false;
+    this.hovering = false;
+    this.delta = 0;
+    this.hoverStart = (e) => {
+      this._log.fn("hoverStart").debug(e);
+      this.hovering = true;
+      this.element.classList.add("hovering");
+      this.maybeEnableDrag(e);
+      this.element.removeEventListener("pointerleave", this.hoverEnd);
+      this.element.addEventListener("pointerleave", this.hoverEnd);
+      document.removeEventListener("keydown", this.maybeEnableDrag);
+      document.addEventListener("keydown", this.maybeEnableDrag);
+    };
+    this.hoverEnd = (e) => {
+      this._log.fn("hoverEnd").debug(e);
+      this.hovering = false;
+      this.element.classList.remove("hovering");
+      this.cancelDrag(e);
+      this.element.removeEventListener("pointerleave", this.hoverEnd);
+      document.removeEventListener("keydown", this.maybeEnableDrag);
+    };
+    this.dragKeyHeld = (e) => {
+      return modKey(e);
+    };
+    this.cancelDrag = (e) => {
+      this._log.fn("cancelDrag").debug(e);
+      this.dragEnabled = e.type === "keyup" ? this.dragKeyHeld(e) : false;
+      document.removeEventListener("keyup", this.cancelDrag);
+      this.element.removeEventListener("pointerleave", this.cancelDrag);
+      this.element.removeEventListener("pointerdown", this.maybeDragStart);
+      if (!this.dragEnabled) {
+        this.element.style.cursor = this.element.dataset["cursor"] ?? "text";
+        if (this.dragging) {
+          this.dragEnd();
+        }
+      }
+    };
+    this.maybeEnableDrag = (e) => {
+      this._log.fn("maybeEnableDrag").debug(e);
+      if (this.dragKeyHeld(e)) {
+        this.dragEnabled = true;
+        document.removeEventListener("keyup", this.cancelDrag);
+        document.addEventListener("keyup", this.cancelDrag);
+        this.element.removeEventListener("pointerleave", this.cancelDrag);
+        this.element.addEventListener("pointerleave", this.cancelDrag);
+        this.element.removeEventListener("pointerdown", this.maybeDragStart);
+        this.element.addEventListener("pointerdown", this.maybeDragStart);
+        this.element.dataset["cursor"] = getStyle(this.element, "cursor");
+        this.element.style.cursor = "ns-resize";
+      }
+    };
+    this.maybeDragStart = () => {
+      if (this.hovering && this.dragEnabled) {
+        this.dragStart();
+      }
+    };
+    this.dragStart = async () => {
+      this._log.fn("dragStart").debug();
+      this.dragging = true;
+      this.element.dispatchEvent(new Event("dragStart"));
+      this.element.tooltip.hide();
+      this.element.removeEventListener("pointermove", this.drag);
+      this.element.addEventListener("pointermove", this.drag);
+      document.removeEventListener("pointerup", this.dragEnd);
+      document.addEventListener("pointerup", this.dragEnd);
+      this.element.classList.add("dragging");
+      await this.element.requestPointerLock();
+      this.element.blur();
+    };
+    this.dragEnd = () => {
+      this._log.fn("dragEnd").debug();
+      this.dragging = false;
+      this.element.classList.remove("dragging");
+      this.element.removeEventListener("pointermove", this.drag);
+      document.removeEventListener("pointerup", this.dragEnd);
+      document.exitPointerLock();
+      this.element.dispatchEvent(new Event("dragEnd"));
+    };
+    this.drag = (e) => {
+      if (!this.dragging) return;
+      const multiplier = e.shiftKey ? 4 : e.altKey ? 0.1 : 1;
+      const direction = Math.sign(e.movementY);
+      this.delta += Math.abs(e.movementY);
+      if (this.delta > +this.element.step) {
+        const amount = +this.element.step * multiplier * -direction;
+        this.element.value = String(this.element.valueAsNumber + amount);
+        direction === -1 ? this.element.stepUp(+this.element.step * multiplier) : this.element.stepDown(+this.element.step * multiplier);
+        this.delta = 0;
+        this.element.dispatchEvent(new Event("input"));
+      }
+    };
+    this._log = new Logger(`NumberController ${this.input.title}`, {
+      fg: "darkgoldenrod"
+    });
     this.element = create("input", {
       type: "number",
-      classes: ["fracgui-controller", "fracgui-controller-number"],
+      classes: [
+        "fracgui-controller",
+        "fracgui-controller-number"
+      ],
       value: String(input.state.value),
       parent,
       tooltip: {
@@ -6589,100 +6925,15 @@ var NumberController = class {
     }
     input.listen(this.element, "pointerenter", this.hoverStart);
   }
-  element;
-  dragEnabled = false;
-  dragging = false;
-  hovering = false;
-  delta = 0;
-  _log;
-  hoverStart = (e) => {
-    this._log.fn("hoverStart").debug(e);
-    this.hovering = true;
-    this.element.classList.add("hovering");
-    this.maybeEnableDrag(e);
-    this.element.removeEventListener("pointerleave", this.hoverEnd);
-    this.element.addEventListener("pointerleave", this.hoverEnd);
-    document.removeEventListener("keydown", this.maybeEnableDrag);
-    document.addEventListener("keydown", this.maybeEnableDrag);
-  };
-  hoverEnd = (e) => {
-    this._log.fn("hoverEnd").debug(e);
-    this.hovering = false;
-    this.element.classList.remove("hovering");
-    this.cancelDrag(e);
-    this.element.removeEventListener("pointerleave", this.hoverEnd);
-    document.removeEventListener("keydown", this.maybeEnableDrag);
-  };
-  dragKeyHeld = (e) => {
-    return modKey(e);
-  };
-  cancelDrag = (e) => {
-    this._log.fn("cancelDrag").debug(e);
-    this.dragEnabled = e.type === "keyup" ? this.dragKeyHeld(e) : false;
-    document.removeEventListener("keyup", this.cancelDrag);
-    this.element.removeEventListener("pointerleave", this.cancelDrag);
-    this.element.removeEventListener("pointerdown", this.maybeDragStart);
-    if (!this.dragEnabled) {
-      this.element.style.cursor = this.element.dataset["cursor"] ?? "text";
-      if (this.dragging) {
-        this.dragEnd();
-      }
-    }
-  };
-  maybeEnableDrag = (e) => {
-    this._log.fn("maybeEnableDrag").debug(e);
-    if (this.dragKeyHeld(e)) {
-      this.dragEnabled = true;
-      document.removeEventListener("keyup", this.cancelDrag);
-      document.addEventListener("keyup", this.cancelDrag);
-      this.element.removeEventListener("pointerleave", this.cancelDrag);
-      this.element.addEventListener("pointerleave", this.cancelDrag);
-      this.element.removeEventListener("pointerdown", this.maybeDragStart);
-      this.element.addEventListener("pointerdown", this.maybeDragStart);
-      this.element.dataset["cursor"] = getStyle(this.element, "cursor");
-      this.element.style.cursor = "ns-resize";
-    }
-  };
-  maybeDragStart = () => {
-    if (this.hovering && this.dragEnabled) {
-      this.dragStart();
-    }
-  };
-  dragStart = async () => {
-    this._log.fn("dragStart").debug();
-    this.dragging = true;
-    this.element.dispatchEvent(new Event("dragStart"));
-    this.element.tooltip.hide();
-    this.element.removeEventListener("pointermove", this.drag);
-    this.element.addEventListener("pointermove", this.drag);
-    document.removeEventListener("pointerup", this.dragEnd);
-    document.addEventListener("pointerup", this.dragEnd);
-    this.element.classList.add("dragging");
-    await this.element.requestPointerLock();
-    this.element.blur();
-  };
-  dragEnd = () => {
-    this._log.fn("dragEnd").debug();
-    this.dragging = false;
-    this.element.classList.remove("dragging");
-    this.element.removeEventListener("pointermove", this.drag);
-    document.removeEventListener("pointerup", this.dragEnd);
-    document.exitPointerLock();
-    this.element.dispatchEvent(new Event("dragEnd"));
-  };
-  drag = (e) => {
-    if (!this.dragging) return;
-    const multiplier = e.shiftKey ? 4 : e.altKey ? 0.1 : 1;
-    const direction = Math.sign(e.movementY);
-    this.delta += Math.abs(e.movementY);
-    if (this.delta > +this.element.step) {
-      const amount = +this.element.step * multiplier * -direction;
-      this.element.value = String(this.element.valueAsNumber + amount);
-      direction === -1 ? this.element.stepUp(+this.element.step * multiplier) : this.element.stepDown(+this.element.step * multiplier);
-      this.delta = 0;
-      this.element.dispatchEvent(new Event("input"));
-    }
-  };
+  hoverStart;
+  hoverEnd;
+  dragKeyHeld;
+  cancelDrag;
+  maybeEnableDrag;
+  maybeDragStart;
+  dragStart;
+  dragEnd;
+  drag;
   dispose() {
     this.element.removeEventListener("pointerenter", this.hoverStart);
     this.element.removeEventListener("pointerleave", this.hoverEnd);
@@ -6698,10 +6949,13 @@ var NumberController = class {
 };
 
 // src/controllers/number.ts
-var rangeController = (input, opts, parent) => {
+var rangeController = /* @__PURE__ */ __name((input, opts, parent) => {
   const range = create("input", {
     type: "range",
-    classes: ["fracgui-controller", "fracgui-input-number-range"],
+    classes: [
+      "fracgui-controller",
+      "fracgui-input-number-range"
+    ],
     value: String(input.state.value),
     parent
   });
@@ -6710,19 +6964,21 @@ var rangeController = (input, opts, parent) => {
   if ("step" in opts) range.step = String(opts.step);
   input.listen(range, "input", input.set.bind(input));
   return range;
-};
+}, "rangeController");
 
 // src/inputs/InputNumber.ts
 var NUMBER_INPUT_DEFAULTS = {
   __type: "NumberInputOptions"
 };
 var InputNumber = class extends Input {
+  static {
+    __name(this, "InputNumber");
+  }
   __type = "InputNumber";
   _log;
   initialValue;
   state;
   dragEnabled = false;
-  // todo - Move this into the number controller?
   numberController;
   numberButtonsController;
   constructor(options, folder) {
@@ -6736,12 +6992,19 @@ var InputNumber = class extends Input {
     const step = v / 100;
     opts.step ??= step <= 0.1 ? 1e-3 : 0.1;
     super(opts, folder);
-    this._log = new Logger(`InputNumber ${opts.title}`, { fg: "cyan" });
-    this._log.fn("constructor").debug({ opts, this: this });
+    this._log = new Logger(`InputNumber ${opts.title}`, {
+      fg: "cyan"
+    });
+    this._log.fn("constructor").debug({
+      opts,
+      this: this
+    });
     this.initialValue = this.resolveInitialValue(opts);
     this.state = this.resolveState(opts);
     const container = create("div", {
-      classes: ["fracgui-input-number-container"],
+      classes: [
+        "fracgui-input-number-container"
+      ],
       parent: this.elements.content
     });
     this.numberController = new NumberController(this, opts, container);
@@ -6759,18 +7022,20 @@ var InputNumber = class extends Input {
     this._evm.listen(this.elements.controllers.input, "dragStart", this.lock);
     this._evm.listen(this.elements.controllers.input, "dragEnd", () => this.unlock());
   }
-  set = (v) => {
+  set = /* @__PURE__ */ __name((v) => {
     this._log.fn("set").debug(v);
     if (typeof v === "undefined") return;
     let newValue = v;
     if (v instanceof Event && v?.target && "valueAsNumber" in v.target) {
       newValue = v.target.valueAsNumber;
     }
-    this.commit({ to: newValue });
+    this.commit({
+      to: newValue
+    });
     this.state.set(newValue);
     this._emit("change", newValue);
     return this;
-  };
+  }, "set");
   enable() {
     this._log.fn("enable").debug();
     this.elements.controllers.input.disabled = false;
@@ -6783,39 +7048,799 @@ var InputNumber = class extends Input {
     super.disable();
     return this;
   }
-  refresh = () => {
+  refresh = /* @__PURE__ */ __name(() => {
     const v = this.state.value;
     this._log.fn("refresh").debug(v);
     this.elements.controllers.range.value = String(v);
     this.elements.controllers.input.value = String(v);
     super.refresh(v);
     return this;
-  };
+  }, "refresh");
   dispose() {
     this._log.fn("dispose").debug();
     super.dispose();
   }
 };
 
+// src/shared/color/regex.ts
+var CSS_INTEGER = "[-\\+]?\\d+%?";
+var CSS_NUMBER = "[-\\+]?\\d*\\.\\d+%?";
+var CSS_UNIT = "(?:" + CSS_NUMBER + ")|(?:" + CSS_INTEGER + ")";
+var PERMISSIVE_MATCH_3 = "[\\s|\\(]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")\\s*\\)?";
+var PERMISSIVE_MATCH_4 = "[\\s|\\(]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")[,|\\s]+(" + CSS_UNIT + ")\\s*\\)?";
+var REGEX_FUNCTIONAL_RGB = new RegExp("rgb" + PERMISSIVE_MATCH_3);
+var REGEX_FUNCTIONAL_RGBA = new RegExp("rgba" + PERMISSIVE_MATCH_4);
+var REGEX_FUNCTIONAL_HSL = new RegExp("hsl" + PERMISSIVE_MATCH_3);
+var REGEX_FUNCTIONAL_HSLA = new RegExp("hsla" + PERMISSIVE_MATCH_4);
+var HEX_START = "^(?:#?|0x?)";
+var HEX_INT_SINGLE = "([0-9a-fA-F]{1})";
+var HEX_INT_DOUBLE = "([0-9a-fA-F]{2})";
+var REGEX_HEX_3 = new RegExp(HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + "$");
+var REGEX_HEX_4 = new RegExp(HEX_START + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + HEX_INT_SINGLE + "$");
+var REGEX_HEX_6 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + "$");
+var REGEX_HEX_8 = new RegExp(HEX_START + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + HEX_INT_DOUBLE + "$");
+
+// src/shared/color/conversions/kelvinToRgb.ts
+function kelvinToRgb(kelvin) {
+  const temp = kelvin / 100;
+  let r2;
+  let g2;
+  let b2;
+  if (temp < 66) {
+    r2 = 255;
+    g2 = -155.25485562709179 - 0.44596950469579133 * (g2 = temp - 2) + 104.49216199393888 * Math.log(g2);
+    b2 = temp < 20 ? 0 : -254.76935184120902 + 0.8274096064007395 * (b2 = temp - 10) + 115.67994401066147 * Math.log(b2);
+  } else {
+    r2 = 351.97690566805693 + 0.114206453784165 * (r2 = temp - 55) - 40.25366309332127 * Math.log(r2);
+    g2 = 325.4494125711974 + 0.07943456536662342 * (g2 = temp - 50) - 28.0852963507957 * Math.log(g2);
+    b2 = 255;
+  }
+  return {
+    r: clamp(Math.floor(r2), 0, 255),
+    g: clamp(Math.floor(g2), 0, 255),
+    b: clamp(Math.floor(b2), 0, 255)
+  };
+}
+__name(kelvinToRgb, "kelvinToRgb");
+
+// src/shared/color/conversions/rgbToKelvin.ts
+var KELVIN_MIN = 2e3;
+var KELVIN_MAX = 4e4;
+function rgbToKelvin(rgb) {
+  const { r: r2, b: b2 } = rgb;
+  const eps = 0.4;
+  let minTemp = KELVIN_MIN;
+  let maxTemp = KELVIN_MAX;
+  let temp;
+  while (maxTemp - minTemp > eps) {
+    temp = (maxTemp + minTemp) * 0.5;
+    const rgb2 = kelvinToRgb(temp);
+    if (rgb2.b / rgb2.r >= b2 / r2) {
+      maxTemp = temp;
+    } else {
+      minTemp = temp;
+    }
+  }
+  return temp;
+}
+__name(rgbToKelvin, "rgbToKelvin");
+
+// src/shared/color/conversions/rgbToHsv.ts
+function rgbToHsv(rgb) {
+  const r2 = rgb.r / 255;
+  const g2 = rgb.g / 255;
+  const b2 = rgb.b / 255;
+  const max = Math.max(r2, g2, b2);
+  const min = Math.min(r2, g2, b2);
+  const delta = max - min;
+  let hue = 0;
+  let value = max;
+  let saturation = max === 0 ? 0 : delta / max;
+  switch (max) {
+    case min:
+      hue = 0;
+      break;
+    case r2:
+      hue = (g2 - b2) / delta + (g2 < b2 ? 6 : 0);
+      break;
+    case g2:
+      hue = (b2 - r2) / delta + 2;
+      break;
+    case b2:
+      hue = (r2 - g2) / delta + 4;
+      break;
+  }
+  return {
+    h: hue * 60 % 360,
+    s: clamp(saturation * 100, 0, 100),
+    v: clamp(value * 100, 0, 100)
+  };
+}
+__name(rgbToHsv, "rgbToHsv");
+
+// src/shared/color/conversions/hslToHsv.ts
+function hslToHsv(hsl) {
+  const l = hsl.l * 2;
+  const s = hsl.s * (l <= 100 ? l : 200 - l) / 100;
+  const saturation = l + s < 1e-9 ? 0 : 2 * s / (l + s);
+  return {
+    h: hsl.h,
+    s: clamp(saturation * 100, 0, 100),
+    v: clamp((l + s) / 2, 0, 100)
+  };
+}
+__name(hslToHsv, "hslToHsv");
+
+// src/shared/color/conversions/hsvToHsl.ts
+function hsvToHsl(hsv) {
+  const s = hsv.s / 100;
+  const v = hsv.v / 100;
+  const l = (2 - s) * v;
+  const divisor = l <= 1 ? l : 2 - l;
+  const saturation = divisor < 1e-9 ? 0 : s * v / divisor;
+  return {
+    h: hsv.h,
+    s: clamp(saturation * 100, 0, 100),
+    l: clamp(l * 50, 0, 100)
+  };
+}
+__name(hsvToHsl, "hsvToHsl");
+
+// src/shared/color/conversions/hsvToRgb.ts
+function hsvToRgb(hsv) {
+  const h = hsv.h / 60;
+  const s = hsv.s / 100;
+  const v = hsv.v / 100;
+  const i = Math.floor(h);
+  const f = h - i;
+  const p = v * (1 - s);
+  const q = v * (1 - f * s);
+  const t = v * (1 - (1 - f) * s);
+  const mod = i % 6;
+  const r2 = [
+    v,
+    q,
+    p,
+    p,
+    t,
+    v
+  ][mod];
+  const g2 = [
+    t,
+    v,
+    v,
+    q,
+    p,
+    p
+  ][mod];
+  const b2 = [
+    p,
+    p,
+    t,
+    v,
+    v,
+    q
+  ][mod];
+  return {
+    r: clamp(r2 * 255, 0, 255),
+    g: clamp(g2 * 255, 0, 255),
+    b: clamp(b2 * 255, 0, 255)
+  };
+}
+__name(hsvToRgb, "hsvToRgb");
+
+// src/shared/color/conversions/parseHexInt.ts
+function parseHexInt(str) {
+  if (str.length !== 2) throw new Error("Invalid hex string: " + str);
+  return parseInt(str, 16);
+}
+__name(parseHexInt, "parseHexInt");
+
+// src/shared/color/conversions/parseUnit.ts
+function parseUnit(str, max) {
+  const isPercentage = str.indexOf("%") > -1;
+  const num = parseFloat(str);
+  return isPercentage ? max / 100 * num : num;
+}
+__name(parseUnit, "parseUnit");
+
+// src/shared/color/conversions/intToHex.ts
+function intToHex(int) {
+  return int.toString(16).padStart(2, "0");
+}
+__name(intToHex, "intToHex");
+
+// src/shared/color/color.ts
+var DEFAULT_COLOR = {
+  h: 0,
+  s: 0,
+  v: 0,
+  a: 1
+};
+var Color = class _Color {
+  static {
+    __name(this, "Color");
+  }
+  isColor = true;
+  #hsva;
+  #initialValue;
+  /**
+  * @param color - The initial color value.
+  * The value can be any valid color representation:
+  * - A hex string: '#5500ee' | '#5500eeff'
+  * - An rgba string: 'rgba(85, 0, 238, 1)' | 'rgba(85, 0, 238, 1.0)'
+  * - An hsla string: 'hsla(261, 100%, 47%, 1)' | 'hsla(261, 100%, 47%, 1.0)'
+  * - An {@link RgbvColor}: { r: 85, g: 0, b: 238, a: 1 }
+  * - An {@link HsvColor}: { h: 261, s: 100, v: 47, a: 1 }
+  * - An {@link HslColor}: { h: 261, s: 100, l: 47, a: 1 }
+  * - An {@link KelvinColor}: { kelvin: 6500 }
+  */
+  constructor(color2) {
+    this.#hsva = DEFAULT_COLOR;
+    if (color2) this.set(color2);
+    this.#initialValue = structuredClone(this.#hsva);
+    return this;
+  }
+  /**
+  * Sets the Color from any valid {@link ColorValue}.
+  */
+  set(color2) {
+    if (typeof color2 === "string") {
+      if (/^(?:#?|0x?)[0-9a-fA-F]{3,8}$/.test(color2)) {
+        this.hexString = color2;
+      } else if (/^rgba?/.test(color2)) {
+        this.rgbString = color2;
+      } else if (/^hsla?/.test(color2)) {
+        this.hslString = color2;
+      }
+    } else if (typeof color2 === "object") {
+      if (color2 instanceof _Color) {
+        this.hsva = color2.hsva;
+      } else if ("r" in color2 && "g" in color2 && "b" in color2) {
+        this.rgb = color2;
+      } else if ("h" in color2 && "s" in color2 && "v" in color2) {
+        this.hsv = color2;
+      } else if ("h" in color2 && "s" in color2 && "l" in color2) {
+        this.hsl = color2;
+      } else if ("kelvin" in color2) {
+        this.kelvin = color2.kelvin;
+      }
+    } else {
+      throw new Error("Invalid color value: " + color2);
+    }
+  }
+  /**
+  * Shortcut to set a specific channel value.
+  * @param format - hsv | hsl | rgb
+  * @param channel - Individual channel to set, for example, if format = hsl, chanel = h | s | l
+  * @param value - New value for the channel.
+  */
+  setChannel(format, channel, value) {
+    this[format] = {
+      ...this[format],
+      [channel]: value
+    };
+  }
+  /**
+  * Reset color back to its initial value
+  */
+  reset() {
+    this.hsva = this.#initialValue;
+  }
+  /**
+  * Returns a new Color instance with the same values as this one.
+  */
+  clone() {
+    return new _Color(this);
+  }
+  /** i.e. `{ h: 261, s: 100, v: 47 }` */
+  get hsv() {
+    const { h, s, v } = this.#hsva;
+    return {
+      h,
+      s,
+      v
+    };
+  }
+  // All other setters go through this one.
+  set hsv(value) {
+    const oldValue = this.#hsva;
+    const mergedValue = {
+      ...oldValue,
+      ...value
+    };
+    if (this.#hsva.h === mergedValue.h && this.#hsva.s === mergedValue.s && this.#hsva.v === mergedValue.v && this.#hsva.a === mergedValue.a) {
+      return;
+    }
+    this.#hsva = {
+      h: Math.round(mergedValue.h),
+      s: Math.round(mergedValue.s),
+      v: Math.round(mergedValue.v),
+      a: mergedValue.a
+    };
+  }
+  /** i.e. `{ h: 261, s: 100, v: 47, a: 1 }` */
+  get hsva() {
+    return structuredClone(this.#hsva);
+  }
+  set hsva(value) {
+    this.hsv = value;
+  }
+  /** The value of `H` in `HSVA`. */
+  get hue() {
+    return this.#hsva.h;
+  }
+  set hue(value) {
+    this.hsv = {
+      h: value
+    };
+  }
+  /** The value of `S` in `HSVA`. */
+  get saturation() {
+    return this.#hsva.s;
+  }
+  set saturation(value) {
+    this.hsv = {
+      s: value
+    };
+  }
+  /** The value of `V` in `HSVA`. */
+  get value() {
+    return this.#hsva.v;
+  }
+  set value(value) {
+    this.hsv = {
+      v: value
+    };
+  }
+  /** The value of `L` in `HSLA`. */
+  get lightness() {
+    return this.hsl.l;
+  }
+  set lightness(value) {
+    this.hsl = {
+      ...this.hsl,
+      l: value
+    };
+  }
+  get alpha() {
+    return this.#hsva.a ?? 1;
+  }
+  set alpha(value) {
+    this.hsv = {
+      ...this.hsv,
+      a: value
+    };
+  }
+  get kelvin() {
+    return rgbToKelvin(this.rgb);
+  }
+  set kelvin(value) {
+    this.rgb = kelvinToRgb(value);
+  }
+  get red() {
+    return this.rgb.r;
+  }
+  set red(value) {
+    this.rgb = {
+      ...this.rgb,
+      r: value
+    };
+  }
+  /**
+  * A float version of the {@link red} channel value as a fraction of 1 (0-1 vs 0-255).
+  */
+  get r() {
+    return this.rgb.r / 255;
+  }
+  set r(value) {
+    this.red = value * 255;
+  }
+  get green() {
+    return this.rgb.g;
+  }
+  set green(value) {
+    this.rgb = {
+      ...this.rgb,
+      g: value
+    };
+  }
+  /**
+  * A float version of the {@link green} channel value as a fraction of 1 (0-1 vs 0-255).
+  */
+  get g() {
+    return this.rgb.g / 255;
+  }
+  set g(value) {
+    this.green = value * 255;
+  }
+  get blue() {
+    return this.rgb.b;
+  }
+  set blue(value) {
+    this.rgb = {
+      ...this.rgb,
+      b: value
+    };
+  }
+  /**
+  * A float version of the {@link blue} channel value as a fraction of 1 (0-1 vs 0-255).
+  */
+  get b() {
+    return this.rgb.b / 255;
+  }
+  set b(value) {
+    this.blue = value * 255;
+  }
+  /** i.e. `{ r: 85, g: 0, b: 238 }` */
+  get rgb() {
+    const { r: r2, g: g2, b: b2 } = hsvToRgb(this.#hsva);
+    return {
+      r: Math.round(r2),
+      g: Math.round(g2),
+      b: Math.round(b2)
+    };
+  }
+  set rgb(value) {
+    this.hsv = {
+      ...rgbToHsv(value),
+      a: "a" in value ? value.a : 1
+    };
+  }
+  /**
+  * A float version of {@link rgb} values as a fraction of 1 (0-1 vs 0-255).
+  */
+  get rgbf() {
+    return {
+      r: this.r,
+      g: this.g,
+      b: this.b
+    };
+  }
+  set rgbf(value) {
+    this.rgb = {
+      r: value.r,
+      g: value.g,
+      b: value.b
+    };
+  }
+  /** i.e. `'rgba(85, 0, 238, 1)'` */
+  get rgba() {
+    return {
+      ...this.rgb,
+      a: this.alpha
+    };
+  }
+  set rgba(value) {
+    this.rgb = value;
+  }
+  /** i.e. `'hsl(261, 100%, 47%)'` */
+  get hsl() {
+    const { h, s, l } = hsvToHsl(this.#hsva);
+    return {
+      h: Math.round(h),
+      s: Math.round(s),
+      l: Math.round(l)
+    };
+  }
+  set hsl(value) {
+    this.hsv = {
+      ...hslToHsv(value),
+      a: "a" in value ? value.a : 1
+    };
+  }
+  /** i.e. `'hsla(261, 100%, 47%, 1)'` */
+  get hsla() {
+    return {
+      ...this.hsl,
+      a: this.alpha
+    };
+  }
+  set hsla(value) {
+    this.hsl = value;
+  }
+  /** i.e. `'rgb(85, 0, 238)'` */
+  get rgbString() {
+    return `rgb(${this.rgb.r}, ${this.rgb.g}, ${this.rgb.b})`;
+  }
+  set rgbString(value) {
+    let match;
+    let r2;
+    let g2;
+    let b2;
+    let a = 1;
+    if (match = REGEX_FUNCTIONAL_RGB.exec(value)) {
+      r2 = parseUnit(match[1], 255);
+      g2 = parseUnit(match[2], 255);
+      b2 = parseUnit(match[3], 255);
+    } else if (match = REGEX_FUNCTIONAL_RGBA.exec(value)) {
+      r2 = parseUnit(match[1], 255);
+      g2 = parseUnit(match[2], 255);
+      b2 = parseUnit(match[3], 255);
+      a = parseUnit(match[4], 1);
+    } else {
+      throw new Error("Invalid rgb string: " + value);
+    }
+    this.rgb = {
+      r: r2,
+      g: g2,
+      b: b2,
+      a
+    };
+  }
+  /** i.e. `'rgba(85, 0, 238, 1)'` */
+  get rgbaString() {
+    const rgba = this.rgba;
+    return `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`;
+  }
+  set rgbaString(value) {
+    this.rgbString = value;
+  }
+  /**
+  * Hex string with an alpha channel, i.e. `'#5500eeff'`. Identical to {@link hex8String}.
+  */
+  get hex() {
+    return this.hex8String;
+  }
+  /** Hex string with no alpha channel, i.e. `'#5500ee'` */
+  get hexString() {
+    const rgb = this.rgb;
+    return `#${intToHex(rgb.r)}${intToHex(rgb.g)}${intToHex(rgb.b)}`;
+  }
+  set hexString(value) {
+    const match = value.match(REGEX_HEX_3) || value.match(REGEX_HEX_4) || value.match(REGEX_HEX_6) || value.match(REGEX_HEX_8);
+    if (!match) throw new Error("Invalid hex string");
+    const [r2, g2, b2, a = 255] = match.slice(1).map((c2) => parseHexInt(c2.length === 1 ? `${c2}${c2}` : c2));
+    this.rgb = {
+      r: r2,
+      g: g2,
+      b: b2,
+      a: +a / 255
+    };
+  }
+  get hex8() {
+    return this.hex8String;
+  }
+  /** i.e. `'#5500eeff'` */
+  get hex8String() {
+    const rgba = this.rgba;
+    return `#${intToHex(rgba.r)}${intToHex(rgba.g)}${intToHex(rgba.b)}${intToHex(Math.floor((rgba.a ?? 1) * 255))}`;
+  }
+  set hex8String(value) {
+    this.hexString = value;
+  }
+  /** i.e. `'rgb(85, 0, 238)'` */
+  get hslString() {
+    const hsl = this.hsl;
+    return `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+  }
+  set hslString(value) {
+    const match = REGEX_FUNCTIONAL_HSL.exec(value) || REGEX_FUNCTIONAL_HSLA.exec(value);
+    if (!match) throw new Error("Invalid rgb string: " + value);
+    const [r2, g2, b2, a = 1] = match.slice(1).map((val, index) => parseUnit(val, index < 3 ? 255 : 1));
+    this.rgb = {
+      r: r2,
+      g: g2,
+      b: b2,
+      a
+    };
+  }
+  /** i.e. `'hsla(261, 100%, 47%, 1)'` */
+  get hslaString() {
+    const hsla = this.hsla;
+    return `hsla(${hsla.h}, ${hsla.s}%, ${hsla.l}%, ${hsla.a})`;
+  }
+  set hslaString(value) {
+    this.hslString = value;
+  }
+  toString() {
+    return this.hex8String;
+  }
+  toJSON() {
+    return {
+      isColor: true,
+      ...this.rgba,
+      hex: this.hex8String
+    };
+  }
+};
+function isColor(color2) {
+  return !!color2.isColor;
+}
+__name(isColor, "isColor");
+function isColorFormat(color2) {
+  return typeof parseColorFormat(color2) !== "undefined";
+}
+__name(isColorFormat, "isColorFormat");
+function parseColorFormat(color2) {
+  if (typeof color2 === "string") {
+    if (color2.match(/^#?[0-9a-fA-F]{6}$/)) {
+      return "HexString";
+    } else if (color2.match(/^#?[0-9a-fA-F]{8}$/)) {
+      return "Hex8String";
+    } else if (color2.match(/^rgba?/)) {
+      return "RgbaString";
+    } else if (color2.match(/^hsla?/)) {
+      return "HslaString";
+    }
+  } else if (typeof color2 === "object") {
+    if (color2 instanceof Color) {
+      return "Color";
+    } else if ("r" in color2 && "g" in color2 && "b" in color2) {
+      return "RgbColor";
+    } else if ("h" in color2 && "s" in color2 && "v" in color2) {
+      return "HsvColor";
+    } else if ("h" in color2 && "s" in color2 && "l" in color2) {
+      return "HslColor";
+    } else if ("kelvin" in color2) {
+      return "number";
+    }
+  }
+  return void 0;
+}
+__name(parseColorFormat, "parseColorFormat");
+
 // src/controllers/color/ColorComponents.ts
+function _ts_decorate6(decorators, target, key, desc) {
+  var c2 = arguments.length, r2 = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r2 = Reflect.decorate(decorators, target, key, desc);
+  else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r2 = (c2 < 3 ? d(r2) : c2 > 3 ? d(target, key, r2) : d(target, key)) || r2;
+  return c2 > 3 && r2 && Object.defineProperty(target, key, r2), r2;
+}
+__name(_ts_decorate6, "_ts_decorate");
+function _ts_metadata6(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+__name(_ts_metadata6, "_ts_metadata");
 var COLOR_PICKER_DEFAULTS = {
   disabled: false
 };
-var ColorComponents = @disableable class {
+var ColorComponents = class {
+  static {
+    __name(this, "ColorComponents");
+  }
+  input;
+  opts;
+  element;
+  elements;
+  select;
+  _evm;
+  _mode;
+  /**
+  * Used to prevent inputs from being refreshed externally after they're updated internally.
+  */
+  _locked;
+  _log;
   constructor(input, options) {
     this.input = input;
-    const opts = { ...COLOR_PICKER_DEFAULTS, ...options };
-    this._log = new Logger(`ColorComponents ${input.title}`, { fg: "wheat" });
+    this._evm = new EventManager();
+    this._locked = false;
+    this.updateMode = (v = this.mode) => {
+      this._log.fn(`updateMode`, v).debug();
+      this._mode = v;
+      if (this.#modeType() === "text") {
+        this.elements.text.classList.add("visible");
+        for (const [, v2] of entries(this.elements.numbers)) {
+          v2.classList.remove("visible");
+        }
+        this.#refreshText();
+      } else {
+        this.elements.text.classList.remove("visible");
+        for (const [, v2] of entries(this.elements.numbers)) {
+          v2.classList.add("visible");
+        }
+        if (this.mode === "rgba") {
+          this.#setProps(this.elements.numbers.a, {
+            min: 0,
+            max: 255,
+            step: 1
+          });
+          this.#setProps(this.elements.numbers.b, {
+            min: 0,
+            max: 255,
+            step: 1
+          });
+          this.#setProps(this.elements.numbers.c, {
+            min: 0,
+            max: 255,
+            step: 1
+          });
+          this.#setProps(this.elements.numbers.d, {
+            min: 0,
+            max: 1,
+            step: 0.01
+          });
+        }
+        if ([
+          "hsla",
+          "hsva"
+        ].includes(this.mode)) {
+          this.#setProps(this.elements.numbers.a, {
+            min: 0,
+            max: 360,
+            step: 1
+          });
+          this.#setProps(this.elements.numbers.b, {
+            min: 0,
+            max: 100,
+            step: 1
+          });
+          this.#setProps(this.elements.numbers.c, {
+            min: 0,
+            max: 100,
+            step: 1
+          });
+          this.#setProps(this.elements.numbers.d, {
+            min: 0,
+            max: 1,
+            step: 0.01
+          });
+        }
+        this.elements.select.selected.innerHTML = [
+          ...v
+        ].map((c2, i) => `<span class="${[
+          "a",
+          "b",
+          "c",
+          "d"
+        ][i]}">${c2}</span>`).join("");
+      }
+      this.refresh();
+    };
+    this.#setProps = (el, props) => {
+      this._log.fn(`#setProps`, el, props).debug();
+      for (const [k, v] of entries(props)) {
+        el[k] = String(v);
+      }
+    };
+    this.#refreshText = () => {
+      this.elements.text.value = // @ts-ignore fuck off
+      this.color[this.mode.startsWith("hex") ? this.mode + "String" : this.mode];
+    };
+    this.refresh = () => {
+      this._log.fn("refresh").debug();
+      const color2 = this.input.state.value.hex8String;
+      const mode = this.mode;
+      if (this.#lastColor === color2 && mode === this.#lastMode) {
+        return this;
+      }
+      this.#lastColor = color2;
+      this.#lastMode = mode;
+      if (this._locked) {
+        this._locked = false;
+        return this;
+      }
+      if (this.#modeType() === "text") {
+        this.#refreshText();
+      } else {
+        this.elements.numbers.a.value = String(this.a);
+        this.elements.numbers.b.value = String(this.b);
+        this.elements.numbers.c.value = String(this.c);
+        this.elements.numbers.d.value = String(this.d);
+      }
+      return this;
+    };
+    const opts = {
+      ...COLOR_PICKER_DEFAULTS,
+      ...options
+    };
+    this._log = new Logger(`ColorComponents ${input.title}`, {
+      fg: "wheat"
+    });
     this.opts = opts;
     this._mode = input.mode;
     const parent = opts.container ?? input.elements.controllers.container;
     const componentsContainer = create("div", {
-      classes: ["fracgui-input-color-components-container"],
+      classes: [
+        "fracgui-input-color-components-container"
+      ],
       parent
     });
     this.element = componentsContainer;
     const selectContainer = create("div", {
-      classes: ["fracgui-input-color-components-select-container"],
+      classes: [
+        "fracgui-input-color-components-select-container"
+      ],
       parent: componentsContainer
     });
     this.select = new Select({
@@ -6823,13 +7848,21 @@ var ColorComponents = @disableable class {
       // disabled: this.opts.disabled,
       disabled: this.disabled,
       container: selectContainer,
-      options: ["hex", "hex8", "rgba", "hsla", "hsva"]
+      options: [
+        "hex",
+        "hex8",
+        "rgba",
+        "hsla",
+        "hsva"
+      ]
     });
     this.select.on("change", (v) => {
       this.updateMode(v.value);
     });
     const numbersContainer = create("div", {
-      classes: ["fracgui-input-color-components-numbers-container"],
+      classes: [
+        "fracgui-input-color-components-numbers-container"
+      ],
       parent: componentsContainer
     });
     const numbers = {
@@ -6843,10 +7876,10 @@ var ColorComponents = @disableable class {
     numbers.c.classList.add("c");
     numbers.d.classList.add("d");
     for (const [k, v] of entries(numbers)) {
-      const update = () => {
+      const update = /* @__PURE__ */ __name(() => {
         this[k] = +v.value;
         this.input.set(this.color);
-      };
+      }, "update");
       if (this.#modeType() === "text") {
         v.classList.add("visible");
       }
@@ -6882,17 +7915,6 @@ var ColorComponents = @disableable class {
       this.disabled = options.disabled;
     }
   }
-  opts;
-  element;
-  elements;
-  select;
-  _evm = new EventManager();
-  _mode;
-  /**
-   * Used to prevent inputs from being refreshed externally after they're updated internally.
-   */
-  _locked = false;
-  _log;
   get color() {
     return this.input.state.value;
   }
@@ -6904,42 +7926,8 @@ var ColorComponents = @disableable class {
     this._mode = v;
     this.select.selected = v;
   }
-  updateMode = (v = this.mode) => {
-    this._log.fn(`updateMode`, v).debug();
-    this._mode = v;
-    if (this.#modeType() === "text") {
-      this.elements.text.classList.add("visible");
-      for (const [, v2] of entries(this.elements.numbers)) {
-        v2.classList.remove("visible");
-      }
-      this.#refreshText();
-    } else {
-      this.elements.text.classList.remove("visible");
-      for (const [, v2] of entries(this.elements.numbers)) {
-        v2.classList.add("visible");
-      }
-      if (this.mode === "rgba") {
-        this.#setProps(this.elements.numbers.a, { min: 0, max: 255, step: 1 });
-        this.#setProps(this.elements.numbers.b, { min: 0, max: 255, step: 1 });
-        this.#setProps(this.elements.numbers.c, { min: 0, max: 255, step: 1 });
-        this.#setProps(this.elements.numbers.d, { min: 0, max: 1, step: 0.01 });
-      }
-      if (["hsla", "hsva"].includes(this.mode)) {
-        this.#setProps(this.elements.numbers.a, { min: 0, max: 360, step: 1 });
-        this.#setProps(this.elements.numbers.b, { min: 0, max: 100, step: 1 });
-        this.#setProps(this.elements.numbers.c, { min: 0, max: 100, step: 1 });
-        this.#setProps(this.elements.numbers.d, { min: 0, max: 1, step: 0.01 });
-      }
-      this.elements.select.selected.innerHTML = [...v].map((c2, i) => `<span class="${["a", "b", "c", "d"][i]}">${c2}</span>`).join("");
-    }
-    this.refresh();
-  };
-  #setProps = (el, props) => {
-    this._log.fn(`#setProps`, el, props).debug();
-    for (const [k, v] of entries(props)) {
-      el[k] = String(v);
-    }
-  };
+  updateMode;
+  #setProps;
   get a() {
     return this.mode === "rgba" ? this.color.rgba.r : this.color.hsla.h;
   }
@@ -6995,43 +7983,19 @@ var ColorComponents = @disableable class {
     this.input.refresh();
   }
   #modeType() {
-    if (["rgba", "hsla", "hsva"].includes(this.mode)) {
+    if ([
+      "rgba",
+      "hsla",
+      "hsva"
+    ].includes(this.mode)) {
       return "numbers";
     }
     return "text";
   }
-  #refreshText = () => {
-    this.elements.text.value = // @ts-ignore fuck off
-    this.color[this.mode.startsWith("hex") ? this.mode + "String" : this.mode];
-  };
+  #refreshText;
   #lastColor;
   #lastMode;
-  /**
-   * Updates the UI to reflect the current state of the source color.
-   */
-  refresh = () => {
-    this._log.fn("refresh").debug();
-    const color2 = this.input.state.value.hex8String;
-    const mode = this.mode;
-    if (this.#lastColor === color2 && mode === this.#lastMode) {
-      return this;
-    }
-    this.#lastColor = color2;
-    this.#lastMode = mode;
-    if (this._locked) {
-      this._locked = false;
-      return this;
-    }
-    if (this.#modeType() === "text") {
-      this.#refreshText();
-    } else {
-      this.elements.numbers.a.value = String(this.a);
-      this.elements.numbers.b.value = String(this.b);
-      this.elements.numbers.c.value = String(this.c);
-      this.elements.numbers.d.value = String(this.d);
-    }
-    return this;
-  };
+  refresh;
   disable() {
     if (!this.disabled) this.disabled = true;
     this.select.disable();
@@ -7061,9 +8025,17 @@ var ColorComponents = @disableable class {
     this._evm.dispose();
   }
 };
+ColorComponents = _ts_decorate6([
+  disableable,
+  _ts_metadata6("design:type", Function),
+  _ts_metadata6("design:paramtypes", [
+    typeof InputColor === "undefined" ? Object : InputColor,
+    typeof Partial === "undefined" ? Object : Partial
+  ])
+], ColorComponents);
 
 // src/shared/mapRange.ts
-var mapRange = (value, x1, x2, y1, y2) => (value - x1) * (y2 - y1) / (x2 - x1) + y1;
+var mapRange = /* @__PURE__ */ __name((value, x1, x2, y1, y2) => (value - x1) * (y2 - y1) / (x2 - x1) + y1, "mapRange");
 
 // src/shared/debounce.ts
 function debounce(func, duration = 50) {
@@ -7076,8 +8048,20 @@ function debounce(func, duration = 50) {
     }, duration);
   };
 }
+__name(debounce, "debounce");
 
 // src/controllers/color/ColorPicker.ts
+function _ts_decorate7(decorators, target, key, desc) {
+  var c2 = arguments.length, r2 = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r2 = Reflect.decorate(decorators, target, key, desc);
+  else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r2 = (c2 < 3 ? d(r2) : c2 > 3 ? d(target, key, r2) : d(target, key)) || r2;
+  return c2 > 3 && r2 && Object.defineProperty(target, key, r2), r2;
+}
+__name(_ts_decorate7, "_ts_decorate");
+function _ts_metadata7(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+__name(_ts_metadata7, "_ts_metadata");
 var COLOR_PICKER_DEFAULTS2 = {
   color: "#fff",
   swatches: [],
@@ -7085,23 +8069,179 @@ var COLOR_PICKER_DEFAULTS2 = {
   container: void 0,
   disabled: false
 };
-var ColorPicker = @disableable class {
+var ColorPicker = class {
+  static {
+    __name(this, "ColorPicker");
+  }
+  input;
+  opts;
+  elements;
+  element;
+  _ctx;
+  _height;
+  _width;
+  _resizeObserver;
+  _gradientWhite;
+  _gradientBlack;
+  _dragging;
+  _lockCursorPosition;
+  _lastColor;
+  _log;
+  _evm;
+  on;
   constructor(input, options) {
     this.input = input;
-    const opts = { ...COLOR_PICKER_DEFAULTS2, ...options };
+    this._height = 16 * 3;
+    this._width = 256;
+    this._dragging = false;
+    this._lockCursorPosition = false;
+    this._evm = new EventManager([
+      "pointerdown",
+      "pointerup"
+    ]);
+    this.on = this._evm.on.bind(this._evm);
+    this.enable = () => {
+      if (this.disabled) this.disabled = false;
+      this.elements.container.classList.remove("fracgui-disabled");
+      this.elements.alphaSlider.disabled = false;
+      this.elements.hueSlider.disabled = false;
+      this.elements.canvas.style.pointerEvents = "auto";
+      return this;
+    };
+    this.disable = () => {
+      if (!this.disabled) this.disabled = true;
+      this.elements.container.classList.add("fracgui-disabled");
+      this.elements.alphaSlider.disabled = true;
+      this.elements.hueSlider.disabled = true;
+      this.elements.canvas.style.pointerEvents = "none";
+      return this;
+    };
+    this.setAlpha = (e) => {
+      this.input.state.value.alpha = Number(e.target.value);
+      this.input.refresh();
+    };
+    this.refresh = () => {
+      this._log.fn("refresh").debug();
+      const color2 = this.input.state.value;
+      if (this._lastColor?.hex === color2.hex8String) return this;
+      this._lastColor = color2.clone();
+      this.elements.hueSlider.value = String(this.hue);
+      this.elements.alphaSlider.value = String(this.alpha);
+      this.elements.alphaSlider.style.color = color2.hexString;
+      this.draw();
+      if (this._lockCursorPosition) {
+        this.elements.handle.style.background = color2.hexString;
+        this._lockCursorPosition = false;
+      } else {
+        this._updateHandle();
+      }
+      return this;
+    };
+    this.draw = () => {
+      this._fill(`hsl(${this.hue}, 100%, 50%)`);
+      this._fill(this._gradientWhite);
+      this._fill(this._gradientBlack);
+    };
+    this._pointerUpClickLatch = false;
+    this._onPointerDown = (e) => {
+      this._log.fn("_onPointerDown").debug();
+      this._evm.emit("pointerdown");
+      this._dragging = true;
+      this._updateFromMousePosition(e);
+      addEventListener("pointerup", this._onPointerUp, {
+        once: true
+      });
+    };
+    this._onPointerMove = (e) => {
+      this._log.fn("_onPointerMove").debug();
+      if (this._dragging) {
+        this._updateFromMousePosition(e);
+      }
+    };
+    this._onPointerUp = () => {
+      this._log.fn("_onPointerUp").debug();
+      this._evm.emit("pointerup");
+      this._dragging = false;
+      this._pointerUpClickLatch = true;
+    };
+    this._onClick = (e) => {
+      this._log.fn("_onClick");
+      if (this._pointerUpClickLatch) {
+        this._log.debug("Click latch triggered. Aborting.");
+        this._pointerUpClickLatch = false;
+        return;
+      }
+      this._log.debug();
+      this._updateFromMousePosition(e);
+      this._dragging = false;
+    };
+    this._getColorAtPosition = (x, y2) => {
+      this._log.fn("_getColorAtPosition").debug();
+      const { width, height } = this.canvas.getBoundingClientRect();
+      const r2 = this.opts.handleSize / 3;
+      return {
+        s: mapRange(x, r2, width - r2, 0, 100),
+        v: mapRange(y2, r2, height - r2, 100, 0)
+      };
+    };
+    this._updateStateFromHue = (e) => {
+      this._log.fn("_updateStateFromHue").debug();
+      this._lockCursorPosition = true;
+      const hue = Number(e.target.value);
+      const { s, v, a } = this.input.state.value.hsva;
+      this.input.state.value.hsva = {
+        h: hue,
+        s,
+        v,
+        a
+      };
+      this.input.set(this.input.state.value);
+      this.elements.handle.style.background = this.input.state.value.hexString;
+      this.draw();
+    };
+    this._updateHandle = (color2 = this.input.state.value) => {
+      this._drawHandle(this._getHandlePosition(color2));
+    };
+    this._getHandlePosition = (color2) => {
+      const { width, height } = this.canvas.getBoundingClientRect();
+      const r2 = this.opts.handleSize / 2;
+      return {
+        x: mapRange(color2.hsv.s, 0, 100, r2, width - r2),
+        y: mapRange(color2.hsv.v, 0, 100, height - r2, r2)
+      };
+    };
+    this._drawHandle = (coords) => {
+      this.elements.handle.style.transform = `translate(${coords.x}px, ${coords.y}px)`;
+      this.elements.handle.style.background = this.input.state.value.hexString;
+    };
+    const opts = {
+      ...COLOR_PICKER_DEFAULTS2,
+      ...options
+    };
     this.opts = opts;
-    this._log = new Logger(`ColorPicker ${input.title}`, { fg: "lightgreen" });
-    this._log.fn("constructor").debug({ opts, this: this });
+    this._log = new Logger(`ColorPicker ${input.title}`, {
+      fg: "lightgreen"
+    });
+    this._log.fn("constructor").debug({
+      opts,
+      this: this
+    });
     this._lastColor = this.input.state.value.clone();
-    const style = input.expanded ? {} : { height: "0px" };
+    const style = input.expanded ? {} : {
+      height: "0px"
+    };
     const container = create("div", {
-      classes: ["fracgui-input-color-picker-container"],
+      classes: [
+        "fracgui-input-color-picker-container"
+      ],
       parent: options?.container ?? input.elements.controllers.container,
       style
     });
     this.element = container;
     const canvas = create("canvas", {
-      classes: ["fracgui-input-color-picker-canvas"],
+      classes: [
+        "fracgui-input-color-picker-canvas"
+      ],
       parent: container,
       height: this._height
     });
@@ -7109,7 +8249,9 @@ var ColorPicker = @disableable class {
     this._resizeObserver = new ResizeObserver(() => debouncedUpdateHandle());
     this._resizeObserver.observe(canvas);
     const handle = create("div", {
-      classes: ["fracgui-input-color-picker-handle"],
+      classes: [
+        "fracgui-input-color-picker-handle"
+      ],
       parent: container,
       style: {
         background: input.state.value.hexString
@@ -7117,7 +8259,10 @@ var ColorPicker = @disableable class {
     });
     const hueSlider = create("input", {
       type: "range",
-      classes: ["fracgui-input-range", "fracgui-input-color-picker-hue"],
+      classes: [
+        "fracgui-input-range",
+        "fracgui-input-color-picker-hue"
+      ],
       parent: container,
       min: 0,
       max: 359
@@ -7125,7 +8270,7 @@ var ColorPicker = @disableable class {
     this._evm.listen(hueSlider, "input", this._updateStateFromHue);
     tooltip(hueSlider, {
       parent: container,
-      text: () => `${this.input.state.value.hsla.h}`,
+      text: /* @__PURE__ */ __name(() => `${this.input.state.value.hsla.h}`, "text"),
       placement: "top",
       offsetX: "0px",
       anchor: {
@@ -7139,7 +8284,10 @@ var ColorPicker = @disableable class {
     });
     const alphaSlider = create("input", {
       type: "range",
-      classes: ["fracgui-input-range", "fracgui-input-color-picker-alpha"],
+      classes: [
+        "fracgui-input-range",
+        "fracgui-input-color-picker-alpha"
+      ],
       parent: container,
       min: 0,
       max: 1,
@@ -7148,7 +8296,7 @@ var ColorPicker = @disableable class {
     this._evm.listen(alphaSlider, "input", this.setAlpha);
     tooltip(alphaSlider, {
       parent: container,
-      text: () => `${this.input.state.value.alpha}`,
+      text: /* @__PURE__ */ __name(() => `${this.input.state.value.alpha}`, "text"),
       placement: "top",
       offsetX: "0px",
       anchor: {
@@ -7179,21 +8327,6 @@ var ColorPicker = @disableable class {
     setTimeout(this.draw, 10);
     setTimeout(this._updateHandle, 20);
   }
-  opts;
-  elements;
-  element;
-  _ctx;
-  _height = 16 * 3;
-  _width = 256;
-  _resizeObserver;
-  _gradientWhite;
-  _gradientBlack;
-  _dragging = false;
-  _lockCursorPosition = false;
-  _lastColor;
-  _log;
-  _evm = new EventManager(["pointerdown", "pointerup"]);
-  on = this._evm.on.bind(this._evm);
   get canvas() {
     return this.elements.canvas;
   }
@@ -7203,56 +8336,16 @@ var ColorPicker = @disableable class {
   get alpha() {
     return this.input.state.value.alpha;
   }
-  enable = () => {
-    if (this.disabled) this.disabled = false;
-    this.elements.container.classList.remove("fracgui-disabled");
-    this.elements.alphaSlider.disabled = false;
-    this.elements.hueSlider.disabled = false;
-    this.elements.canvas.style.pointerEvents = "auto";
-    return this;
-  };
-  disable = () => {
-    if (!this.disabled) this.disabled = true;
-    this.elements.container.classList.add("fracgui-disabled");
-    this.elements.alphaSlider.disabled = true;
-    this.elements.hueSlider.disabled = true;
-    this.elements.canvas.style.pointerEvents = "none";
-    return this;
-  };
+  enable;
+  disable;
   set(v) {
     this.input.state.value.set(v);
     this.input.refresh();
     this.refresh();
   }
-  setAlpha = (e) => {
-    this.input.state.value.alpha = Number(e.target.value);
-    this.input.refresh();
-  };
-  /**
-   * Updates the UI to reflect the current state of the color picker.
-   */
-  refresh = () => {
-    this._log.fn("refresh").debug();
-    const color2 = this.input.state.value;
-    if (this._lastColor?.hex === color2.hex8String) return this;
-    this._lastColor = color2.clone();
-    this.elements.hueSlider.value = String(this.hue);
-    this.elements.alphaSlider.value = String(this.alpha);
-    this.elements.alphaSlider.style.color = color2.hexString;
-    this.draw();
-    if (this._lockCursorPosition) {
-      this.elements.handle.style.background = color2.hexString;
-      this._lockCursorPosition = false;
-    } else {
-      this._updateHandle();
-    }
-    return this;
-  };
-  draw = () => {
-    this._fill(`hsl(${this.hue}, 100%, 50%)`);
-    this._fill(this._gradientWhite);
-    this._fill(this._gradientBlack);
-  };
+  setAlpha;
+  refresh;
+  draw;
   _fill(style) {
     this._ctx.fillStyle = style;
     this._ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -7266,91 +8359,40 @@ var ColorPicker = @disableable class {
     this._gradientBlack.addColorStop(1, "rgba(0,0,0,1)");
   }
   //· Pointer Events ···································································¬
-  _pointerUpClickLatch = false;
-  _onPointerDown = (e) => {
-    this._log.fn("_onPointerDown").debug();
-    this._evm.emit("pointerdown");
-    this._dragging = true;
-    this._updateFromMousePosition(e);
-    addEventListener("pointerup", this._onPointerUp, { once: true });
-  };
-  _onPointerMove = (e) => {
-    this._log.fn("_onPointerMove").debug();
-    if (this._dragging) {
-      this._updateFromMousePosition(e);
-    }
-  };
-  _onPointerUp = () => {
-    this._log.fn("_onPointerUp").debug();
-    this._evm.emit("pointerup");
-    this._dragging = false;
-    this._pointerUpClickLatch = true;
-  };
-  _onClick = (e) => {
-    this._log.fn("_onClick");
-    if (this._pointerUpClickLatch) {
-      this._log.debug("Click latch triggered. Aborting.");
-      this._pointerUpClickLatch = false;
-      return;
-    }
-    this._log.debug();
-    this._updateFromMousePosition(e);
-    this._dragging = false;
-  };
+  _pointerUpClickLatch;
+  _onPointerDown;
+  _onPointerMove;
+  _onPointerUp;
+  _onClick;
   /**
-   * Updates the color picker's state based on the current mouse position.
-   */
+  * Updates the color picker's state based on the current mouse position.
+  */
   _updateFromMousePosition(e) {
     this._log.fn("_updateFromMousePosition").debug();
     const { left, top, width, height } = this.canvas.getBoundingClientRect();
     const x = clamp(e.clientX - left, 0, width);
     const y2 = clamp(e.clientY - top, 0, height);
     const { s, v } = this._getColorAtPosition(x, y2);
-    this.input.state.value.hsv = { h: this.hue, s, v };
+    this.input.state.value.hsv = {
+      h: this.hue,
+      s,
+      v
+    };
     this.input.set(this.input.state.value);
     this._drawHandle(this._getHandlePosition(this.input.state.value));
   }
   //⌟
   /**
-   * Maps canvas `x` and `y` coordinates to their respective `s` and `v` color values.
-   */
-  _getColorAtPosition = (x, y2) => {
-    this._log.fn("_getColorAtPosition").debug();
-    const { width, height } = this.canvas.getBoundingClientRect();
-    const r2 = this.opts.handleSize / 3;
-    return {
-      s: mapRange(x, r2, width - r2, 0, 100),
-      v: mapRange(y2, r2, height - r2, 100, 0)
-    };
-  };
-  _updateStateFromHue = (e) => {
-    this._log.fn("_updateStateFromHue").debug();
-    this._lockCursorPosition = true;
-    const hue = Number(e.target.value);
-    const { s, v, a } = this.input.state.value.hsva;
-    this.input.state.value.hsva = { h: hue, s, v, a };
-    this.input.set(this.input.state.value);
-    this.elements.handle.style.background = this.input.state.value.hexString;
-    this.draw();
-  };
-  _updateHandle = (color2 = this.input.state.value) => {
-    this._drawHandle(this._getHandlePosition(color2));
-  };
+  * Maps canvas `x` and `y` coordinates to their respective `s` and `v` color values.
+  */
+  _getColorAtPosition;
+  _updateStateFromHue;
+  _updateHandle;
   /**
-   * Get the current handle position for a given color.
-   */
-  _getHandlePosition = (color2) => {
-    const { width, height } = this.canvas.getBoundingClientRect();
-    const r2 = this.opts.handleSize / 2;
-    return {
-      x: mapRange(color2.hsv.s, 0, 100, r2, width - r2),
-      y: mapRange(color2.hsv.v, 0, 100, height - r2, r2)
-    };
-  };
-  _drawHandle = (coords) => {
-    this.elements.handle.style.transform = `translate(${coords.x}px, ${coords.y}px)`;
-    this.elements.handle.style.background = this.input.state.value.hexString;
-  };
+  * Get the current handle position for a given color.
+  */
+  _getHandlePosition;
+  _drawHandle;
   dispose() {
     this._ctx = null;
     this.elements.alphaSlider.remove();
@@ -7362,11 +8404,21 @@ var ColorPicker = @disableable class {
     this._evm.dispose();
   }
 };
+ColorPicker = _ts_decorate7([
+  disableable,
+  _ts_metadata7("design:type", Function),
+  _ts_metadata7("design:paramtypes", [
+    typeof InputColor === "undefined" ? Object : InputColor,
+    typeof Partial === "undefined" ? Object : Partial
+  ])
+], ColorPicker);
 
 // src/shared/mount.ts
 function append(...els) {
   let i = 0;
-  const e = [...els];
+  const e = [
+    ...els
+  ];
   let p = e.shift();
   let c2 = e.shift();
   function mount(..._e) {
@@ -7378,11 +8430,16 @@ function append(...els) {
       mount(..._e);
     }
   }
+  __name(mount, "mount");
   mount(...e);
 }
+__name(append, "append");
 
 // src/svg/CopySVG.ts
 var CopySVG = class {
+  static {
+    __name(this, "CopySVG");
+  }
   svg;
   back;
   front;
@@ -7435,12 +8492,80 @@ var CopySVG = class {
 
 // src/shared/CopyButton.ts
 var CopyButton = class {
+  static {
+    __name(this, "CopyButton");
+  }
+  container;
+  text;
+  message;
+  button;
+  icon;
+  /**
+  * When the copy animation is active, this is `true` and the button has an `active` class.
+  */
+  active;
+  /**
+  * When the copy animation is outroing, this is `true` and the button has an `outro` class.
+  */
+  outro;
+  #completeTimeout;
+  tooltip;
   constructor(container, text, message = "Copy") {
     this.container = container;
     this.text = text;
     this.message = message;
+    this.active = false;
+    this.outro = false;
+    this.copy = () => {
+      if (typeof navigator === "undefined") return;
+      if (this.active) return;
+      let text2 = this.text();
+      if (!text2) return;
+      if (typeof text2 === "object") text2 = JSON.stringify(text2);
+      navigator.clipboard?.writeText?.(text2);
+      clearTimeout(this.#completeTimeout);
+      this.#animateIn();
+    };
+    this.#animateIn = () => {
+      this.active = true;
+      this.tooltip.show();
+      this.button.blur();
+      this.button.classList.add("active");
+      this.icon.svg.classList.add("active");
+      this.icon.front.setAttribute("x", "5.5");
+      this.icon.front.setAttribute("y", "5.5");
+      this.icon.front.setAttribute("rx", "10");
+      this.icon.front.setAttribute("ry", "10");
+      this.tooltip.text = "Copied!";
+      setTimeout(this.#animateOut, 1250);
+    };
+    this.#animateOut = () => {
+      this.active = false;
+      this.outro = true;
+      this.button.classList.remove("active");
+      this.icon.svg.classList.remove("active");
+      this.icon.svg.classList.add("outro");
+      this.button.classList.add("outro");
+      this.icon.front.setAttribute("x", "8");
+      this.icon.front.setAttribute("y", "8");
+      this.icon.front.setAttribute("rx", "1");
+      this.icon.front.setAttribute("ry", "1");
+      setTimeout(this.#complete, 900);
+    };
+    this.#complete = () => {
+      this.button.classList.remove("outro");
+      this.icon.svg.classList.remove("outro");
+      this.outro = false;
+      this.tooltip.hide();
+      clearTimeout(this.#completeTimeout);
+      this.#completeTimeout = setTimeout(() => {
+        this.tooltip.text = this.message;
+      }, 300);
+    };
     const button = create("div", {
-      classes: ["copy-button"],
+      classes: [
+        "copy-button"
+      ],
       title: "Copy",
       attributes: {
         "aria-label": "Copy",
@@ -7448,7 +8573,9 @@ var CopyButton = class {
       }
     });
     const svgContainer = create("div", {
-      classes: ["copy-button-svg-container"]
+      classes: [
+        "copy-button-svg-container"
+      ]
     });
     this.button = button;
     this.icon = new CopySVG();
@@ -7467,64 +8594,10 @@ var CopyButton = class {
       }
     });
   }
-  button;
-  icon;
-  /**
-   * When the copy animation is active, this is `true` and the button has an `active` class.
-   */
-  active = false;
-  /**
-   * When the copy animation is outroing, this is `true` and the button has an `outro` class.
-   */
-  outro = false;
-  #completeTimeout;
-  tooltip;
-  copy = () => {
-    if (typeof navigator === "undefined") return;
-    if (this.active) return;
-    let text = this.text();
-    if (!text) return;
-    if (typeof text === "object") text = JSON.stringify(text);
-    navigator.clipboard?.writeText?.(text);
-    clearTimeout(this.#completeTimeout);
-    this.#animateIn();
-  };
-  #animateIn = () => {
-    this.active = true;
-    this.tooltip.show();
-    this.button.blur();
-    this.button.classList.add("active");
-    this.icon.svg.classList.add("active");
-    this.icon.front.setAttribute("x", "5.5");
-    this.icon.front.setAttribute("y", "5.5");
-    this.icon.front.setAttribute("rx", "10");
-    this.icon.front.setAttribute("ry", "10");
-    this.tooltip.text = "Copied!";
-    setTimeout(this.#animateOut, 1250);
-  };
-  #animateOut = () => {
-    this.active = false;
-    this.outro = true;
-    this.button.classList.remove("active");
-    this.icon.svg.classList.remove("active");
-    this.icon.svg.classList.add("outro");
-    this.button.classList.add("outro");
-    this.icon.front.setAttribute("x", "8");
-    this.icon.front.setAttribute("y", "8");
-    this.icon.front.setAttribute("rx", "1");
-    this.icon.front.setAttribute("ry", "1");
-    setTimeout(this.#complete, 900);
-  };
-  #complete = () => {
-    this.button.classList.remove("outro");
-    this.icon.svg.classList.remove("outro");
-    this.outro = false;
-    this.tooltip.hide();
-    clearTimeout(this.#completeTimeout);
-    this.#completeTimeout = setTimeout(() => {
-      this.tooltip.text = this.message;
-    }, 300);
-  };
+  copy;
+  #animateIn;
+  #animateOut;
+  #complete;
 };
 
 // src/inputs/InputColor.ts
@@ -7534,21 +8607,24 @@ var COLOR_INPUT_DEFAULTS = {
   mode: "hex",
   expanded: false
 };
-var InputColor = class _InputColor extends Input {
+var InputColor2 = class _InputColor extends Input {
+  static {
+    __name(this, "InputColor");
+  }
   __type = "InputColor";
   initialValue;
   state;
   /**
-   * The color picker instance.
-   */
+  * The color picker instance.
+  */
   picker;
   /**
-   * RGBA/HSLA/HSVA number component inputs.
-   */
+  * RGBA/HSLA/HSVA number component inputs.
+  */
   components;
   /**
-   * When `true`, the color picker is visible.
-   */
+  * When `true`, the color picker is visible.
+  */
   expanded;
   _mode;
   get mode() {
@@ -7566,32 +8642,43 @@ var InputColor = class _InputColor extends Input {
     super(opts, folder);
     this.expanded = opts.expanded;
     this._mode = opts.mode;
-    this._log = new Logger(`InputColor ${opts.title}`, { fg: "cyan" });
-    this._log.fn("constructor").debug({ opts, this: this }).groupEnd();
+    this._log = new Logger(`InputColor ${opts.title}`, {
+      fg: "cyan"
+    });
+    this._log.fn("constructor").debug({
+      opts,
+      this: this
+    }).groupEnd();
     if (opts.binding) {
       this.initialValue = new Color(opts.binding.target[opts.binding.key]);
       this.state = state(this.initialValue.clone());
-      this._evm.add(
-        this.state.subscribe((v) => {
-          opts.binding.target[opts.binding.key] = v;
-        })
-      );
+      this._evm.add(this.state.subscribe((v) => {
+        opts.binding.target[opts.binding.key] = v;
+      }));
     } else {
       this.initialValue = new Color(opts.value);
       this.state = state(this.initialValue.clone());
     }
     const container = create("div", {
-      classes: ["fracgui-input-color-container"],
+      classes: [
+        "fracgui-input-color-container"
+      ],
       parent: this.elements.content
     });
     this.elements.controllers.container = container;
     this.elements.controllers.currentColor = this._createCurrentColor(container);
     const body = create("div", {
-      classes: ["fracgui-input-color-body"],
+      classes: [
+        "fracgui-input-color-body"
+      ],
       parent: container
     });
-    this.picker = new ColorPicker(this, { container: body });
-    this.components = new ColorComponents(this, { container: body });
+    this.picker = new ColorPicker(this, {
+      container: body
+    });
+    this.components = new ColorComponents(this, {
+      container: body
+    });
     this.elements.controllers.body = {
       container: body,
       picker: this.picker.elements,
@@ -7611,11 +8698,11 @@ var InputColor = class _InputColor extends Input {
       this.commit({
         to: v.rgba,
         from: this.state.value.rgba,
-        setter: (v2) => {
+        setter: /* @__PURE__ */ __name((v2) => {
           this.state.value.set(v2);
           this.state.refresh();
           this.refresh();
-        }
+        }, "setter")
       });
       this.state.set(new Color(v.rgba));
     } else {
@@ -7623,28 +8710,35 @@ var InputColor = class _InputColor extends Input {
       this.commit({
         to: newColor.rgba,
         from: this.state.value.rgba,
-        setter: (v2) => {
+        setter: /* @__PURE__ */ __name((v2) => {
           this.state.value.set(v2);
           this.state.refresh();
           this.refresh();
-        }
+        }, "setter")
       });
       this.state.set(newColor);
     }
     const newValue = this.state.value;
-    this._log.fn("set").debug({ v, newValue, this: this });
+    this._log.fn("set").debug({
+      v,
+      newValue,
+      this: this
+    });
     this._emit("change", newValue);
     this.refresh(newValue);
     return this;
   }
-  refresh = (v = this.state.value) => {
-    this._log.fn("refresh").debug({ v, this: this });
+  refresh = /* @__PURE__ */ __name((v = this.state.value) => {
+    this._log.fn("refresh").debug({
+      v,
+      this: this
+    });
     this.elements.controllers.currentColor.display.style.backgroundColor = v.hex;
     this.picker.refresh();
     this.components.refresh();
     super.refresh();
     return this;
-  };
+  }, "refresh");
   //· Getters & Setters ········································································¬
   get aTitle() {
     return this.mode === "rgba" ? "r" : "h";
@@ -7661,25 +8755,27 @@ var InputColor = class _InputColor extends Input {
   //⌟
   _createCurrentColor(parent) {
     const container = create("div", {
-      classes: ["fracgui-input-color-current-color-container"],
+      classes: [
+        "fracgui-input-color-current-color-container"
+      ],
       parent
     });
     const displayBackground = create("div", {
-      classes: ["fracgui-input-color-current-color-background"],
+      classes: [
+        "fracgui-input-color-current-color-background"
+      ],
       parent: container
     });
     const display = create("div", {
-      classes: ["fracgui-input-color-current-color-display"],
+      classes: [
+        "fracgui-input-color-current-color-display"
+      ],
       parent: displayBackground
     });
     this._evm.listen(display, "click", this.togglePicker);
-    const copyButton = new CopyButton(
-      container,
-      () => {
-        return this.state.value.hex;
-      },
-      "Copy Hex"
-    );
+    const copyButton = new CopyButton(container, () => {
+      return this.state.value.hex;
+    }, "Copy Hex");
     return {
       container,
       displayBackground,
@@ -7692,89 +8788,114 @@ var InputColor = class _InputColor extends Input {
   get _pickerContainer() {
     return this.picker.elements.container;
   }
-  togglePicker = async () => {
+  togglePicker = /* @__PURE__ */ __name(async () => {
     if (!this.expanded) {
       await this.open();
     } else {
       await this.close();
     }
-  };
-  open = async () => {
+  }, "togglePicker");
+  open = /* @__PURE__ */ __name(async () => {
     this.expanded = true;
     this.elements.container.dataset["search_height"] = "100px";
-    const pickerAnim = this._pickerContainer?.animate(
-      [
-        { height: "0px", clipPath: "inset(0 0 100% 0)" },
-        { height: _InputColor.#pickerHeight, clipPath: "inset(0 0 -50% 0)" }
-      ],
-      { duration: 200, easing: "cubic-bezier(.08,.38,0,0.92)", fill: "forwards" }
-    );
-    const containerAnim = this.elements.container.animate(
-      { maxHeight: "100px", height: "100px" },
-      { duration: 200, easing: "cubic-bezier(.08,.38,0,0.92)", fill: "forwards" }
-    );
+    const pickerAnim = this._pickerContainer?.animate([
+      {
+        height: "0px",
+        clipPath: "inset(0 0 100% 0)"
+      },
+      {
+        height: _InputColor.#pickerHeight,
+        clipPath: "inset(0 0 -50% 0)"
+      }
+    ], {
+      duration: 200,
+      easing: "cubic-bezier(.08,.38,0,0.92)",
+      fill: "forwards"
+    });
+    const containerAnim = this.elements.container.animate({
+      maxHeight: "100px",
+      height: "100px"
+    }, {
+      duration: 200,
+      easing: "cubic-bezier(.08,.38,0,0.92)",
+      fill: "forwards"
+    });
     this._pickerContainer?.style.setProperty("overflow", "visible");
     this._pickerContainer?.classList.add("expanded");
-    await Promise.all([pickerAnim?.finished, containerAnim?.finished]);
+    await Promise.all([
+      pickerAnim?.finished,
+      containerAnim?.finished
+    ]);
     if (this._pickerContainer && document.contains(this._pickerContainer)) {
       pickerAnim?.commitStyles();
     }
     if (this.elements.container && document.contains(this.elements.container)) {
       containerAnim?.commitStyles();
     }
-  };
-  close = async (duration = 300) => {
+  }, "open");
+  close = /* @__PURE__ */ __name(async (duration = 300) => {
     this.expanded = false;
     delete this.elements.container.dataset["search_height"];
-    const pickerAnim = this._pickerContainer?.animate(
-      [
-        { height: _InputColor.#pickerHeight, clipPath: "inset(0 0 -100% 0)" },
-        { height: "0px", clipPath: "inset(0 0 100% 0)" }
-      ],
-      { duration, easing: "cubic-bezier(.13,.09,.02,.96)", fill: "forwards" }
-    );
-    const containerAnim = this.elements.container.animate(
+    const pickerAnim = this._pickerContainer?.animate([
       {
-        minHeight: "var(--fracgui-input_height)",
-        maxHeight: "var(--fracgui-input_height)",
-        height: "var(--fracgui-input_height)"
+        height: _InputColor.#pickerHeight,
+        clipPath: "inset(0 0 -100% 0)"
       },
-      { duration, easing: "cubic-bezier(.13,.09,.02,.96)", fill: "forwards" }
-    );
+      {
+        height: "0px",
+        clipPath: "inset(0 0 100% 0)"
+      }
+    ], {
+      duration,
+      easing: "cubic-bezier(.13,.09,.02,.96)",
+      fill: "forwards"
+    });
+    const containerAnim = this.elements.container.animate({
+      minHeight: "var(--fracgui-input_height)",
+      maxHeight: "var(--fracgui-input_height)",
+      height: "var(--fracgui-input_height)"
+    }, {
+      duration,
+      easing: "cubic-bezier(.13,.09,.02,.96)",
+      fill: "forwards"
+    });
     this._pickerContainer?.style.setProperty("overflow", "hidden");
     this._pickerContainer?.classList.remove("expanded");
-    await Promise.all([pickerAnim?.finished, containerAnim?.finished]);
+    await Promise.all([
+      pickerAnim?.finished,
+      containerAnim?.finished
+    ]);
     if (this._pickerContainer && document.contains(this._pickerContainer)) {
       pickerAnim?.commitStyles();
     }
     if (this.elements.container && document.contains(this.elements.container)) {
       containerAnim?.commitStyles();
     }
-  };
+  }, "close");
   //⌟
   //· Super Overrides ··········································································¬
   /**
-   * Prevents the range slider from registering undo history commits while dragging on the
-   * canvas, storing the initial value on pointerdown for the eventual commit in {@link unlock}.
-   */
-  _lock = () => {
+  * Prevents the range slider from registering undo history commits while dragging on the
+  * canvas, storing the initial value on pointerdown for the eventual commit in {@link unlock}.
+  */
+  _lock = /* @__PURE__ */ __name(() => {
     this.lock(this.state.value.rgba);
-  };
+  }, "_lock");
   /**
-   * Saves the commit stored in #lock on pointerup.
-   */
-  _unlock = () => {
+  * Saves the commit stored in #lock on pointerup.
+  */
+  _unlock = /* @__PURE__ */ __name(() => {
     this.unlock({
       target: this,
       to: this.state.value.rgba,
-      setter: (v) => {
+      setter: /* @__PURE__ */ __name((v) => {
         this.state.value.set(v);
         this.state.refresh();
         this._emit("change", this.state.value);
         this.refresh();
-      }
+      }, "setter")
     });
-  };
+  }, "_unlock");
   enable() {
     this.picker.enable();
     super.enable();
@@ -7786,7 +8907,9 @@ var InputColor = class _InputColor extends Input {
     return this;
   }
   save() {
-    return super.save({ value: this.state.value.hex });
+    return super.save({
+      value: this.state.value.hex
+    });
   }
   load(json) {
     const data = typeof json === "string" ? JSON.parse(json) : json;
@@ -7798,17 +8921,22 @@ var InputColor = class _InputColor extends Input {
   }
   //⌟
   dispose() {
-    this._log.fn("dispose").debug({ this: this });
+    this._log.fn("dispose").debug({
+      this: this
+    });
     this.picker.dispose();
     super.dispose();
   }
 };
 
 // src/controllers/text.ts
-var textController = (input, _opts, parent) => {
+var textController = /* @__PURE__ */ __name((input, _opts, parent) => {
   const controller = create("input", {
     type: "textarea",
-    classes: ["fracgui-controller", "fracgui-controller-text"],
+    classes: [
+      "fracgui-controller",
+      "fracgui-controller-text"
+    ],
     value: input.state.value,
     parent,
     attributes: {
@@ -7816,7 +8944,7 @@ var textController = (input, _opts, parent) => {
     }
   });
   return controller;
-};
+}, "textController");
 
 // src/inputs/InputText.ts
 var TEXT_INPUT_DEFAULTS = {
@@ -7825,6 +8953,9 @@ var TEXT_INPUT_DEFAULTS = {
   maxLength: 50
 };
 var InputText = class extends Input {
+  static {
+    __name(this, "InputText");
+  }
   __type = "InputText";
   initialValue;
   state;
@@ -7835,22 +8966,27 @@ var InputText = class extends Input {
   constructor(options, folder) {
     const opts = Object.assign({}, TEXT_INPUT_DEFAULTS, options);
     super(opts, folder);
-    this.#log = new Logger(`InputText ${opts.title}`, { fg: "cyan" });
-    this.#log.fn("constructor").info({ opts, this: this });
+    this.#log = new Logger(`InputText ${opts.title}`, {
+      fg: "cyan"
+    });
+    this.#log.fn("constructor").info({
+      opts,
+      this: this
+    });
     if (opts.binding) {
       this.initialValue = opts.binding.target[opts.binding.key];
       this.state = state(this.initialValue);
-      this._evm.add(
-        this.state.subscribe((v) => {
-          opts.binding.target[opts.binding.key] = v;
-        })
-      );
+      this._evm.add(this.state.subscribe((v) => {
+        opts.binding.target[opts.binding.key] = v;
+      }));
     } else {
       this.initialValue = opts.value;
       this.state = state(opts.value);
     }
     const container = create("div", {
-      classes: ["fracgui-input-text-container"],
+      classes: [
+        "fracgui-input-text-container"
+      ],
       parent: this.elements.content
     });
     this.elements.controllers = {
@@ -7858,11 +8994,9 @@ var InputText = class extends Input {
       input: textController(this, opts, container)
     };
     this._evm.listen(this.elements.controllers.input, "input", this.set);
-    this._evm.add(
-      this.state.subscribe(() => {
-        this.refresh();
-      })
-    );
+    this._evm.add(this.state.subscribe(() => {
+      this.refresh();
+    }));
   }
   enable() {
     super.enable();
@@ -7874,26 +9008,30 @@ var InputText = class extends Input {
     this.elements.controllers.input.disabled = true;
     return this;
   }
-  set = (v) => {
+  set = /* @__PURE__ */ __name((v) => {
     if (typeof v === "undefined") return;
     if (typeof v !== "string") {
       if (v?.target && "value" in v.target) {
-        this.commit({ to: v.target.value });
+        this.commit({
+          to: v.target.value
+        });
         this.state.set(v.target.value);
       }
     } else {
-      this.commit({ to: v });
+      this.commit({
+        to: v
+      });
       this.state.set(v);
     }
     this._emit("change", this.state.value);
     return this;
-  };
-  refresh = () => {
+  }, "set");
+  refresh = /* @__PURE__ */ __name(() => {
     const v = this.state.value;
     this.elements.controllers.input.value = v;
     super.refresh(v);
     return this;
-  };
+  }, "refresh");
   dispose() {
     super.dispose();
   }
@@ -7912,23 +9050,108 @@ function createFolderSvg(folder) {
   const count = folder.allChildren.length + folder.inputs.size;
   icon.style.setProperty("filter", `hue-rotate(${folder.hue}deg)`);
   const circs = [
-    { id: 1, cx: 16.43, cy: 11.93, r: 1.1103 },
-    { id: 2, cx: 15.13, cy: 15.44, r: 0.8081 },
-    { id: 3, cx: 15.13, cy: 8.423, r: 0.8081 },
-    { id: 4, cx: 12.49, cy: 16.05, r: 0.4788 },
-    { id: 5, cx: 12.42, cy: 7.876, r: 0.545 },
-    { id: 6, cx: 10.43, cy: 15.43, r: 0.2577 },
-    { id: 7, cx: 10.43, cy: 8.506, r: 0.2769 },
-    { id: 8, cx: 17.85, cy: 14.59, r: 0.5635 },
-    { id: 9, cx: 17.85, cy: 9.295, r: 0.5635 },
-    { id: 10, cx: 19.19, cy: 12.95, r: 0.5635 },
-    { id: 11, cx: 19.19, cy: 10.9, r: 0.5635 },
-    { id: 12, cx: 20.38, cy: 11.96, r: 0.2661 },
-    { id: 13, cx: 19.74, cy: 14.07, r: 0.2661 },
-    { id: 14, cx: 19.74, cy: 9.78, r: 0.2661 },
-    { id: 15, cx: 20.7, cy: 12.96, r: 0.2661 },
-    { id: 16, cx: 20.7, cy: 10.9, r: 0.2661 },
-    { id: 17, cx: 21.38, cy: 11.96, r: 0.2661 }
+    {
+      id: 1,
+      cx: 16.43,
+      cy: 11.93,
+      r: 1.1103
+    },
+    {
+      id: 2,
+      cx: 15.13,
+      cy: 15.44,
+      r: 0.8081
+    },
+    {
+      id: 3,
+      cx: 15.13,
+      cy: 8.423,
+      r: 0.8081
+    },
+    {
+      id: 4,
+      cx: 12.49,
+      cy: 16.05,
+      r: 0.4788
+    },
+    {
+      id: 5,
+      cx: 12.42,
+      cy: 7.876,
+      r: 0.545
+    },
+    {
+      id: 6,
+      cx: 10.43,
+      cy: 15.43,
+      r: 0.2577
+    },
+    {
+      id: 7,
+      cx: 10.43,
+      cy: 8.506,
+      r: 0.2769
+    },
+    {
+      id: 8,
+      cx: 17.85,
+      cy: 14.59,
+      r: 0.5635
+    },
+    {
+      id: 9,
+      cx: 17.85,
+      cy: 9.295,
+      r: 0.5635
+    },
+    {
+      id: 10,
+      cx: 19.19,
+      cy: 12.95,
+      r: 0.5635
+    },
+    {
+      id: 11,
+      cx: 19.19,
+      cy: 10.9,
+      r: 0.5635
+    },
+    {
+      id: 12,
+      cx: 20.38,
+      cy: 11.96,
+      r: 0.2661
+    },
+    {
+      id: 13,
+      cx: 19.74,
+      cy: 14.07,
+      r: 0.2661
+    },
+    {
+      id: 14,
+      cx: 19.74,
+      cy: 9.78,
+      r: 0.2661
+    },
+    {
+      id: 15,
+      cx: 20.7,
+      cy: 12.96,
+      r: 0.2661
+    },
+    {
+      id: 16,
+      cx: 20.7,
+      cy: 10.9,
+      r: 0.2661
+    },
+    {
+      id: 17,
+      cx: 21.38,
+      cy: 11.96,
+      r: 0.2661
+    }
   ];
   function circ(c2) {
     return (
@@ -7942,28 +9165,200 @@ function createFolderSvg(folder) {
 			/>`
     );
   }
+  __name(circ, "circ");
   function toCircs(ids) {
     return ids.map((id) => circ(circs[id - 1])).join("\n");
   }
+  __name(toCircs, "toCircs");
   const circMap = {
     0: [],
-    1: [1],
-    2: [2, 3],
-    3: [1, 2, 3],
-    4: [2, 3, 4, 5],
-    5: [1, 2, 3, 4, 5],
-    6: [2, 3, 4, 5, 6, 7],
-    7: [1, 2, 3, 4, 5, 6, 7],
-    8: [1, 2, 3, 4, 5, 6, 7, 8],
-    9: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    10: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    11: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-    12: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-    13: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-    14: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-    15: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-    16: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16],
-    17: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+    1: [
+      1
+    ],
+    2: [
+      2,
+      3
+    ],
+    3: [
+      1,
+      2,
+      3
+    ],
+    4: [
+      2,
+      3,
+      4,
+      5
+    ],
+    5: [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    6: [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    7: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    8: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    9: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    10: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    11: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    12: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    13: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    14: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    15: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    16: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    17: [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ]
   };
   const circles = toCircs(circMap[Math.min(count, circs.length)]);
   const bounce = "cubic-bezier(0.36, 0, 0.66, -0.56)";
@@ -8045,9 +9440,12 @@ function createFolderSvg(folder) {
   if (folder.closed.value) icon.classList.add("closed");
   return icon;
 }
+__name(createFolderSvg, "createFolderSvg");
 function createFolderConnector(folder) {
   const container = create("div", {
-    classes: ["fracgui-connector-container"]
+    classes: [
+      "fracgui-connector-container"
+    ]
   });
   const width = 20;
   const height = folder.element.clientHeight;
@@ -8079,12 +9477,13 @@ function createFolderConnector(folder) {
   linearGradient.setAttribute("x2", "0%");
   linearGradient.setAttribute("y2", "100%");
   function stop(offset, opacity, color2 = "var(--fracgui-theme-a)") {
-    const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
-    stop2.setAttribute("offset", `${offset}%`);
-    stop2.setAttribute("style", `stop-color: ${color2}; stop-opacity: ${opacity}`);
-    linearGradient.appendChild(stop2);
-    return stop2;
+    const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    stop1.setAttribute("offset", `${offset}%`);
+    stop1.setAttribute("style", `stop-color: ${color2}; stop-opacity: ${opacity}`);
+    linearGradient.appendChild(stop1);
+    return stop1;
   }
+  __name(stop, "stop");
   stop(0, 0.5);
   stop(1, 0.5);
   stop(5, 0.4);
@@ -8102,6 +9501,7 @@ function createFolderConnector(folder) {
     path
   };
 }
+__name(createFolderConnector, "createFolderConnector");
 function animateConnector(folder, action) {
   if (!folder.graphics?.connector) return;
   const path = folder.graphics.connector.path;
@@ -8120,7 +9520,14 @@ function animateConnector(folder, action) {
     easing: "cubic-bezier(.15,.84,.19,.98)",
     to: length
   };
-  const keyframes = [{ strokeDashoffset: from }, { strokeDashoffset: to }];
+  const keyframes = [
+    {
+      strokeDashoffset: from
+    },
+    {
+      strokeDashoffset: to
+    }
+  ];
   const timing = {
     duration,
     delay,
@@ -8129,17 +9536,36 @@ function animateConnector(folder, action) {
   };
   folder.graphics.connector.path.animate(keyframes, timing);
 }
+__name(animateConnector, "animateConnector");
 
 // src/shared/cancelClassFound.ts
 function composedPathContains(e, classname) {
   return e.composedPath().some((n) => n.classList?.contains(classname));
 }
+__name(composedPathContains, "composedPathContains");
 
 // src/svg/TerminalSvg.ts
-var TerminalSvg = @styled class {
+function _ts_decorate8(decorators, target, key, desc) {
+  var c2 = arguments.length, r2 = c2 < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+  if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r2 = Reflect.decorate(decorators, target, key, desc);
+  else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r2 = (c2 < 3 ? d(r2) : c2 > 3 ? d(target, key, r2) : d(target, key)) || r2;
+  return c2 > 3 && r2 && Object.defineProperty(target, key, r2), r2;
+}
+__name(_ts_decorate8, "_ts_decorate");
+function _ts_metadata8(k, v) {
+  if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+}
+__name(_ts_metadata8, "_ts_metadata");
+var TerminalSvg = class {
+  static {
+    __name(this, "TerminalSvg");
+  }
   class = "fracgui-terminal-icon";
   element;
-  classes = [this.class, "fracgui-cancel"];
+  classes = [
+    this.class,
+    "fracgui-cancel"
+  ];
   constructor(folder) {
     const parent = folder.isRoot ? folder.elements.header : folder.elements.title;
     if (folder.isRoot) this.classes.push("fracgui-terminal-icon-root");
@@ -8160,11 +9586,11 @@ var TerminalSvg = @styled class {
         delay: 1500,
         placement: "right"
       },
-      onclick: (e) => {
+      onclick: /* @__PURE__ */ __name((e) => {
         e.stopPropagation();
         e.preventDefault();
         console.log(folder);
-      }
+      }, "onclick")
     });
   }
   static style = (
@@ -8207,6 +9633,13 @@ var TerminalSvg = @styled class {
     `
   );
 };
+TerminalSvg = _ts_decorate8([
+  styled,
+  _ts_metadata8("design:type", Function),
+  _ts_metadata8("design:paramtypes", [
+    typeof Folder === "undefined" ? Object : Folder
+  ])
+], TerminalSvg);
 
 // src/shared/fuzzySearch.ts
 function fuzzysearch(needle, haystack) {
@@ -8229,22 +9662,174 @@ function fuzzysearch(needle, haystack) {
   }
   return true;
 }
+__name(fuzzysearch, "fuzzysearch");
 
 // src/toolbar/Search.ts
 var Search = class {
+  static {
+    __name(this, "Search");
+  }
+  folder;
+  elements;
+  needle;
+  showing;
+  tooltip;
+  get defaultTooltipText() {
+    return "Search " + (this.folder.isRoot ? "All" : this.folder.title);
+  }
+  _evm;
   constructor(folder) {
     this.folder = folder;
+    this.needle = "";
+    this.showing = false;
+    this._evm = new EventManager();
+    this.search = (query) => {
+      this.needle = query;
+      for (const [key, controller] of this.folder.allInputs) {
+        const search_result = fuzzysearch(this.needle.toLocaleLowerCase(), key.toLowerCase()) ? "hit" : "miss";
+        const result = this.needle === "" ? "hit" : search_result;
+        const node = controller.elements.container;
+        if (node.dataset["search"] === result) continue;
+        const style = getComputedStyle(node);
+        node.dataset["search_height"] ??= style.minHeight;
+        node.dataset["search_overflow"] ??= style.overflow ?? "unset";
+        node.dataset["search_contain"] ??= style.contain ?? "none";
+        node.dataset["search_opacity"] ??= style.opacity ?? 1;
+        if (result === "hit") {
+          this._expandInput(node);
+        } else if (result === "miss") {
+          this._collapseInput(node);
+        }
+        node.dataset["search"] = result;
+      }
+    };
+    this._expandInput = async (node) => {
+      if (node.dataset["search"] === "miss") {
+        node.style.setProperty("overflow", node.dataset["search_overflow"]);
+        node.style.setProperty("contain", node.dataset["search_contain"]);
+        const targetHeight = node.dataset["search_height"] ?? "100%";
+        const anim = node.animate([
+          {
+            opacity: 0,
+            height: "0px",
+            minHeight: "0px"
+          },
+          {
+            opacity: 1,
+            height: targetHeight,
+            minHeight: targetHeight
+          }
+        ], {
+          duration: 300,
+          easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+          fill: "forwards"
+        });
+        await anim.finished;
+        anim.commitStyles();
+      }
+    };
+    this._collapseInput = async (node) => {
+      node.style.setProperty("overflow", "hidden");
+      node.style.setProperty("contain", "size");
+      const anim = node.animate([
+        {
+          opacity: 0,
+          height: "0px",
+          minHeight: "0px"
+        }
+      ], {
+        duration: 300,
+        easing: "cubic-bezier(0.23, 1, 0.32, 1)",
+        fill: "forwards"
+      });
+      await anim.finished;
+      anim.commitStyles();
+    };
+    this.clear = () => {
+      for (const [, controller] of this.folder.allInputs) {
+        this._expandInput(controller.elements.container);
+      }
+    };
+    this.toggle = (e) => {
+      e?.stopImmediatePropagation();
+      this.showing ? this.close() : this.open();
+    };
+    this.open = () => {
+      this.showing = true;
+      this.elements.container.classList.add("active");
+      this.elements.input.focus();
+      removeEventListener("click", this._clickOutside);
+      addEventListener("click", this._clickOutside);
+      removeEventListener("keydown", this._escape);
+      addEventListener("keydown", this._escape);
+      this.tooltip.hide();
+      clearTimeout(this._tooltipTimeout);
+      this._tooltipTimeout = setTimeout(() => {
+        this.tooltip.text = "Cancel (esc)";
+        this.tooltip.placement = "top";
+        this.tooltip.offsetX = "-40px";
+        this.tooltip.offsetY = "-2px";
+      }, 100);
+      for (const folder2 of this.folder.allChildren) {
+        if (!folder2.closed.value) continue;
+        folder2.element.dataset["searchclosed"] = "true";
+        folder2.open();
+      }
+    };
+    this.close = () => {
+      this.showing = false;
+      this.elements.container.classList.remove("active");
+      if (document.activeElement === this.elements.input || document.activeElement === this.elements.button) {
+        document.activeElement?.blur();
+      }
+      this.clear();
+      removeEventListener("click", this._clickOutside);
+      removeEventListener("keydown", this._escape);
+      this.tooltip.hide();
+      clearTimeout(this._tooltipTimeout);
+      this._tooltipTimeout = setTimeout(() => {
+        this.tooltip.text = this.defaultTooltipText;
+        this.tooltip.placement = "left";
+        this.tooltip.offsetX = TOOLTIP_DEFAULTS.offsetX;
+        this.tooltip.offsetY = TOOLTIP_DEFAULTS.offsetY;
+      }, 100);
+      for (const folder2 of this.folder.allChildren) {
+        if (!folder2.element.dataset["searchclosed"]) continue;
+        folder2.element.dataset["searchclosed"] = "";
+        folder2.close();
+      }
+    };
+    this._clickOutside = (e) => {
+      if (!this.needle && !e.composedPath().includes(this.elements.container)) {
+        this.close();
+      }
+    };
+    this._escape = (e) => {
+      if (e.key === "Escape") {
+        this.close();
+      }
+    };
     const container = create("div", {
-      classes: ["fracgui-toolbar-item", "fracgui-search-container"]
+      classes: [
+        "fracgui-toolbar-item",
+        "fracgui-search-container"
+      ]
     });
     folder.elements.toolbar.container.prepend(container);
     const input = create("input", {
-      classes: ["fracgui-controller-text", "fracgui-search-input", "fracgui-cancel"],
+      classes: [
+        "fracgui-controller-text",
+        "fracgui-search-input",
+        "fracgui-cancel"
+      ],
       parent: container
     });
     this._evm.listen(input, "input", (e) => this.search(e.target.value));
     const button = create("button", {
-      classes: ["fracgui-search-button", "fracgui-cancel"],
+      classes: [
+        "fracgui-search-button",
+        "fracgui-cancel"
+      ],
       parent: container
     });
     this.tooltip = new Tooltip(button, {
@@ -8263,131 +9848,16 @@ var Search = class {
     };
     return this;
   }
-  elements;
-  needle = "";
-  showing = false;
-  tooltip;
-  get defaultTooltipText() {
-    return "Search " + (this.folder.isRoot ? "All" : this.folder.title);
-  }
-  _evm = new EventManager();
-  search = (query) => {
-    this.needle = query;
-    for (const [key, controller] of this.folder.allInputs) {
-      const search_result = fuzzysearch(this.needle.toLocaleLowerCase(), key.toLowerCase()) ? "hit" : "miss";
-      const result = this.needle === "" ? "hit" : search_result;
-      const node = controller.elements.container;
-      if (node.dataset["search"] === result) continue;
-      const style = getComputedStyle(node);
-      node.dataset["search_height"] ??= style.minHeight;
-      node.dataset["search_overflow"] ??= style.overflow ?? "unset";
-      node.dataset["search_contain"] ??= style.contain ?? "none";
-      node.dataset["search_opacity"] ??= style.opacity ?? 1;
-      if (result === "hit") {
-        this._expandInput(node);
-      } else if (result === "miss") {
-        this._collapseInput(node);
-      }
-      node.dataset["search"] = result;
-    }
-  };
-  _expandInput = async (node) => {
-    if (node.dataset["search"] === "miss") {
-      node.style.setProperty("overflow", node.dataset["search_overflow"]);
-      node.style.setProperty("contain", node.dataset["search_contain"]);
-      const targetHeight = node.dataset["search_height"] ?? "100%";
-      const anim = node.animate(
-        [
-          { opacity: 0, height: "0px", minHeight: "0px" },
-          { opacity: 1, height: targetHeight, minHeight: targetHeight }
-        ],
-        {
-          duration: 300,
-          easing: "cubic-bezier(0.23, 1, 0.32, 1)",
-          fill: "forwards"
-        }
-      );
-      await anim.finished;
-      anim.commitStyles();
-    }
-  };
-  _collapseInput = async (node) => {
-    node.style.setProperty("overflow", "hidden");
-    node.style.setProperty("contain", "size");
-    const anim = node.animate([{ opacity: 0, height: "0px", minHeight: "0px" }], {
-      duration: 300,
-      easing: "cubic-bezier(0.23, 1, 0.32, 1)",
-      fill: "forwards"
-    });
-    await anim.finished;
-    anim.commitStyles();
-  };
-  clear = () => {
-    for (const [, controller] of this.folder.allInputs) {
-      this._expandInput(controller.elements.container);
-    }
-  };
-  toggle = (e) => {
-    e?.stopImmediatePropagation();
-    this.showing ? this.close() : this.open();
-  };
+  search;
+  _expandInput;
+  _collapseInput;
+  clear;
+  toggle;
   _tooltipTimeout;
-  open = () => {
-    this.showing = true;
-    this.elements.container.classList.add("active");
-    this.elements.input.focus();
-    removeEventListener("click", this._clickOutside);
-    addEventListener("click", this._clickOutside);
-    removeEventListener("keydown", this._escape);
-    addEventListener("keydown", this._escape);
-    this.tooltip.hide();
-    clearTimeout(this._tooltipTimeout);
-    this._tooltipTimeout = setTimeout(() => {
-      this.tooltip.text = "Cancel (esc)";
-      this.tooltip.placement = "top";
-      this.tooltip.offsetX = "-40px";
-      this.tooltip.offsetY = "-2px";
-    }, 100);
-    for (const folder of this.folder.allChildren) {
-      if (!folder.closed.value) continue;
-      folder.element.dataset["searchclosed"] = "true";
-      folder.open();
-    }
-  };
-  close = () => {
-    this.showing = false;
-    this.elements.container.classList.remove("active");
-    if (document.activeElement === this.elements.input || document.activeElement === this.elements.button) {
-      ;
-      document.activeElement?.blur();
-    }
-    this.clear();
-    removeEventListener("click", this._clickOutside);
-    removeEventListener("keydown", this._escape);
-    this.tooltip.hide();
-    clearTimeout(this._tooltipTimeout);
-    this._tooltipTimeout = setTimeout(() => {
-      this.tooltip.text = this.defaultTooltipText;
-      this.tooltip.placement = "left";
-      this.tooltip.offsetX = TOOLTIP_DEFAULTS.offsetX;
-      this.tooltip.offsetY = TOOLTIP_DEFAULTS.offsetY;
-    }, 100);
-    for (const folder of this.folder.allChildren) {
-      if (!folder.element.dataset["searchclosed"]) continue;
-      folder.element.dataset["searchclosed"] = "";
-      folder.close();
-    }
-  };
-  _clickOutside = (e) => {
-    if (!this.needle && !e.composedPath().includes(this.elements.container)) {
-      this.close();
-    }
-  };
-  _escape = (e) => {
-    if (e.key === "Escape") {
-      this.close();
-    }
-  };
+  open;
+  close;
+  _clickOutside;
+  _escape;
   _searchIcon() {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("aria-hidden", "true");
@@ -8436,40 +9906,43 @@ var INTERNAL_FOLDER_DEFAULTS = {
   gui: void 0,
   _headerless: false
 };
-var Folder = class _Folder {
+var Folder2 = class _Folder {
+  static {
+    __name(this, "Folder");
+  }
   //· Props ····················································································¬
   __type = "Folder";
   isRoot = true;
   id = nanoid();
   gui;
   /**
-   * A preset namespace to use for saving/loading.  By default, the {@link title|`title`}
-   * is used, in combiniation with the parent folder's title (and so on up the hierarchy).
-   * Therefore, if you want to use presets, you will only need to set this if you:
-   * - Use the same title for multiple inputs _in the same {@link Folder}_, or
-   * - Leave all titles empty
-   * Otherwise, this can be left as the default and presets will work as expected.
-   * @defaultValue {@link title|`title`}
-   */
+  * A preset namespace to use for saving/loading.  By default, the {@link title|`title`}
+  * is used, in combiniation with the parent folder's title (and so on up the hierarchy).
+  * Therefore, if you want to use presets, you will only need to set this if you:
+  * - Use the same title for multiple inputs _in the same {@link Folder}_, or
+  * - Leave all titles empty
+  * Otherwise, this can be left as the default and presets will work as expected.
+  * @defaultValue {@link title|`title`}
+  */
   presetId;
   /**
-   * Whether this Folder should be saved as a {@link FolderPreset} when saving the
-   * {@link GuiPreset} for the {@link Gui} this Folder belongs to.  If `false`, this Input will
-   * be skipped.
-   * @defaultValue `true`
-   */
+  * Whether this Folder should be saved as a {@link FolderPreset} when saving the
+  * {@link GuiPreset} for the {@link Gui} this Folder belongs to.  If `false`, this Input will
+  * be skipped.
+  * @defaultValue `true`
+  */
   saveable;
   /**
-   * The child folders of this folder.
-   */
+  * The child folders of this folder.
+  */
   children = [];
   /**
-   * All inputs added to this folder.
-   */
+  * All inputs added to this folder.
+  */
   inputs = /* @__PURE__ */ new Map();
   /**
-   * The root folder.  All folders have a reference to the same root folder.
-   */
+  * The root folder.  All folders have a reference to the same root folder.
+  */
   root;
   parentFolder;
   settingsFolder;
@@ -8478,10 +9951,15 @@ var Folder = class _Folder {
   element;
   elements = {};
   graphics;
-  evm = new EventManager(["change", "refresh", "toggle", "mount"]);
+  evm = new EventManager([
+    "change",
+    "refresh",
+    "toggle",
+    "mount"
+  ]);
   on = this.evm.on.bind(this.evm);
   _title;
-  _hidden = () => false;
+  _hidden = /* @__PURE__ */ __name(() => false, "_hidden");
   _log;
   /** Used to disable clicking the header to open/close the folder. */
   _disabledTimer;
@@ -8495,18 +9973,17 @@ var Folder = class _Folder {
     if (!("container" in options)) {
       throw new Error("Folder must have a container.");
     }
-    const opts = Object.assign(
-      {},
-      FOLDER_DEFAULTS,
-      INTERNAL_FOLDER_DEFAULTS,
-      {
-        gui: this.gui,
-        isRoot: true
-      },
-      options
-    );
-    this._log = new Logger(`Folder ${opts.title}`, { fg: "DarkSalmon" });
-    this._log.fn("constructor").debug({ opts, this: this });
+    const opts = Object.assign({}, FOLDER_DEFAULTS, INTERNAL_FOLDER_DEFAULTS, {
+      gui: this.gui,
+      isRoot: true
+    }, options);
+    this._log = new Logger(`Folder ${opts.title}`, {
+      fg: "DarkSalmon"
+    });
+    this._log.fn("constructor").debug({
+      opts,
+      this: this
+    });
     this.isRoot = opts.isRoot;
     if (this.isRoot) {
       this._depth = 0;
@@ -8536,12 +10013,10 @@ var Folder = class _Folder {
       }, 0);
     }
     this.hidden = opts.hidden ? toFn(opts.hidden) : () => false;
-    this.evm.add(
-      this.closed.subscribe((v) => {
-        v ? this.close() : this.open();
-        this.evm.emit("toggle", v);
-      })
-    );
+    this.evm.add(this.closed.subscribe((v) => {
+      v ? this.close() : this.open();
+      this.evm.emit("toggle", v);
+    }));
     this._createGraphics(opts._headerless).then(() => {
       if (opts.closed) {
         this.closed.set(opts.closed);
@@ -8551,49 +10026,43 @@ var Folder = class _Folder {
   }
   //· Getters/Setters ··········································································¬
   /**
-   * The folder's title.  Changing this will update the UI.
-   */
+  * The folder's title.  Changing this will update the UI.
+  */
   get title() {
     return this._title;
   }
   set title(v) {
     if (v === this._title) return;
     this._title = v;
-    this.elements.title.animate(
-      {
-        opacity: 0,
-        transform: "translateY(-0.33rem)"
-      },
-      {
-        duration: 75,
-        easing: "ease-out",
-        fill: "forwards"
-      }
-    ).onfinish = () => {
+    this.elements.title.animate({
+      opacity: 0,
+      transform: "translateY(-0.33rem)"
+    }, {
+      duration: 75,
+      easing: "ease-out",
+      fill: "forwards"
+    }).onfinish = () => {
       this.elements.title.textContent = v;
-      this.elements.title.animate(
-        [
-          {
-            opacity: 0,
-            transform: "translateY(.33rem)"
-          },
-          {
-            opacity: 1,
-            transform: "translateY(0rem)"
-          }
-        ],
+      this.elements.title.animate([
         {
-          delay: 0,
-          duration: 75,
-          easing: "ease-in",
-          fill: "forwards"
+          opacity: 0,
+          transform: "translateY(.33rem)"
+        },
+        {
+          opacity: 1,
+          transform: "translateY(0rem)"
         }
-      );
+      ], {
+        delay: 0,
+        duration: 75,
+        easing: "ease-in",
+        fill: "forwards"
+      });
     };
   }
   /**
-   * Whether the folder is visible.
-   */
+  * Whether the folder is visible.
+  */
   get hidden() {
     return this._hidden();
   }
@@ -8602,18 +10071,24 @@ var Folder = class _Folder {
     this._hidden() ? this.hide() : this.show();
   }
   /**
-   * A flat array of all child folders of this folder (and their children, etc).
-   */
+  * A flat array of all child folders of this folder (and their children, etc).
+  */
   get allChildren() {
-    return this.children.flatMap((child) => [child, ...child.allChildren]);
+    return this.children.flatMap((child) => [
+      child,
+      ...child.allChildren
+    ]);
   }
   /**
-   * A flat array of all inputs in all child folders of this folder (and their children, etc).
-   * See Input Generators region.
-   */
+  * A flat array of all inputs in all child folders of this folder (and their children, etc).
+  * See Input Generators region.
+  */
   get allInputs() {
     const allControls = /* @__PURE__ */ new Map();
-    for (const child of [this, ...this.allChildren]) {
+    for (const child of [
+      this,
+      ...this.allChildren
+    ]) {
       for (const [key, value] of child.inputs.entries()) {
         allControls.set(key, value);
       }
@@ -8628,7 +10103,10 @@ var Folder = class _Folder {
   addFolder(title, options) {
     options ??= {};
     options.title ??= title;
-    this._log.fn("addFolder").debug({ options, this: this });
+    this._log.fn("addFolder").debug({
+      options,
+      this: this
+    });
     const defaults = Object.assign({}, INTERNAL_FOLDER_DEFAULTS, {
       parentFolder: this,
       depth: this._depth + 1,
@@ -8651,9 +10129,14 @@ var Folder = class _Folder {
   }
   _handleClick(event) {
     if (event.button !== 0) return;
-    this._log.fn("#handleClick").debug({ event, this: this });
+    this._log.fn("#handleClick").debug({
+      event,
+      this: this
+    });
     this.element.removeEventListener("pointerup", this.toggle);
-    this.element.addEventListener("pointerup", this.toggle, { once: true });
+    this.element.addEventListener("pointerup", this.toggle, {
+      once: true
+    });
     if (composedPathContains(event, "fracgui-cancel")) return this._disableClicks();
     clearTimeout(this._disabledTimer);
     this._disabledTimer = setTimeout(() => {
@@ -8669,21 +10152,21 @@ var Folder = class _Folder {
     }, 150);
     if (this._clicksDisabled) return;
   }
-  _disableClicks = () => {
+  _disableClicks = /* @__PURE__ */ __name(() => {
     if (!this._clicksDisabled) {
       this._clicksDisabled = true;
       this._log.fn("disable").debug("Clicks DISABLED");
     }
     this._clicksDisabled = true;
     clearTimeout(this._disabledTimer);
-  };
+  }, "_disableClicks");
   _resetClicks() {
     this._log.fn("cancel").debug("Clicks ENABLED");
     removeEventListener("pointerup", this.toggle);
     this._clicksDisabled = false;
   }
   //·· Open/Close ······································································¬
-  toggle = () => {
+  toggle = /* @__PURE__ */ __name(() => {
     this._log.fn("toggle").debug();
     clearTimeout(this._disabledTimer);
     if (this._clicksDisabled) {
@@ -8697,7 +10180,7 @@ var Folder = class _Folder {
     const state2 = !this.closed.value;
     this.closed.set(state2);
     this.evm.emit("toggle", state2);
-  };
+  }, "toggle");
   open(updateState = false) {
     this._log.fn("open").debug();
     this.element.classList.remove("closed");
@@ -8727,22 +10210,29 @@ var Folder = class _Folder {
     this.element.classList.remove("hidden");
   }
   #toggleTimeout;
-  #toggleAnimClass = () => {
+  #toggleAnimClass = /* @__PURE__ */ __name(() => {
     this.element.classList.add("animating");
     clearTimeout(this.#toggleTimeout);
     this.#toggleTimeout = setTimeout(() => {
       this.element.classList.remove("animating");
     }, 600);
-  };
+  }, "#toggleAnimClass");
   //⌟
   //·· Save/Load ···············································································¬
-  resolvePresetId = (opts) => {
-    this._log.fn("resolvePresetId").debug({ opts, this: this });
-    const getPaths = (folder) => {
-      if (folder.isRootFolder.bind(folder) || !(folder.parentFolder === this))
-        return [folder.title];
-      return [...getPaths(folder.parentFolder), folder.title];
-    };
+  resolvePresetId = /* @__PURE__ */ __name((opts) => {
+    this._log.fn("resolvePresetId").debug({
+      opts,
+      this: this
+    });
+    const getPaths = /* @__PURE__ */ __name((folder) => {
+      if (folder.isRootFolder.bind(folder) || !(folder.parentFolder === this)) return [
+        folder.title
+      ];
+      return [
+        ...getPaths(folder.parentFolder),
+        folder.title
+      ];
+    }, "getPaths");
     const paths = getPaths(this);
     let presetId = opts?.presetId || paths.join("__");
     if (!presetId) {
@@ -8753,9 +10243,11 @@ var Folder = class _Folder {
       if (i > 0) presetId += i;
     }
     return presetId;
-  };
+  }, "resolvePresetId");
   save() {
-    this._log.fn("save").debug({ this: this });
+    this._log.fn("save").debug({
+      this: this
+    });
     if (this.saveable !== true) {
       throw new Error("Attempted to save unsaveable Folder: " + this.title);
     }
@@ -8771,12 +10263,15 @@ var Folder = class _Folder {
     return preset;
   }
   /**
-   * Updates all inputs with values from the {@link FolderPreset}.  If the preset has children,
-   * those presets will also be passed to the corresponding child folders'
-   * {@link Folder.load|`load`} method.
-   */
+  * Updates all inputs with values from the {@link FolderPreset}.  If the preset has children,
+  * those presets will also be passed to the corresponding child folders'
+  * {@link Folder.load|`load`} method.
+  */
   load(preset) {
-    this._log.fn("load").debug({ preset, this: this });
+    this._log.fn("load").debug({
+      preset,
+      this: this
+    });
     this.closed.set(preset.closed);
     this.hidden = preset.hidden;
     for (const child of this.children) {
@@ -8792,8 +10287,8 @@ var Folder = class _Folder {
   //⌟
   //· Input Generators ·········································································¬
   /**
-   * Updates the ui for all inputs belonging to this folder to reflect their current values.
-   */
+  * Updates the ui for all inputs belonging to this folder to reflect their current values.
+  */
   refresh() {
     this._log.fn("refresh").debug(this);
     for (const input of this.inputs.values()) {
@@ -8801,8 +10296,8 @@ var Folder = class _Folder {
     }
   }
   /**
-   * Updates the ui for all inputs in this folder and all child folders recursively.
-   */
+  * Updates the ui for all inputs in this folder and all child folders recursively.
+  */
   refreshAll() {
     for (const input of this.allInputs.values()) {
       input.refresh();
@@ -8814,11 +10309,16 @@ var Folder = class _Folder {
     for (const [key, value] of Object.entries(obj)) {
       if (typeof value === "object") {
         if (isColor(value)) {
-          this.addColor({ title: key, value });
+          this.addColor({
+            title: key,
+            value
+          });
           continue;
         }
         const subFolder = folder.addFolder(key);
-        subFolder.addMany(value, { folder: subFolder });
+        subFolder.addMany(value, {
+          folder: subFolder
+        });
       } else {
         const opts = {
           title: key,
@@ -8830,17 +10330,14 @@ var Folder = class _Folder {
         };
         if (typeof value === "number") {
           if (value > 0) {
-            ;
             opts.max = value * 2;
             opts.step = value / 10;
             opts.min = 0;
           } else if (value == 0) {
-            ;
             opts.min = -1;
             opts.step = 0.01;
             opts.max = 1;
           } else {
-            ;
             opts.min = value * 2;
             opts.step = value / 10;
             opts.max = 0;
@@ -8858,29 +10355,33 @@ var Folder = class _Folder {
     return input;
   }
   /**
-   * Binds an input to a target object and key.  The input will automatically update the target
-   * object's key when the input value changes.
-   * @param target - The object to bind the input to.
-   * @param key - The key of the target object to bind the input to.
-   * @param options - The {@link InputOptions}, the type of which is inferred based on the type
-   * of the value at the {@link target} object's {@link key}.
-   * @example
-   * ```ts
-   * const gui = new Gui()
-   * const params = { foo: 5, bar: 'baz' }
-   * const folder = gui.addFolder('params')
-   *
-   * const numberInput = folder.bind(params, 'foo', { min: 0, max: 10, step: 1 })
-   * //    ^? `InputNumber`
-   *
-   * const textInput = folder.bind(params, 'bar', { maxLength: 50 })
-   * //    ^? `InputText`
-   */
+  * Binds an input to a target object and key.  The input will automatically update the target
+  * object's key when the input value changes.
+  * @param target - The object to bind the input to.
+  * @param key - The key of the target object to bind the input to.
+  * @param options - The {@link InputOptions}, the type of which is inferred based on the type
+  * of the value at the {@link target} object's {@link key}.
+  * @example
+  * ```ts
+  * const gui = new Gui()
+  * const params = { foo: 5, bar: 'baz' }
+  * const folder = gui.addFolder('params')
+  *
+  * const numberInput = folder.bind(params, 'foo', { min: 0, max: 10, step: 1 })
+  * //    ^? `InputNumber`
+  *
+  * const textInput = folder.bind(params, 'bar', { maxLength: 50 })
+  * //    ^? `InputText`
+  */
   bind(target, key, options) {
     const value = target[key];
     const opts = options ?? {};
     opts.title ??= key;
-    opts.binding = { target, key, initial: value };
+    opts.binding = {
+      target,
+      key,
+      initial: value
+    };
     const input = this._createInput(opts);
     this.inputs.set(input.id, input);
     this._refreshIcon();
@@ -8916,14 +10417,14 @@ var Folder = class _Folder {
   }
   addColor(titleOrOptions, maybeOptions) {
     const opts = this._resolveOptions(titleOrOptions, maybeOptions);
-    const input = new InputColor(opts, this);
+    const input = new InputColor2(opts, this);
     this.inputs.set(input.id, input);
     this._refreshIcon();
     return input;
   }
   bindColor(titleOrTarget, keyOrOptions, options) {
     const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
-    const input = new InputColor(opts, this);
+    const input = new InputColor2(opts, this);
     this.inputs.set(input.title, input);
     this._refreshIcon();
     return input;
@@ -8950,11 +10451,7 @@ var Folder = class _Folder {
     return input;
   }
   bindButtonGrid(titleOrTarget, keyOrOptions, options) {
-    const opts = this._resolveBinding(
-      titleOrTarget,
-      keyOrOptions,
-      options
-    );
+    const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
     const input = new InputButtonGrid(opts, this);
     this.inputs.set(input.title, input);
     this._refreshIcon();
@@ -8968,11 +10465,7 @@ var Folder = class _Folder {
     return input;
   }
   bindSelect(titleOrTarget, keyOrOptions, options) {
-    const opts = this._resolveBinding(
-      titleOrTarget,
-      keyOrOptions,
-      options
-    );
+    const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
     const input = new InputSelect(opts, this);
     this.inputs.set(input.title, input);
     this._refreshIcon();
@@ -8993,10 +10486,10 @@ var Folder = class _Folder {
     return input;
   }
   /**
-   * Does validation / error handling.
-   * If no title was provided, this method will also assign the binding key to the title.
-   * @returns The processed options.
-   */
+  * Does validation / error handling.
+  * If no title was provided, this method will also assign the binding key to the title.
+  * @returns The processed options.
+  */
   _validateOptions(options, validate) {
     if (options.binding?.key && !options.title) {
       options.title = options.binding.key;
@@ -9012,35 +10505,25 @@ var Folder = class _Folder {
           let err = false;
           if (typeof b2.target === "undefined") {
             err = true;
-            console.error(
-              `\x1B[96mgooey\x1B[39m ~ \x1B[91mError\x1B[39m Binding "target" is undefined:`,
-              b2
-            );
+            console.error(`\x1B[96mgooey\x1B[39m ~ \x1B[91mError\x1B[39m Binding "target" is undefined:`, b2);
           }
           if (typeof b2.key === "undefined") {
             err = true;
-            console.error(
-              `\x1B[96mgooey\x1B[39m ~ \x1B[91mError\x1B[39m Binding "key" is undefined:`,
-              b2
-            );
+            console.error(`\x1B[96mgooey\x1B[39m ~ \x1B[91mError\x1B[39m Binding "key" is undefined:`, b2);
           }
           if (typeof b2.target[b2.key] === "undefined") {
             err = true;
-            console.error(
-              `\x1B[96mgooey\x1B[39m ~ \x1B[91mError\x1B[39m The provided binding key \x1B[33m"${b2.key}"\x1B[39m does not exist on provided \x1B[33mtarget\x1B[39m:`,
-              b2
-            );
+            console.error(`\x1B[96mgooey\x1B[39m ~ \x1B[91mError\x1B[39m The provided binding key \x1B[33m"${b2.key}"\x1B[39m does not exist on provided \x1B[33mtarget\x1B[39m:`, b2);
           }
           if (err) {
-            throw new Error(
-              "gooey ~ Failed to bind input to the provided target object.",
-              {
-                cause: options
-              }
-            );
+            throw new Error("gooey ~ Failed to bind input to the provided target object.", {
+              cause: options
+            });
           }
         } else {
-          throw new Error("gooey ~ No value or binding provided.", { cause: options });
+          throw new Error("gooey ~ No value or binding provided.", {
+            cause: options
+          });
         }
       }
     }
@@ -9056,7 +10539,7 @@ var Folder = class _Folder {
       case "InputNumber":
         return new InputNumber(options, this);
       case "InputColor":
-        return new InputColor(options, this);
+        return new InputColor2(options, this);
       case "InputSelect":
         return new InputSelect(options, this);
       case "InputButton":
@@ -9084,12 +10567,19 @@ var Folder = class _Folder {
       const target = titleOrTarget;
       const key = keyOrOptions;
       opts = options ?? {};
-      opts.binding = { target, key, initial: target[key] };
+      opts.binding = {
+        target,
+        key,
+        initial: target[key]
+      };
     }
     return this._validateOptions(opts, shouldHaveValue);
   }
   _resolveType(options) {
-    this._log.fn("resolveType").debug({ options, this: this });
+    this._log.fn("resolveType").debug({
+      options,
+      this: this
+    });
     let value = options.value ?? options.binding?.target[options.binding.key];
     if ("onClick" in options) {
       return "InputButton";
@@ -9133,49 +10623,73 @@ var Folder = class _Folder {
   //⌟
   //· Elements ·················································································¬
   _createElement(el) {
-    this._log.fn("#createElement").debug({ el, this: this });
+    this._log.fn("#createElement").debug({
+      el,
+      this: this
+    });
     if (this.isRoot) {
       return create("div", {
         id: `fracgui-root_${this.id}`,
-        classes: ["fracgui-root", "fracgui-folder", "closed"],
-        dataset: { theme: this.gui.theme ?? "default" },
+        classes: [
+          "fracgui-root",
+          "fracgui-folder",
+          "closed"
+        ],
+        dataset: {
+          theme: this.gui.theme ?? "default"
+        },
         parent: el
       });
     }
     return create("div", {
       parent: this.parentFolder.elements.content,
-      classes: ["fracgui-folder", "closed"]
+      classes: [
+        "fracgui-folder",
+        "closed"
+      ]
     });
   }
   _createElements(element) {
-    this._log.fn("#createElements").debug({ element, this: this });
+    this._log.fn("#createElements").debug({
+      element,
+      this: this
+    });
     const header = create("div", {
       parent: element,
-      classes: ["fracgui-header"]
+      classes: [
+        "fracgui-header"
+      ]
     });
     header.addEventListener("pointerdown", this._handleClick.bind(this));
     const title = create("div", {
       parent: header,
-      classes: ["fracgui-title"],
+      classes: [
+        "fracgui-title"
+      ],
       textContent: this.title
     });
     const toolbar = create("div", {
       parent: header,
-      classes: ["fracgui-toolbar"]
+      classes: [
+        "fracgui-toolbar"
+      ]
     });
     const contentWrapper = create("div", {
-      classes: ["fracgui-content-wrapper"],
+      classes: [
+        "fracgui-content-wrapper"
+      ],
       parent: element
     });
     const content = create("div", {
-      classes: ["fracgui-content"],
+      classes: [
+        "fracgui-content"
+      ],
       parent: contentWrapper
     });
     return {
       header,
       toolbar: {
         container: toolbar
-        // settingsButton,
       },
       title,
       contentWrapper,
@@ -9185,10 +10699,14 @@ var Folder = class _Folder {
   //⌟
   //· SVG's ····················································································¬
   async _createGraphics(headerless = false) {
-    this._log.fn("createGraphics").debug({ this: this });
+    this._log.fn("createGraphics").debug({
+      this: this
+    });
     await Promise.resolve();
     if (!this.isRootFolder()) {
-      this.graphics = { icon: createFolderSvg(this) };
+      this.graphics = {
+        icon: createFolderSvg(this)
+      };
       this.elements.header.prepend(this.graphics.icon);
       if (!headerless) {
         this.graphics.connector = createFolderConnector(this);
@@ -9198,7 +10716,9 @@ var Folder = class _Folder {
     if (DEV) new TerminalSvg(this);
   }
   _createSvgs() {
-    this._log.fn("#createSvgs").debug({ this: this });
+    this._log.fn("#createSvgs").debug({
+      this: this
+    });
   }
   get hue() {
     const localIndex = this.parentFolder.children.indexOf(this);
@@ -9231,7 +10751,9 @@ var Folder = class _Folder {
     try {
       this.parentFolder.children.splice(this.parentFolder.children.indexOf(this), 1);
     } catch (err) {
-      this._log.fn("dispose").error("Error removing folder from parent", { err });
+      this._log.fn("dispose").error("Error removing folder from parent", {
+        err
+      });
     }
     this.disposed = true;
   }
@@ -9256,7 +10778,10 @@ var GUI_WINDOWMANAGER_DEFAULTS = {
   resizable: {
     grabberSize: 9,
     color: "var(--bg-d)",
-    sides: ["right", "left"],
+    sides: [
+      "right",
+      "left"
+    ],
     corners: []
   },
   draggable: {
@@ -9279,58 +10804,65 @@ var GUI_DEFAULTS = {
   container: "body",
   theme: "default",
   themeMode: "dark",
-  themes: [default_default, flat_default, scout_default],
+  themes: [
+    default_default,
+    flat_default,
+    scout_default
+  ],
   resizable: true,
   draggable: true
 };
 var Gui = class _Gui {
+  static {
+    __name(this, "Gui");
+  }
   __type = "Gui";
   id = nanoid();
   folder;
   /**
-   * The initial options passed to the gui.
-   */
+  * The initial options passed to the gui.
+  */
   opts;
   /**
-   * Whether the gui root folder is currently collapsed.
-   */
+  * Whether the gui root folder is currently collapsed.
+  */
   closed;
   /**
-   * The {@link PresetManager} instance for the gui.
-   */
+  * The {@link PresetManager} instance for the gui.
+  */
   presetManager;
   /**
-   * Whether any of the inputs have been changed from their default values in the active preset.
-   */
+  * Whether any of the inputs have been changed from their default values in the active preset.
+  */
   dirty = false;
   wrapper;
   container;
   settingsFolder;
   static settingsFolderTitle = "fracgui-settings-folder";
   /**
-   * The {@link UndoManager} instance for the gui, handling undo/redo functionality.
-   * @internal
-   */
+  * The {@link UndoManager} instance for the gui, handling undo/redo functionality.
+  * @internal
+  */
   _undoManager = new UndoManager();
   themer;
   themeEditor;
   windowManager;
   /**
-   * `false` if this {@link Gui}'s {@link WindowManager} belongs to an existing, external
-   * instance _(i.e. a separate {@link Gui} instance or custom {@link WindowManager})_.  The
-   * {@link WindowManager} will be disposed when this {@link Gui} is disposed.
-   * @internal
-   */
+  * `false` if this {@link Gui}'s {@link WindowManager} belongs to an existing, external
+  * instance _(i.e. a separate {@link Gui} instance or custom {@link WindowManager})_.  The
+  * {@link WindowManager} will be disposed when this {@link Gui} is disposed.
+  * @internal
+  */
   _isWindowManagerOwner = false;
   /**
-   * The time of the gui's creation.
-   * @internal
-   */
+  * The time of the gui's creation.
+  * @internal
+  */
   _birthday = Date.now();
   /**
-   * The number of milliseconds post-instantiation to watch for adders for repositioning.
-   * @internal
-   */
+  * The number of milliseconds post-instantiation to watch for adders for repositioning.
+  * @internal
+  */
   _honeymoon = 1e3;
   _theme;
   _log;
@@ -9353,7 +10885,10 @@ var Gui = class _Gui {
   addSwitch;
   addColor;
   constructor(options) {
-    const opts = deepMergeOpts([GUI_DEFAULTS, options ?? {}], {
+    const opts = deepMergeOpts([
+      GUI_DEFAULTS,
+      options ?? {}
+    ], {
       concatArrays: false
     });
     opts.container ??= document.body;
@@ -9374,17 +10909,24 @@ var Gui = class _Gui {
       reposition = true;
     }
     this.opts = opts;
-    this._log = new Logger(`Gui ${this.opts.title}`, { fg: "palevioletred" });
-    this._log.fn("constructor").debug({ options, opts });
+    this._log = new Logger(`Gui ${this.opts.title}`, {
+      fg: "palevioletred"
+    });
+    this._log.fn("constructor").debug({
+      options,
+      opts
+    });
     this.container = select(this.opts.container)[0];
     this.wrapper = create("div", {
-      classes: ["fracgui-wrapper"],
+      classes: [
+        "fracgui-wrapper"
+      ],
       style: {
         display: "contents"
       },
       parent: this.container
     });
-    this.folder = new Folder({
+    this.folder = new Folder2({
       ...this.opts,
       __type: "FolderOptions",
       container: this.wrapper,
@@ -9402,7 +10944,7 @@ var Gui = class _Gui {
     this.addNumber = this.folder.addNumber.bind(this.folder);
     this.addSwitch = this.folder.addSwitch.bind(this.folder);
     this.addColor = this.folder.addColor.bind(this.folder);
-    const handleUndoRedo = (e) => {
+    const handleUndoRedo = /* @__PURE__ */ __name((e) => {
       if (globalThis.navigator?.userAgent?.match(/mac/i)) {
         if (e.metaKey && e.key === "z") {
           e.preventDefault();
@@ -9418,15 +10960,13 @@ var Gui = class _Gui {
           this._undoManager.redo();
         }
       }
-    };
+    }, "handleUndoRedo");
     removeEventListener("keydown", handleUndoRedo);
     addEventListener("keydown", handleUndoRedo);
     this.closed = state(!!this.opts.closed, {
       key: this.opts.storage ? `${this.opts.storage.key}::closed` : void 0
     });
-    this.folder.elements.toolbar.settingsButton = this._createSettingsButton(
-      this.folder.elements.toolbar.container
-    );
+    this.folder.elements.toolbar.settingsButton = this._createSettingsButton(this.folder.elements.toolbar.container);
     this.settingsFolder = this.folder.addFolder(_Gui.settingsFolderTitle, {
       closed: true,
       hidden: false,
@@ -9464,7 +11004,14 @@ var Gui = class _Gui {
       }
     }
     this.container.appendChild(this.wrapper);
-    this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
+    this.folder.element.animate([
+      {
+        opacity: 0
+      },
+      {
+        opacity: 1
+      }
+    ], {
       fill: "none",
       duration: 400
     });
@@ -9512,15 +11059,18 @@ var Gui = class _Gui {
       });
       return windowManager2;
     }
-    const windowManagerOpts = resolveOpts(
-      {
-        ...GUI_WINDOWMANAGER_DEFAULTS,
-        draggable: dragOpts,
-        resizable: resizeOpts
-      },
-      WINDOWMANAGER_DEFAULTS
-    );
-    this._log.fn("_createWindowManager").debug({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts });
+    const windowManagerOpts = resolveOpts({
+      ...GUI_WINDOWMANAGER_DEFAULTS,
+      draggable: dragOpts,
+      resizable: resizeOpts
+    }, WINDOWMANAGER_DEFAULTS);
+    this._log.fn("_createWindowManager").debug({
+      windowManagerOpts,
+      options,
+      opts: this.opts,
+      dragOpts,
+      resizeOpts
+    });
     const windowManager = new WindowManager({
       ...windowManagerOpts,
       draggable: dragOpts,
@@ -9529,7 +11079,6 @@ var Gui = class _Gui {
     this._isWindowManagerOwner = true;
     windowManager.add(this.folder.element, {
       id: this.id
-      // The rest of the options will inherit from the WindowManager instance.
     });
     return windowManager;
   }
@@ -9542,8 +11091,8 @@ var Gui = class _Gui {
     return this._theme;
   }
   /**
-   * Saves the current gui state as a preset.
-   */
+  * Saves the current gui state as a preset.
+  */
   save(title, id = nanoid(10)) {
     const preset = {
       __type: "GuiPreset",
@@ -9555,20 +11104,24 @@ var Gui = class _Gui {
     return preset;
   }
   /**
-   * Loads a given preset into the gui, updating all inputs.
-   */
+  * Loads a given preset into the gui, updating all inputs.
+  */
   load(preset) {
-    this._log.fn("load").debug({ preset });
+    this._log.fn("load").debug({
+      preset
+    });
     this.dirty = false;
     this.lockCommits(preset);
     this.folder.load(preset.data);
     Promise.resolve().then(() => this.unlockCommits());
   }
   _undoLock = false;
-  lockCommit = { from: void 0 };
+  lockCommit = {
+    from: void 0
+  };
   /**
-   * Commits a change to the input's value to the undo manager.
-   */
+  * Commits a change to the input's value to the undo manager.
+  */
   commit(commit) {
     if (this._undoLock) {
       this._log.fn("commit").debug("LOCKED: prevented commit while locked");
@@ -9578,27 +11131,35 @@ var Gui = class _Gui {
     this._undoManager?.commit(commit);
   }
   /**
-   * Prevents the input from registering undo history, storing the initial
-   * for the eventual commit in {@link unlockCommits}.
-   */
-  lockCommits = (from) => {
+  * Prevents the input from registering undo history, storing the initial
+  * for the eventual commit in {@link unlockCommits}.
+  */
+  lockCommits = /* @__PURE__ */ __name((from) => {
     this._undoManager.lockedExternally = true;
     this.lockCommit.from = from;
-    this._log.fn(o("lock")).debug("commit", { from, lockCommit: this.lockCommit });
-  };
+    this._log.fn(o("lock")).debug("commit", {
+      from,
+      lockCommit: this.lockCommit
+    });
+  }, "lockCommits");
   /**
-   * Unlocks commits and saves the current commit stored in lock.
-   */
-  unlockCommits = (commit) => {
+  * Unlocks commits and saves the current commit stored in lock.
+  */
+  unlockCommits = /* @__PURE__ */ __name((commit) => {
     commit ??= {};
     commit.target ??= this;
     commit.from ??= this.lockCommit.from;
     this._undoManager.lockedExternally = false;
     this.commit(commit);
-    this._log.fn(o("unlock")).debug("commit", { commit, lockCommit: this.lockCommit });
-  };
+    this._log.fn(o("unlock")).debug("commit", {
+      commit,
+      lockCommit: this.lockCommit
+    });
+  }, "unlockCommits");
   _createThemer(folder) {
-    this._log.fn("createThemer").debug({ folder });
+    this._log.fn("createThemer").debug({
+      folder
+    });
     let finalThemer = void 0;
     const themer = this.opts._themer;
     const themerOptions = {
@@ -9610,21 +11171,24 @@ var Gui = class _Gui {
       theme: this.opts.themes.find((t) => t.title === this.opts.theme),
       vars: GUI_VARS
     };
-    themerOptions.vars = deepMergeOpts([GUI_VARS, themerOptions.vars]);
+    themerOptions.vars = deepMergeOpts([
+      GUI_VARS,
+      themerOptions.vars
+    ]);
     if (themer) {
       finalThemer = themer;
     } else {
       themerOptions.wrapper = this.wrapper;
       finalThemer = new Themer(this.folder.element, themerOptions);
     }
-    this.folder.evm.add(
-      finalThemer.mode.subscribe(() => {
-        if (this.settingsFolder) {
-          this.applyAltStyle(this.settingsFolder);
-        }
-      })
-    );
-    const uiFolder = folder.addFolder("ui", { closed: true });
+    this.folder.evm.add(finalThemer.mode.subscribe(() => {
+      if (this.settingsFolder) {
+        this.applyAltStyle(this.settingsFolder);
+      }
+    }));
+    const uiFolder = folder.addFolder("ui", {
+      closed: true
+    });
     uiFolder.on("mount", () => {
       uiFolder.graphics?.connector?.svg.style.setProperty("filter", "saturate(0.1)");
       uiFolder.graphics?.icon.style.setProperty("filter", "saturate(0)");
@@ -9643,10 +11207,14 @@ var Gui = class _Gui {
         title: "mode",
         activeOnClick: true,
         value: [
-          ["light", "dark", "system"].map((m2) => ({
+          [
+            "light",
+            "dark",
+            "system"
+          ].map((m2) => ({
             text: m2,
-            onClick: () => finalThemer?.mode.set(m2),
-            active: () => finalThemer?.mode.value === m2
+            onClick: /* @__PURE__ */ __name(() => finalThemer?.mode.set(m2), "onClick"),
+            active: /* @__PURE__ */ __name(() => finalThemer?.mode.value === m2, "active")
           }))
         ]
       });
@@ -9659,12 +11227,15 @@ var Gui = class _Gui {
   _createSettingsButton(parent) {
     const button = create("button", {
       parent,
-      classes: ["fracgui-toolbar-item", "fracgui-settings-button"],
+      classes: [
+        "fracgui-toolbar-item",
+        "fracgui-settings-button"
+      ],
       innerHTML: settings_icon_default,
       tooltip: {
-        text: () => {
+        text: /* @__PURE__ */ __name(() => {
           return this.settingsFolder?.closed.value ? "Open Settings" : "Close Settings";
-        },
+        }, "text"),
         placement: "left",
         delay: 750,
         delayOut: 0,
@@ -9673,29 +11244,28 @@ var Gui = class _Gui {
     });
     button.addEventListener("click", () => {
       this.settingsFolder.toggle();
-      this.folder.elements.toolbar.settingsButton?.classList.toggle(
-        "open",
-        !this.settingsFolder.closed.value
-      );
+      this.folder.elements.toolbar.settingsButton?.classList.toggle("open", !this.settingsFolder.closed.value);
     });
     return button;
   }
   // todo - convert this crap to a css utility class
   applyAltStyle(folder) {
-    this._setVar(
-      folder.elements.content,
-      `box-shadow`,
-      `0px 0px 10px 0px hsl(10deg, 0%, var(--${VAR_PREFIX}-shadow-lightness), inset`
-    );
+    this._setVar(folder.elements.content, `box-shadow`, `0px 0px 10px 0px hsl(10deg, 0%, var(--${VAR_PREFIX}-shadow-lightness), inset`);
     folder.elements.content.style.setProperty("background", `--${VAR_PREFIX}-folder_background`);
     this._setProps(folder.element, [
-      ["background", `color-mix(in sRGB, var(--${VAR_PREFIX}-bg-b) 100%, transparent)`]
+      [
+        "background",
+        `color-mix(in sRGB, var(--${VAR_PREFIX}-bg-b) 100%, transparent)`
+      ]
     ]);
     switch (this.themer?.activeMode) {
       case "dark": {
         this._setVars(folder.elements.contentWrapper, [
           //- ['input-container_background', `var(--${VAR_PREFIX}-bg-b)`],
-          ["input-container_color", `var(--${VAR_PREFIX}-fg-b)`],
+          [
+            "input-container_color",
+            `var(--${VAR_PREFIX}-fg-b)`
+          ],
           [
             "folder-header_background",
             `color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 75%, transparent)`
@@ -9717,7 +11287,10 @@ var Gui = class _Gui {
             "folder-header_background",
             `color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 60%, transparent)`
           ],
-          ["controller_background", `var(--${VAR_PREFIX}-light-a)`]
+          [
+            "controller_background",
+            `var(--${VAR_PREFIX}-light-a)`
+          ]
         ]);
         break;
       }
@@ -9741,7 +11314,7 @@ var Gui = class _Gui {
       this._setVar(el, key, value);
     }
   }
-  dispose = () => {
+  dispose = /* @__PURE__ */ __name(() => {
     this._log.fn("dispose").debug(this);
     this.themer?.dispose();
     if (this._isWindowManagerOwner) {
@@ -9750,10 +11323,17 @@ var Gui = class _Gui {
     }
     this.settingsFolder?.dispose();
     this.folder?.dispose();
-  };
+  }, "dispose");
 };
 export {
-  Folder,
-  Gui
+  Color,
+  Folder2 as Folder,
+  GUI_DEFAULTS,
+  GUI_STORAGE_DEFAULTS,
+  GUI_WINDOWMANAGER_DEFAULTS,
+  Gui,
+  isColor,
+  isColorFormat,
+  parseColorFormat,
+  state
 };
-//! We should use the same bounds as Draggable...

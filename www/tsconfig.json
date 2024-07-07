@@ -11,5 +11,5 @@
 		"checkJs": true,
 		"moduleResolution": "Bundler",
 		"strict": true
-	},
+	}
 }
