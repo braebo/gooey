@@ -12,6 +12,7 @@ export default defineConfig([
 		clean: true,
 		dts: !!0,
 		esbuildPlugins: [
+			// @ts-expect-error broken type
 			sassPlugin({
 				type: 'css-text',
 			}),
@@ -24,6 +25,7 @@ export default defineConfig([
 		clean: true,
 		dts: true,
 		esbuildPlugins: [
+			// @ts-expect-error broken type
 			sassPlugin({
 				type: 'css-text',
 			}),
