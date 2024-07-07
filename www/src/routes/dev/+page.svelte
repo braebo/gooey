@@ -3,8 +3,8 @@
 <script lang="ts">
 	import { params } from '$lib/components/orbs/params'
 	import Orbs from '$lib/components/orbs/Orbs.svelte'
-	import { Gui } from '$lib/gui/Gui'
-	import { Code } from '$lib'
+	import Code from '$lib/components/Code.svelte'
+	import { Gui } from 'gooey'
 
 	import { demoGui, code, showCode } from './demoGui'
 
@@ -17,7 +17,7 @@
 	let orbs = true
 
 	onMount(() => {
-		params.update(p => {
+		params.update((p) => {
 			p.height = Math.round(window.innerHeight / 10)
 			p.width = Math.round(window.innerWidth / 7)
 			return p
@@ -32,7 +32,7 @@
 	})
 
 	function onResize() {
-		params.update(p => {
+		params.update((p) => {
 			p.height = Math.round(window.innerHeight / 10)
 			p.width = Math.round(window.innerWidth / 7)
 			return p
