@@ -2,7 +2,11 @@
   "name": "gooey",
   "version": "0.1.0",
   "description": "yet another web gui",
-  "keywords": [],
+  "keywords": [
+    "gui",
+    "typescript",
+    "javascript"
+  ],
   "license": "MIT",
   "author": "braebo",
   "type": "module",
@@ -20,7 +24,6 @@
     "LICENSE"
   ],
   "scripts": {
-    "dev": "vite-node --watch src/index",
     "build": "tsup",
     "build:watch": "tsup --watch",
     "check": "tsc --noEmit",
