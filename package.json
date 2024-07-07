@@ -23,6 +23,9 @@
     "dev": "vite-node --watch src/index",
     "build": "tsup",
     "build:watch": "tsup --watch",
+    "check": "tsc --noEmit",
+    "check:watch": "tsc --noEmit --watch",
+    "dev": "vite-node --watch src/index",
     "lint": "publint"
   },
   "devDependencies": {
