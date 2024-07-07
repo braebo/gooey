@@ -3724,8 +3724,9 @@ var PresetManager = class {
     if (this.opts.autoInit !== false) {
       this.init();
     }
-    if (this.activePreset.value.id !== this._defaultPresetId) {
+    if (Object.keys(this.activePreset.value).length && this.activePreset.value.id !== this._defaultPresetId) {
       Promise.resolve().then(() => {
+        console.log("loading active preset", this.activePreset.value);
         this.gui.load(this.activePreset.value);
         this.gui._undoManager.clear();
       });
