@@ -3,7 +3,7 @@ import type { ElementMap } from '../inputs/Input'
 import type { ControllerFactory } from './types'
 
 import { svgChevron } from '../svg/chevronSvg'
-import { create } from '../../utils/create'
+import { create } from '../shared/create'
 
 export const rangeController: ControllerFactory<HTMLInputElement> = (input, opts, parent) => {
 	const range = create('input', {

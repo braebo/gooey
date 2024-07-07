@@ -2,15 +2,15 @@
 
 import type { InputColor } from '../../inputs/InputColor'
 
-import { disableable, type Disableable } from '../../../decorators/disableable-class-decorator'
-import { Color, type ColorValue } from '../../../color/color'
-import { EventManager } from '../../../utils/EventManager'
-import { tooltip } from '../../../actions/tooltip'
-import { mapRange } from '../../../utils/mapRange'
-import { debounce } from '../../../utils/debounce'
-import { Logger } from '../../../utils/logger'
-import { create } from '../../../utils/create'
-import { clamp } from '../../../utils/clamp'
+import { disableable, type Disableable } from '../../shared/decorators/disableable-class-decorator'
+import { Color, type ColorValue } from '../../shared/color/color'
+import { EventManager } from '../../shared/EventManager'
+import { mapRange } from '../../shared/mapRange'
+import { debounce } from '../../shared/debounce'
+import { tooltip } from '../../shared/Tooltip'
+import { Logger } from '../../shared/logger'
+import { create } from '../../shared/create'
+import { clamp } from '../../shared/clamp'
 
 export type LayoutDirection = 'vertical' | 'horizontal' | ''
 

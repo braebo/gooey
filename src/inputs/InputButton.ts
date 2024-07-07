@@ -1,11 +1,11 @@
 import type { ElementMap, InputEvents, InputOptions } from './Input'
-import type { State } from '../../utils/state'
+import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
 import { ButtonController } from '../controllers/ButtonController'
-import { Logger } from '../../utils/logger'
-import { create } from '../../utils/create'
-import { state } from '../../utils/state'
+import { Logger } from '../shared/logger'
+import { create } from '../shared/create'
+import { state } from '../shared/state'
 import { Input } from './Input'
 import { DEV } from 'esm-env'
 

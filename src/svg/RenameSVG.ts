@@ -1,6 +1,6 @@
-import { styled } from '../../decorators/styled'
-import { Tooltip } from '../../actions/tooltip'
-import { create } from '../../utils/create'
+import { styled } from '../shared/decorators/styled'
+import { Tooltip } from '../shared/Tooltip'
+import { create } from '../shared/create'
 
 @styled
 export class RenameSVG {

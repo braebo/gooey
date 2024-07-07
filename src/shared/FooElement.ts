@@ -1,7 +1,7 @@
 //- Hypothetical component api
 // @ts-nocheck
 
-import type { CreateOptions } from '../../utils/create'
+import type { CreateOptions } from '../shared/create'
 
 import { styled } from '../../decorators/styled'
 

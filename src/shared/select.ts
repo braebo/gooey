@@ -1,4 +1,4 @@
-import { DEV } from './env'
+import { DEV } from 'esm-env'
 
 export type ElementOrSelector = string | HTMLElement | undefined | 'document' | 'window'
 export type ElementsOrSelectors = ElementOrSelector | ElementOrSelector[]

@@ -1,7 +1,7 @@
-import type { ExtendedVars } from '$lib/themer/types'
-import type { DestructuredVars, ThemeVars } from '../../css/custom-properties'
+import type { DestructuredVars, ThemeVars } from '../shared/css-custom-properties'
+import type { ExtendedVars } from '../styles/themer/types'
 
-import { destructureVars } from '../../css/custom-properties'
+import { destructureVars } from '../shared/css-custom-properties'
 import defaultTheme from './themes/default'
 
 export type GuiCoreVars = DestructuredVars<typeof GUI_VARS_STRUCTURED, typeof VAR_PREFIX>

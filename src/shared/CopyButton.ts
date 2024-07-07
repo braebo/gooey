@@ -1,6 +1,6 @@
-import { Tooltip } from '../../actions/tooltip'
-import { create } from '../../utils/create'
-import { append } from '../../utils/mount'
+import { Tooltip } from '../shared/Tooltip'
+import { create } from '../shared/create'
+import { append } from '../shared/mount'
 import { CopySVG } from '../svg/CopySVG'
 
 export class CopyButton {

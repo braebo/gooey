@@ -1,9 +1,9 @@
 import type { Folder } from '../Folder'
 
-import { TOOLTIP_DEFAULTS, Tooltip } from '../../actions/tooltip'
-import { EventManager } from '../../utils/EventManager'
-import { fuzzysearch } from '../../utils/fuzzySearch'
-import { create } from '../../utils/create'
+import { TOOLTIP_DEFAULTS, Tooltip } from '../shared/Tooltip'
+import { EventManager } from '../shared/EventManager'
+import { fuzzysearch } from '../shared/fuzzySearch'
+import { create } from '../shared/create'
 
 export class Search {
 	elements: {
@@ -33,7 +33,7 @@ export class Search {
 			classes: ['fracgui-controller-text', 'fracgui-search-input', 'fracgui-cancel'],
 			parent: container,
 		})
-		this._evm.listen(input, 'input', e => this.search(e.target.value))
+		this._evm.listen(input, 'input', (e) => this.search(e.target.value))
 
 		const button = create('button', {
 			classes: ['fracgui-search-button', 'fracgui-cancel'],

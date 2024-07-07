@@ -1,10 +1,10 @@
 import type { InputOptions, ValidInput } from '../inputs/Input'
-import type { Tooltip } from '../../actions/tooltip'
+import type { Tooltip } from '../shared/Tooltip'
 
-import { modIcon, modKey } from '../../utils/keys'
-import { getStyle } from '../../dom/getStyle'
-import { create } from '../../utils/create'
-import { Logger } from '../../utils/logger'
+import { modIcon, modKey } from '../shared/keys'
+import { getStyle } from '../shared/getStyle'
+import { create } from '../shared/create'
+import { Logger } from '../shared/logger'
 
 export class NumberController<
 	TInput extends ValidInput = ValidInput,

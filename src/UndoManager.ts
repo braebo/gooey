@@ -8,7 +8,7 @@
  * Also, when undoing all the way, the pointer is -1, but the stack still has 1 commit.
  */
 
-import type { Input, ValidInputValue } from '../gui/inputs/Input'
+import type { Input, ValidInputValue } from './inputs/Input'
 
 /**
  * A recorded "action" callback that can be re-played forwards or backwards.

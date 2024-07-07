@@ -1,17 +1,17 @@
 import type { ColorComponentsElements } from '../controllers/color/ColorComponents'
 import type { ColorPickerElements } from '../controllers/color/ColorPicker'
 import type { ElementMap, InputOptions, InputPreset } from './Input'
-import type { ColorFormat } from '../../color/types/colorFormat'
-import type { State } from '../../utils/state'
+import type { ColorFormat } from '../shared/color/types/colorFormat'
+import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
 import { ColorComponents } from '../controllers/color/ColorComponents'
 import { ColorPicker } from '../controllers/color/ColorPicker'
-import { Color, isColor } from '../../color/color'
+import { Color, isColor } from '../shared/color/color'
 import { CopyButton } from '../shared/CopyButton'
-import { create } from '../../utils/create'
-import { Logger } from '../../utils/logger'
-import { state } from '../../utils/state'
+import { create } from '../shared/create'
+import { Logger } from '../shared/logger'
+import { state } from '../shared/state'
 import { Input } from './Input'
 
 export type ColorMode = (typeof COLOR_MODES)[number]

@@ -1,6 +1,6 @@
-import type { JavascriptStyleProperty } from '../../css/types'
-import type { TooltipOptions } from '../../actions/tooltip'
-import type { CreateOptions } from '../../utils/create'
+import type { JavascriptStyleProperty } from '../shared/css-types'
+import type { TooltipOptions } from '../shared/Tooltip'
+import type { CreateOptions } from '../shared/create'
 import type { ElementMap, InputOptions } from './Input'
 import type { Folder } from '../Folder'
 import type {
@@ -9,12 +9,12 @@ import type {
 } from '../controllers/ButtonController'
 
 import { ButtonController } from '../controllers/ButtonController'
-import { getStyle } from '../../dom/getStyle'
-import { nanoid } from '../../utils/nanoid'
-import { Logger } from '../../utils/logger'
-import { create } from '../../utils/create'
-import { state } from '../../utils/state'
-import { toFn } from '../../utils/toFn'
+import { getStyle } from '../shared/getStyle'
+import { nanoid } from '../shared/nanoid'
+import { Logger } from '../shared/logger'
+import { create } from '../shared/create'
+import { state } from '../shared/state'
+import { toFn } from '../shared/toFn'
 import { Input } from './Input'
 
 /**
@@ -131,7 +131,7 @@ export class InputButtonGrid extends Input<
 		const instanceGrid: ButtonGrid = []
 
 		const rows = grid.length
-		const cols = Math.max(...grid.map(row => row.length))
+		const cols = Math.max(...grid.map((row) => row.length))
 
 		// Remove all buttons.
 		for (const { element } of this.buttons.values()) {

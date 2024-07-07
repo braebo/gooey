@@ -1,7 +1,7 @@
+import type { ThemeDefinition } from '../../styles/themer/types'
 import type { GUI_VARS } from '../GUI_VARS'
-import type { ThemeDefinition } from '../../../themer/types'
 
-import { resolveTheme } from '../../../themer/resolveTheme'
+import { resolveTheme } from '../../styles/themer/resolveTheme'
 
 export default resolveTheme({
 	title: 'scout',

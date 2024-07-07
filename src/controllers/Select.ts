@@ -1,13 +1,13 @@
-import type { State } from '../../utils/state'
+import type { State } from '../shared/state'
 import type { Input } from '../inputs/Input'
 
-import { disableable, type Disableable } from '../../decorators/disableable-class-decorator'
-import { getScrollParent } from '../../dom/scrollParent'
-import { EventManager } from '../../utils/EventManager'
-import { isState } from '../../utils/state'
-import { values } from '../../utils/object'
-import { create } from '../../utils/create'
-import { Logger } from '../../utils/logger'
+import { disableable, type Disableable } from '../shared/decorators/disableable-class-decorator'
+import { getScrollParent } from '../shared/scrollParent'
+import { EventManager } from '../shared/EventManager'
+import { isState } from '../shared/state'
+import { values } from '../shared/object'
+import { create } from '../shared/create'
+import { Logger } from '../shared/logger'
 
 export type LabeledOption<T> = { label: string; value: T }
 export type Option<T> = T | LabeledOption<T>
@@ -146,7 +146,10 @@ export class Select<T> {
 	/**
 	 * Used to subscribe to {@link SelectInputEvents}.
 	 */
-	on = this._evm.on.bind(this._evm)
+	on = this._evm.on.bind(this._evm) as <K extends keyof SelectInputEvents<T>>(
+		event: K,
+		handler: (v: SelectInputEvents<T>[K]) => void,
+	) => void
 
 	private _log: Logger
 
@@ -154,7 +157,7 @@ export class Select<T> {
 		const opts = {
 			...options,
 			selected: toLabeledOption(options.selected ? options.selected : options.options[0]),
-			options: options.options.map(o => toLabeledOption(o)),
+			options: options.options.map((o) => toLabeledOption(o)),
 			selectOnHover: options.selectOnHover ?? true,
 		}
 		this._opts = opts
@@ -306,10 +309,10 @@ export class Select<T> {
 			this.select(fallback, false)
 		}
 
-		this.elements.options = this.elements.options.filter(el => el !== btn.element)
+		this.elements.options = this.elements.options.filter((el) => el !== btn.element)
 		btn.element.remove()
 
-		this.options = this.options.filter(o => o.label !== btn.option.label)
+		this.options = this.options.filter((o) => o.label !== btn.option.label)
 		this.optionMap.delete(id)
 	}
 
@@ -530,7 +533,7 @@ export class Select<T> {
 	dispose() {
 		for (const el of values(this.elements)) {
 			if (Array.isArray(el)) {
-				el.forEach(e => e.remove())
+				el.forEach((e) => e.remove())
 			} else el.remove()
 		}
 

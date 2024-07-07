@@ -1,6 +1,6 @@
 import type { Folder } from '../Folder'
 
-import { create } from '../../utils/create'
+import { create } from '../shared/create'
 
 export function createFolderSvg(folder: Folder) {
 	const strokeWidth = 1

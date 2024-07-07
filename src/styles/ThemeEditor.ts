@@ -1,13 +1,13 @@
-import type { StructuredVars } from '../../css/custom-properties'
-import type { VariableDefinition } from '../../themer/types'
+import type { StructuredVars } from '../shared/css-custom-properties'
+import type { VariableDefinition } from '../styles/themer/types'
 import type { InputOptions } from '../inputs/Input'
 import type { Folder } from '../Folder'
 
-import { CSS_VAR_INNER, restructureVars } from '../../css/custom-properties'
-import { entries } from '../../utils/object'
-import { isType } from '../../utils/isType'
-import { isColor } from '../../color/color'
-import { Logger } from '../../utils/logger'
+import { CSS_VAR_INNER, restructureVars } from '../shared/css-custom-properties'
+import { isColor } from '../shared/color/color'
+import { entries } from '../shared/object'
+import { isType } from '../shared/isType'
+import { Logger } from '../shared/logger'
 import { Gui } from '../Gui'
 
 export class ThemeEditor {
@@ -68,7 +68,7 @@ export class ThemeEditor {
 		this.targetGui.themer.addTarget(this.gui.wrapper)
 
 		this.folder.evm.add(
-			this.targetGui.themer.theme.subscribe(t => {
+			this.targetGui.themer.theme.subscribe((t) => {
 				this.gui.folder.title = `${opts?.title} · ${t.title}`
 			}),
 		)
@@ -120,7 +120,7 @@ export class ThemeEditor {
 								max: Math.max(0, av < 1 ? 1 : av * 3),
 								step: av < 1 ? 0.01 : av < 10 ? 0.1 : 1,
 							})
-							.on('change', v => onChange!(v))
+							.on('change', (v) => onChange!(v))
 						return
 					}
 				} catch (e) {}
@@ -153,7 +153,7 @@ export class ThemeEditor {
 				}
 
 				if (typeof v === 'string') {
-					const vars = [...v.matchAll(CSS_VAR_INNER)].map(m => m[1])
+					const vars = [...v.matchAll(CSS_VAR_INNER)].map((m) => m[1])
 
 					if (vars.length) {
 						add(
@@ -172,8 +172,7 @@ export class ThemeEditor {
 					}
 				} else {
 					if (currentFolder.title !== k) {
-						currentFolder = parent.addFolder({
-							title: k,
+						currentFolder = parent.addFolder(k, {
 							closed: _depth > MAX_DEPTH,
 						})
 					}
@@ -190,19 +189,16 @@ export class ThemeEditor {
 		const allVars = this.vars
 
 		for (const [title, def] of entries(allVars)) {
-			currentFolder = this.gui.folder.addFolder({ title, closed: depth > MAX_DEPTH })
+			currentFolder = this.gui.folder.addFolder(title, { closed: depth > MAX_DEPTH })
 
 			if (title === 'core' && 'core' in allVars) {
 				for (const [mode, vars] of entries(allVars['core'])) {
-					currentFolder.addFolder({ title: mode, closed: depth > MAX_DEPTH })
+					currentFolder.addFolder(mode, { closed: depth > MAX_DEPTH })
 					traverse(restructureVars(vars), currentFolder, depth)
 				}
 			} else {
 				for (const [mode, vars] of entries(def)) {
-					traverse(
-						vars,
-						currentFolder.addFolder({ title: mode, closed: depth > MAX_DEPTH }),
-					)
+					traverse(vars, currentFolder.addFolder(mode, { closed: depth > MAX_DEPTH }))
 				}
 			}
 		}

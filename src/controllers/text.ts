@@ -1,6 +1,6 @@
 import type { ControllerFactory } from './types'
 
-import { create } from '../../utils/create'
+import { create } from '../shared/create'
 
 export const textController: ControllerFactory<HTMLInputElement> = (input, _opts, parent) => {
 	const controller = create('input', {

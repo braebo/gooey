@@ -1,7 +1,7 @@
 import type { ElementMap } from '../inputs/Input'
 
-import { EventManager } from '../../utils/EventManager'
-import { toFn } from '../../utils/toFn'
+import { EventManager } from '../shared/EventManager'
+import { toFn } from '../shared/toFn'
 
 export abstract class Controller<
 	TValue,

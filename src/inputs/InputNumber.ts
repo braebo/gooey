@@ -1,12 +1,12 @@
 import type { ElementMap, InputOptions } from './Input'
-import type { State } from '../../utils/state'
+import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
 import { NumberButtonsController } from '../controllers/NumberButtonsController'
 import { NumberController } from '../controllers/NumberController'
 import { rangeController } from '../controllers/number'
-import { Logger } from '../../utils/logger'
-import { create } from '../../utils/create'
+import { Logger } from '../shared/logger'
+import { create } from '../shared/create'
 import { Input } from './Input'
 
 export interface NumberControllerElements extends ElementMap {

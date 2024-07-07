@@ -1,5 +1,5 @@
-import type { PrimitiveState, State } from '../utils/state'
-import type { ElementOrSelector } from '../shared/select'
+import type { PrimitiveState, State } from '../../shared/state'
+import type { ElementOrSelector } from '../../shared/select'
 import type {
 	VariableDefinition,
 	ThemeDefinition,
@@ -14,14 +14,14 @@ import type {
 import { resolveTheme } from './resolveTheme'
 import theme_default from './defaultTheme'
 
-import { deepMergeOpts } from '../gui/shared/deepMergeOpts'
-import { partition } from '../shared/partition'
-import { hexToRgb } from '../utils/hexToRgb'
-import { entries } from '../utils/object'
-import { Logger } from '../utils/logger'
-import { select } from '../shared/select'
-import { c, g, o, r } from '../utils/l'
-import { state } from '../utils/state'
+import { deepMergeOpts } from '../../shared/deepMergeOpts'
+import { partition } from '../../shared/partition'
+import { hexToRgb } from '../../shared/hexToRgb'
+import { entries } from '../../shared/object'
+import { Logger } from '../../shared/logger'
+import { select } from '../../shared/select'
+import { c, g, o, r } from '../../shared/l'
+import { state } from '../../shared/state'
 
 /**
  * A JSON representation of the {@link Themer} class. Used in the
@@ -197,7 +197,7 @@ export class Themer {
 		this.theme = state(resolveTheme(opts.theme, opts.vars))
 
 		this.themes = state(
-			opts.themes.map(t => {
+			opts.themes.map((t) => {
 				return resolveTheme(t, opts.vars)
 			}),
 		)
@@ -208,7 +208,7 @@ export class Themer {
 
 		const storedTitle = this.activeThemeTitle.value
 		if (opts.theme.title !== storedTitle) {
-			const theme = this.themes.value.find(t => t.title === storedTitle)
+			const theme = this.themes.value.find((t) => t.title === storedTitle)
 			if (theme) this.theme.set(theme)
 		}
 
@@ -218,7 +218,7 @@ export class Themer {
 
 		this._persistent = opts.persistent ?? true
 
-		this.#addSub(this.theme, v => {
+		this.#addSub(this.theme, (v) => {
 			this._log.fn(o('theme.subscribe')).debug({ v, this: this })
 			if (this._initialized) {
 				this.activeThemeTitle.set(v.title)
@@ -226,7 +226,7 @@ export class Themer {
 			}
 		})
 
-		this.#addSub(this.mode, v => {
+		this.#addSub(this.mode, (v) => {
 			this._log.fn(o('mode.subscribe')).debug('v', v, { this: this })
 
 			if (typeof v === 'undefined') throw new Error('Mode is undefined.')
@@ -245,7 +245,7 @@ export class Themer {
 		S extends PrimitiveState<unknown>,
 		V extends Parameters<Parameters<S['subscribe']>[0]>[0],
 	>(state: S, cb: (v: V) => void) {
-		this._unsubs.push(state.subscribe(v => cb(v as V)))
+		this._unsubs.push(state.subscribe((v) => cb(v as V)))
 	}
 
 	init() {
@@ -259,7 +259,7 @@ export class Themer {
 		this._initialized = true
 
 		// Make sure the initial theme is in the themes array.
-		if (!themes.find(t => t.title === theme.title)) {
+		if (!themes.find((t) => t.title === theme.title)) {
 			this.create(theme, { overwrite: true, save: false })
 		}
 
@@ -343,7 +343,7 @@ export class Themer {
 		const overwrite = options?.overwrite ?? false
 		const save = options?.save ?? true
 
-		const [dupes, existing] = partition(this.themes.value, t => t.title === theme.title)
+		const [dupes, existing] = partition(this.themes.value, (t) => t.title === theme.title)
 		const alreadyExists = dupes.length > 0
 
 		if (!overwrite && alreadyExists) {
@@ -355,7 +355,7 @@ export class Themer {
 			while (true) {
 				const newTitle = `${theme.title} (${i++})`
 
-				if (!existing.some(t => t.title === newTitle)) {
+				if (!existing.some((t) => t.title === newTitle)) {
 					theme.title = newTitle
 					break
 				}
@@ -381,7 +381,7 @@ export class Themer {
 
 		const themes = this.themes.value
 
-		const theme = themes.find(t => t.title === themeTitle)
+		const theme = themes.find((t) => t.title === themeTitle)
 
 		if (!theme) {
 			this._log.error('`themeTitle` not found in `themes` array.', {
@@ -395,7 +395,7 @@ export class Themer {
 
 		const isActive = this.theme.value.title === themeTitle
 
-		this.themes.set(this.themes.value.filter(t => t.title !== themeTitle))
+		this.themes.set(this.themes.value.filter((t) => t.title !== themeTitle))
 
 		if (isActive) {
 			this.theme.set(themes[nextIndex] ?? themes.at(-1))
@@ -410,7 +410,7 @@ export class Themer {
 	 * Resolves a {@link Theme} by title.
 	 */
 	getTheme(themeTitle: ThemeTitle) {
-		return this.themes.value.find(t => t.title === themeTitle)
+		return this.themes.value.find((t) => t.title === themeTitle)
 	}
 
 	/**
@@ -444,8 +444,8 @@ export class Themer {
 	fromJSON(json: ThemerJSON) {
 		const isNewTheme = this.theme.value.title !== json.activeTheme
 
-		let theme = json.themes.find(t => t.title === json.activeTheme)
-		theme ??= this.themes.value.find(t => t.title === json.activeTheme)
+		let theme = json.themes.find((t) => t.title === json.activeTheme)
+		theme ??= this.themes.value.find((t) => t.title === json.activeTheme)
 
 		if (!theme) {
 			this._log.error('`activeTheme` not found in `themes` array.', {
@@ -547,7 +547,10 @@ export class Themer {
 	 * @returns A string of CSS custom properties.
 	 * @internal
 	 */
-	#applyStyleProps = (themeConfig: Theme, targets = this._targets as any as HTMLElement[]): void => {
+	#applyStyleProps = (
+		themeConfig: Theme,
+		targets = this._targets as any as HTMLElement[],
+	): void => {
 		const config = themeConfig
 		this._log.fn(c('applyStyleProps')).debug({ config, this: this })
 

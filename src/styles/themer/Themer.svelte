@@ -2,7 +2,7 @@
 	import { resizable } from '../actions/resizable'
 	import { quadOut, quadIn } from 'svelte/easing'
 	import autoAnimate from '@formkit/auto-animate'
-	import { Themer } from '../themer/Themer'
+	import { Themer } from '../styles/themer/Themer'
 	import { hover } from '../actions/hover'
 	import { fly } from 'svelte/transition'
 	// import theme1 from './themes/theme-1'

@@ -1,6 +1,6 @@
 import type { ExtendedVars, Theme, ThemeDefinition } from './types'
 
-import { deepMergeOpts } from '../gui/shared/deepMergeOpts'
+import { deepMergeOpts } from '../../shared/deepMergeOpts'
 
 export function resolveTheme(def: ThemeDefinition, vars: ExtendedVars = {}) {
 	const color = def.resolved

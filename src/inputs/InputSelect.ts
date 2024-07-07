@@ -1,15 +1,15 @@
 import type { ElementMap, InputEvents, InputOptions, ValidInputValue } from './Input'
 import type { LabeledOption } from '../controllers/Select'
-import type { State } from '../../utils/state'
+import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
 import { isLabeledOption, Select, toLabeledOption, fromLabeledOption } from '../controllers/Select'
-import { disableable, type Disableable } from '../../decorators/disableable-class-decorator'
-import { fromState, isState, state } from '../../utils/state'
-import { stringify } from '../../utils/stringify'
-import { Logger } from '../../utils/logger'
-import { create } from '../../utils/create'
-import { toFn } from '../../utils/toFn'
+import { disableable, type Disableable } from '../shared/decorators/disableable-class-decorator'
+import { fromState, isState, state } from '../shared/state'
+import { stringify } from '../shared/stringify'
+import { Logger } from '../shared/logger'
+import { create } from '../shared/create'
+import { toFn } from '../shared/toFn'
 import { Input } from './Input'
 
 export type SelectInputOptions<T = ValidInputValue> = Omit<

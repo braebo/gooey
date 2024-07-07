@@ -1,10 +1,10 @@
-import type { ThemeVars } from '../../css/custom-properties'
-import type { ColorTheme, ThemeMode } from '../../themer/types'
+import type { ColorTheme, ThemeMode } from '../styles/themer/types'
+import type { ThemeVars } from '../shared/css-custom-properties'
 
 import { VAR_PREFIX, GUI_VARS } from './GUI_VARS'
 import { readFileSync, writeFileSync } from 'fs'
-import { hexToRgb } from '../../utils/hexToRgb'
-import { entries } from '../../utils/object'
+import { hexToRgb } from '../shared/hexToRgb'
+import { entries } from '../shared/object'
 import { join } from 'path'
 
 const j = (o: any) => JSON.stringify(o, null, 2).replaceAll(/"/g, '')
@@ -26,10 +26,10 @@ writeFileSync(join(here, 'gui-vars.scss'), css)
 
 const guiScss = readFileSync(join(here, 'gui.scss'), 'utf-8')
 	.split('\n')
-	.filter(line => !line.trim().startsWith('//'))
+	.filter((line) => !line.trim().startsWith('//'))
 	.join('\n')
 
-const counts = [test['base'], test['dark'], test['light']].map(vars =>
+const counts = [test['base'], test['dark'], test['light']].map((vars) =>
 	Object.entries(vars).reduce((acc, [k]) => {
 		const count = (guiScss.match(new RegExp(k, 'g')) || []).length
 

@@ -7,21 +7,21 @@ import type { InputNumber, NumberInputOptions } from './InputNumber'
 import type { InputColor, ColorInputOptions } from './InputColor'
 import type { InputText, TextInputOptions } from './InputText'
 
-import type { ColorFormat } from '../../color/types/colorFormat'
-import type { EventCallback } from '../../utils/EventManager'
+import type { ColorFormat } from '../shared/color/types/colorFormat'
+import type { EventCallback } from '../shared/EventManager'
 import type { Option } from '../controllers/Select'
-import type { State } from '../../utils/state'
-import type { Color } from '../../color/color'
+import type { Color } from '../shared/color/color'
+import type { State } from '../shared/state'
 import type { Commit } from '../UndoManager'
 import type { Folder } from '../Folder'
 
-import { EventManager } from '../../utils/EventManager'
-import { isState, state } from '../../utils/state'
-import { keys, values } from '../../utils/object'
-import { create } from '../../utils/create'
-import { Logger } from '../../utils/logger'
-import { toFn } from '../../utils/toFn'
-import { o } from '../../utils/l'
+import { EventManager } from '../shared/EventManager'
+import { isState, state } from '../shared/state'
+import { keys, values } from '../shared/object'
+import { create } from '../shared/create'
+import { Logger } from '../shared/logger'
+import { toFn } from '../shared/toFn'
+import { o } from '../shared/l'
 
 //· Types ··············································································¬
 export type InputType = (typeof INPUT_TYPES)[number]
@@ -179,6 +179,19 @@ export type InputEvents<T extends ValidInputValue = ValidInputValue> = {
 }
 //⌟
 
+/**
+ * An input that can be added to a {@link Folder}.  This class is extended by all
+ * {@link ValidInput} classes. Inputs occupy a single row in a folder, and are in charge of
+ * managing a single state value.  Inputs often combine multiple controllers to provide a rich
+ * user interface for interacting with the input's value.
+ *
+ * @template TValueType - The type of value this input manages.
+ * @template TOptions - The options object for this input, determined by the input class
+ * responsible for the {@link TValueType}.
+ * @template TElements - A map of all HTMLElement's created by this input.
+ * @template TEvents - A map of all events emitted by this input.
+ * @template TType - A string-literal type brand.  Identical to the input class name.
+ */
 export abstract class Input<
 	TValueType extends ValidInputValue = ValidInputValue,
 	TOptions extends ValidInputOptions = InputOptions,
@@ -415,7 +428,7 @@ export abstract class Input<
 			const s = state<T>(opts.binding.target[opts.binding.key])
 
 			this._evm.add(
-				s.subscribe(v => {
+				s.subscribe((v) => {
 					opts.binding!.target[opts.binding!.key] = v
 				}),
 			)

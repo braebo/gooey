@@ -1,7 +1,7 @@
-import type { Tooltip } from '../../actions/tooltip'
+import type { Tooltip } from '../shared/Tooltip'
 
-import { styled } from '../../decorators/styled'
-import { create } from '../../utils/create'
+import { styled } from '../shared/decorators/styled'
+import { create } from '../shared/create'
 
 @styled
 export class SaveSVG {

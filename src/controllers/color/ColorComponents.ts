@@ -1,15 +1,14 @@
 import type { ColorMode, InputColor } from '../../inputs/InputColor'
 
-import { parseColorFormat } from '../../../color/color'
+import { parseColorFormat } from '../../shared/color/color'
 import { NumberController } from '../NumberController'
-// import { Controller } from '../Controller'
 import { Select } from '../Select'
 
-import { disableable, type Disableable } from '../../../decorators/disableable-class-decorator'
-import { EventManager } from '../../../utils/EventManager'
-import { entries } from '../../../utils/object'
-import { create } from '../../../utils/create'
-import { Logger } from '../../../utils/logger'
+import { disableable, type Disableable } from '../../shared/decorators/disableable-class-decorator'
+import { EventManager } from '../../shared/EventManager'
+import { entries } from '../../shared/object'
+import { create } from '../../shared/create'
+import { Logger } from '../../shared/logger'
 
 export interface ColorComponentsOptions {
 	container?: HTMLDivElement
@@ -82,7 +81,7 @@ export class ColorComponents {
 			container: selectContainer,
 			options: ['hex', 'hex8', 'rgba', 'hsla', 'hsva'],
 		})
-		this.select.on('change', v => {
+		this.select.on('change', (v) => {
 			this.updateMode(v.value)
 		})
 

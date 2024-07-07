@@ -1,11 +1,11 @@
 import type { ElementMap, InputOptions } from './Input'
-import type { State } from '../../utils/state'
+import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
 import { textController } from '../controllers/text'
-import { create } from '../../utils/create'
-import { Logger } from '../../utils/logger'
-import { state } from '../../utils/state'
+import { create } from '../shared/create'
+import { Logger } from '../shared/logger'
+import { state } from '../shared/state'
 import { Input } from './Input'
 
 export type TextInputOptions = InputOptions<string> & {

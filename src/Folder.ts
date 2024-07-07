@@ -1,9 +1,9 @@
 // The custom-regions extension is recommended for this file.
 
 import type { Input, InputOptions, InputPreset, InputType, ValidInput } from './inputs/Input'
-import type { ColorFormat } from '../color/types/colorFormat'
+import type { ColorFormat } from './shared/color/types/colorFormat'
 import type { Option } from './controllers/Select'
-import type { Tooltip } from '../actions/tooltip'
+import type { Tooltip } from './shared/Tooltip'
 import type { GuiPreset } from './Gui'
 
 import { InputButtonGrid, type ButtonGridInputOptions } from './inputs/InputButtonGrid'
@@ -16,17 +16,17 @@ import { InputText, type TextInputOptions } from './inputs/InputText'
 import { isLabeledOption } from './controllers/Select'
 
 import { animateConnector, createFolderConnector, createFolderSvg } from './svg/createFolderSVG'
-import { composedPathContains } from '../internal/cancelClassFound'
-import { isColor, isColorFormat } from '../color/color'
-import { EventManager } from '../utils/EventManager'
+import { composedPathContains } from './shared/cancelClassFound'
+import { isColor, isColorFormat } from './shared/color/color'
+import { EventManager } from './shared/EventManager'
 import { TerminalSvg } from './svg/TerminalSvg'
 import { Search } from './toolbar/Search'
-import { create } from '../utils/create'
-import { Logger } from '../utils/logger'
-import { nanoid } from '../utils/nanoid'
-import { state } from '../utils/state'
-import { toFn } from '../utils/toFn'
-import { DEV } from '../utils/env'
+import { create } from './shared/create'
+import { Logger } from './shared/logger'
+import { nanoid } from './shared/nanoid'
+import { state } from './shared/state'
+import { toFn } from './shared/toFn'
+import { DEV } from 'esm-env'
 import { Gui } from './Gui'
 
 //· Types ························································································¬

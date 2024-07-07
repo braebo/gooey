@@ -5,7 +5,7 @@ test('InputSelect', () => {
 })
 
 // import { describe, expect, it, beforeEach, test } from 'vitest'
-// import { isState, state } from '../../utils/state'
+// import { isState, state } from '../shared/state'
 // import { Gui } from '../Gui'
 
 // // cases to test:

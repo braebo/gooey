@@ -1,13 +1,16 @@
 import type { ElementMap, InputOptions } from './Input'
-import type { Tooltip } from '../../actions/tooltip'
-import type { State } from '../../utils/state'
+import type { Tooltip } from '../shared/Tooltip'
+import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
-import { Logger } from '../../utils/logger'
-import { create } from '../../utils/create'
-import { state } from '../../utils/state'
+import { Logger } from '../shared/logger'
+import { create } from '../shared/create'
+import { state } from '../shared/state'
 import { Input } from './Input'
 
+/**
+ * Options for the {@link InputSwitch} class.
+ */
 export type SwitchInputOptions = InputOptions<boolean> & {
 	readonly __type?: 'SwitchInputOptions'
 	/** Text to display in various parts of the switch. */
@@ -65,6 +68,9 @@ export interface SwitchInputElements extends ElementMap {
 	stateText: HTMLDivElement
 }
 
+/**
+ * A switch {@link Input} for booleans.
+ */
 export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputElements> {
 	readonly __type = 'InputSwitch' as const
 	readonly state: State<boolean>
@@ -85,7 +91,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 			this.state = state(!!this.initialValue)
 
 			this._evm.add(
-				this.state.subscribe(v => {
+				this.state.subscribe((v) => {
 					opts.binding!.target[opts.binding!.key] = v
 				}),
 			)
@@ -146,7 +152,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 
 		if (typeof v === 'boolean') {
 			this.undoManager?.commit({
-				// @ts-expect-error - ??
+				// @ts-expect-error - ¯\_(ツ)_/¯
 				target: this,
 				from: this.state.value,
 				to: v,

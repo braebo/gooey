@@ -1,7 +1,7 @@
 import type { InputNumber, NumberInputOptions } from '../inputs/InputNumber'
 
 import { svgChevron } from '../svg/chevronSvg'
-import { create } from '../../utils/create'
+import { create } from '../shared/create'
 
 export class NumberButtonsController {
 	elements = {} as {
