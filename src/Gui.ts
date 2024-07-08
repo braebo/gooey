@@ -17,6 +17,7 @@ import style from './styles/gui.scss'
 
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager'
 import { deepMergeOpts } from './shared/deepMergeOpts'
+import { styled } from './shared/decorators/styled'
 import { ThemeEditor } from './styles/ThemeEditor'
 import { resolveOpts } from './shared/resolveOpts'
 import { PresetManager } from './PresetManager'
@@ -33,7 +34,6 @@ import { state } from './shared/state'
 import { place } from './shared/place'
 import { Folder } from './Folder'
 import { o } from './shared/l'
-import { styled } from './shared/decorators/styled'
 
 //· Types ························································································¬
 
@@ -48,7 +48,7 @@ export interface GuiOptions {
 
 	/**
 	 * The title of the Gui.
-	 * @defaultValue 'gooey'
+	 * @default 'gooey'
 	 */
 	title: string
 
@@ -56,43 +56,45 @@ export interface GuiOptions {
 	 * Defines which properties to persist in localStorage, and under which
 	 * key, if any.  If `true`, the {@link GUI_STORAGE_DEFAULTS} will be used.
 	 * If `false`, no state will be persisted.
-	 * @defaultValue false
+	 * @default false
 	 */
 	storage: boolean | Partial<GuiStorageOptions>
 
 	/**
 	 * The container to append the gui to.
-	 * @defaultValue 'body'
+	 * @default 'body'
 	 */
 	// container: HTMLElement
 	container: string | HTMLElement | 'document' | 'body'
 
 	/**
 	 * Whether the gui is draggable.
-	 * @defaultValue `true`
+	 * @default true
 	 */
 	draggable: boolean
 
 	/**
 	 * Whether the gui is resizable.
-	 * @defaultValue `true`
+	 * @default true
 	 */
 	resizable: boolean
 
 	/**
 	 * The title of the theme to use for the gui.  To add your own themes,
 	 * use {@link themerOptions.themes}.
-	 * @defaultValue 'default'
+	 * @default 'default'
 	 */
 	theme: GuiTheme
 
 	/**
 	 * The themes available to the gui.
+	 * @defaultValue [ {@link theme_default|default}, {@link theme_flat|flat}, {@link theme_scout|scout} ]
 	 */
 	themes: Theme[]
 
 	/**
 	 * The initial {@link Themer.mode|theme mode}.
+	 * @default 'dark'
 	 */
 	themeMode: 'light' | 'dark' | 'system'
 
@@ -102,7 +104,7 @@ export interface GuiOptions {
 	 *
 	 * This value can either be a {@link Placement} string, or an object with
 	 * `x` and `y` properties representing the position in pixels.
-	 * @defaultValue 'top-right'
+	 * @default 'top-right'
 	 */
 	position: Placement | { x: number; y: number }
 
@@ -116,25 +118,25 @@ export interface GuiOptions {
 
 	/**
 	 * The initial expanded state of the gui.
-	 * @defaultValue `false`
+	 * @default false
 	 */
 	closed: boolean
 
 	/**
 	 * Presets to make available in the gui.
-	 * @defaultValue `[]`
+	 * @default []
 	 */
 	presets?: GuiPreset[]
 
 	/**
 	 * The default preset to load when the gui is created, or the initial gui state if undefined.
-	 * @defaultValue `undefined`
+	 * @default undefined
 	 */
 	defaultPreset?: GuiPreset
 
 	/**
 	 * A unique id for the gui's root element.
-	 * @defaultValue {@link nanoid}
+	 * @default {@link nanoid}
 	 */
 	id?: string
 
@@ -154,37 +156,37 @@ export interface GuiStorageOptions {
 
 	/**
 	 * Prefix to use for localStorage keys.
-	 * @defaultValue `"fractils::gui"`
+	 * @default `"fractils::gui"`
 	 */
 	key: string
 
 	/**
 	 * Whether to persist the folder's expanded state.
-	 * @defaultValue `true`
+	 * @default true
 	 */
 	closed?: boolean
 
 	/**
 	 * Whether to persist the theme.
-	 * @defaultValue `true`
+	 * @default true
 	 */
 	theme?: boolean
 
 	/**
 	 * Whether to persist the gui's position.
-	 * @defaultValue `false`
+	 * @default false
 	 */
 	position?: boolean
 
 	/**
 	 * Whether to persist the gui's size.
-	 * @defaultValue `false`
+	 * @default false
 	 */
 	size?: boolean
 
 	/**
 	 * Whether to persist the gui's presets.
-	 * @defaultValue `true`
+	 * @default true
 	 */
 	presets?: boolean
 }
