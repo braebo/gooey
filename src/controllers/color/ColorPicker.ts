@@ -81,7 +81,10 @@ export class ColorPicker {
 	private _evm = new EventManager(['pointerdown', 'pointerup'])
 	on = this._evm.on.bind(this._evm)
 
-	constructor(public input: InputColor, options?: Partial<ColorPickerOptions>) {
+	constructor(
+		public input: InputColor,
+		options?: Partial<ColorPickerOptions>,
+	) {
 		const opts = { ...COLOR_PICKER_DEFAULTS, ...options }
 
 		this.opts = opts

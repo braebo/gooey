@@ -206,7 +206,10 @@ export class Resizable {
 
 	#log: Logger
 
-	constructor(public node: HTMLElement, options?: Partial<ResizableOptions>) {
+	constructor(
+		public node: HTMLElement,
+		options?: Partial<ResizableOptions>,
+	) {
 		this.opts = deepMergeOpts([RESIZABLE_DEFAULTS, options], { concatArrays: false })
 		this.disabled = this.opts.disabled
 
@@ -636,8 +639,8 @@ export class Resizable {
 					width: 100%;
 					height: 100%;
 					background: radial-gradient(farthest-corner at ${opposites[corner]}, transparent 70%, ${
-				this.opts.color
-			} 86%);
+						this.opts.color
+					} 86%);
 					border-radius: 15%;
 				}
 			`

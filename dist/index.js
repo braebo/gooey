@@ -1881,8 +1881,7 @@ var collisionClampY = /* @__PURE__ */ __name((deltaY, nodeRect, obstacles) => {
 
 // src/shared/nanoid.ts
 function nanoid(length = 21) {
-  return crypto.getRandomValues(new Uint8Array(length)).reduce((t, e) => t += // prettier-ignore
-  (e &= 63) < 36 ? e.toString(36) : e < 62 ? (e - 26).toString(36).toUpperCase() : e > 62 ? "-" : "_", "");
+  return crypto.getRandomValues(new Uint8Array(length)).reduce((t, e) => t += (e &= 63) < 36 ? e.toString(36) : e < 62 ? (e - 26).toString(36).toUpperCase() : e > 62 ? "-" : "_", "");
 }
 __name(nanoid, "nanoid");
 

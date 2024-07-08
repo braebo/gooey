@@ -268,7 +268,10 @@ export abstract class Input<
 
 	private __log: Logger
 
-	constructor(options: TOptions & { __type: T__TYPE }, public folder: Folder) {
+	constructor(
+		options: TOptions & { __type: T__TYPE },
+		public folder: Folder,
+	) {
 		this.opts = options
 		this.opts.saveable ??= true
 		this.opts.resettable ??= true

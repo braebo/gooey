@@ -33,7 +33,7 @@ export function resolveTheme(def: ThemeDefinition, vars: ExtendedVars = {}) {
 					'fg-e': def.vars.color.light?.['fg-e'] || def.vars.color.base['dark-e'],
 					...def.vars.color.light,
 				},
-		  }
+			}
 
 	const theme: Theme = {
 		title: def.title,

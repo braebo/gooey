@@ -38,7 +38,6 @@ export type BindingFactory<
 	TTargetKey extends keyof TTarget,
 > = (target: TTarget, key: TTargetKey, options: Partial<TOptions>) => TInput
 
-// prettier-ignore
 export type InferOptions<T> = T extends number
 	? NumberInputOptions
 	: T extends boolean
@@ -53,7 +52,6 @@ export type InferOptions<T> = T extends number
 						? TextInputOptions
 						: InputOptions
 
-// prettier-ignore
 export type InferInput<T> = T extends number
 	? InputNumber
 	: T extends boolean

@@ -51,7 +51,10 @@ export class ColorComponents {
 	private _locked = false
 	private _log: Logger
 
-	constructor(public input: InputColor, options?: Partial<ColorComponentsOptions>) {
+	constructor(
+		public input: InputColor,
+		options?: Partial<ColorComponentsOptions>,
+	) {
 		const opts = { ...COLOR_PICKER_DEFAULTS, ...options }
 		this._log = new Logger(`ColorComponents ${input.title}`, { fg: 'wheat' })
 

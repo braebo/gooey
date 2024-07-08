@@ -21,7 +21,7 @@ type TupleEntry<
 type ObjectEntry<T extends {}> = T extends object
 	? {
 			[K in keyof T]: [K, Required<T>[K]]
-	  }[keyof T] extends infer E
+		}[keyof T] extends infer E
 		? E extends [infer K, infer V]
 			? K extends string | number
 				? [`${K}`, V]
@@ -30,7 +30,6 @@ type ObjectEntry<T extends {}> = T extends object
 		: never
 	: never
 
-// prettier-ignore
 type Entry<T extends {}> = T extends readonly [unknown, ...unknown[]]
 	? TupleEntry<T>
 	: T extends ReadonlyArray<infer U>

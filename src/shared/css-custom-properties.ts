@@ -49,18 +49,18 @@ type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] // Infinite recursion prev
 type AccumulateKeys<T, Prefix extends string = '', Depth extends number = 10> = Depth extends 0
 	? never
 	: T extends object
-	? {
-			[K in keyof T]: K extends string
-				? T[K] extends Record<string, any>
-					? `${Prefix}${K}-` extends `${infer Rest}-`
-						? AccumulateKeys<T[K], `${Rest}-`, Prev[Depth]>
-						: never
-					: `${Prefix}${K}` extends `${infer Rest}`
-					? `${Rest}_${K}`
+		? {
+				[K in keyof T]: K extends string
+					? T[K] extends Record<string, any>
+						? `${Prefix}${K}-` extends `${infer Rest}-`
+							? AccumulateKeys<T[K], `${Rest}-`, Prev[Depth]>
+							: never
+						: `${Prefix}${K}` extends `${infer Rest}`
+							? `${Rest}_${K}`
+							: never
 					: never
-				: never
-	  }[keyof T]
-	: ''
+			}[keyof T]
+		: ''
 
 type FlattenStructuredVars<T, P extends string> = {
 	[K in AccumulateKeys<T> as `--${P}-${K}`]: string

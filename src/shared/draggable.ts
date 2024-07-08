@@ -352,7 +352,10 @@ export class Draggable {
 	 */
 	#log: Logger
 
-	constructor(public node: HTMLElement, options?: Partial<DraggableOptions>) {
+	constructor(
+		public node: HTMLElement,
+		options?: Partial<DraggableOptions>,
+	) {
 		this.opts = Object.assign({}, DRAGGABLE_DEFAULTS, options)
 
 		this.#log = new Logger('draggable ' + Array.from(this.node.classList).join('.'), {
