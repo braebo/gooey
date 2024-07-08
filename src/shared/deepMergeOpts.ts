@@ -14,7 +14,7 @@ export function deepMergeOpts<T, U>(
 	options?: {
 		/**
 		 * If `true`, arrays are concatenated and de-duplicated.
-		 * 
+		 *
 		 * If `false`, arrays are replaced.
 		 * @defaultValue `false`
 		 */

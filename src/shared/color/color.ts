@@ -115,6 +115,7 @@ export class Color {
 	 */
 	setChannel<Mode extends ColorMode>(
 		format: Mode,
+		// prettier-ignore
 		channel: Mode extends 'hsv'
 			? 'h' | 's' | 'v'
 			: Mode extends 'hsl'
@@ -413,7 +414,9 @@ export class Color {
 	/** i.e. `'#5500eeff'` */
 	get hex8String(): HexAlphaString {
 		const rgba = this.rgba
-		return `#${intToHex(rgba.r)}${intToHex(rgba.g)}${intToHex(rgba.b)}${intToHex(Math.floor((rgba.a ?? 1) * 255))}` as HexAlphaString
+		return `#${intToHex(rgba.r)}${intToHex(rgba.g)}${intToHex(rgba.b)}${intToHex(
+			Math.floor((rgba.a ?? 1) * 255),
+		)}` as HexAlphaString
 	}
 	set hex8String(value: HexAlphaString | (string & {})) {
 		this.hexString = value

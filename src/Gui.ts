@@ -695,7 +695,7 @@ export class Gui {
 			autoInit: !this.themer,
 			persistent: !!(this.opts.storage && this.opts.storage.theme),
 			themes: this.opts.themes,
-			theme: this.opts.themes.find((t) => t.title === this.opts.theme),
+			theme: this.opts.themes.find(t => t.title === this.opts.theme),
 			vars: GUI_VARS,
 		}
 		themerOptions.vars = deepMergeOpts([GUI_VARS, themerOptions.vars])
@@ -738,7 +738,7 @@ export class Gui {
 				title: 'mode',
 				activeOnClick: true,
 				value: [
-					['light', 'dark', 'system'].map((m) => ({
+					['light', 'dark', 'system'].map(m => ({
 						text: m,
 						onClick: () => finalThemer?.mode.set(m as ThemeMode),
 						active: () => finalThemer?.mode.value === m,

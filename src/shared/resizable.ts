@@ -243,17 +243,11 @@ export class Resizable {
 					height: this.node.offsetHeight,
 				})
 			} else {
-				if (
-					this.opts.corners.length ||
-					this.opts.sides.some((s) => s.match(/left|right/))
-				) {
+				if (this.opts.corners.length || this.opts.sides.some(s => s.match(/left|right/))) {
 					node.style.width = width + 'px'
 				}
 
-				if (
-					this.opts.corners.length ||
-					this.opts.sides.some((s) => s.match(/top|bottom/))
-				) {
+				if (this.opts.corners.length || this.opts.sides.some(s => s.match(/top|bottom/))) {
 					node.style.height = height + 'px'
 				}
 			}
@@ -282,8 +276,8 @@ export class Resizable {
 
 	createGrabbers() {
 		for (const [side, type] of [
-			...this.opts.sides.map((s) => [s, 'side']),
-			...this.opts.corners.map((c) => [c, 'corner']),
+			...this.opts.sides.map(s => [s, 'side']),
+			...this.opts.corners.map(c => [c, 'corner']),
 		]) {
 			const grabber = document.createElement('div')
 			grabber.classList.add(`${this.opts.classes.default}-${this.id}`)
@@ -644,7 +638,9 @@ export class Resizable {
 					content: '';
 					width: 100%;
 					height: 100%;
-					background: radial-gradient(farthest-corner at ${opposites[corner]}, transparent 70%, ${this.opts.color} 86%);
+					background: radial-gradient(farthest-corner at ${opposites[corner]}, transparent 70%, ${
+						this.opts.color
+					} 86%);
 					border-radius: 15%;
 				}
 			`

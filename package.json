@@ -29,7 +29,8 @@
 		"check": "tsc --noEmit",
 		"check:watch": "tsc --noEmit --watch",
 		"dev": "vite-node --watch src/index",
-		"lint": "publint"
+		"lint": "publint && prettier --check src",
+		"format": "prettier --write src"
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.27.7",
@@ -40,6 +41,7 @@
 		"csstype": "^3.1.3",
 		"esbuild-sass-plugin": "^3.3.1",
 		"esm-env": "^1.0.0",
+		"prettier": "^3.3.2",
 		"publint": "0.2.8",
 		"tsup": "8.1.0",
 		"vite-node": "1.6.0",

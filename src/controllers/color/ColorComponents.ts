@@ -81,7 +81,7 @@ export class ColorComponents {
 			container: selectContainer,
 			options: ['hex', 'hex8', 'rgba', 'hsla', 'hsva'],
 		})
-		this.select.on('change', (v) => {
+		this.select.on('change', v => {
 			this.updateMode(v.value)
 		})
 

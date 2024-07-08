@@ -68,7 +68,7 @@ export class ThemeEditor {
 		this.targetGui.themer.addTarget(this.gui.wrapper)
 
 		this.folder.evm.add(
-			this.targetGui.themer.theme.subscribe((t) => {
+			this.targetGui.themer.theme.subscribe(t => {
 				this.gui.folder.title = `${opts?.title} · ${t.title}`
 			}),
 		)
@@ -120,7 +120,7 @@ export class ThemeEditor {
 								max: Math.max(0, av < 1 ? 1 : av * 3),
 								step: av < 1 ? 0.01 : av < 10 ? 0.1 : 1,
 							})
-							.on('change', (v) => onChange!(v))
+							.on('change', v => onChange!(v))
 						return
 					}
 				} catch (e) {}
@@ -153,7 +153,7 @@ export class ThemeEditor {
 				}
 
 				if (typeof v === 'string') {
-					const vars = [...v.matchAll(CSS_VAR_INNER)].map((m) => m[1])
+					const vars = [...v.matchAll(CSS_VAR_INNER)].map(m => m[1])
 
 					if (vars.length) {
 						add(

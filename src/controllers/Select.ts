@@ -157,7 +157,7 @@ export class Select<T> {
 		const opts = {
 			...options,
 			selected: toLabeledOption(options.selected ? options.selected : options.options[0]),
-			options: options.options.map((o) => toLabeledOption(o)),
+			options: options.options.map(o => toLabeledOption(o)),
 			selectOnHover: options.selectOnHover ?? true,
 		}
 		this._opts = opts
@@ -309,10 +309,10 @@ export class Select<T> {
 			this.select(fallback, false)
 		}
 
-		this.elements.options = this.elements.options.filter((el) => el !== btn.element)
+		this.elements.options = this.elements.options.filter(el => el !== btn.element)
 		btn.element.remove()
 
-		this.options = this.options.filter((o) => o.label !== btn.option.label)
+		this.options = this.options.filter(o => o.label !== btn.option.label)
 		this.optionMap.delete(id)
 	}
 
@@ -533,7 +533,7 @@ export class Select<T> {
 	dispose() {
 		for (const el of values(this.elements)) {
 			if (Array.isArray(el)) {
-				el.forEach((e) => e.remove())
+				el.forEach(e => e.remove())
 			} else el.remove()
 		}
 

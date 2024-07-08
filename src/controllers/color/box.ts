@@ -60,11 +60,11 @@
 //  */
 // export function getBoxHandlePosition(picker: ColorPicker, color: Color) {
 // 	const { canvas, cursorSize } = picker
-	
+
 //     const { width, height } = canvas.getBoundingClientRect()
-	
+
 //     const hsv = color.hsv
-	
+
 //     const handleStart = radius
 // 	const handleRangeX = width - radius * 2
 // 	const handleRangeY = height - radius * 2

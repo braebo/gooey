@@ -91,7 +91,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 			this.state = state(!!this.initialValue)
 
 			this._evm.add(
-				this.state.subscribe((v) => {
+				this.state.subscribe(v => {
 					opts.binding!.target[opts.binding!.key] = v
 				}),
 			)

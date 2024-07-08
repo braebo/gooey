@@ -110,10 +110,10 @@ export function tldr<T>(
 					// if (depthReached) return `[..${o.length} ${o.length === 1 ? 'item' : 'items'}]`
 					if (depthReached) return `[ ..${obj.length} ]`
 					if (obj.length <= maxSiblings || depth === 0)
-						return obj.map((s) => parse(s, depth + 1))
+						return obj.map(s => parse(s, depth + 1))
 
 					return [
-						...obj.slice(0, maxSiblings).map((s) => parse(s, depth)),
+						...obj.slice(0, maxSiblings).map(s => parse(s, depth)),
 						`..${obj.length - maxSiblings} more`,
 					]
 				}

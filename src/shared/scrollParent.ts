@@ -6,7 +6,7 @@ export const isScrollable = (node: Element) => {
 		return false
 	}
 	const style = getComputedStyle(node)
-	return ['overflow', 'overflow-x', 'overflow-y'].some((propertyName) => {
+	return ['overflow', 'overflow-x', 'overflow-y'].some(propertyName => {
 		const value = style.getPropertyValue(propertyName)
 		return value === 'auto' || value === 'scroll'
 	})

@@ -131,7 +131,7 @@ function maybeAddOpenInEditorEventListener(stack: string, el: HTMLElement) {
 	if (file) {
 		el.addEventListener(
 			'contextmenu',
-			(e) => {
+			e => {
 				if ((e as MouseEvent).metaKey && (e as MouseEvent).altKey) {
 					e.preventDefault()
 					e.stopPropagation()
@@ -147,10 +147,10 @@ function maybeAddOpenInEditorEventListener(stack: string, el: HTMLElement) {
 function openFileInEditor(file: string) {
 	const url = '/__open-in-editor?file=' + file
 	fetch(url)
-		.then((response) => {
+		.then(response => {
 			console.log(response.status, url)
 		})
-		.catch((error) => {
+		.catch(error => {
 			console.error('Failed to open file in editor:', error)
 		})
 }
