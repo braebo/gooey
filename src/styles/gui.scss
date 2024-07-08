@@ -859,7 +859,7 @@ input.fracgui-search-input {
 //·· Settings Button ···································································¬
 
 .fracgui-settings-button {
-	contain: content;
+	contain: layout style;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
