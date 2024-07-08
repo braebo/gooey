@@ -147,8 +147,6 @@ export function createFolderSvg(folder: Folder) {
 			</style>
 		</svg>`.trim()
 
-	if (folder.closed.value) icon.classList.add('closed')
-
 	return icon
 }
 
