@@ -29,7 +29,8 @@
 		"check": "tsc --noEmit",
 		"check:watch": "tsc --noEmit --watch",
 		"dev": "vite-node --watch src/index",
-		"lint": "publint"
+		"lint": "publint && prettier --check src",
+		"format": "prettier --write src"
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.27.7",
