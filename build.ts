@@ -33,3 +33,5 @@ await esbuild.build({
 		'empty-import-meta': 'silent',
 	},
 })
+
+await $`publint`
