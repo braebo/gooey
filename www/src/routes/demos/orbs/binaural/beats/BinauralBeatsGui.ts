@@ -1,5 +1,5 @@
 import { BinauralBeats, WAVE_PRESETS } from './BinauralBeats'
-import { Gui } from '$lib/gui/Gui'
+import { Gui } from 'gooey'
 
 export class BinauralBeatsGui extends Gui {
 	constructor(public beats: BinauralBeats) {

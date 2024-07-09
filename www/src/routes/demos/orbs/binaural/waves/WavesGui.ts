@@ -1,37 +1,37 @@
 import type { Waves } from './Waves'
 
 import { WAVE_PRESETS } from '../beats/BinauralBeats'
-import { Gui } from '$lib/gui/Gui'
+import { Gui } from 'gooey'
 
 const dims = {
 	mx: 10,
 	my: 150,
 	w: 500,
-	h: 250,
+	h: 250
 }
 
 export class WavesGui extends Gui {
 	constructor(
 		public waves: Waves,
-		public kind: keyof typeof WAVE_PRESETS,
+		public kind: keyof typeof WAVE_PRESETS
 	) {
 		const positions = {
 			alpha: {
 				x: window.innerWidth / 2 - dims.w - dims.mx,
-				y: dims.my,
+				y: dims.my
 			},
 			beta: {
 				x: window.innerWidth / 2 + dims.mx,
-				y: dims.my,
+				y: dims.my
 			},
 			theta: {
 				x: window.innerWidth / 2 - dims.w - dims.mx,
-				y: dims.my + dims.h + dims.my,
+				y: dims.my + dims.h + dims.my
 			},
 			delta: {
 				x: window.innerWidth / 2 + dims.mx,
-				y: dims.my + dims.h + dims.my,
-			},
+				y: dims.my + dims.h + dims.my
+			}
 		}
 
 		super({
@@ -39,7 +39,7 @@ export class WavesGui extends Gui {
 			closed: false,
 			_windowManager: waves.beats.gui!.windowManager,
 			position: positions[kind],
-			storage: false,
+			storage: false
 		})
 
 		const btnGrid = this.addButtonGrid({
@@ -51,11 +51,11 @@ export class WavesGui extends Gui {
 						onClick: () => {
 							if (waves.playing) return
 							waves.start()
-							this.folder.allInputs.forEach(c => c.refresh())
+							this.folder.allInputs.forEach((c) => c.refresh())
 						},
 						active() {
 							return waves.playing && !waves.stopping
-						},
+						}
 					},
 					{
 						text: 'Stop',
@@ -73,13 +73,13 @@ export class WavesGui extends Gui {
 						},
 						active() {
 							return waves.stopping
-						},
-					},
-				],
-			],
+						}
+					}
+				]
+			]
 		})
 
-		const folderL = this.addFolder({ title: 'Left' })
+		const folderL = this.addFolder('Left')
 
 		// todo - handle state so we can do:
 		// gui.add({
@@ -93,9 +93,9 @@ export class WavesGui extends Gui {
 				value: waves.volL,
 				min: 0,
 				max: 1,
-				step: 0.01,
+				step: 0.01
 			})
-			.on('change', v => {
+			.on('change', (v) => {
 				waves.volL = v
 			})
 
@@ -105,13 +105,13 @@ export class WavesGui extends Gui {
 				value: waves.freqL,
 				min: 20,
 				max: 440,
-				step: 1,
+				step: 1
 			})
-			.on('change', v => {
+			.on('change', (v) => {
 				this.waves.freqL = v
 			})
 
-		const folderR = this.addFolder({ title: 'Right' })
+		const folderR = this.addFolder('Right')
 
 		folderR
 			.addNumber({
@@ -119,9 +119,9 @@ export class WavesGui extends Gui {
 				value: waves.volR,
 				min: 0,
 				max: 1,
-				step: 0.01,
+				step: 0.01
 			})
-			.on('change', v => {
+			.on('change', (v) => {
 				this.waves.volR = v
 			})
 
@@ -131,9 +131,9 @@ export class WavesGui extends Gui {
 				value: waves.freqR,
 				min: 20,
 				max: 440,
-				step: 1,
+				step: 1
 			})
-			.on('change', v => {
+			.on('change', (v) => {
 				this.waves.freqR = v
 			})
 	}

@@ -3,8 +3,9 @@
 <script lang="ts">
 	import { params } from '$lib/components/orbs/params'
 	import Orbs from '$lib/components/orbs/Orbs.svelte'
-	import { Gui } from '$lib/gui/Gui'
-	import { Code, stringify } from '$lib'
+	import { stringify } from '$lib/utils/stringify'
+	import Code from '$lib/components/Code.svelte'
+	import { Gui } from 'gooey'
 
 	import { code, showCode } from './stores'
 

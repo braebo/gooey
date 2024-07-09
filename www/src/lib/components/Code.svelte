@@ -51,9 +51,6 @@
 
 <!-- //todo - Document the events -->
 
-<script lang="ts" context="module">
-</script>
-
 <script lang="ts">
 	import type { highlight } from '../utils/highlight'
 

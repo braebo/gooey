@@ -1,31 +1,30 @@
 import { BinauralBeatsGui } from './BinauralBeatsGui'
 import { Waves } from '../waves/Waves'
 import { BROWSER } from 'esm-env'
-import { clamp } from '$lib'
+
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 
 export const WAVE_PRESETS = {
 	alpha: {
 		freqL: 440,
 		freqR: 444,
-		description: 'Alpha waves (8-13 Hz) are associated with relaxation and stress reduction.',
+		description: 'Alpha waves (8-13 Hz) are associated with relaxation and stress reduction.'
 	},
 	beta: {
 		freqL: 220,
 		freqR: 224,
-		description:
-			'Beta waves (13-30 Hz) are associated with focus, concentration, and alertness.',
+		description: 'Beta waves (13-30 Hz) are associated with focus, concentration, and alertness.'
 	},
 	theta: {
 		freqL: 110,
 		freqR: 114,
-		description:
-			'Theta waves (4-8 Hz) are associated with deep relaxation, meditation, and creativity.',
+		description: 'Theta waves (4-8 Hz) are associated with deep relaxation, meditation, and creativity.'
 	},
 	delta: {
 		freqL: 55,
 		freqR: 59,
-		description: 'Delta waves (0.5-4 Hz) are associated with deep sleep and healing.',
-	},
+		description: 'Delta waves (0.5-4 Hz) are associated with deep sleep and healing.'
+	}
 } as const
 
 export class BinauralBeats {
