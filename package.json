@@ -25,6 +25,8 @@
 	],
 	"scripts": {
 		"build": "bun run build.ts",
+		"build:all": "pnpm build && pnpm build:site",
+		"build:site": "cd www && pnpm i && pnpm build",
 		"build:watch": "bun run --watch build.ts -w",
 		"check": "tsc --noEmit",
 		"check:watch": "tsc --noEmit --watch",

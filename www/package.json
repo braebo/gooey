@@ -1,7 +1,7 @@
 {
 	"name": "gooey-www",
-	"private": true,
 	"version": "0.0.1",
+	"private": true,
 	"description": "Website for [gooey](https://github.com/braebo/gooey).",
 	"keywords": [
 		"sveltekit",
