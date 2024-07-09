@@ -1,5 +1,5 @@
 /**
- * @module yet another web gui
+ * @module A modern gui library for typescript and javascript.
  */
 
 export type { GuiOptions, GuiStorageOptions, GuiPreset, GuiElements } from './Gui'

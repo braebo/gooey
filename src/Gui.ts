@@ -1,12 +1,12 @@
 import type { WindowManagerOptions } from './shared/WindowManager'
-import type { JavascriptStyleProperty } from './shared/css-types'
+// import type { JavascriptStyleProperty } from './shared/css-types'
 import type { Theme, ThemeMode } from './styles/themer/types'
 import type { ThemerOptions } from './styles/themer/Themer'
 import type { FolderOptions, FolderPreset } from './Folder'
 import type { ResizableOptions } from './shared/resizable'
 import type { DraggableOptions } from './shared/draggable'
 import type { PrimitiveState } from './shared/state'
-import type { PropertiesHyphen } from 'csstype'
+// import type { PropertiesHyphen } from 'csstype'
 import type { Placement } from './shared/place'
 import type { Commit } from './UndoManager'
 
@@ -23,7 +23,7 @@ import { resolveOpts } from './shared/resolveOpts'
 import { PresetManager } from './PresetManager'
 import { Themer } from './styles/themer/Themer'
 import settingsIcon from './svg/settings-icon'
-import { VAR_PREFIX } from './styles/GUI_VARS'
+// import { VAR_PREFIX } from './styles/GUI_VARS'
 import { GUI_VARS } from './styles/GUI_VARS'
 import { UndoManager } from './UndoManager'
 import { select } from './shared/select'
@@ -141,6 +141,13 @@ export interface GuiOptions {
 	id?: string
 
 	/**
+	 * Whether to load the default font for use.  Set to `false` if you're overwriting
+	 * the `--fragcui-font` variable in your theme.
+	 * @default true
+	 */
+	loadDefaultFont?: boolean
+
+	/**
 	 * @internal
 	 */
 	_windowManager?: WindowManager
@@ -248,6 +255,7 @@ export const GUI_DEFAULTS = {
 	themes: [theme_default, theme_flat, theme_scout],
 	resizable: true,
 	draggable: true,
+	loadDefaultFont: true,
 } as const satisfies GuiOptions
 //⌟
 
@@ -330,7 +338,11 @@ export class Gui {
 			this._reveal(true)
 		}
 
-		return this.folder.addFolder(title, options)
+		return this.folder.addFolder(title, {
+			...options,
+			// @ts-expect-error @internal
+			gui: this,
+		})
 	}
 	add: Folder['add']
 	addMany: Folder['addMany']
@@ -364,7 +376,7 @@ export class Gui {
 				key: `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`,
 			}
 			// When storage is on, repositioning after animating-in is disabled unless this is the
-			// very first page load.
+			// _very_ first page load.
 			if (!(`${opts.storage.key}::wm::0::position` in localStorage)) {
 				reposition = true
 			}
@@ -375,7 +387,29 @@ export class Gui {
 		this.opts = opts as GuiOptions & { storage: GuiStorageOptions | false }
 
 		this._log = new Logger(`Gui ${this.opts.title}`, { fg: 'palevioletred' })
-		this._log.fn('constructor').debug({ options, opts })
+		this._log.fn('constructor').info({ options, opts })
+
+		if (this.opts.loadDefaultFont !== false) {
+			const ff = new FontFace(
+				'fredoka',
+				`url(${encodeURI?.(
+					'https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2',
+				)})`,
+				{
+					style: 'normal',
+					display: 'swap',
+					weight: '300 700',
+					stretch: '75% 125%',
+					unicodeRange:
+						'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
+				},
+			)
+
+			ff.load().then(font => {
+				// @ts-expect-error - ¯\_(ツ)_/¯
+				document.fonts.add(font)
+			})
+		}
 
 		this.container = select(this.opts.container)[0]
 
@@ -397,7 +431,7 @@ export class Gui {
 
 		// Not stoked about this.
 		this.on = this.folder.on.bind(this.folder)
-		this.addFolder = this.folder.addFolder.bind(this.folder)
+		// this.addFolder = this.folder.addFolder.bind(this.folder)
 		this.add = this.folder.add.bind(this.folder)
 		this.addMany = this.folder.addMany.bind(this.folder)
 		this.addButtonGrid = this.folder.addButtonGrid.bind(this.folder)
@@ -439,19 +473,20 @@ export class Gui {
 			this.folder.elements.toolbar.container,
 		)
 
-		this.settingsFolder = this.folder.addFolder(Gui.settingsFolderTitle, {
-			closed: true,
+		this.settingsFolder = this.addFolder(Gui.settingsFolderTitle, {
+			// closed: true,
 			hidden: false,
 			// @ts-expect-error @internal
 			_headerless: true,
 		})
+		this.settingsFolder.element.classList.add('fracgui-folder-alt')
 
 		this.themer = this.opts._themer ?? this._createThemer(this.settingsFolder)
 		this.theme = this.opts.theme
 		this.presetManager = this._createPresetManager(this.settingsFolder)
 
 		// todo - convert this crap to an 'alt' class
-		this.applyAltStyle(this.settingsFolder)
+		// this.applyAltStyle(this.settingsFolder)
 
 		this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage)
 
@@ -502,6 +537,9 @@ export class Gui {
 				 * should probably set the position here.
 				 */
 				console.error('//todo - set position here or enforce window manager')
+
+				// Let's just throw if the wm isn't here.
+				// throw new Error('Position option provided but window manager is missing.')
 			}
 		}
 
@@ -580,7 +618,7 @@ export class Gui {
 
 		this._log
 			.fn('_createWindowManager')
-			.debug({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts })
+			.info({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts })
 
 		const windowManager = new WindowManager({
 			...windowManagerOpts,
@@ -636,7 +674,7 @@ export class Gui {
 	 * Loads a given preset into the gui, updating all inputs.
 	 */
 	load(preset: GuiPreset) {
-		this._log.fn('load').debug({ preset })
+		this._log.fn('load').info({ preset })
 
 		// todo - this isn't working, it's being unset immediately somewhere...
 		this.dirty = false
@@ -654,10 +692,10 @@ export class Gui {
 	 */
 	commit(commit: Partial<Commit>) {
 		if (this._undoLock) {
-			this._log.fn('commit').debug('LOCKED: prevented commit while locked')
+			this._log.fn('commit').info('LOCKED: prevented commit while locked')
 			return
 		}
-		this._log.fn('commit').debug('commited', commit)
+		this._log.fn('commit').info('commited', commit)
 		this._undoManager?.commit(commit as Commit)
 	}
 
@@ -669,7 +707,7 @@ export class Gui {
 		// this._undoLock = true
 		this._undoManager.lockedExternally = true
 		this.lockCommit.from = from
-		this._log.fn(o('lock')).debug('commit', { from, lockCommit: this.lockCommit })
+		this._log.fn(o('lock')).info('commit', { from, lockCommit: this.lockCommit })
 	}
 
 	/**
@@ -684,11 +722,11 @@ export class Gui {
 		this._undoManager.lockedExternally = false
 		this.commit(commit)
 
-		this._log.fn(o('unlock')).debug('commit', { commit, lockCommit: this.lockCommit })
+		this._log.fn(o('unlock')).info('commit', { commit, lockCommit: this.lockCommit })
 	}
 
 	private _createThemer(folder: Folder) {
-		this._log.fn('createThemer').debug({ folder })
+		this._log.fn('createThemer').info({ folder })
 		let finalThemer = undefined as Themer | undefined
 		const themer = this.opts._themer
 		const themerOptions: Partial<ThemerOptions> = {
@@ -712,7 +750,7 @@ export class Gui {
 		this.folder.evm.add(
 			finalThemer.mode.subscribe(() => {
 				if (this.settingsFolder) {
-					this.applyAltStyle(this.settingsFolder)
+					// this.applyAltStyle(this.settingsFolder)
 				}
 			}),
 		)
@@ -753,10 +791,6 @@ export class Gui {
 		return finalThemer
 	}
 
-	isGui(): this is Gui {
-		return this.__type === 'Gui'
-	}
-
 	private _createSettingsButton(parent: HTMLElement) {
 		const button = create<'button', any, HTMLButtonElement>('button', {
 			parent,
@@ -786,75 +820,75 @@ export class Gui {
 	}
 
 	// todo - convert this crap to a css utility class
-	applyAltStyle(folder: Folder) {
-		this._setVar(
-			folder.elements.content,
-			`box-shadow`,
-			`0px 0px 10px 0px hsl(10deg, 0%, var(--${VAR_PREFIX}-shadow-lightness), inset`,
-		)
+	// applyAltStyle(folder: Folder) {
+	// 	this._setVar(
+	// 		folder.elements.content,
+	// 		`box-shadow`,
+	// 		`0px 0px 10px 0px hsl(10deg, 0%, var(--${VAR_PREFIX}-shadow-lightness)), inset`,
+	// 	)
 
-		folder.elements.content.style.setProperty('background', `--${VAR_PREFIX}-folder_background`)
+	// 	folder.elements.content.style.setProperty('background', `--${VAR_PREFIX}-folder_background`)
 
-		this._setProps(folder.element, [
-			['background', `color-mix(in sRGB, var(--${VAR_PREFIX}-bg-b) 100%, transparent)`],
-		])
+	// 	this._setProps(folder.element, [
+	// 		['background', `color-mix(in sRGB, var(--${VAR_PREFIX}-bg-b) 100%, transparent)`],
+	// 	])
 
-		switch (this.themer?.activeMode) {
-			case 'dark': {
-				this._setVars(folder.elements.contentWrapper, [
-					//- ['input-container_background', `var(--${VAR_PREFIX}-bg-b)`],
-					['input-container_color', `var(--${VAR_PREFIX}-fg-b)`],
-					[
-						'folder-header_background',
-						`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 75%, transparent)`,
-					],
-					[
-						'controller-dim_background',
-						`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 50%, transparent)`,
-					],
-					[
-						'controller_background',
-						`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-c) 50%, transparent)`,
-					],
-				])
+	// 	switch (this.themer?.activeMode) {
+	// 		case 'dark': {
+	// 			// this._setVars(folder.elements.contentWrapper, [
+	// 			// 	//- ['input-container_background', `var(--${VAR_PREFIX}-bg-b)`],
+	// 			// 	['input-container_color', `var(--${VAR_PREFIX}-fg-b)`],
+	// 			// 	[
+	// 			// 		'folder-header_background',
+	// 			// 		`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 75%, transparent)`,
+	// 			// 	],
+	// 			// 	[
+	// 			// 		'controller-dim_background',
+	// 			// 		`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 50%, transparent)`,
+	// 			// 	],
+	// 			// 	[
+	// 			// 		'controller_background',
+	// 			// 		`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-c) 50%, transparent)`,
+	// 			// 	],
+	// 			// ])
 
-				break
-			}
-			case 'light': {
-				this._setVars(folder.elements.contentWrapper, [
-					[
-						'folder-header_background',
-						`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 60%, transparent)`,
-					],
-					['controller_background', `var(--${VAR_PREFIX}-light-a)`],
-				])
-				break
-			}
-		}
-	}
+	// 			break
+	// 		}
+	// 		case 'light': {
+	// 			this._setVars(folder.elements.contentWrapper, [
+	// 				[
+	// 					'folder-header_background',
+	// 					`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 60%, transparent)`,
+	// 				],
+	// 				['controller_background', `var(--${VAR_PREFIX}-light-a)`],
+	// 			])
+	// 			break
+	// 		}
+	// 	}
+	// }
 
-	private _setProps(el: HTMLElement, props: [JavascriptStyleProperty | (string & {}), string][]) {
-		for (const [k, v] of props) {
-			el.style.setProperty(k, v)
-		}
-	}
+	// private _setProps(el: HTMLElement, props: [JavascriptStyleProperty | (string & {}), string][]) {
+	// 	for (const [k, v] of props) {
+	// 		el.style.setProperty(k, v)
+	// 	}
+	// }
 
-	private _setVar(el: HTMLElement, key: keyof PropertiesHyphen | (string & {}), value: string) {
-		el.style.setProperty(`--${VAR_PREFIX}-${key}`, value)
-		Promise.resolve().then(() => {
-			if (!el.style.getPropertyValue(`--${VAR_PREFIX}-${key}`)) {
-				console.warn(`No property found for --${VAR_PREFIX}-${key}`)
-			}
-		})
-	}
-	private _setVars(el: HTMLElement, props: [keyof PropertiesHyphen | (string & {}), string][]) {
-		for (const [key, value] of props) {
-			this._setVar(el, key, value)
-		}
-	}
+	// private _setVar(el: HTMLElement, key: keyof PropertiesHyphen | (string & {}), value: string) {
+	// 	el.style.setProperty(`--${VAR_PREFIX}-${key}`, value)
+	// 	Promise.resolve().then(() => {
+	// 		if (!el.style.getPropertyValue(`--${VAR_PREFIX}-${key}`)) {
+	// 			console.warn(`No property found for --${VAR_PREFIX}-${key}`)
+	// 		}
+	// 	})
+	// }
+	// private _setVars(el: HTMLElement, props: [keyof PropertiesHyphen | (string & {}), string][]) {
+	// 	for (const [key, value] of props) {
+	// 		this._setVar(el, key, value)
+	// 	}
+	// }
 
 	dispose = () => {
-		this._log.fn('dispose').debug(this)
+		this._log.fn('dispose').info(this)
 		this.themer?.dispose()
 		// this.themeEditor?.dispose()
 		if (this._isWindowManagerOwner) {

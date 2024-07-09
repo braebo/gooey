@@ -303,7 +303,7 @@ export class Folder {
 	// closed: State<boolean>
 	closed = state(false)
 
-	element: HTMLElement
+	element: HTMLDivElement
 	elements = {} as FolderElements
 	graphics?: {
 		icon: HTMLDivElement
@@ -311,11 +311,15 @@ export class Folder {
 			container: HTMLDivElement
 			svg: SVGElement
 			path: SVGPathElement
+			update: () => void
 		}
 	}
 
 	evm = new EventManager<FolderEvents>(['change', 'refresh', 'toggle', 'mount'])
 	on = this.evm.on.bind(this.evm)
+
+	initialHeight = 0
+	initialHeaderHeight = 0
 
 	private _title: string
 	private _hidden = () => false
@@ -387,6 +391,15 @@ export class Folder {
 		if (opts._skipAnimations) {
 			// We need to bypass animations so I can get the rect.
 			this.element.classList.add('instant')
+
+			this.initialHeight = this.element.scrollHeight
+			if (this.initialHeight === 0) {
+				console.error(`${this.title} has a height of 0.`, this.element)
+			}
+			this.initialHeaderHeight = this.elements.header.scrollHeight
+			if (this.initialHeaderHeight === 0) {
+				console.error(`${this.title} header has a height of 0.`, this.elements.header)
+			}
 			setTimeout(() => {
 				this.element.classList.remove('instant')
 			}, 0)
@@ -394,19 +407,20 @@ export class Folder {
 
 		this.hidden = opts.hidden ? toFn(opts.hidden) : () => false
 
-		// Open/close the folder when the closed state changes.
-		this.evm.add(
-			this.closed.subscribe(v => {
-				v ? this.close() : this.open()
-				this.evm.emit('toggle', v)
-			}),
-		)
-
 		this._createGraphics(opts._headerless).then(() => {
+			this.evm.emit('mount')
+
+			// Open/close the folder when the closed state changes.
+			this.evm.add(
+				this.closed.subscribe(v => {
+					v ? this.close() : this.open()
+					this.evm.emit('toggle', v)
+				}),
+			)
+
 			if (opts.closed) {
 				this.closed.set(opts.closed)
 			}
-			this.evm.emit('mount')
 		})
 	}
 
@@ -506,6 +520,7 @@ export class Folder {
 		const overrides = {
 			__type: 'InternalFolderOptions',
 			container: this.elements.content,
+			gui: this.gui,
 			isRoot: false,
 		}
 
@@ -516,9 +531,9 @@ export class Folder {
 		folder.on('change', v => this.evm.emit('change', v))
 
 		this.children.push(folder)
-		this._createSvgs()
 
 		if (opts._headerless) {
+			folder.initialHeaderHeight ??= folder.elements.header.scrollHeight
 			folder.elements.header.style.display = 'none'
 		}
 
@@ -1362,25 +1377,48 @@ export class Folder {
 
 	//· SVG's ····················································································¬
 
-	private async _createGraphics(headerless = false) {
+	private async _createGraphics(headerless = false): Promise<void> {
+		if (this.isRootFolder()) return
 		this._log.fn('createGraphics').debug({ this: this })
-		await Promise.resolve()
+
+		// await Promise.resolve()
+		await new Promise(resolve => setTimeout(resolve, 0))
 
 		if (!this.isRootFolder()) {
 			this.graphics = { icon: createFolderSvg(this) }
 			this.elements.header.prepend(this.graphics.icon)
 
 			if (!headerless) {
-				this.graphics.connector = createFolderConnector(this)
-				this.element.prepend(this.graphics.connector.container)
+				this.initialHeaderHeight ??= this._resolveHeaderHeight()
+				// this.initialHeaderHeight = this._resolveHeaderHeight()
+				this.graphics.connector = createFolderConnector(this, this.graphics.icon)
+				// this.element.prepend(this.graphics.connector.container)
 			}
 		}
 
 		if (DEV) new TerminalSvg(this)
 	}
 
-	private _createSvgs() {
-		this._log.fn('#createSvgs').debug({ this: this })
+	private _resolveHeaderHeight() {
+		// Get the _pixel_ value of the `--fracgui-header_height` variable for SVG generation.
+		let height = 16 * 1.75
+		const wrapper = this.root?.gui?.wrapper
+		if (!wrapper) {
+			throw new Error('No wrapper found!  This should never happen...')
+		}
+		const prop = getComputedStyle(wrapper).getPropertyValue('--fracgui-header_height')
+		if (prop.endsWith('px')) {
+			height = parseFloat(prop)
+		} else if (prop.endsWith('em')) {
+			let fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
+			height = parseFloat(prop) * fontSize
+		} else {
+			console.error('Invalid header height for', this.title)
+			console.error({
+				prop,
+			})
+		}
+		return height
 	}
 
 	get hue() {

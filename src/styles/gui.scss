@@ -223,11 +223,11 @@
 		width: fit-content;
 
 		font-size: calc(var(--fracgui-font-size) * 0.9);
-		font-weight: var(--fracgui-folder-header_font-weight);
+		// font-weight: var(--fracgui-folder-header_font-weight);
 		letter-spacing: var(--fracgui-folder-header_letter-spacing);
-		font-variation-settings:
-			'wght' var(--fracgui-folder-header_font-weight),
-			'wdth' 100;
+		// font-variation-settings:
+		// 	'wght' var(--fracgui-folder-header_font-weight),
+		// 	'wdth' 100;
 
 		transition: color var(--fracgui-transition-duration);
 	}
@@ -254,15 +254,16 @@
 }
 
 .fracgui-connector-svg {
-	contain: strict;
+	contain: layout style;
 	display: flex;
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: 1px;
 	width: 20px;
 	height: 100%;
+	// height: 70%;
 	pointer-events: none;
-	overflow: hidden;
+	overflow: visible;
 	z-index: 10;
 	backface-visibility: hidden;
 }
@@ -288,17 +289,29 @@
 	}
 }
 
-.fracgui-folder:hover:not(.fracgui-root) {
-	> .fracgui-header {
-		color: var(--fracgui-folder-header_color);
-		// .fracgui-title {
-		// 	font-variation-settings:
-		// 		'wght' calc(var(--fracgui-folder-header_font-weight) + 20),
-		// 		'wdth' 104;
-		// }
-	}
-	> .fracgui-content {
-		opacity: 1;
+.fracgui-folder-alt {
+	box-shadow:
+		0px 0px 10px 0px hsl(10deg, 0%, var(--fracgui-shadow-lightness)),
+		inset;
+	background: color-mix(in sRGB, var(--fracgui-bg-b) 100%, transparent);
+
+	--fracgui-input-container_color: var(--fracgui-fg-b);
+	--fracgui-folder-header_background: color-mix(in sRGB, var(--fracgui-bg-a) 75%, transparent);
+	--fracgui-controller-dim_background: color-mix(in sRGB, var(--fracgui-bg-a) 50%, transparent);
+	// --fracgui-controller_background: color-mix(in sRGB, var(--fracgui-bg-c) 50%, transparent);
+	--fracgui-controller_background: color-mix(
+		in sRGB,
+		var(--fracgui-bg-a) 80%,
+		var(--fracgui-bg-b)
+	);
+
+	@at-root .fracgui-root[mode='light'] & {
+		--fracgui-folder-header_background: color-mix(
+			in sRGB,
+			var(--fracgui-bg-a) 75%,
+			var(--fracgui-bg-b)
+		);
+		--fracgui-controller_background: var(--fracgui-light-a);
 	}
 }
 //⌟
@@ -325,6 +338,9 @@
 	font-family: var(--fracgui-font-family);
 	font-weight: var(--fracgui-folder-content_font-weight);
 	// font-size: var(--fracgui-font-size);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
 
 	user-select: none;
 	z-index: 99;
@@ -360,7 +376,7 @@
 
 		// font-size: var(--fracgui-root-header_font-size);
 		font-size: var(--fracgui-font-size);
-		font-weight: var(--fracgui-root-header_font-weight);
+		// font-weight: var(--fracgui-root-header_font-weight);
 		font-variation-settings:
 			'wght' var(--fracgui-root-header_font-weight),
 			'wdth' 100;
@@ -2182,7 +2198,7 @@ input.fracgui-search-input {
 					color: var(--fracgui-controller_color);
 					color: var(--fracgui-theme-a);
 
-					font-variation-settings: 'wght' 800;
+					// font-variation-settings: 'wght' 800;
 				}
 				@at-root .fracgui-root[mode='light'] & {
 					background: var(--fracgui-controller-dim_background);

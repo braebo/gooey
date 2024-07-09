@@ -6,12 +6,8 @@ import { EventManager } from './EventManager'
 import { resolveOpts } from './resolveOpts'
 import { Logger } from './logger'
 import { nanoid } from './nanoid'
+import { isObject } from './is'
 import { state } from './state'
-// import { isObject } from './is'
-
-function isObject<T extends Record<string, any> = Record<string, any>>(thing: any): thing is T {
-	return typeof thing === 'object' && thing !== null
-}
 
 export interface WindowManagerOptions {
 	__type?: 'WindowManagerOptions'

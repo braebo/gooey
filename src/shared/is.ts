@@ -21,3 +21,7 @@ export function isHTMLElement(value: unknown): value is HTMLElement {
 export function isObject(value: unknown): value is Record<string, unknown> {
 	return !!value && typeof value === 'object'
 }
+
+export function isNumber(value: unknown): value is number {
+	return typeof value === 'number' && !isNaN(value)
+}

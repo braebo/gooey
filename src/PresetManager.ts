@@ -173,18 +173,25 @@ export class PresetManager {
 
 		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
 
-		await new Promise(r => setTimeout(r, 0))
+		// await new Promise(r => setTimeout(r, 0))
 
 		const presetsFolder = parentFolder.addFolder('presets', {
 			closed: false,
-			hidden: false,
-			children: [],
+			// hidden: false,
+			// children: [],
+			// @ts-expect-error - @internal
+			gui: this.gui,
 		})
+
+		// todo - use this class and remove all that styling 🍝
+		presetsFolder.element.classList.add('fracgui-folder-alt')
 
 		// Fully desaturate the presets folder's header connector to svg.
 		presetsFolder.on('mount', () => {
-			presetsFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
-			presetsFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
+			// presetsFolder.graphics!.connector!.update()
+			presetsFolder.graphics!.connector!.svg.style.setProperty('filter', 'saturate(0.1)')
+			presetsFolder.graphics!.icon.style.setProperty('filter', 'saturate(0)')
+			
 		})
 
 		this.defaultPreset = defaultPreset ?? this._resolveDefaultPreset()
@@ -403,7 +410,6 @@ export class PresetManager {
 		//? Presets Select Input
 		this._presetsInput = presetsFolder.addSelect({
 			__type: 'SelectInputOptions',
-			// title: 'active',
 			options: this.presets.value,
 			labelKey: 'title',
 			order: -1,
@@ -411,9 +417,6 @@ export class PresetManager {
 			resettable: false,
 			disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,
 		})
-
-		// //! This should happen automatically if no title is provided
-		// this._presetsInput.element.style.setProperty('--fracgui-input-section-1_width', '0px')
 
 		this._presetsInput.on('change', ({ value }) => {
 			this._log.fn('_presetsInput.on(change)').debug({ value, this: this })
@@ -441,7 +444,6 @@ export class PresetManager {
 			text: 'Save',
 			delay: 0,
 			placement: 'bottom',
-			// offsetY: '0.1rem',
 			hideOnClick: true,
 		})
 		this._presetsInput.listen(newPresetButton.element, 'click', () => {
@@ -454,7 +456,6 @@ export class PresetManager {
 		this._renamePresetButton.element.tooltip = new Tooltip(this._renamePresetButton.element, {
 			delay: 0,
 			placement: 'bottom',
-			// offsetY: '0.1rem',
 			hideOnClick: true,
 			text: () => {
 				if (this._renamePresetButton.element.classList.contains('active')) {
@@ -499,10 +500,10 @@ export class PresetManager {
 
 		const existing = this.presets.value.find(p => p.id === preset.id)
 		if (!existing) {
-			this._log.debug('pushing preset:', { preset, existing })
+			this._log.fn('put').debug('pushing preset:', { preset, existing })
 			this.presets.push(preset)
 		} else {
-			this._log.debug('preset exists. replacing with:', { preset, existing })
+			this._log.fn('put').debug('preset exists. replacing with:', { preset, existing })
 			this.presets.update(presets => {
 				const index = presets.findIndex(p => p.id === preset.id)
 				presets[index] = preset
@@ -520,7 +521,7 @@ export class PresetManager {
 	 * Delete a preset.
 	 */
 	delete(preset: GuiPreset | GuiPreset['id']) {
-		this._log.fn('deletePreset').debug({ this: this, preset })
+		this._log.fn('delete').debug({ this: this, preset })
 
 		if (!this._isInitialized()) {
 			throw new Error('PresetManager not initialized.')

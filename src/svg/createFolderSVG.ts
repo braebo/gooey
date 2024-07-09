@@ -1,6 +1,6 @@
 import type { Folder } from '../Folder'
 
-import { create } from '../shared/create'
+// import { create } from '../shared/create'
 
 export function createFolderSvg(folder: Folder) {
 	const strokeWidth = 1
@@ -89,13 +89,13 @@ export function createFolderSvg(folder: Folder) {
 				backface-visibility: hidden;
 			}
 
-			/*//?	Circle A	*/
+			/*  Circle A  */
 			.closed .fracgui-folder-icon circle.a {
 				transform: scale(1);
-				
+
 				stroke: transparent;
 				fill: ${fill};
-				
+
 				transition: all .5s ${bounce}, stroke 2s ${bounce}, fill .2s ${bounce} 0s;
 			}
 			.fracgui-folder-icon circle.a {
@@ -107,7 +107,7 @@ export function createFolderSvg(folder: Folder) {
 				transition: all .33s ${bounce}, stroke 2s ${bounce}, fill .2s ease-in 0.25s;
 			}
 
-			/*//?	Circle Alt	*/
+			/*  Circle Alt  */
 			.closed .fracgui-folder-icon circle.alt {
 				transform: translate(-3px, 0) scale(1.8);
 
@@ -150,13 +150,13 @@ export function createFolderSvg(folder: Folder) {
 	return icon
 }
 
-export function createFolderConnector(folder: Folder) {
-	const container = create('div', {
-		classes: ['fracgui-connector-container'],
-	})
+export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
+	// const container = create('div', { classes: ['fracgui-connector-container'] })
+	const container = folder.element
 
 	const width = 20
-	const height = folder.element.clientHeight
+	// const height = folder.element.offsetHeight
+	const height = folder.element.scrollHeight
 	const stroke = 1
 
 	//? SVG
@@ -165,7 +165,6 @@ export function createFolderConnector(folder: Folder) {
 	svg.setAttribute('width', `${width}`)
 	svg.setAttribute('stroke-width', `${stroke}`)
 	svg.setAttribute('viewBox', `0 0 ${width} ${height}`)
-	svg.setAttribute('overflow', 'visible')
 	svg.setAttribute('backface-visibility', 'hidden')
 
 	svg.setAttribute('preserveAspectRatio', 'xMinYMin slice')
@@ -181,8 +180,15 @@ export function createFolderConnector(folder: Folder) {
 	path.setAttribute('stroke-linecap', 'round')
 	path.setAttribute('stroke-linejoin', 'round')
 	path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
-	const headerHeight = folder.elements.header.clientHeight
-	path.setAttribute('transform', `translate(0, ${headerHeight / 2})`)
+	// path.setAttribute('transform', `translate(0, ${folder.initialHeaderHeight / 2})`)
+
+	// console.log('\nicon.scrollTop', icon.scrollTop)
+	// console.log('icon.offsetHeight', icon.offsetHeight)
+	// console.log('iconCenter', iconCenter)
+
+	// console.log('svg.scrollTop', svg.scrollTop)
+	// console.log('svg.offsetHeight', svg.scrollHeight)
+	// console.log('svgTop', svgTop)
 
 	//? Path Gradient
 	const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
@@ -216,15 +222,51 @@ export function createFolderConnector(folder: Folder) {
 	svg.appendChild(path)
 	container.appendChild(svg)
 
+	const iconCenter = icon.scrollHeight - stroke - icon.scrollTop
+	const svgTop = svg.scrollTop
+	let diff = iconCenter - svgTop
+	svg.style.top = diff + 'px'
+
+	console.log('\ndiff', diff)
+
+	const connectorTop = svg.getBoundingClientRect().top
+	const iconTop = icon.getBoundingClientRect().top
+	// diff = connectorTop - iconTop - stroke / 2
+	diff = connectorTop - iconTop - stroke / 2
+	svg.style.top = diff + 'px'
+	console.log('diff', diff)
+
 	return {
 		container,
 		svg,
 		path,
+		update: () => {
+			if (!folder.graphics) return
+
+			// // const svg = folder.graphics.connector.svg
+			// // const height = folder.element.offsetHeight
+			// const height = folder.initialHeight
+			// svg.setAttribute('height', `${height * 0.1}`)
+			// // svg.style.setProperty('height', `${height}px`)
+
+			// const count = folder.allChildren.length + folder.inputs.size
+			// svg.style.setProperty('filter', `hue-rotate(${-60 + (count % 360) * 20}deg)`)
+
+			// path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
+			// path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
+			// // const headerHeight = folder.elements.header.offsetHeight
+			// // const headerHeight = folder.initialHeaderHeight
+			// // path.setAttribute('transform', `translate(0, ${headerHeight / 2})`)
+		},
 	}
 }
 
-export function animateConnector(folder: Folder, action: 'open' | 'close') {
-	if (!folder.graphics?.connector) return
+export function animateConnector(
+	folder: Folder,
+	action: 'open' | 'close',
+): Promise<Animation | void> {
+	if (!folder.graphics?.connector) return Promise.resolve()
+
 	const path = folder.graphics.connector.path
 	const length = `${path.getTotalLength()}`
 	path.style.strokeDasharray = `${length}`
@@ -255,24 +297,24 @@ export function animateConnector(folder: Folder, action: 'open' | 'close') {
 		fill: 'forwards',
 	} as const satisfies KeyframeAnimationOptions
 
-	folder.graphics.connector.path.animate(keyframes, timing)
+	return folder.graphics.connector.path.animate(keyframes, timing).finished
 }
 
-// todo - This will likely be needed when dynamically adding/removing inputs.
-export function updateConnector(folder: Folder, svg: SVGSVGElement, path: SVGPathElement) {
-	if (!folder.graphics) return
+// // todo - This will likely be needed when dynamically adding/removing inputs.
+// export function updateConnector(folder: Folder, svg: SVGSVGElement, path: SVGPathElement) {
+// 	if (!folder.graphics) return
 
-	// const svg = folder.graphics.connector.svg
+// 	// const svg = folder.graphics.connector.svg
 
-	const height = folder.element.clientHeight
-	svg.setAttribute('height', `${height * 0.1}`)
-	// svg.style.setProperty('height', `${height}px`)
+// 	const height = folder.element.offsetHeight
+// 	svg.setAttribute('height', `${height * 0.1}`)
+// 	// svg.style.setProperty('height', `${height}px`)
 
-	const count = folder.allChildren.length + folder.inputs.size
-	svg.style.setProperty('filter', `hue-rotate(${-60 + (count % 360) * 20}deg)`)
+// 	const count = folder.allChildren.length + folder.inputs.size
+// 	svg.style.setProperty('filter', `hue-rotate(${-60 + (count % 360) * 20}deg)`)
 
-	const headerHeight = folder.elements.header.clientHeight
-	path.setAttribute('transform', `translate(0, ${headerHeight / 2})`)
-	path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
-	path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
-}
+// 	const headerHeight = folder.elements.header.offsetHeight
+// 	path.setAttribute('transform', `translate(0, ${headerHeight / 2})`)
+// 	path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
+// 	path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
+// }

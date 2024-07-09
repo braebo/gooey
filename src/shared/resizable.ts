@@ -1,7 +1,7 @@
 import type { ElementOrSelector, ElementsOrSelectors } from './select'
 import type { State } from './state'
 
-import { collisionClampX, collisionClampY } from './collisions'
+// import { collisionClampX, collisionClampY } from './collisions'
 import { deepMergeOpts } from './deepMergeOpts'
 import { nanoid } from './nanoid'
 import { Logger } from './logger'
@@ -30,108 +30,97 @@ export type Side = 'top' | 'right' | 'bottom' | 'left'
  */
 export type Corner = 'top-left' | 'top-right' | 'bottom-right' | 'bottom-left'
 
-//! We should use the same bounds as Draggable...
-// /**
-//  * Represents the bounds to which the draggable element is limited to.
-//  */
-// export type DragBounds = ElementOrSelector | false | Partial<VirtualRect>
-
 /**
  * Options for the {@link resizable} action.
  */
 export interface ResizableOptions {
 	__type?: 'ResizableOptions'
+
 	/**
 	 * To only allow resizing on certain sides, specify them here.
-	 * @defaultValue ['right', 'bottom']
+	 * @default ['right', 'bottom']
 	 */
 	sides: Side[]
+
 	/**
 	 * To only allow resizing on certain corners, specify them here.
-	 * @defaultValue ['bottom-right']
+	 * @default ['bottom-right']
 	 */
 	corners: ('top-left' | 'top-right' | 'bottom-right' | 'bottom-left')[]
+
 	/**
 	 * The size of the resize handle in pixels.
-	 * @defaultValue 6
+	 * @default 6
 	 */
 	grabberSize: number
+
 	/**
 	 * Optional callback function that runs when the element is resized.
-	 * @defaultValue () => void
+	 * @default () => void
 	 */
 	onResize: (size: { width: number; height: number }) => void
+
 	/**
 	 * If provided, the size of the element will be persisted
 	 * to local storage under the specified key.
-	 * @defaultValue undefined
+	 * @default undefined
 	 */
 	localStorageKey?: string
+
 	/**
 	 * Use a visible or invisible gutter.
-	 * @defaultValue false
+	 * @default false
 	 */
 	visible: boolean
+
 	/**
 	 * Gutter css color (if visible = `true`)
-	 * @defaultValue 'var(--fg-d, #1d1d1d)'
+	 * @default 'var(--fg-d, #1d1d1d)'
 	 */
 	color: string
+
 	/**
 	 * The max opacity (0-1) when hovering/dragging a grabber.
-	 * @defaultValue 1
+	 * @default 1
 	 */
 	opacity: number
+
 	/**
 	 * Border radius of the element.
-	 * @defaultValue '0.5rem'
+	 * @default '0.5rem'
 	 */
 	borderRadius: string
+
 	/**
 	 * The element to use as the bounds for resizing.
-	 * @defaultValue window['document']['documentElement']
+	 * @default window['document']['documentElement']
 	 */
 	bounds: ElementOrSelector
-
-	//! We should use the same bounds as Draggable...
-	//  **
-	//  * The boundary to which the draggable element is limited to.
-	//  *
-	//  * Valid values:
-	//  *
-	//  * - `undefined` - defaults to `document.documentElement`
-	//  * - An `HTMLElement` or query selector string, _i.e. `.container` or `#container`_
-	//  * - `'parent'` - the element's {@link HTMLElement.offsetParent|offsetParent}
-	//  * - `'body'` - `document.body`
-	//  * - `false` - no boundary
-	//  * - `{ top: number, right: number, bottom: number, left: number }` - A custom {@link VirtualRect rect} relative to the viewport.
-	//  *
-	//  * **Note**: Make sure the bounds is smaller than the node's min size.
-	//  * @defaultValue undefined
-	//  */
-	//  bounds: DragBounds
 
 	/**
 	 * Element's or selectors which will act as collision obstacles for the draggable element.
 	 */
 	obstacles: ElementsOrSelectors
+
 	/**
 	 * Whether to apply different `cursor` values to grabbers.
 	 */
 	cursors: boolean
+
 	/**
 	 * The classnames to apply to the resize grabbers, used for styling.
-	 * @defaultValue { default: 'resize-grabber', active: 'resize-grabbing' }
+	 * @default { default: 'resize-grabber', active: 'resize-grabbing' }
 	 */
 	classes: {
-		/** @defaultValue 'resize-grabber' */
+		/** @default 'resize-grabber' */
 		default: string
-		/** @defaultValue 'resize-grabbing' */
+		/** @default 'resize-grabbing' */
 		active: string
 	}
+
 	/**
 	 * Whether the element is disabled.
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled: boolean
 }
@@ -232,6 +221,8 @@ export class Resizable {
 		const { offsetWidth: width, offsetHeight: height } = node
 
 		this.size = state({ width, height }, { key: this.opts.localStorageKey })
+		console.log('this.opts.localStorageKey', this.opts.localStorageKey)
+		console.log('this.size.value', this.size.value)
 
 		//? Load size from local storage.
 		if (this.opts.localStorageKey) {
@@ -395,7 +386,7 @@ export class Resizable {
 			deltaX = x - this.rect.left
 			if (deltaX === 0) return this
 
-			deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls)
+			// deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls)
 			if (this.#boundsRect) deltaX = Math.max(deltaX, this.#boundsRect.left - this.rect.left)
 
 			const newWidth = clamp(this.rect.width - deltaX, this.#minWidth, this.#maxWidth)
@@ -408,7 +399,7 @@ export class Resizable {
 			deltaX = x - this.rect.right
 			if (deltaX === 0) return this
 
-			deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls)
+			// deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls)
 			if (this.#boundsRect)
 				deltaX = Math.min(deltaX, this.#boundsRect.right - this.rect.right)
 			const newWidth = clamp(this.rect.width + deltaX, this.#minWidth, this.#maxWidth)
@@ -423,7 +414,7 @@ export class Resizable {
 		if (bordertop) {
 			deltaY = y - this.rect.top
 			if (deltaY != 0) {
-				deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls)
+				// deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls)
 				if (this.#boundsRect)
 					deltaY = Math.max(deltaY, this.#boundsRect.top - this.rect.top)
 				const newHeight = clamp(this.rect.height - deltaY, this.#minHeight, this.#maxHeight)
@@ -439,7 +430,7 @@ export class Resizable {
 		} else {
 			deltaY = y - this.rect.bottom
 			if (deltaY !== 0) {
-				deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls)
+				// deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls)
 				if (this.#boundsRect)
 					deltaY = Math.min(deltaY, this.#boundsRect.bottom - this.rect.bottom)
 				const newHeight = clamp(this.rect.height + deltaY, this.#minHeight, this.#maxHeight)

@@ -3,7 +3,7 @@ import type { CSSColorName } from './css-colors'
 import { CSS_COLORS, randomCSSColorName } from './css-colors'
 import { r, y, gr, dim, hex } from './l'
 import { stringify } from './stringify'
-import { DEV, BROWSER } from 'esm-env'
+// import { BROWSER } from 'esm-env'
 import { defer } from './defer'
 import { tldr } from './tldr'
 
@@ -60,12 +60,14 @@ export interface LoggerOptions {
 }
 
 // todo - Is there a reliable way to type an ImportMetaEnv entry globally for consumers?
-const ENABLED =
-	DEV &&
-	// @ts-ignore
-	import.meta?.env?.VITE_FRACTILS_LOG_LEVEL !== 'off' &&
-	// @ts-ignore
-	!(import.meta?.env?.VITEST && !import.meta?.env?.VITE_FRACTILS_LOG_VITEST)
+const ENABLED = true
+// // DEV &&
+// // @ts-ignore - For Vite environments.
+// (import.meta.env?.DEV || globalThis?.process?.env?.NODE_ENV === 'development') &&
+// // @ts-ignore - Killswitch.
+// import.meta?.env?.VITE_FRACTILS_LOG_LEVEL !== 'off' &&
+// // @ts-ignore - VITEST is a global variable injected by Vite.
+// !(import.meta?.env?.VITEST && !import.meta?.env?.VITE_FRACTILS_LOG_VITEST)
 
 export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'off'
 
@@ -76,7 +78,8 @@ export class Logger {
 	title = ''
 	options: LoggerOptions
 	// color: ChalkInstance
-	color: string
+	// color: string
+	color: (str: string) => string
 
 	#logger: (...args: any[]) => void
 
@@ -94,9 +97,11 @@ export class Logger {
 		const colorname = options?.fg?.toLowerCase() ?? randomCSSColorName()
 		const fg = colorname in CSS_COLORS ? CSS_COLORS[colorname as CSSColorName] : colorname
 
-		// this.color = hex(fg)
-		this.color = fg
+		this.color = hex(fg)
+		// this.color = fg
 		this.#logger = Logger.createLogger(this.title, this.options)
+
+		// console.log('Logger', this.title, this.#logger)
 
 		return this
 	}
@@ -229,13 +234,15 @@ export class Logger {
 	}
 
 	static createLogger(title: string, options?: LoggerOptions) {
+		if (!ENABLED) return () => void 0
+
 		options ??= {}
 
-		const browser = options.browser ?? true
-		const server = options.server ?? false
+		const BROWSER = typeof globalThis.window !== 'undefined'
+		const SERVER = !BROWSER
 
-		if (BROWSER && !browser) return () => void 0
-		if (!BROWSER && !server) return () => void 0
+		if (!BROWSER || options.browser === false) return () => void 0
+		if (SERVER && options.server !== true) return () => void 0
 
 		const fg = options.fg || randomCSSColorName()
 		const bg = options.bg || 'transparent'
@@ -249,8 +256,6 @@ export class Logger {
 			options.deferred &&
 			!Logger._BYPASS_DEFER &&
 			/^((?!chrome|android).)*safari/i.test(navigator.userAgent) // Safari explosed from requestIdleCallback
-
-		if (!ENABLED) return () => void 0
 
 		let callsite: URL | undefined = undefined
 
