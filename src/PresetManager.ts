@@ -173,10 +173,8 @@ export class PresetManager {
 
 		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
 
-		// await new Promise(r => setTimeout(r, 0))
-
 		const presetsFolder = parentFolder.addFolder('presets', {
-			closed: false,
+			closed: true,
 			// hidden: false,
 			// children: [],
 			// @ts-expect-error - @internal

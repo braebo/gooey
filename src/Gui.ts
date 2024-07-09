@@ -12,11 +12,12 @@ import theme_default from './styles/themes/default'
 import theme_scout from './styles/themes/scout'
 import theme_flat from './styles/themes/flat'
 import style from './styles/gui.scss'
+// import style from './gui.css'
 
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager'
 import { deepMergeOpts } from './shared/deepMergeOpts'
 import { styled } from './shared/decorators/styled'
-import { ThemeEditor } from './styles/ThemeEditor'
+// import { ThemeEditor } from './styles/ThemeEditor'
 import { resolveOpts } from './shared/resolveOpts'
 import { PresetManager } from './PresetManager'
 import { Themer } from './styles/themer/Themer'
@@ -304,7 +305,7 @@ export class Gui {
 	_undoManager = new UndoManager()
 
 	themer: Themer
-	themeEditor?: ThemeEditor
+	// themeEditor?: ThemeEditor
 	windowManager?: WindowManager
 
 	/**
@@ -472,7 +473,7 @@ export class Gui {
 
 		this.settingsFolder = this.addFolder(Gui.settingsFolderTitle, {
 			// closed: true,
-			hidden: false,
+			// hidden: false,
 			// @ts-expect-error @internal
 			_headerless: true,
 		})
