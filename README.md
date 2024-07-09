@@ -8,12 +8,12 @@ Yet another web gui.
 ## Features
 
 - [x] Flexible API
+- [x] Thoroughly Typed
 - [x] Zero Dependencies
-- [x] Theme Manager
 - [x] Preset Manager
-- [x] Fully Typed
-- [x] Draggable
-- [x] Resizable
+- [x] Theme Manager
+- [x] Undo History
+- [x] Draggable / Resizable
 - [x] `addMany` for Bulk Generation
 - [x] Strong Type Inference
 - [x] Reset to Default buttons
