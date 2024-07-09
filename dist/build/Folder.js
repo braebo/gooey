@@ -17,7 +17,7 @@ import { Logger } from './shared/logger.js';
 import { nanoid } from './shared/nanoid.js';
 import { state } from './shared/state.js';
 import { toFn } from './shared/toFn.js';
-import { DEV } from './node_modules/.pnpm/esm-env@1.0.0/node_modules/esm-env/prod-ssr.js';
+import { DEV } from './external/.pnpm/esm-env@1.0.0/external/esm-env/prod-ssr.js';
 import { Gui } from './Gui.js';
 
 // The custom-regions extension is recommended for this file.
