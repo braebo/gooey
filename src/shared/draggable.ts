@@ -384,7 +384,6 @@ export class Draggable {
 		this._evm.listen(window, 'resize', this.resize)
 		this._evm.add(
 			this.positionStore.subscribe(({ x, y }) => {
-				console.trace()
 				this.node.style.setProperty('translate', `${x}px ${y}px 1px`)
 			}),
 		)

@@ -1,12 +1,10 @@
 import type { WindowManagerOptions } from './shared/WindowManager'
-// import type { JavascriptStyleProperty } from './shared/css-types'
 import type { Theme, ThemeMode } from './styles/themer/types'
 import type { ThemerOptions } from './styles/themer/Themer'
 import type { FolderOptions, FolderPreset } from './Folder'
 import type { ResizableOptions } from './shared/resizable'
 import type { DraggableOptions } from './shared/draggable'
 import type { PrimitiveState } from './shared/state'
-// import type { PropertiesHyphen } from 'csstype'
 import type { Placement } from './shared/place'
 import type { Commit } from './UndoManager'
 
@@ -23,7 +21,6 @@ import { resolveOpts } from './shared/resolveOpts'
 import { PresetManager } from './PresetManager'
 import { Themer } from './styles/themer/Themer'
 import settingsIcon from './svg/settings-icon'
-// import { VAR_PREFIX } from './styles/GUI_VARS'
 import { GUI_VARS } from './styles/GUI_VARS'
 import { UndoManager } from './UndoManager'
 import { select } from './shared/select'
@@ -500,7 +497,8 @@ export class Gui {
 	private async _reveal(reposition: boolean) {
 		// Wait until the gui is fully constructed before positioning it
 		// to make sure we can calculate the correct size and position.
-		await Promise.resolve()
+		// await Promise.resolve()
+		// await new Promise(resolve => setTimeout(resolve, 1000))
 
 		// In case dispose() was called before this resolved...
 		if (!this.container) return
@@ -527,19 +525,6 @@ export class Gui {
 				if (win?.draggableInstance) {
 					win.draggableInstance.position = placementPosition
 				}
-			} else {
-				/** // todo
-				 * Should we just enforce the window manager and use it for positioning?
-				 * I imagine this {@link folder.element} shouldn't be positioned if it has no
-				 * window manager... but when I disabled all logic here, the folder position was
-				 * top and centered, which I'm not sure is correct (might be though..).  Anyways,
-				 * if the position option was provided but the window manager is disabled, we
-				 * should probably set the position here.
-				 */
-				console.error('//todo - set position here or enforce window manager')
-
-				// Let's just throw if the wm isn't here.
-				// throw new Error('Position option provided but window manager is missing.')
 			}
 		}
 
@@ -818,74 +803,6 @@ export class Gui {
 
 		return button
 	}
-
-	// todo - convert this crap to a css utility class
-	// applyAltStyle(folder: Folder) {
-	// 	this._setVar(
-	// 		folder.elements.content,
-	// 		`box-shadow`,
-	// 		`0px 0px 10px 0px hsl(10deg, 0%, var(--${VAR_PREFIX}-shadow-lightness)), inset`,
-	// 	)
-
-	// 	folder.elements.content.style.setProperty('background', `--${VAR_PREFIX}-folder_background`)
-
-	// 	this._setProps(folder.element, [
-	// 		['background', `color-mix(in sRGB, var(--${VAR_PREFIX}-bg-b) 100%, transparent)`],
-	// 	])
-
-	// 	switch (this.themer?.activeMode) {
-	// 		case 'dark': {
-	// 			// this._setVars(folder.elements.contentWrapper, [
-	// 			// 	//- ['input-container_background', `var(--${VAR_PREFIX}-bg-b)`],
-	// 			// 	['input-container_color', `var(--${VAR_PREFIX}-fg-b)`],
-	// 			// 	[
-	// 			// 		'folder-header_background',
-	// 			// 		`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 75%, transparent)`,
-	// 			// 	],
-	// 			// 	[
-	// 			// 		'controller-dim_background',
-	// 			// 		`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 50%, transparent)`,
-	// 			// 	],
-	// 			// 	[
-	// 			// 		'controller_background',
-	// 			// 		`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-c) 50%, transparent)`,
-	// 			// 	],
-	// 			// ])
-
-	// 			break
-	// 		}
-	// 		case 'light': {
-	// 			this._setVars(folder.elements.contentWrapper, [
-	// 				[
-	// 					'folder-header_background',
-	// 					`color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a) 60%, transparent)`,
-	// 				],
-	// 				['controller_background', `var(--${VAR_PREFIX}-light-a)`],
-	// 			])
-	// 			break
-	// 		}
-	// 	}
-	// }
-
-	// private _setProps(el: HTMLElement, props: [JavascriptStyleProperty | (string & {}), string][]) {
-	// 	for (const [k, v] of props) {
-	// 		el.style.setProperty(k, v)
-	// 	}
-	// }
-
-	// private _setVar(el: HTMLElement, key: keyof PropertiesHyphen | (string & {}), value: string) {
-	// 	el.style.setProperty(`--${VAR_PREFIX}-${key}`, value)
-	// 	Promise.resolve().then(() => {
-	// 		if (!el.style.getPropertyValue(`--${VAR_PREFIX}-${key}`)) {
-	// 			console.warn(`No property found for --${VAR_PREFIX}-${key}`)
-	// 		}
-	// 	})
-	// }
-	// private _setVars(el: HTMLElement, props: [keyof PropertiesHyphen | (string & {}), string][]) {
-	// 	for (const [key, value] of props) {
-	// 		this._setVar(el, key, value)
-	// 	}
-	// }
 
 	dispose = () => {
 		this._log.fn('dispose').info(this)
