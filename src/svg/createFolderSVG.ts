@@ -151,11 +151,8 @@ export function createFolderSvg(folder: Folder) {
 }
 
 export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
-	// const container = create('div', { classes: ['fracgui-connector-container'] })
 	const container = folder.element
-
 	const width = 20
-	// const height = folder.element.offsetHeight
 	const height = folder.element.scrollHeight
 	const stroke = 1
 
@@ -180,15 +177,6 @@ export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
 	path.setAttribute('stroke-linecap', 'round')
 	path.setAttribute('stroke-linejoin', 'round')
 	path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
-	// path.setAttribute('transform', `translate(0, ${folder.initialHeaderHeight / 2})`)
-
-	// console.log('\nicon.scrollTop', icon.scrollTop)
-	// console.log('icon.offsetHeight', icon.offsetHeight)
-	// console.log('iconCenter', iconCenter)
-
-	// console.log('svg.scrollTop', svg.scrollTop)
-	// console.log('svg.offsetHeight', svg.scrollHeight)
-	// console.log('svgTop', svgTop)
 
 	//? Path Gradient
 	const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
@@ -222,43 +210,18 @@ export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
 	svg.appendChild(path)
 	container.appendChild(svg)
 
+	//- This is cursed..
+
+	// Container offset correction.
 	const iconCenter = icon.scrollHeight - stroke - icon.scrollTop
 	const svgTop = svg.scrollTop
-	let diff = iconCenter - svgTop
-	svg.style.top = diff + 'px'
-
-	console.log('\ndiff', diff)
-
+	svg.style.top = iconCenter - svgTop + 'px'
+	// Icon offset correction.
 	const connectorTop = svg.getBoundingClientRect().top
 	const iconTop = icon.getBoundingClientRect().top
-	// diff = connectorTop - iconTop - stroke / 2
-	diff = connectorTop - iconTop - stroke / 2
-	svg.style.top = diff + 'px'
-	console.log('diff', diff)
+	svg.style.top = connectorTop - iconTop - stroke / 2 + 'px'
 
-	return {
-		container,
-		svg,
-		path,
-		update: () => {
-			if (!folder.graphics) return
-
-			// // const svg = folder.graphics.connector.svg
-			// // const height = folder.element.offsetHeight
-			// const height = folder.initialHeight
-			// svg.setAttribute('height', `${height * 0.1}`)
-			// // svg.style.setProperty('height', `${height}px`)
-
-			// const count = folder.allChildren.length + folder.inputs.size
-			// svg.style.setProperty('filter', `hue-rotate(${-60 + (count % 360) * 20}deg)`)
-
-			// path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
-			// path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
-			// // const headerHeight = folder.elements.header.offsetHeight
-			// // const headerHeight = folder.initialHeaderHeight
-			// // path.setAttribute('transform', `translate(0, ${headerHeight / 2})`)
-		},
-	}
+	return { container, svg, path }
 }
 
 export function animateConnector(
@@ -299,22 +262,3 @@ export function animateConnector(
 
 	return folder.graphics.connector.path.animate(keyframes, timing).finished
 }
-
-// // todo - This will likely be needed when dynamically adding/removing inputs.
-// export function updateConnector(folder: Folder, svg: SVGSVGElement, path: SVGPathElement) {
-// 	if (!folder.graphics) return
-
-// 	// const svg = folder.graphics.connector.svg
-
-// 	const height = folder.element.offsetHeight
-// 	svg.setAttribute('height', `${height * 0.1}`)
-// 	// svg.style.setProperty('height', `${height}px`)
-
-// 	const count = folder.allChildren.length + folder.inputs.size
-// 	svg.style.setProperty('filter', `hue-rotate(${-60 + (count % 360) * 20}deg)`)
-
-// 	const headerHeight = folder.elements.header.offsetHeight
-// 	path.setAttribute('transform', `translate(0, ${headerHeight / 2})`)
-// 	path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
-// 	path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`)
-// }
