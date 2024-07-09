@@ -1,3 +1,4 @@
+import renameNodeModules from 'rollup-plugin-rename-node-modules'
 import typescript from '@rollup/plugin-typescript'
 import resolve from '@rollup/plugin-node-resolve'
 import sass from 'rollup-plugin-sass'
@@ -50,7 +51,7 @@ spinner.start(pc.red('rollup') + ' /build\n')
 
 const bundle = await rollup({
 	input: 'src/index.ts',
-	plugins: [resolve(), typescript(), sass()],
+	plugins: [resolve(), renameNodeModules(), typescript(), sass()],
 })
 
 spinner.text = pc.red('rollup') + ' /build'
