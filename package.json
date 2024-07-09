@@ -1,53 +1,54 @@
 {
-	"name": "gooey",
-	"version": "0.1.0",
-	"description": "yet another web gui",
-	"keywords": [
-		"gui",
-		"typescript",
-		"javascript"
-	],
-	"license": "MIT",
-	"author": "braebo",
-	"type": "module",
-	"exports": {
-		"./package.json": "./package.json",
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js"
-		}
-	},
-	"types": "./dist/index.d.ts",
-	"files": [
-		"dist",
-		"README.md",
-		"LICENSE"
-	],
-	"scripts": {
-		"build": "tsup",
-		"build:watch": "tsup --watch",
-		"check": "tsc --noEmit",
-		"check:watch": "tsc --noEmit --watch",
-		"dev": "vite-node --watch src/index",
-		"lint": "publint && prettier --check src",
-		"format": "prettier --write src"
-	},
-	"devDependencies": {
-		"@changesets/cli": "2.27.7",
-		"@svitejs/changesets-changelog-github-compact": "1.1.0",
-		"@swc/core": "^1.6.13",
-		"@types/node": "20.14.10",
-		"changeset": "0.2.6",
-		"csstype": "^3.1.3",
-		"esbuild-sass-plugin": "^3.3.1",
-		"esm-env": "^1.0.0",
-		"prettier": "^3.3.2",
-		"publint": "0.2.8",
-		"tsup": "8.1.0",
-		"vite-node": "1.6.0",
-		"vitest": "1.6.0"
-	},
-	"peerDependencies": {
-		"typescript": "latest"
-	}
+  "name": "gooey",
+  "version": "0.1.0",
+  "description": "yet another web gui",
+  "keywords": [
+    "gui",
+    "typescript",
+    "javascript"
+  ],
+  "license": "MIT",
+  "author": "braebo",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/build/index.d.ts",
+      "default": "./dist/build/index.js"
+    }
+  },
+  "types": "./dist/build/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "bun build.ts",
+    "build:watch": "tsc --watch",
+    "check": "tsc --noEmit",
+    "check:watch": "tsc --noEmit --watch",
+    "dev": "vite-node --watch src/index",
+    "format": "prettier --write src",
+    "lint": "publint && prettier --check src"
+  },
+  "devDependencies": {
+    "@changesets/cli": "2.27.7",
+    "@svitejs/changesets-changelog-github-compact": "1.1.0",
+    "@swc/core": "^1.6.13",
+    "@types/bun": "^1.1.6",
+    "@types/node": "20.14.10",
+    "changeset": "0.2.6",
+    "csstype": "^3.1.3",
+    "esbuild": "^0.23.0",
+    "esbuild-sass-plugin": "^3.3.1",
+    "esm-env": "^1.0.0",
+    "prettier": "^3.3.2",
+    "publint": "0.2.8",
+    "vite-node": "1.6.0",
+    "vitest": "1.6.0"
+  },
+  "peerDependencies": {
+    "typescript": "latest"
+  }
 }
