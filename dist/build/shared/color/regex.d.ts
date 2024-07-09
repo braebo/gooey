@@ -1,0 +1,16 @@
+export declare const CSS_INTEGER = "[-\\+]?\\d+%?";
+export declare const CSS_NUMBER = "[-\\+]?\\d*\\.\\d+%?";
+export declare const CSS_UNIT: string;
+export declare const PERMISSIVE_MATCH_3: string;
+export declare const PERMISSIVE_MATCH_4: string;
+export declare const REGEX_FUNCTIONAL_RGB: RegExp;
+export declare const REGEX_FUNCTIONAL_RGBA: RegExp;
+export declare const REGEX_FUNCTIONAL_HSL: RegExp;
+export declare const REGEX_FUNCTIONAL_HSLA: RegExp;
+export declare const HEX_START = "^(?:#?|0x?)";
+export declare const HEX_INT_SINGLE = "([0-9a-fA-F]{1})";
+export declare const HEX_INT_DOUBLE = "([0-9a-fA-F]{2})";
+export declare const REGEX_HEX_3: RegExp;
+export declare const REGEX_HEX_4: RegExp;
+export declare const REGEX_HEX_6: RegExp;
+export declare const REGEX_HEX_8: RegExp;
