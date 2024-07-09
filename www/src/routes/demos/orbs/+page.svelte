@@ -45,8 +45,6 @@
 <div class="page">
 	<h1 class="hero-title">gooey</h1>
 
-	<img src="assets/gooey-logo-slider-orbs.svg" alt="gooey" />
-
 	{#if $showCode}
 		<div class="debug" transition:fly={{ y: 5, duration: 250, easing: quintOut }}>
 			{#key $code}
@@ -70,7 +68,6 @@
 
 <style>
 	.page {
-		width: 100vw;
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;

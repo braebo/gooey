@@ -1,9 +1,8 @@
 # gooey
 
-Yet another web gui.
+A modern gui library for typescript and javascript _(yet another web gui)_.
 
-> Work in progress.
-
+> Work in progress..
 
 ## Features
 

@@ -19,6 +19,7 @@ export function demoGui(params: Params) {
 		storage: {
 			key: 'fracgui',
 			position: true,
+			closed: true,
 			size: true
 		},
 		presets: ORBS_PRESETS
