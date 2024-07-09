@@ -311,7 +311,6 @@ export class Folder {
 			container: HTMLDivElement
 			svg: SVGElement
 			path: SVGPathElement
-			update: () => void
 		}
 	}
 
