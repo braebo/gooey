@@ -43,8 +43,6 @@
 <svelte:window on:resize={onResize} />
 
 <div class="page">
-	<h1 class="hero-title">gooey</h1>
-
 	{#if $showCode}
 		<div class="debug" transition:fly={{ y: 5, duration: 250, easing: quintOut }}>
 			{#key $code}
