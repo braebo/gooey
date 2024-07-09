@@ -9,13 +9,13 @@
             "type": "image/png"
         },
         {
-            "src": "/icons/android-chrome-512x512.png",
-            "sizes": "512x512",
+            "src": "/icons/android-chrome-384x384.png",
+            "sizes": "384x384",
             "type": "image/png"
         }
     ],
     "theme_color": "#00d0ff",
     "background_color": "#3d3d3d",
     "display": "standalone",
-	"descripton": "yet another web gui"
+	"descripton": "A modern gui library for typescript and javascript."
 }
