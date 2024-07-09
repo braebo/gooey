@@ -1,4 +1,5 @@
-import { select } from './select';
+import { select } from './select.js';
+
 /**
  * Determines the x and y position of an element relative to
  * a bounding box based on a given {@link Placement} string.
@@ -16,7 +17,7 @@ import { select } from './select';
  * const { x, y } = place(node, 'top-right', { bounds: window, margin: 10 })
  * ```
  */
-export function place(node, placement = 'top-right', options) {
+function place(node, placement = 'top-right', options) {
     const { bounds, margin } = Object.assign({
         bounds: undefined,
         margin: 10,
@@ -62,3 +63,6 @@ export function place(node, placement = 'top-right', options) {
         default: throw new Error('Invalid placement: ' + placement);
     }
 }
+
+export { place };
+//# sourceMappingURL=place.js.map

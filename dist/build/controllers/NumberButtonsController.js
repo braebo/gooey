@@ -1,6 +1,7 @@
-import { svgChevron } from '../svg/chevronSvg';
-import { create } from '../shared/create';
-export class NumberButtonsController {
+import { svgChevron } from '../svg/chevronSvg.js';
+import { create } from '../shared/create.js';
+
+class NumberButtonsController {
     input;
     opts;
     parent;
@@ -70,3 +71,6 @@ export class NumberButtonsController {
         this.rampChange(-1);
     }
 }
+
+export { NumberButtonsController };
+//# sourceMappingURL=NumberButtonsController.js.map

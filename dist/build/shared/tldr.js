@@ -1,7 +1,7 @@
 /**
  * Truncate objects by depth, sibling count, and string/number length.
  */
-export function tldr(
+function tldr(
 /**
  * The object to simplify.
  */
@@ -77,3 +77,6 @@ object,
         return obj;
     }
 }
+
+export { tldr };
+//# sourceMappingURL=tldr.js.map

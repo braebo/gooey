@@ -1,8 +1,7 @@
+import { writable } from './store.js';
+import { cancelDefer, defer } from './defer.js';
+
 // https://github.com/babichjacob/svelte-localstorage
-import { writable } from './store';
-import { cancelDefer, defer } from './defer';
-// import { logger } from './logger'
-import { BROWSER, DEV } from 'esm-env';
 /**
  * An observable store that uses localStorage to store data asyncronously.
  * It supports Maps and Sets, debouncing and deferring localStorage updates,
@@ -15,11 +14,11 @@ import { BROWSER, DEV } from 'esm-env';
  * const store = localStorageStore('foo', 5)
  * ```
  */
-export const localStorageStore = (key, initial, options) => {
+const localStorageStore = (key, initial, options) => {
     let currentValue = initial;
-    const verbose = options?.verbose ?? DEV;
+    const verbose = !!options?.verbose;
     const { set: setStore, ...readableStore } = writable(initial, () => {
-        if (options?.browserOverride || BROWSER) {
+        if (options?.browserOverride || typeof globalThis.window !== 'undefined') {
             getAndSetFromLocalStorage();
             const updateFromStorageEvents = (event) => {
                 if (event.key === key)
@@ -117,3 +116,6 @@ export const localStorageStore = (key, initial, options) => {
     };
     return { ...readableStore, set, update };
 };
+
+export { localStorageStore };
+//# sourceMappingURL=localStorageStore.js.map

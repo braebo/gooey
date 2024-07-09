@@ -1,5 +1,6 @@
-import { deepMergeOpts } from '../../shared/deepMergeOpts';
-export function resolveTheme(def, vars = {}) {
+import { deepMergeOpts } from '../../shared/deepMergeOpts.js';
+
+function resolveTheme(def, vars = {}) {
     const color = def.resolved
         ? {}
         : {
@@ -39,3 +40,6 @@ export function resolveTheme(def, vars = {}) {
     };
     return theme;
 }
+
+export { resolveTheme };
+//# sourceMappingURL=resolveTheme.js.map

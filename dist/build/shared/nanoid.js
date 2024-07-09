@@ -2,7 +2,7 @@
  * Generate a random ID.
  * @param length The length of the ID to generate. Default: `21`
  */
-export function nanoid(
+function nanoid(
 /** @default 21 */
 length = 21) {
     return crypto
@@ -16,3 +16,6 @@ length = 21) {
                     ? '-'
                     : '_'), '');
 }
+
+export { nanoid };
+//# sourceMappingURL=nanoid.js.map

@@ -1,9 +1,10 @@
-import { clamp } from '../../clamp';
+import { clamp } from '../../clamp.js';
+
 /**
  * Converts {@link HsvColor} object to an {@link HslColor} object.
  * @param hsv - {@link HsvColor} object to convert.
  */
-export function hsvToHsl(hsv) {
+function hsvToHsl(hsv) {
     const s = hsv.s / 100;
     const v = hsv.v / 100;
     const l = (2 - s) * v;
@@ -16,3 +17,6 @@ export function hsvToHsl(hsv) {
         l: clamp(l * 50, 0, 100),
     };
 }
+
+export { hsvToHsl };
+//# sourceMappingURL=hsvToHsl.js.map

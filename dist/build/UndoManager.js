@@ -7,7 +7,7 @@
  * Things will be out of sync.
  * Also, when undoing all the way, the pointer is -1, but the stack still has 1 commit.
  */
-export class UndoManager {
+class UndoManager {
     pointer = -1;
     maxHistory = 50;
     stack = [];
@@ -69,3 +69,6 @@ export class UndoManager {
         this.pointer = -1;
     }
 }
+
+export { UndoManager };
+//# sourceMappingURL=UndoManager.js.map

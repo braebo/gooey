@@ -25,22 +25,22 @@ export interface ResizableOptions {
     __type?: 'ResizableOptions';
     /**
      * To only allow resizing on certain sides, specify them here.
-     * @defaultValue ['right', 'bottom']
+     * @default ['right', 'bottom']
      */
     sides: Side[];
     /**
      * To only allow resizing on certain corners, specify them here.
-     * @defaultValue ['bottom-right']
+     * @default ['bottom-right']
      */
     corners: ('top-left' | 'top-right' | 'bottom-right' | 'bottom-left')[];
     /**
      * The size of the resize handle in pixels.
-     * @defaultValue 6
+     * @default 6
      */
     grabberSize: number;
     /**
      * Optional callback function that runs when the element is resized.
-     * @defaultValue () => void
+     * @default () => void
      */
     onResize: (size: {
         width: number;
@@ -49,32 +49,32 @@ export interface ResizableOptions {
     /**
      * If provided, the size of the element will be persisted
      * to local storage under the specified key.
-     * @defaultValue undefined
+     * @default undefined
      */
     localStorageKey?: string;
     /**
      * Use a visible or invisible gutter.
-     * @defaultValue false
+     * @default false
      */
     visible: boolean;
     /**
      * Gutter css color (if visible = `true`)
-     * @defaultValue 'var(--fg-d, #1d1d1d)'
+     * @default 'var(--fg-d, #1d1d1d)'
      */
     color: string;
     /**
      * The max opacity (0-1) when hovering/dragging a grabber.
-     * @defaultValue 1
+     * @default 1
      */
     opacity: number;
     /**
      * Border radius of the element.
-     * @defaultValue '0.5rem'
+     * @default '0.5rem'
      */
     borderRadius: string;
     /**
      * The element to use as the bounds for resizing.
-     * @defaultValue window['document']['documentElement']
+     * @default window['document']['documentElement']
      */
     bounds: ElementOrSelector;
     /**
@@ -87,17 +87,17 @@ export interface ResizableOptions {
     cursors: boolean;
     /**
      * The classnames to apply to the resize grabbers, used for styling.
-     * @defaultValue { default: 'resize-grabber', active: 'resize-grabbing' }
+     * @default { default: 'resize-grabber', active: 'resize-grabbing' }
      */
     classes: {
-        /** @defaultValue 'resize-grabber' */
+        /** @default 'resize-grabber' */
         default: string;
-        /** @defaultValue 'resize-grabbing' */
+        /** @default 'resize-grabbing' */
         active: string;
     };
     /**
      * Whether the element is disabled.
-     * @defaultValue false
+     * @default false
      */
     disabled: boolean;
 }

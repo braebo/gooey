@@ -1,4 +1,5 @@
-import { toFn } from '../toFn';
+import { toFn } from '../toFn.js';
+
 /**
  * A class decorator that adds a `disabled` property to a class that implements an `enable` and
  * disable` method. The `disabled` property can be set to either a static boolean, or a function
@@ -11,7 +12,7 @@ import { toFn } from '../toFn';
  * - `set disabled(boolean | (() => boolean))` - Set the disabled state to either a static boolean or a
  *  function that returns a boolean.
  */
-export function disableable(constructor) {
+function disableable(constructor) {
     let disabled = () => false;
     return class extends constructor {
         get disabled() {
@@ -23,3 +24,6 @@ export function disableable(constructor) {
         }
     };
 }
+
+export { disableable };
+//# sourceMappingURL=disableable-class-decorator.js.map

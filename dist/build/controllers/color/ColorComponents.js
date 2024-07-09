@@ -1,21 +1,14 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { parseColorFormat } from '../../shared/color/color';
-import { NumberController } from '../NumberController';
-import { Select } from '../Select';
-import { disableable } from '../../shared/decorators/disableable-class-decorator';
-import { EventManager } from '../../shared/EventManager';
-import { entries } from '../../shared/object';
-import { create } from '../../shared/create';
-import { Logger } from '../../shared/logger';
-export const COLOR_PICKER_DEFAULTS = {
+import { __decorate, __metadata } from '../../node_modules/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.18.1_tslib@2.6.3_typescript@5.5.3/node_modules/tslib/tslib.es6.js';
+import { parseColorFormat } from '../../shared/color/color.js';
+import { NumberController } from '../NumberController.js';
+import { Select } from '../Select.js';
+import { disableable } from '../../shared/decorators/disableable-class-decorator.js';
+import { EventManager } from '../../shared/EventManager.js';
+import { entries } from '../../shared/object.js';
+import { create } from '../../shared/create.js';
+import { Logger } from '../../shared/logger.js';
+
+const COLOR_PICKER_DEFAULTS = {
     disabled: false,
 };
 let ColorComponents = class ColorComponents {
@@ -297,4 +290,6 @@ ColorComponents = __decorate([
     disableable,
     __metadata("design:paramtypes", [Function, Object])
 ], ColorComponents);
-export { ColorComponents };
+
+export { COLOR_PICKER_DEFAULTS, ColorComponents };
+//# sourceMappingURL=ColorComponents.js.map

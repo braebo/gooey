@@ -1,5 +1,5 @@
-import { create } from '../shared/create';
-export function createFolderSvg(folder) {
+// import { create } from '../shared/create'
+function createFolderSvg(folder) {
     const strokeWidth = 1;
     const x = 12;
     const y = 12;
@@ -78,13 +78,13 @@ export function createFolderSvg(folder) {
 				backface-visibility: hidden;
 			}
 
-			/*//?	Circle A	*/
+			/*  Circle A  */
 			.closed .fracgui-folder-icon circle.a {
 				transform: scale(1);
-				
+
 				stroke: transparent;
 				fill: ${fill};
-				
+
 				transition: all .5s ${bounce}, stroke 2s ${bounce}, fill .2s ${bounce} 0s;
 			}
 			.fracgui-folder-icon circle.a {
@@ -96,7 +96,7 @@ export function createFolderSvg(folder) {
 				transition: all .33s ${bounce}, stroke 2s ${bounce}, fill .2s ease-in 0.25s;
 			}
 
-			/*//?	Circle Alt	*/
+			/*  Circle Alt  */
 			.closed .fracgui-folder-icon circle.alt {
 				transform: translate(-3px, 0) scale(1.8);
 
@@ -134,16 +134,12 @@ export function createFolderSvg(folder) {
 				${css}
 			</style>
 		</svg>`.trim();
-    if (folder.closed.value)
-        icon.classList.add('closed');
     return icon;
 }
-export function createFolderConnector(folder) {
-    const container = create('div', {
-        classes: ['fracgui-connector-container'],
-    });
+function createFolderConnector(folder, icon) {
+    const container = folder.element;
     const width = 20;
-    const height = folder.element.clientHeight;
+    const height = folder.element.scrollHeight;
     const stroke = 1;
     //? SVG
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -151,7 +147,6 @@ export function createFolderConnector(folder) {
     svg.setAttribute('width', `${width}`);
     svg.setAttribute('stroke-width', `${stroke}`);
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
-    svg.setAttribute('overflow', 'visible');
     svg.setAttribute('backface-visibility', 'hidden');
     svg.setAttribute('preserveAspectRatio', 'xMinYMin slice');
     svg.style.setProperty('filter', `hue-rotate(${folder.hue}deg)`);
@@ -164,8 +159,6 @@ export function createFolderConnector(folder) {
     path.setAttribute('stroke-linecap', 'round');
     path.setAttribute('stroke-linejoin', 'round');
     path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`);
-    const headerHeight = folder.elements.header.clientHeight;
-    path.setAttribute('transform', `translate(0, ${headerHeight / 2})`);
     //? Path Gradient
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     const linearGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
@@ -193,15 +186,20 @@ export function createFolderConnector(folder) {
     svg.insertBefore(defs, svg.firstChild);
     svg.appendChild(path);
     container.appendChild(svg);
-    return {
-        container,
-        svg,
-        path,
-    };
+    //- This is cursed..
+    // Container offset correction.
+    const iconCenter = icon.scrollHeight - stroke - icon.scrollTop;
+    const svgTop = svg.scrollTop;
+    svg.style.top = iconCenter - svgTop + 'px';
+    // Icon offset correction.
+    const connectorTop = svg.getBoundingClientRect().top;
+    const iconTop = icon.getBoundingClientRect().top;
+    svg.style.top = connectorTop - iconTop - stroke / 2 + 'px';
+    return { container, svg, path };
 }
-export function animateConnector(folder, action) {
+function animateConnector(folder, action) {
     if (!folder.graphics?.connector)
-        return;
+        return Promise.resolve();
     const path = folder.graphics.connector.path;
     const length = `${path.getTotalLength()}`;
     path.style.strokeDasharray = `${length}`;
@@ -227,20 +225,8 @@ export function animateConnector(folder, action) {
         easing,
         fill: 'forwards',
     };
-    folder.graphics.connector.path.animate(keyframes, timing);
+    return folder.graphics.connector.path.animate(keyframes, timing).finished;
 }
-// todo - This will likely be needed when dynamically adding/removing inputs.
-export function updateConnector(folder, svg, path) {
-    if (!folder.graphics)
-        return;
-    // const svg = folder.graphics.connector.svg
-    const height = folder.element.clientHeight;
-    svg.setAttribute('height', `${height * 0.1}`);
-    // svg.style.setProperty('height', `${height}px`)
-    const count = folder.allChildren.length + folder.inputs.size;
-    svg.style.setProperty('filter', `hue-rotate(${-60 + (count % 360) * 20}deg)`);
-    const headerHeight = folder.elements.header.clientHeight;
-    path.setAttribute('transform', `translate(0, ${headerHeight / 2})`);
-    path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`);
-    path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`);
-}
+
+export { animateConnector, createFolderConnector, createFolderSvg };
+//# sourceMappingURL=createFolderSVG.js.map

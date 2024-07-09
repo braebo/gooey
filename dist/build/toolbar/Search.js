@@ -1,8 +1,9 @@
-import { TOOLTIP_DEFAULTS, Tooltip } from '../shared/Tooltip';
-import { EventManager } from '../shared/EventManager';
-import { fuzzysearch } from '../shared/fuzzySearch';
-import { create } from '../shared/create';
-export class Search {
+import { Tooltip, TOOLTIP_DEFAULTS } from '../shared/Tooltip.js';
+import { EventManager } from '../shared/EventManager.js';
+import { fuzzysearch } from '../shared/fuzzySearch.js';
+import { create } from '../shared/create.js';
+
+class Search {
     folder;
     elements;
     needle = '';
@@ -138,7 +139,6 @@ export class Search {
         this.elements.container.classList.remove('active');
         if (document.activeElement === this.elements.input ||
             document.activeElement === this.elements.button) {
-            ;
             document.activeElement?.blur();
         }
         this.clear();
@@ -201,3 +201,6 @@ export class Search {
         this.elements.container.remove();
     }
 }
+
+export { Search };
+//# sourceMappingURL=Search.js.map

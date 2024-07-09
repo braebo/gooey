@@ -1,5 +1,6 @@
-import { resolveTheme } from '../../styles/themer/resolveTheme';
-export default resolveTheme({
+import { resolveTheme } from '../themer/resolveTheme.js';
+
+var theme_default = resolveTheme({
     title: 'default',
     prefix: 'fracgui',
     vars: {
@@ -30,3 +31,6 @@ export default resolveTheme({
         },
     },
 });
+
+export { theme_default as default };
+//# sourceMappingURL=default.js.map

@@ -57,7 +57,7 @@ export declare class Logger {
     private static _BYPASS_DEFER;
     title: string;
     options: LoggerOptions;
-    color: string;
+    color: (str: string) => string;
     constructor(title: string, options?: LoggerOptions);
     constructor(options: LoggerOptions);
     get deferred(): boolean | undefined;

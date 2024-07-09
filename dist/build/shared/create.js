@@ -1,7 +1,7 @@
-import { Tooltip } from './Tooltip';
-import { entries } from './object';
-import { DEV } from 'esm-env';
-export function create(tagname, options) {
+import { Tooltip } from './Tooltip.js';
+import { entries } from './object.js';
+
+function create(tagname, options) {
     const el = globalThis?.document?.createElement(tagname);
     if (options) {
         if (options.classes)
@@ -70,59 +70,8 @@ export function create(tagname, options) {
             el.addEventListener('click', options.onclick);
         }
     }
-    if (DEV) {
-        const stack = new Error().stack;
-        maybeAddOpenInEditorEventListener(stack, el);
-    }
     return el;
 }
-/**
- * Adds an event listener to the element that opens the file in the editor
- * when the element is right-clicked with `meta` and `alt` keys pressed.
- *
- * @todo - This doesn't work yet -- the file/line is inaccurate and doesn't
- * correspond to the locatioin where the {@link create} function was called.
- *
- * @todo - Should this be one event listener that parses the url from the
- * target node's dataset?
- *
- */
-function maybeAddOpenInEditorEventListener(stack, el) {
-    const file = parseFileFromStack(stack);
-    if (file) {
-        el.addEventListener('contextmenu', e => {
-            if (e.metaKey && e.altKey) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log(e.target);
-                openFileInEditor(file);
-            }
-        }, { capture: false });
-    }
-}
-function openFileInEditor(file) {
-    const url = '/__open-in-editor?file=' + file;
-    fetch(url)
-        .then(response => {
-        console.log(response.status, url);
-    })
-        .catch(error => {
-        console.error('Failed to open file in editor:', error);
-    });
-}
-function parseFileFromStack(stack) {
-    const stackLine = stack?.split('\n')[2].trim();
-    const url_regex = /http:\/\/[^ )]+/;
-    const timestamp_regex = /\?t=\d+/;
-    const url = stackLine?.match(url_regex)?.[0]?.replace(timestamp_regex, '');
-    if (url) {
-        try {
-            const path = new URL(url).pathname.slice(1);
-            return path;
-        }
-        catch (e) {
-            console.error('Failed to parse file from stack:', e);
-        }
-    }
-    return null;
-}
+
+export { create };
+//# sourceMappingURL=create.js.map

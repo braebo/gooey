@@ -111,9 +111,6 @@ export declare class Tooltip {
     private _animPositions;
     private _delayInTimer;
     private _delayOutTimer;
-    /**
-     * removeEventListener callbacks for listeners with particularly short lifecycles.
-     */
     constructor(
     /**
      * The node that the tooltip is attached to.

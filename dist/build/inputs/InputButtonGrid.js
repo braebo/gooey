@@ -1,12 +1,13 @@
-import { ButtonController } from '../controllers/ButtonController';
-import { getStyle } from '../shared/getStyle';
-import { nanoid } from '../shared/nanoid';
-import { Logger } from '../shared/logger';
-import { create } from '../shared/create';
-import { state } from '../shared/state';
-import { toFn } from '../shared/toFn';
-import { Input } from './Input';
-export const BUTTONGRID_INPUT_DEFAULTS = {
+import { ButtonController } from '../controllers/ButtonController.js';
+import { getStyle } from '../shared/getStyle.js';
+import { nanoid } from '../shared/nanoid.js';
+import { Logger } from '../shared/logger.js';
+import { create } from '../shared/create.js';
+import { state } from '../shared/state.js';
+import { toFn } from '../shared/toFn.js';
+import { Input } from './Input.js';
+
+const BUTTONGRID_INPUT_DEFAULTS = {
     __type: 'ButtonGridInputOptions',
     value: [[{ text: '', onClick: () => { } }]],
     style: {
@@ -15,7 +16,7 @@ export const BUTTONGRID_INPUT_DEFAULTS = {
     activeOnClick: false,
     resettable: false,
 };
-export class InputButtonGrid extends Input {
+class InputButtonGrid extends Input {
     __type = 'InputButtonGrid';
     initialValue = {};
     state = state({});
@@ -155,3 +156,6 @@ export class InputButtonGrid extends Input {
         super.dispose();
     }
 }
+
+export { BUTTONGRID_INPUT_DEFAULTS, InputButtonGrid };
+//# sourceMappingURL=InputButtonGrid.js.map

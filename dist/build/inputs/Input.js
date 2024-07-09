@@ -1,11 +1,12 @@
-import { EventManager } from '../shared/EventManager';
-import { isState, state } from '../shared/state';
-import { keys, values } from '../shared/object';
-import { create } from '../shared/create';
-import { Logger } from '../shared/logger';
-import { toFn } from '../shared/toFn';
-import { o } from '../shared/l';
-export const INPUT_TYPE_MAP = Object.freeze({
+import { EventManager } from '../shared/EventManager.js';
+import { state, isState } from '../shared/state.js';
+import { keys, values } from '../shared/object.js';
+import { create } from '../shared/create.js';
+import { Logger } from '../shared/logger.js';
+import { toFn } from '../shared/toFn.js';
+import { o } from '../shared/l.js';
+
+const INPUT_TYPE_MAP = Object.freeze({
     InputText: 'TextInputOptions',
     InputTextArea: 'TextAreaInputOptions',
     InputNumber: 'NumberInputOptions',
@@ -15,8 +16,8 @@ export const INPUT_TYPE_MAP = Object.freeze({
     InputButtonGrid: 'ButtonGridInputOptions',
     InputSwitch: 'SwitchInputOptions',
 });
-export const INPUT_TYPES = Object.freeze(keys(INPUT_TYPE_MAP));
-export const INPUT_OPTION_TYPES = Object.freeze(values(INPUT_TYPE_MAP));
+Object.freeze(keys(INPUT_TYPE_MAP));
+Object.freeze(values(INPUT_TYPE_MAP));
 //⌟
 /**
  * An input that can be added to a {@link Folder}.  This class is extended by all
@@ -31,7 +32,7 @@ export const INPUT_OPTION_TYPES = Object.freeze(values(INPUT_TYPE_MAP));
  * @template TEvents - A map of all events emitted by this input.
  * @template TType - A string-literal type brand.  Identical to the input class name.
  */
-export class Input {
+class Input {
     folder;
     opts;
     /**
@@ -333,3 +334,6 @@ export class Input {
         rm(this.elements);
     }
 }
+
+export { INPUT_TYPE_MAP, Input };
+//# sourceMappingURL=Input.js.map

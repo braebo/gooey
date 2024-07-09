@@ -1,21 +1,14 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { isLabeledOption, Select, toLabeledOption, fromLabeledOption } from '../controllers/Select';
-import { disableable } from '../shared/decorators/disableable-class-decorator';
-import { fromState, isState, state } from '../shared/state';
-import { stringify } from '../shared/stringify';
-import { Logger } from '../shared/logger';
-import { create } from '../shared/create';
-import { toFn } from '../shared/toFn';
-import { Input } from './Input';
-export const SELECT_INPUT_DEFAULTS = {
+import { __decorate, __metadata } from '../node_modules/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.18.1_tslib@2.6.3_typescript@5.5.3/node_modules/tslib/tslib.es6.js';
+import { fromLabeledOption, Select, toLabeledOption, isLabeledOption } from '../controllers/Select.js';
+import { disableable } from '../shared/decorators/disableable-class-decorator.js';
+import { fromState, state, isState } from '../shared/state.js';
+import { stringify } from '../shared/stringify.js';
+import { Logger } from '../shared/logger.js';
+import { create } from '../shared/create.js';
+import { toFn } from '../shared/toFn.js';
+import { Input } from './Input.js';
+
+const SELECT_INPUT_DEFAULTS = {
     __type: 'SelectInputOptions',
     options: [],
 };
@@ -260,4 +253,6 @@ InputSelect = __decorate([
     disableable,
     __metadata("design:paramtypes", [Object, Function])
 ], InputSelect);
-export { InputSelect };
+
+export { InputSelect, SELECT_INPUT_DEFAULTS };
+//# sourceMappingURL=InputSelect.js.map

@@ -1,6 +1,7 @@
-import { destructureVars } from '../shared/css-custom-properties';
-import defaultTheme from './themes/default';
-export const VAR_PREFIX = 'fracgui';
+import { destructureVars } from '../shared/css-custom-properties.js';
+import theme_default from './themes/default.js';
+
+const VAR_PREFIX = 'fracgui';
 const GUI_VARS_UTILITY = {
     base: {
         'font-family': "'fredoka', sans-serif",
@@ -51,12 +52,12 @@ const GUI_VARS_STRUCTURED = {
                 outline: 'none',
                 'box-shadow': 'none',
                 'font-size': `var(--${VAR_PREFIX}-font-size)`,
-                'font-weight': '350',
+                'font-weight': '400',
                 'letter-spacing': '0.75px',
             },
             content: {
                 'padding-left': '0.33rem',
-                'font-weight': '350',
+                'font-weight': '400',
                 'letter-spacing': '0.5px',
             },
         },
@@ -123,12 +124,15 @@ const GUI_VARS_STRUCTURED = {
         },
     },
 };
-export const GUI_VARS = {
-    color: defaultTheme.vars.color,
+const GUI_VARS = {
+    color: theme_default.vars.color,
     utility: GUI_VARS_UTILITY,
     core: {
-        base: destructureVars(GUI_VARS_STRUCTURED.base, VAR_PREFIX),
-        dark: destructureVars(GUI_VARS_STRUCTURED.dark, VAR_PREFIX),
-        light: destructureVars(GUI_VARS_STRUCTURED.light, VAR_PREFIX),
+        base: destructureVars(GUI_VARS_STRUCTURED.base),
+        dark: destructureVars(GUI_VARS_STRUCTURED.dark),
+        light: destructureVars(GUI_VARS_STRUCTURED.light),
     },
 };
+
+export { GUI_VARS, VAR_PREFIX };
+//# sourceMappingURL=GUI_VARS.js.map

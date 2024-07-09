@@ -1,8 +1,9 @@
-import { modIcon, modKey } from '../shared/keys';
-import { getStyle } from '../shared/getStyle';
-import { create } from '../shared/create';
-import { Logger } from '../shared/logger';
-export class NumberController {
+import { modIcon, modKey } from '../shared/keys.js';
+import { getStyle } from '../shared/getStyle.js';
+import { create } from '../shared/create.js';
+import { Logger } from '../shared/logger.js';
+
+class NumberController {
     input;
     opts;
     parent;
@@ -145,3 +146,6 @@ export class NumberController {
         this.element.remove();
     }
 }
+
+export { NumberController };
+//# sourceMappingURL=NumberController.js.map

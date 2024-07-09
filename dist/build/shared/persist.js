@@ -1,4 +1,3 @@
-import { DEV } from 'esm-env';
 /**
  * Persists a value in localStorage.
  * @returns An object with a `get` and `set` method that syncs with localStorage.
@@ -20,7 +19,7 @@ import { DEV } from 'esm-env';
  * localStorage.getItem('foo') // "123"
  * ```
  */
-export function persist(
+function persist(
 /**
  * The key to store the value under in local storage.
  */
@@ -34,15 +33,16 @@ initialValue = undefined,
  * Whether to print a warning if localStorage is not available.
  * @default false
  */
-quiet = !DEV) {
+quiet = false) {
     const bail = () => {
         if (typeof localStorage === 'undefined') {
             if (!quiet)
                 console.warn(`localStorage is not available for key "${key}"`);
             return true;
         }
-        else
+        else {
             return false;
+        }
     };
     return {
         get() {
@@ -64,3 +64,6 @@ quiet = !DEV) {
         },
     };
 }
+
+export { persist };
+//# sourceMappingURL=persist.js.map

@@ -13,10 +13,9 @@ export interface StateOptions<T> extends Partial<Writable<T>> {
      * falling back to `requestAnimationFrame` and finally `setTimeout` with
      * a timeout of 0. Particularly useful in hot code paths like render loops.
      * @remarks
-     * Deferring can significantly reduce the performance impact of many
-     * syncronous localStorage updates (which run on the main thread).
-     * At the time of writing, `requestIdleCallback` is still in
-     * Safari Technology Preview, hence the fallbacks.
+     * Deferring can significantly reduce the performance impact of many syncronous localStorage
+     * updates running on the main thread. At the time of writing, `requestIdleCallback` is still
+     * in Safari Technology Preview, hence the fallbacks.
      * @default false
      */
     defer?: boolean;

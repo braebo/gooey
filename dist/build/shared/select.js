@@ -1,4 +1,3 @@
-import { DEV } from 'esm-env';
 /**
  * Takes in any combination of selectors and elements, and
  * resolves them all into an array of HTMLElements.
@@ -15,7 +14,7 @@ import { DEV } from 'esm-env';
  * select('document')		// -> [HTMLHtmlElement]
  * select('window')			// -> [HTMLHtmlElement]
  */
-export function select(
+function select(
 /**
  * The elements or selectors to resolve.
  */
@@ -49,24 +48,17 @@ node) {
                     return [foundEl];
                 }
                 else {
-                    if (DEV) {
-                        console.warn(`No element found width id: `, el);
-                        console.warn(`Make sure the selector is a child of the target node.`);
-                        console.warn({ input, node, elements });
-                    }
                     return [];
                 }
             }
         }
         const foundEls = node.querySelectorAll(el);
         if (foundEls.length === 0) {
-            if (DEV) {
-                console.warn(`No elements found for selector:`, el);
-                console.warn(`Make sure the selector is a child of the target node.`);
-                console.warn({ input, node, elements });
-            }
             return [];
         }
         return Array.from(foundEls);
     });
 }
+
+export { select };
+//# sourceMappingURL=select.js.map

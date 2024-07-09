@@ -1,5 +1,6 @@
-import { resolveTheme } from './resolveTheme';
-export default resolveTheme({
+import { resolveTheme } from './resolveTheme.js';
+
+var theme_default = resolveTheme({
     title: 'default',
     prefix: 'themer',
     vars: {
@@ -24,3 +25,6 @@ export default resolveTheme({
         },
     },
 });
+
+export { theme_default as default };
+//# sourceMappingURL=defaultTheme.js.map

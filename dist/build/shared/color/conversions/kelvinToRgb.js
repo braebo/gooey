@@ -1,9 +1,10 @@
-import { clamp } from '../../clamp';
+import { clamp } from '../../clamp.js';
+
 /**
  * Converts a {@link KelvinColor} temperature to an approximate {@link RgbColor} object.
  * @param kelvin - {@link KelvinColor | Kelvin} temperature to convert.
  */
-export function kelvinToRgb(kelvin) {
+function kelvinToRgb(kelvin) {
     const temp = kelvin / 100;
     let r;
     let g;
@@ -38,3 +39,6 @@ export function kelvinToRgb(kelvin) {
         b: clamp(Math.floor(b), 0, 255),
     };
 }
+
+export { kelvinToRgb };
+//# sourceMappingURL=kelvinToRgb.js.map

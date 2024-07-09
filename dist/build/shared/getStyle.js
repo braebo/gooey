@@ -4,7 +4,7 @@
  *
  * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=1857849|Bugzilla}
  */
-export const getStyleMap = (element) => {
+const getStyleMap = (element) => {
     if (typeof element !== 'object') {
         throw new Error('element must be an object');
     }
@@ -24,6 +24,9 @@ export const getStyleMap = (element) => {
         return styleMap;
     }
 };
-export const getStyle = (element, property) => {
+const getStyle = (element, property) => {
     return getStyleMap(element).get(property);
 };
+
+export { getStyle, getStyleMap };
+//# sourceMappingURL=getStyle.js.map

@@ -1,11 +1,12 @@
-import { collisionClampX, collisionClampY } from './collisions';
-import { deepMergeOpts } from './deepMergeOpts';
-import { nanoid } from './nanoid';
-import { Logger } from './logger';
-import { select } from './select';
-import { state } from './state';
-import { clamp } from './clamp';
-export const RESIZABLE_DEFAULTS = {
+import { deepMergeOpts } from './deepMergeOpts.js';
+import { nanoid } from './nanoid.js';
+import { Logger } from './logger.js';
+import { select } from './select.js';
+import { state } from './state.js';
+import { clamp } from './clamp.js';
+
+// import { collisionClampX, collisionClampY } from './collisions'
+const RESIZABLE_DEFAULTS = {
     __type: 'ResizableOptions',
     sides: ['right', 'bottom'],
     corners: ['bottom-right'],
@@ -56,7 +57,7 @@ export const RESIZABLE_DEFAULTS = {
  * })
  * ```
  */
-export class Resizable {
+class Resizable {
     node;
     static type = 'Resizable';
     static initialized = false;
@@ -87,6 +88,8 @@ export class Resizable {
         this.generateStyles();
         const { offsetWidth: width, offsetHeight: height } = node;
         this.size = state({ width, height }, { key: this.opts.localStorageKey });
+        console.log('this.opts.localStorageKey', this.opts.localStorageKey);
+        console.log('this.size.value', this.size.value);
         //? Load size from local storage.
         if (this.opts.localStorageKey) {
             const { width, height } = this.size.value;
@@ -211,7 +214,7 @@ export class Resizable {
             deltaX = x - this.rect.left;
             if (deltaX === 0)
                 return this;
-            deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls);
+            // deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls)
             if (this.#boundsRect)
                 deltaX = Math.max(deltaX, this.#boundsRect.left - this.rect.left);
             const newWidth = clamp(this.rect.width - deltaX, this.#minWidth, this.#maxWidth);
@@ -225,7 +228,7 @@ export class Resizable {
             deltaX = x - this.rect.right;
             if (deltaX === 0)
                 return this;
-            deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls);
+            // deltaX = collisionClampX(deltaX, this.rect, this.obstacleEls)
             if (this.#boundsRect)
                 deltaX = Math.min(deltaX, this.#boundsRect.right - this.rect.right);
             const newWidth = clamp(this.rect.width + deltaX, this.#minWidth, this.#maxWidth);
@@ -238,7 +241,7 @@ export class Resizable {
         if (bordertop) {
             deltaY = y - this.rect.top;
             if (deltaY != 0) {
-                deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls);
+                // deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls)
                 if (this.#boundsRect)
                     deltaY = Math.max(deltaY, this.#boundsRect.top - this.rect.top);
                 const newHeight = clamp(this.rect.height - deltaY, this.#minHeight, this.#maxHeight);
@@ -252,7 +255,7 @@ export class Resizable {
         else {
             deltaY = y - this.rect.bottom;
             if (deltaY !== 0) {
-                deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls);
+                // deltaY = collisionClampY(deltaY, this.rect, this.obstacleEls)
                 if (this.#boundsRect)
                     deltaY = Math.min(deltaY, this.#boundsRect.bottom - this.rect.bottom);
                 const newHeight = clamp(this.rect.height + deltaY, this.#minHeight, this.#maxHeight);
@@ -450,6 +453,6 @@ export class Resizable {
         this.#cleanupGrabListener?.();
     }
 }
-export function isResizableOptions(opts) {
-    return '__type' in opts && opts['__type'] === 'ResizableOptions';
-}
+
+export { RESIZABLE_DEFAULTS, Resizable };
+//# sourceMappingURL=resizable.js.map

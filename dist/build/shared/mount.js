@@ -10,7 +10,7 @@
  * baz.appendChild(qux)
  * ```
  */
-export function append(...els) {
+function append(...els) {
     let i = 0;
     const e = [...els];
     /** parent */
@@ -30,3 +30,6 @@ export function append(...els) {
     }
     mount(...e);
 }
+
+export { append };
+//# sourceMappingURL=mount.js.map

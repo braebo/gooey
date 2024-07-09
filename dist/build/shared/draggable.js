@@ -1,21 +1,19 @@
-import { collisionClampX, collisionClampY } from './collisions';
-import { isDefined, isHTMLElement, isString } from './is';
-import { writable } from './store';
-import { EventManager } from './EventManager';
-import { getStyleMap } from './getStyle';
-import { persist } from './persist';
-import { select } from './select';
-import { Logger } from './logger';
-import { place } from './place';
-import { clamp } from './clamp';
-import { DEV } from 'esm-env';
+import { isString, isHTMLElement, isDefined } from './is.js';
+import { writable } from './store.js';
+import { EventManager } from './EventManager.js';
+import { persist } from './persist.js';
+import { select } from './select.js';
+import { Logger } from './logger.js';
+import { place } from './place.js';
+import { clamp } from './clamp.js';
+
 const DEFAULT_CLASSES = {
     default: 'fractils-draggable',
     dragging: 'fractils-dragging',
     dragged: 'fractils-dragged',
     cancel: 'fractils-cancel',
 };
-export const DRAGGABLE_DEFAULTS = {
+const DRAGGABLE_DEFAULTS = {
     __type: 'DraggableOptions',
     bounds: 'body',
     axis: 'both',
@@ -51,14 +49,10 @@ export const DRAGGABLE_DEFAULTS = {
  * })
  * ```
  */
-export class Draggable {
+class Draggable {
     node;
     static initialized = false;
     opts;
-    /**
-     * Whether the draggable element is currently being dragged.
-     */
-    #active = false;
     /**
      * Disables user interaction with the draggable element.
      */
@@ -75,17 +69,11 @@ export class Draggable {
         x: 0,
         y: 0,
     };
-    /**
-     * An internal representation of the {@link node|node's} bounding rectangle.
-     * Used for collision detection and animations.
-     */
-    rect = { top: 0, right: 0, bottom: 0, left: 0 };
-    /**
-     * The original value of `user-select` on the body element
-     * used to restore the original value after dragging when
-     * {@link DraggableOptions.userSelectNone|userSelectNone} is `true`.
-     */
-    #bodyOriginalUserSelectVal = '';
+    // /**
+    //  * An internal representation of the {@link node|node's} bounding rectangle.
+    //  * Used for collision detection and animations.
+    //  */
+    // rect: VirtualRect = { top: 0, right: 0, bottom: 0, left: 0 }
     boundsEl;
     handleEls;
     cancelEls;
@@ -99,60 +87,58 @@ export class Draggable {
         right: Infinity,
         bottom: Infinity,
     };
-    #leftBound = -Infinity;
-    #topBound = -Infinity;
-    #rightBound = Infinity;
-    #bottomBound = Infinity;
     _storage;
     _position = { x: 0, y: 0 };
     /**
-     * Programmatically sets the position of the draggable element.
+     * An observable store that updates the draggable element's position.
      */
-    get position() {
-        return this._position;
-    }
-    set position(v) {
-        this._position = v;
-        this.moveTo(v);
-        this.updateLocalStorage();
-    }
-    /**
-     * Updates the {@link bounds} property to account for any changes in the
-     * DOM or this instance's {@link DraggableOptions.bounds|bounds} option.
-     */
-    #recomputeBounds;
+    positionStore;
     /**
      * @todo I think we can just remove this and let the user add their
      * own event listeners if they want to target a specific element.
      */
     eventTarget;
     /**
-     * An observable store that updates the draggable element's position.
+     * Whether the draggable element is currently being dragged.
      */
-    positionStore;
+    _active = false;
     /**
-     * Cleanup functions (removeEventLister / unsubscribe) to call in {@link dispose}.
+     * The original value of `user-select` on the body element
+     * used to restore the original value after dragging when
+     * {@link DraggableOptions.userSelectNone|userSelectNone} is `true`.
      */
-    #listeners = new Set();
-    #evm = new EventManager();
+    _bodyOriginalUserSelectVal = '';
+    /**
+     * Updates the {@link bounds} property to account for any changes in the
+     * DOM or this instance's {@link DraggableOptions.bounds|bounds} option.
+     */
+    _recomputeBounds;
+    /**
+     * This node's DOMRect, cached for use via {@link rect}.
+     */
+    _rect;
+    _evm = new EventManager();
+    // todo - isn't this redundant with the evm?
+    _listeners = new Set();
     /**
      * A callback to release the pointer capture using the
      * {@link PointerEvent.pointerId | pointerId} and reset the cursor.
      */
-    #releaseCapture = () => { };
+    _releaseCapture = () => { };
     /**
      * Internal logger for infoging. Automatically bypassed in non-dev environments.
      */
-    #log;
+    _log;
     constructor(node, options) {
         this.node = node;
         this.opts = Object.assign({}, DRAGGABLE_DEFAULTS, options);
-        this.#log = new Logger('draggable ' + Array.from(this.node.classList).join('.'), {
+        this._log = new Logger('draggable ' + Array.from(this.node.classList).join('.'), {
             fg: 'SkyBlue',
         });
-        this.#recomputeBounds = this.#resolveBounds(this.opts.bounds);
+        this._log.fn('constructor').debug({ opts: this.opts, this: this });
+        this._rect = this.node.getBoundingClientRect();
+        this._recomputeBounds = this._resolveBounds(this.opts.bounds);
         this.opts.position = this.resolvePosition(this.opts.position);
-        this.#log.fn('constructor').debug({ opts: this.opts, this: this });
         this.positionStore = writable(this.opts.position);
         this.node.classList.add(this.opts.classes.default);
         const startPosition = this.opts.position;
@@ -172,24 +158,29 @@ export class Draggable {
         this.handleEls = this.opts.handle ? select(this.opts.handle, this.node) : [this.node];
         this.cancelEls = select(this.opts.cancel, this.node);
         this.obstacleEls = select(this.opts.obstacles);
-        // this.#recomputeBounds = this.#resolveRecomputeBounds(this.opts.bounds)
-        // this.#recomputeBounds()
-        this.#evm.listen(this.node, 'pointerdown', this.dragStart);
-        this.#evm.listen(window, 'pointerup', this.dragEnd);
-        this.#evm.listen(window, 'pointermove', this.drag);
-        this.#evm.listen(window, 'resize', this.resize);
-        this.#evm.add(this.positionStore.subscribe(({ x, y }) => {
+        this._evm.listen(this.node, 'pointerdown', this.dragStart);
+        this._evm.listen(window, 'pointerup', this.dragEnd);
+        this._evm.listen(window, 'pointermove', this.drag);
+        this._evm.listen(window, 'resize', this.resize);
+        this._evm.add(this.positionStore.subscribe(({ x, y }) => {
             this.node.style.setProperty('translate', `${x}px ${y}px 1px`);
         }));
         if (startPosition !== DRAGGABLE_DEFAULTS.position) {
-            // Init the virtual rect for updateBounds
-            const { top, right, bottom, left } = this.node.getBoundingClientRect();
-            this.rect = { top, right, bottom, left };
-            this.#recomputeBounds();
-            this.#updateBounds();
-            this.moveTo(startPosition);
+            this._recomputeBounds();
             this._position = { x: this.x, y: this.y };
+            this.moveTo(startPosition);
         }
+    }
+    /**
+     * Programmatically sets the position of the draggable element.
+     */
+    get position() {
+        return this._position;
+    }
+    set position(v) {
+        this._position = v;
+        this.moveTo(v);
+        this.updateLocalStorage();
     }
     /**
      * The x position of the draggable element's transform offset.
@@ -250,19 +241,14 @@ export class Draggable {
         }
         // Refresh the obstacles.
         this.obstacleEls = select(this.opts.obstacles);
-        if (DEV) {
-            for (const el of this.obstacleEls) {
-                el.dataset['outline'] = el.style.outline;
-                el.style.outline = '2px dotted #f007';
-            }
-        }
         // Error handling.
         if (isString(this.opts.handle) &&
             isString(this.opts.cancel) &&
             this.opts.handle === this.opts.cancel) {
             throw new Error("`handle` selector can't be same as `cancel` selector");
         }
-        if (this.#cancelElementContains(this.handleEls)) {
+        // Resolve the event target.
+        if (this._cancelElementContains(this.handleEls)) {
             throw new Error("Element being dragged can't be a child of the element on which `cancel` is applied");
         }
         const eventTarget = e.composedPath()[0];
@@ -270,48 +256,62 @@ export class Draggable {
         if (!this.handleEls.some(e => e.contains(eventTarget) || e.shadowRoot?.contains(eventTarget)))
             return;
         // Make sure it's not a cancel element.
-        if (this.#cancelElementContains([eventTarget])) {
+        if (this._cancelElementContains([eventTarget])) {
             return;
         }
-        this.#log.fn('dragStart').debug('Dragging initiated.');
+        this._log.fn('dragStart').debug('Dragging initiated.');
         e.stopPropagation();
         // Resolve the event target.
         this.eventTarget =
             this.handleEls.length === 1
                 ? this.node
                 : this.handleEls.find(el => el.contains(eventTarget));
-        this.#active = true;
+        this._active = true;
         // Store the click offset
         if (this.canMoveX)
             this.clickOffset.x = e.clientX - this.x;
         if (this.canMoveY)
             this.clickOffset.y = e.clientY - this.y;
         // Update the virtual rectangle.
-        const { top, right, bottom, left } = this.node.getBoundingClientRect();
-        this.rect = { top, right, bottom, left };
+        // const { top, right, bottom, left } = this.node.getBoundingClientRect()
+        // this.rect = { top, right, bottom, left }
+        this._updateRect();
         // Update the clientToNodeOffset.
-        if (this.bounds)
-            this.clientToNodeOffset = { x: e.clientX - left, y: e.clientY - top };
+        if (this.bounds) {
+            this.clientToNodeOffset = {
+                x: e.clientX - this.rect.left,
+                y: e.clientY - this.rect.top,
+            };
+        }
         // Set the initial position (with a forced duration of 0).
         this.positionStore.set({ x: this.x, y: this.y });
         // Update the bounds rect.
-        this.#recomputeBounds();
-        this.#updateBounds();
+        this._recomputeBounds();
+        // this.#updateBounds()
         this.node.dispatchEvent(new CustomEvent('grab'));
         // Capture the pointer and store the release callback.
         const { cursor } = getComputedStyle(this.node);
         this.node.setPointerCapture(e.pointerId);
         this.node.style.cursor = 'grabbing';
-        this.#releaseCapture = () => {
+        this._releaseCapture = () => {
             // this.node.releasePointerCapture(e.pointerId)
             this.node.style.cursor = cursor;
         };
         // Dispatch custom events
-        this.#fireSvelteDragStartEvent();
-        this.#fireUpdateEvent();
+        this._fireSvelteDragStartEvent();
+        this._fireUpdateEvent();
     };
+    /**
+     * This target node's cached {@link DOMRect}
+     */
+    get rect() {
+        return this._rect;
+    }
+    _updateRect() {
+        this._rect = this.node.getBoundingClientRect();
+    }
     drag = (e) => {
-        if (!this.#active)
+        if (!this._active)
             return;
         e.preventDefault();
         e.stopPropagation();
@@ -323,87 +323,82 @@ export class Draggable {
         const target = { x, y };
         // if (this.bounds) this.#clampToBounds(target)
         this.moveTo(target);
-        this.#fireSvelteDragEvent();
+        this._fireSvelteDragEvent();
     };
     dragEnd = () => {
-        if (!this.#active)
+        if (!this._active)
             return;
-        // todo - delete!
-        if (DEV) {
-            for (const el of this.obstacleEls) {
-                el.style.outline = el.dataset['outline'] ?? 'none';
-            }
-        }
         this.node.classList.remove(this.opts.classes.dragging);
         if (this.opts.userSelectNone) {
-            document.body.style.userSelect = this.#bodyOriginalUserSelectVal;
+            document.body.style.userSelect = this._bodyOriginalUserSelectVal;
         }
         this.clickOffset = { x: 0, y: 0 };
         this.clientToNodeOffset = { x: 0, y: 0 };
         this._position = { x: this.x, y: this.y };
         // if (this._storage) this._storage.value = this._position
-        this.#active = false;
-        this.#releaseCapture();
+        this._active = false;
+        this._releaseCapture();
         this.node.dispatchEvent(new CustomEvent('release'));
         setTimeout(() => this.node.classList.remove(this.opts.classes.dragged), 0);
-        this.#fireSvelteDragEndEvent();
+        this._fireSvelteDragEndEvent();
         this.updateLocalStorage();
     };
     resize = () => {
-        this.#recomputeBounds();
-        this.#updateBounds();
+        this._recomputeBounds();
+        // this.#updateBounds()
         this.moveTo(this.position); // works but doesn't preserve original position
     };
-    #updateBounds = () => {
-        // refresh style left & top
-        const styleLeft = parseFloat(this.node.style.left) || 0;
-        this.#leftBound = -styleLeft;
-        this.#rightBound =
-            this.bounds.right - this.bounds.left - (this.rect.right - this.rect.left) - styleLeft;
-        const styleTop = parseFloat(this.node.style.top) || 0;
-        this.#topBound = -styleTop;
-        this.#bottomBound =
-            this.bounds.bottom - this.bounds.top - styleTop - (this.rect.bottom - this.rect.top);
-        // refresh bounds element padding ...
-        if (this.boundsEl) {
-            const styleMap = getStyleMap(this.boundsEl);
-            // const { paddingLeft, paddingRight, paddingTop, paddingBottom } =
-            // 	getStyleMap(this.boundsEl)
-            this.#leftBound -= parseFloat(styleMap.get('padding-left'));
-            this.#rightBound -= parseFloat(styleMap.get('padding-right'));
-            this.#topBound -= parseFloat(styleMap.get('padding-top'));
-            this.#bottomBound -= parseFloat(styleMap.get('padding-bottom'));
-        }
-    };
+    // #updateBounds = () => {
+    // 	// refresh style left & top
+    // 	const styleLeft = parseFloat(this.node.style.left) || 0
+    // 	this.#leftBound = -styleLeft
+    // 	this.#rightBound =
+    // 		this.bounds.right - this.bounds.left - (this.rect.right - this.rect.left) - styleLeft
+    // 	const styleTop = parseFloat(this.node.style.top) || 0
+    // 	this.#topBound = -styleTop
+    // 	this.#bottomBound =
+    // 		this.bounds.bottom - this.bounds.top - styleTop - (this.rect.bottom - this.rect.top)
+    // 	// refresh bounds element padding ...
+    // 	if (this.boundsEl) {
+    // 		const styleMap = getStyleMap(this.boundsEl)
+    // 		// const { paddingLeft, paddingRight, paddingTop, paddingBottom } =
+    // 		// 	getStyleMap(this.boundsEl)
+    // 		this.#leftBound -= parseFloat(styleMap.get('padding-left'))
+    // 		this.#rightBound -= parseFloat(styleMap.get('padding-right'))
+    // 		this.#topBound -= parseFloat(styleMap.get('padding-top'))
+    // 		this.#bottomBound -= parseFloat(styleMap.get('padding-bottom'))
+    // 	}
+    // }
     /**
      * Moves the {@link node|draggable element} to the specified position, adjusted
      * for collisions with {@link obstacleEls obstacles} or {@link boundsRect bounds}.
      */
     moveTo(target) {
-        this.#log.fn('moveTo').debug('Moving to:', target, this);
+        this._log.fn('moveTo').debug('Moving to:', target, { bounds: this.bounds });
+        if (this.bounds) {
+            const TESTING = target.x;
+            target.x = clamp(target.x, this.bounds.left, this.bounds.right - (this.rect.right - this.rect.left));
+            target.y = clamp(target.y, this.bounds.top, this.bounds.bottom - (this.rect.bottom - this.rect.top));
+            if (target.x !== TESTING) ;
+        }
         if (this.canMoveX) {
-            if (this.bounds)
-                target.x = clamp(target.x, this.#leftBound, this.#rightBound);
             const deltaX = target.x - this.x;
             if (deltaX !== 0) {
-                const x = collisionClampX(deltaX, this.rect, this.obstacleEls);
-                // Apply delta to x / virtual rect (!! before checking collisionY !!).
-                this.rect.left += x;
-                this.rect.right += x;
-                this.x += x;
+                this.x += deltaX;
             }
         }
         if (this.canMoveY) {
             if (this.bounds)
-                target.y = clamp(target.y, this.#topBound, this.#bottomBound);
+                target.y = clamp(target.y, this.bounds.top, this.bounds.bottom);
             const deltaY = target.y - this.y;
             if (deltaY !== 0) {
                 // const y = this.#collisionClampY(deltaY)
-                const y = collisionClampY(deltaY, this.rect, this.obstacleEls);
-                // Apply delta to y / virtual rect.
-                this.rect.top += y;
-                this.rect.bottom += y;
-                this.y += y;
+                // const y = collisionClampY(deltaY, this.rect, this.obstacleEls)
+                // // Apply delta to y / virtual rect.
+                // this.rect.top += y
+                // this.rect.bottom += y
+                // this.y += y
+                this.y += deltaY;
             }
         }
         // Check for a custom user transform function before applying ours.
@@ -428,10 +423,10 @@ export class Draggable {
             }
         }
         // this.updateLocalStorage()
-        this.#fireUpdateEvent();
+        this._fireUpdateEvent();
     }
     update(v = this.position) {
-        this.#log.fn('update').debug('Updating position:', v, this);
+        this._log.fn('update').debug('Updating position:', v, this);
         this.moveTo(v);
     }
     /**
@@ -440,7 +435,7 @@ export class Draggable {
     updateLocalStorage = () => {
         if (!this.opts.localStorageKey)
             return;
-        this.#log
+        this._log
             .fn('updateLocalStorage')
             .debug('Updating position in localStorage:', `{ x: ${this._position.x}, y: ${this._position.y} }`, this);
         if (this._storage) {
@@ -452,49 +447,6 @@ export class Draggable {
             localStorage.removeItem(this.opts.localStorageKey);
         }
     };
-    /**
-     * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
-     * function that updates the {@link bounds} property when called.
-     */
-    #resolveBounds(opts) {
-        if (!opts)
-            return () => void 0;
-        // Check for a custom bounds rect.
-        if (opts &&
-            typeof opts === 'object' &&
-            ('left' in opts || 'right' in opts || 'top' in opts || 'bottom' in opts)) {
-            return () => {
-                this.bounds = {
-                    left: -Infinity,
-                    right: Infinity,
-                    top: -Infinity,
-                    bottom: Infinity,
-                    ...this.opts.bounds,
-                };
-            };
-        }
-        // prettier-ignore
-        const node = isHTMLElement(opts) ? opts
-            : opts === 'body' ? document.body
-                : opts === 'parent' ? this.node.offsetParent
-                    : isString(opts) ? select(opts)[0]
-                        : !isDefined(opts) ? document.documentElement
-                            : undefined;
-        // Error handling.
-        if (!node)
-            throw new Error('Invalid bounds option provided: ' + opts);
-        this.boundsEl = node;
-        // Add a resize observer to the bounds element to automatically update the bounds.
-        const boundsResizeObserver = new ResizeObserver(() => {
-            // this.clickOffset = { x: this.rect.left, y: this.rect.top }
-            this.resize();
-            this.#fireUpdateEvent();
-        });
-        boundsResizeObserver.observe(node);
-        this.#listeners.add(() => boundsResizeObserver.disconnect());
-        this.#fireUpdateEvent();
-        return () => (this.bounds = node.getBoundingClientRect());
-    }
     /**
      * Resolves a {@link DraggableOptions.position} option into an `{x,y}` vector
      * depending on its type:
@@ -524,79 +476,83 @@ export class Draggable {
             },
         });
     }
-    #cancelElementContains = (dragElements) => {
+    /**
+     * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
+     * function that updates the {@link bounds} property when called.
+     */
+    _resolveBounds(optsBounds) {
+        const resolveUpdater = () => {
+            if (!optsBounds)
+                return () => void 0;
+            // Check for a custom bounds rect.
+            if (optsBounds &&
+                typeof optsBounds === 'object' &&
+                ('left' in optsBounds ||
+                    'right' in optsBounds ||
+                    'top' in optsBounds ||
+                    'bottom' in optsBounds)) {
+                return () => {
+                    Object.assign(this.bounds, optsBounds);
+                };
+            }
+            // prettier-ignore
+            const node = isHTMLElement(optsBounds) ? optsBounds
+                : optsBounds === 'body' ? document.body
+                    : optsBounds === 'parent' ? this.node.offsetParent
+                        : isString(optsBounds) ? select(optsBounds)[0]
+                            : !isDefined(optsBounds) ? document.documentElement
+                                : undefined;
+            // Error handling.
+            if (!node)
+                throw new Error('Invalid bounds option provided: ' + optsBounds);
+            this.boundsEl = node;
+            // Add a resize observer to the bounds element to automatically update the bounds.
+            const boundsResizeObserver = new ResizeObserver(() => {
+                // this.clickOffset = { x: this.rect.left, y: this.rect.top }
+                this.resize();
+                this._fireUpdateEvent();
+            });
+            boundsResizeObserver.observe(node);
+            this._listeners.add(() => boundsResizeObserver.disconnect());
+            this._fireUpdateEvent();
+            return () => {
+                const rect = node.getBoundingClientRect();
+                this.bounds.left = rect.left;
+                this.bounds.top = rect.top;
+                this.bounds.right = rect.right;
+                this.bounds.bottom = rect.bottom;
+            };
+        };
+        const updateBounds = resolveUpdater();
+        return () => {
+            updateBounds();
+            this._updateRect();
+        };
+    }
+    _cancelElementContains = (dragElements) => {
         return this.cancelEls.some(cancelEl => dragElements.some(el => cancelEl.contains(el)));
     };
-    #callEvent = (eventName, fn) => {
+    _callEvent = (eventName, fn) => {
         const data = this.eventData;
         this.node.dispatchEvent(new CustomEvent(eventName, { detail: data }));
         fn?.(data);
     };
-    #fireSvelteDragStartEvent = () => {
-        this.#callEvent('dragstart', this.opts.onDragStart);
+    _fireSvelteDragStartEvent = () => {
+        this._callEvent('dragstart', this.opts.onDragStart);
     };
-    #fireSvelteDragEndEvent = () => {
-        this.#callEvent('dragend', this.opts.onDragEnd);
+    _fireSvelteDragEndEvent = () => {
+        this._callEvent('dragend', this.opts.onDragEnd);
     };
-    #fireSvelteDragEvent = () => {
-        this.#callEvent('drag', this.opts.onDrag);
+    _fireSvelteDragEvent = () => {
+        this._callEvent('drag', this.opts.onDrag);
     };
-    #fireUpdateEvent = () => {
+    _fireUpdateEvent = () => {
         this.node.dispatchEvent(new CustomEvent('update', { detail: this }));
     };
     dispose() {
-        this.#evm.dispose();
+        this._evm.dispose();
     }
 }
-/**
- * A svelte action to make an element draggable.
- *
- * @example
- * ```svelte
- * <script>
- * 	import { draggable } from 'fractils'
- * </script>
- *
- * <div use:draggable> Drag Me </div>
- * ```
- */
-export function draggable(node, options) {
-    const d = new Draggable(node, options ?? {});
-    return {
-        destroy: () => {
-            d.dispose();
-        },
-        // The update function of a svelte action automatically fires whenever the
-        // options object is changed externally, enabling easy reactivity.
-        update: (options) => {
-            if (!options)
-                return;
-            // Update all the values that need to be changed
-            d.opts.axis = options.axis || DRAGGABLE_DEFAULTS.axis;
-            d.disabled = options.disabled ?? DRAGGABLE_DEFAULTS.disabled;
-            d.opts.ignoreMultitouch =
-                options.ignoreMultitouch ?? DRAGGABLE_DEFAULTS.ignoreMultitouch;
-            d.opts.handle = options.handle;
-            d.opts.bounds = options.bounds;
-            d.opts.cancel = options.cancel;
-            d.opts.userSelectNone = options.userSelectNone ?? DRAGGABLE_DEFAULTS.userSelectNone;
-            d.opts.transform = options.transform;
-            const dragged = d.node.classList.contains(d.opts.classes.dragged);
-            d.node.classList.remove(d.opts.classes.default, d.opts.classes.dragged);
-            d.opts.classes.default = options?.classes?.default ?? DEFAULT_CLASSES.default;
-            d.opts.classes.dragging = options?.classes?.dragging ?? DEFAULT_CLASSES.dragging;
-            d.opts.classes.dragged = options?.classes?.dragged ?? DEFAULT_CLASSES.dragged;
-            d.node.classList.add(d.opts.classes.default);
-            if (dragged)
-                d.node.classList.add(d.opts.classes.default);
-            if (d.isControlled) {
-                if (options.position) {
-                    const pos = d.resolvePosition(options.position);
-                    d.x = pos.x;
-                    d.y = pos.y;
-                }
-                d.moveTo({ x: d.x, y: d.y });
-            }
-        },
-    };
-}
+
+export { DRAGGABLE_DEFAULTS, Draggable };
+//# sourceMappingURL=draggable.js.map

@@ -1,8 +1,9 @@
-import { Tooltip } from '../shared/Tooltip';
-import { create } from '../shared/create';
-import { append } from '../shared/mount';
-import { CopySVG } from '../svg/CopySVG';
-export class CopyButton {
+import { Tooltip } from './Tooltip.js';
+import { create } from './create.js';
+import { append } from './mount.js';
+import { CopySVG } from '../svg/CopySVG.js';
+
+class CopyButton {
     container;
     text;
     message;
@@ -41,13 +42,7 @@ export class CopyButton {
             text: message,
             placement: 'top',
             offsetY: '6px',
-            delay: 300,
-            parent: container,
-            style: {
-                minWidth: '4.25rem',
-                background: 'var(--fracgui-bg-a)',
-                color: 'var(--fracgui-fg-a)',
-            },
+            delay: 600,
         });
     }
     copy = () => {
@@ -102,3 +97,6 @@ export class CopyButton {
         }, 300);
     };
 }
+
+export { CopyButton };
+//# sourceMappingURL=CopyButton.js.map

@@ -1,13 +1,14 @@
-import { NumberButtonsController } from '../controllers/NumberButtonsController';
-import { NumberController } from '../controllers/NumberController';
-import { rangeController } from '../controllers/number';
-import { Logger } from '../shared/logger';
-import { create } from '../shared/create';
-import { Input } from './Input';
-export const NUMBER_INPUT_DEFAULTS = {
+import { NumberButtonsController } from '../controllers/NumberButtonsController.js';
+import { NumberController } from '../controllers/NumberController.js';
+import { rangeController } from '../controllers/number.js';
+import { Logger } from '../shared/logger.js';
+import { create } from '../shared/create.js';
+import { Input } from './Input.js';
+
+const NUMBER_INPUT_DEFAULTS = {
     __type: 'NumberInputOptions',
 };
-export class InputNumber extends Input {
+class InputNumber extends Input {
     __type = 'InputNumber';
     _log;
     initialValue;
@@ -88,3 +89,6 @@ export class InputNumber extends Input {
         super.dispose();
     }
 }
+
+export { InputNumber, NUMBER_INPUT_DEFAULTS };
+//# sourceMappingURL=InputNumber.js.map

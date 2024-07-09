@@ -1,4 +1,4 @@
-export class CopySVG {
+class CopySVG {
     svg;
     back;
     front;
@@ -48,3 +48,6 @@ export class CopySVG {
         container.appendChild(this.svg);
     }
 }
+
+export { CopySVG };
+//# sourceMappingURL=CopySVG.js.map

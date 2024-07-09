@@ -9,7 +9,7 @@
  * ```
  * @see https://github.com/helyo-world/fuzzysearch-ts
  */
-export function fuzzysearch(needle, haystack) {
+function fuzzysearch(needle, haystack) {
     const n = needle.length;
     const h = haystack.length;
     if (n > h) {
@@ -29,3 +29,6 @@ export function fuzzysearch(needle, haystack) {
     }
     return true;
 }
+
+export { fuzzysearch };
+//# sourceMappingURL=fuzzySearch.js.map

@@ -1,9 +1,10 @@
-import { clamp } from '../../clamp';
+import { clamp } from '../../clamp.js';
+
 /**
  * Converts an {@link HsvColor} object to an {@link RgbColor} object.
  * @param hsv - {@link HsvColor} object to convert.
  */
-export function hsvToRgb(hsv) {
+function hsvToRgb(hsv) {
     const h = hsv.h / 60;
     const s = hsv.s / 100;
     const v = hsv.v / 100;
@@ -22,3 +23,6 @@ export function hsvToRgb(hsv) {
         b: clamp(b * 255, 0, 255),
     };
 }
+
+export { hsvToRgb };
+//# sourceMappingURL=hsvToRgb.js.map

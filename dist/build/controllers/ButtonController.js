@@ -1,9 +1,10 @@
-import { create } from '../shared/create';
-import { EventManager } from '../shared/EventManager';
-import { Logger } from '../shared/logger';
-import { nanoid } from '../shared/nanoid';
-import { toFn } from '../shared/toFn';
-export const BUTTON_INPUT_DEFAULTS = {
+import { create } from '../shared/create.js';
+import { EventManager } from '../shared/EventManager.js';
+import { Logger } from '../shared/logger.js';
+import { nanoid } from '../shared/nanoid.js';
+import { toFn } from '../shared/toFn.js';
+
+const BUTTON_INPUT_DEFAULTS = {
     __type: 'ButtonControllerOptions',
     text: () => 'click me',
     onClick: () => void 0,
@@ -15,7 +16,7 @@ export const BUTTON_INPUT_DEFAULTS = {
     element: undefined,
     parent: undefined,
 };
-export class ButtonController {
+class ButtonController {
     __type = 'ButtonController';
     static is(v) {
         return v?.__type === 'ButtonController' && v instanceof ButtonController;
@@ -116,3 +117,6 @@ export class ButtonController {
         this._evm.dispose();
     }
 }
+
+export { BUTTON_INPUT_DEFAULTS, ButtonController };
+//# sourceMappingURL=ButtonController.js.map

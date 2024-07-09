@@ -200,7 +200,7 @@ export declare class Folder {
     closed: {
         set: (value: boolean) => void;
     } & Omit<import("./shared/state").PrimitiveState<boolean>, "set">;
-    element: HTMLElement;
+    element: HTMLDivElement;
     elements: FolderElements;
     graphics?: {
         icon: HTMLDivElement;
@@ -212,6 +212,8 @@ export declare class Folder {
     };
     evm: EventManager<FolderEvents>;
     on: <K extends keyof FolderEvents>(event: K, callback: import("./shared/EventManager").EventCallback<FolderEvents[K]>) => string;
+    initialHeight: number;
+    initialHeaderHeight: number;
     private _title;
     private _hidden;
     private _log;
@@ -392,7 +394,7 @@ export declare class Folder {
     private _createElement;
     private _createElements;
     private _createGraphics;
-    private _createSvgs;
+    private _resolveHeaderHeight;
     get hue(): number;
     private _refreshIcon;
     disposed: boolean;

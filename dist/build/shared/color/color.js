@@ -1,18 +1,19 @@
-import { REGEX_FUNCTIONAL_RGB, REGEX_FUNCTIONAL_RGBA, REGEX_FUNCTIONAL_HSL, REGEX_FUNCTIONAL_HSLA, REGEX_HEX_3, REGEX_HEX_4, REGEX_HEX_6, REGEX_HEX_8, } from './regex';
-import { kelvinToRgb } from './conversions/kelvinToRgb';
-import { rgbToKelvin } from './conversions/rgbToKelvin';
-import { rgbToHsv } from './conversions/rgbToHsv';
-import { hslToHsv } from './conversions/hslToHsv';
-import { hsvToHsl } from './conversions/hsvToHsl';
-import { hsvToRgb } from './conversions/hsvToRgb';
-import { parseHexInt } from './conversions/parseHexInt';
-import { parseUnit } from './conversions/parseUnit';
-import { intToHex } from './conversions/intToHex';
+import { REGEX_FUNCTIONAL_RGB, REGEX_FUNCTIONAL_RGBA, REGEX_HEX_3, REGEX_HEX_4, REGEX_HEX_6, REGEX_HEX_8, REGEX_FUNCTIONAL_HSL, REGEX_FUNCTIONAL_HSLA } from './regex.js';
+import { kelvinToRgb } from './conversions/kelvinToRgb.js';
+import { rgbToKelvin } from './conversions/rgbToKelvin.js';
+import { rgbToHsv } from './conversions/rgbToHsv.js';
+import { hslToHsv } from './conversions/hslToHsv.js';
+import { hsvToHsl } from './conversions/hsvToHsl.js';
+import { hsvToRgb } from './conversions/hsvToRgb.js';
+import { parseHexInt } from './conversions/parseHexInt.js';
+import { parseUnit } from './conversions/parseUnit.js';
+import { intToHex } from './conversions/intToHex.js';
+
 const DEFAULT_COLOR = { h: 0, s: 0, v: 0, a: 1 };
 /**
  * A color class with rgb, hsl, hsv, and kelvin color objects, strings, and conversion methods.
  */
-export class Color {
+class Color {
     isColor = true;
     #hsva; // The primary internal color value (source of truth).
     #initialValue;
@@ -372,13 +373,13 @@ export class Color {
         };
     }
 }
-export function isColor(color) {
+function isColor(color) {
     return !!color.isColor;
 }
-export function isColorFormat(color) {
+function isColorFormat(color) {
     return typeof parseColorFormat(color) !== 'undefined';
 }
-export function parseColorFormat(color) {
+function parseColorFormat(color) {
     if (typeof color === 'string') {
         if (color.match(/^#?[0-9a-fA-F]{6}$/)) {
             return 'HexString';
@@ -412,3 +413,6 @@ export function parseColorFormat(color) {
     }
     return undefined;
 }
+
+export { Color, isColor, isColorFormat, parseColorFormat };
+//# sourceMappingURL=color.js.map

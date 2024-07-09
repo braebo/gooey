@@ -1,30 +1,20 @@
-import { ColorComponents } from '../controllers/color/ColorComponents';
-import { ColorPicker } from '../controllers/color/ColorPicker';
-import { Color, isColor } from '../shared/color/color';
-import { CopyButton } from '../shared/CopyButton';
-import { create } from '../shared/create';
-import { Logger } from '../shared/logger';
-import { state } from '../shared/state';
-import { Input } from './Input';
-export const COLOR_MODES = [
-    'rgba',
-    'rgbaString',
-    'hsla',
-    'hslaString',
-    'hsva',
-    'hsvaString',
-    'hex',
-    'hex8',
-    'array',
-];
+import { ColorComponents } from '../controllers/color/ColorComponents.js';
+import { ColorPicker } from '../controllers/color/ColorPicker.js';
+import { Color, isColor } from '../shared/color/color.js';
+import { CopyButton } from '../shared/CopyButton.js';
+import { create } from '../shared/create.js';
+import { Logger } from '../shared/logger.js';
+import { state } from '../shared/state.js';
+import { Input } from './Input.js';
+
 //⌟
-export const COLOR_INPUT_DEFAULTS = {
+const COLOR_INPUT_DEFAULTS = {
     __type: 'ColorInputOptions',
     value: '#FF0000FF',
     mode: 'hex',
     expanded: false,
 };
-export class InputColor extends Input {
+class InputColor extends Input {
     __type = 'InputColor';
     initialValue;
     state;
@@ -285,3 +275,6 @@ export class InputColor extends Input {
         super.dispose();
     }
 }
+
+export { COLOR_INPUT_DEFAULTS, InputColor };
+//# sourceMappingURL=InputColor.js.map

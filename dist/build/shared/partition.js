@@ -12,7 +12,7 @@
  * console.log(odd) // [1, 3, 5]
  * ```
  */
-export function partition(array, predicate) {
+function partition(array, predicate) {
     const left = [];
     const right = [];
     for (const element of array) {
@@ -25,3 +25,6 @@ export function partition(array, predicate) {
     }
     return [left, right];
 }
+
+export { partition };
+//# sourceMappingURL=partition.js.map

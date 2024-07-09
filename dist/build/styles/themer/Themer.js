@@ -1,17 +1,18 @@
-import { resolveTheme } from './resolveTheme';
-import theme_default from './defaultTheme';
-import { deepMergeOpts } from '../../shared/deepMergeOpts';
-import { partition } from '../../shared/partition';
-import { hexToRgb } from '../../shared/hexToRgb';
-import { entries } from '../../shared/object';
-import { Logger } from '../../shared/logger';
-import { select } from '../../shared/select';
-import { c, g, o, r } from '../../shared/l';
-import { state } from '../../shared/state';
+import { resolveTheme } from './resolveTheme.js';
+import theme_default from './defaultTheme.js';
+import { deepMergeOpts } from '../../shared/deepMergeOpts.js';
+import { partition } from '../../shared/partition.js';
+import { hexToRgb } from '../../shared/hexToRgb.js';
+import { entries } from '../../shared/object.js';
+import { Logger } from '../../shared/logger.js';
+import { select } from '../../shared/select.js';
+import { g, o, c, r } from '../../shared/l.js';
+import { state } from '../../shared/state.js';
+
 /**
  * Default {@link ThemerOptions} object.
  */
-export const THEMER_DEFAULTS = {
+const THEMER_DEFAULTS = {
     autoInit: true,
     persistent: true,
     theme: theme_default,
@@ -56,7 +57,7 @@ export const THEMER_DEFAULTS = {
  * <button on:click={() => themer.addTheme({...})}>add theme</button>
  * ```
  */
-export class Themer {
+class Themer {
     /**
      * The element to theme.
      */
@@ -439,3 +440,6 @@ export class Themer {
         }
     }
 }
+
+export { THEMER_DEFAULTS, Themer };
+//# sourceMappingURL=Themer.js.map

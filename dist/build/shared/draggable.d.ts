@@ -197,7 +197,6 @@ export declare const DRAGGABLE_DEFAULTS: DraggableOptions;
  * ```
  */
 export declare class Draggable {
-    #private;
     node: HTMLElement;
     static initialized: boolean;
     opts: DraggableOptions;
@@ -220,11 +219,6 @@ export declare class Draggable {
         x: number;
         y: number;
     };
-    /**
-     * An internal representation of the {@link node|node's} bounding rectangle.
-     * Used for collision detection and animations.
-     */
-    rect: VirtualRect;
     boundsEl?: HTMLElement;
     handleEls: HTMLElement[];
     cancelEls: HTMLElement[];
@@ -241,6 +235,49 @@ export declare class Draggable {
     private _storage?;
     private _position;
     /**
+     * An observable store that updates the draggable element's position.
+     */
+    positionStore: Writable<{
+        x: number;
+        y: number;
+    }>;
+    /**
+     * @todo I think we can just remove this and let the user add their
+     * own event listeners if they want to target a specific element.
+     */
+    eventTarget?: HTMLElement;
+    /**
+     * Whether the draggable element is currently being dragged.
+     */
+    private _active;
+    /**
+     * The original value of `user-select` on the body element
+     * used to restore the original value after dragging when
+     * {@link DraggableOptions.userSelectNone|userSelectNone} is `true`.
+     */
+    private _bodyOriginalUserSelectVal;
+    /**
+     * Updates the {@link bounds} property to account for any changes in the
+     * DOM or this instance's {@link DraggableOptions.bounds|bounds} option.
+     */
+    private _recomputeBounds;
+    /**
+     * This node's DOMRect, cached for use via {@link rect}.
+     */
+    private _rect;
+    private _evm;
+    private _listeners;
+    /**
+     * A callback to release the pointer capture using the
+     * {@link PointerEvent.pointerId | pointerId} and reset the cursor.
+     */
+    private _releaseCapture;
+    /**
+     * Internal logger for infoging. Automatically bypassed in non-dev environments.
+     */
+    private _log;
+    constructor(node: HTMLElement, options?: Partial<DraggableOptions>);
+    /**
      * Programmatically sets the position of the draggable element.
      */
     get position(): {
@@ -251,19 +288,6 @@ export declare class Draggable {
         x: number;
         y: number;
     });
-    /**
-     * @todo I think we can just remove this and let the user add their
-     * own event listeners if they want to target a specific element.
-     */
-    eventTarget?: HTMLElement;
-    /**
-     * An observable store that updates the draggable element's position.
-     */
-    positionStore: Writable<{
-        x: number;
-        y: number;
-    }>;
-    constructor(node: HTMLElement, options?: Partial<DraggableOptions>);
     /**
      * The x position of the draggable element's transform offset.
      */
@@ -287,6 +311,11 @@ export declare class Draggable {
     get eventData(): DragEventData;
     get isControlled(): boolean;
     dragStart: (e: PointerEvent) => void;
+    /**
+     * This target node's cached {@link DOMRect}
+     */
+    get rect(): DOMRect;
+    private _updateRect;
     drag: (e: PointerEvent) => void;
     dragEnd: () => void;
     resize: () => void;
@@ -316,6 +345,17 @@ export declare class Draggable {
      * if it's a partial.)
      */
     resolvePosition(pos: DraggableOptions['position']): import("./place").Vec2;
+    /**
+     * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
+     * function that updates the {@link bounds} property when called.
+     */
+    private _resolveBounds;
+    private _cancelElementContains;
+    private _callEvent;
+    private _fireSvelteDragStartEvent;
+    private _fireSvelteDragEndEvent;
+    private _fireSvelteDragEvent;
+    private _fireUpdateEvent;
     dispose(): void;
 }
 /**

@@ -9,7 +9,7 @@
  * @param obj - The object to stringify.
  * @param indentation - Number of spaces for indentation. Optional.
  */
-export const stringify = (input, indentation = 0) => {
+const stringify = (input, indentation = 0) => {
     const stack = [];
     return JSON.stringify(input, serialize(stack), indentation);
 };
@@ -18,7 +18,7 @@ export const stringify = (input, indentation = 0) => {
  * undefined values, and functions with strings.
  * @see {@link stringify}
  */
-export function serialize(stack) {
+function serialize(stack) {
     const keys = [];
     return function (key, value) {
         if (typeof value === 'undefined')
@@ -59,3 +59,6 @@ export function serialize(stack) {
         return value;
     };
 }
+
+export { serialize, stringify };
+//# sourceMappingURL=stringify.js.map

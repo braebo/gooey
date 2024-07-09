@@ -1,4 +1,4 @@
-export const svgChevron = () => {
+const svgChevron = () => {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('width', '24');
     svg.setAttribute('height', '24');
@@ -13,3 +13,6 @@ export const svgChevron = () => {
     svg.appendChild(path);
     return svg;
 };
+
+export { svgChevron };
+//# sourceMappingURL=chevronSvg.js.map

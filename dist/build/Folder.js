@@ -1,25 +1,26 @@
+import { InputButtonGrid } from './inputs/InputButtonGrid.js';
+import { InputSwitch } from './inputs/InputSwitch.js';
+import { InputButton } from './inputs/InputButton.js';
+import { InputSelect } from './inputs/InputSelect.js';
+import { InputNumber } from './inputs/InputNumber.js';
+import { InputColor } from './inputs/InputColor.js';
+import { InputText } from './inputs/InputText.js';
+import { isLabeledOption } from './controllers/Select.js';
+import { animateConnector, createFolderSvg, createFolderConnector } from './svg/createFolderSVG.js';
+import { composedPathContains } from './shared/cancelClassFound.js';
+import { isColor, isColorFormat } from './shared/color/color.js';
+import { EventManager } from './shared/EventManager.js';
+import './svg/TerminalSvg.js';
+import { Search } from './toolbar/Search.js';
+import { create } from './shared/create.js';
+import { Logger } from './shared/logger.js';
+import { nanoid } from './shared/nanoid.js';
+import { state } from './shared/state.js';
+import { toFn } from './shared/toFn.js';
+import { DEV } from './node_modules/.pnpm/esm-env@1.0.0/node_modules/esm-env/prod-ssr.js';
+import { Gui } from './Gui.js';
+
 // The custom-regions extension is recommended for this file.
-import { InputButtonGrid } from './inputs/InputButtonGrid';
-import { InputSwitch } from './inputs/InputSwitch';
-import { InputButton } from './inputs/InputButton';
-import { InputSelect } from './inputs/InputSelect';
-import { InputNumber } from './inputs/InputNumber';
-import { InputColor } from './inputs/InputColor';
-import { InputText } from './inputs/InputText';
-import { isLabeledOption } from './controllers/Select';
-import { animateConnector, createFolderConnector, createFolderSvg } from './svg/createFolderSVG';
-import { composedPathContains } from './shared/cancelClassFound';
-import { isColor, isColorFormat } from './shared/color/color';
-import { EventManager } from './shared/EventManager';
-import { TerminalSvg } from './svg/TerminalSvg';
-import { Search } from './toolbar/Search';
-import { create } from './shared/create';
-import { Logger } from './shared/logger';
-import { nanoid } from './shared/nanoid';
-import { state } from './shared/state';
-import { toFn } from './shared/toFn';
-import { DEV } from 'esm-env';
-import { Gui } from './Gui';
 //⌟
 //· Contants ·····················································································¬
 const FOLDER_DEFAULTS = Object.freeze({
@@ -55,7 +56,7 @@ const INTERNAL_FOLDER_DEFAULTS = {
  * folder.addNumber({ title: 'foo', value: 5 })
  * ```
  */
-export class Folder {
+class Folder {
     //· Props ····················································································¬
     __type = 'Folder';
     isRoot = true;
@@ -99,6 +100,8 @@ export class Folder {
     graphics;
     evm = new EventManager(['change', 'refresh', 'toggle', 'mount']);
     on = this.evm.on.bind(this.evm);
+    initialHeight = 0;
+    initialHeaderHeight = 0;
     _title;
     _hidden = () => false;
     _log;
@@ -154,21 +157,29 @@ export class Folder {
         if (opts._skipAnimations) {
             // We need to bypass animations so I can get the rect.
             this.element.classList.add('instant');
+            this.initialHeight = this.element.scrollHeight;
+            if (this.initialHeight === 0) {
+                console.error(`${this.title} has a height of 0.`, this.element);
+            }
+            this.initialHeaderHeight = this.elements.header.scrollHeight;
+            if (this.initialHeaderHeight === 0) {
+                console.error(`${this.title} header has a height of 0.`, this.elements.header);
+            }
             setTimeout(() => {
                 this.element.classList.remove('instant');
             }, 0);
         }
         this.hidden = opts.hidden ? toFn(opts.hidden) : () => false;
-        // Open/close the folder when the closed state changes.
-        this.evm.add(this.closed.subscribe(v => {
-            v ? this.close() : this.open();
-            this.evm.emit('toggle', v);
-        }));
         this._createGraphics(opts._headerless).then(() => {
+            this.evm.emit('mount');
+            // Open/close the folder when the closed state changes.
+            this.evm.add(this.closed.subscribe(v => {
+                v ? this.close() : this.open();
+                this.evm.emit('toggle', v);
+            }));
             if (opts.closed) {
                 this.closed.set(opts.closed);
             }
-            this.evm.emit('mount');
         });
     }
     //· Getters/Setters ··········································································¬
@@ -254,14 +265,15 @@ export class Folder {
         const overrides = {
             __type: 'InternalFolderOptions',
             container: this.elements.content,
+            gui: this.gui,
             isRoot: false,
         };
         const opts = Object.assign({}, defaults, options, overrides);
         const folder = new Folder(opts);
         folder.on('change', v => this.evm.emit('change', v));
         this.children.push(folder);
-        this._createSvgs();
         if (opts._headerless) {
+            folder.initialHeaderHeight ??= folder.elements.header.scrollHeight;
             folder.elements.header.style.display = 'none';
         }
         return folder;
@@ -467,19 +479,16 @@ export class Folder {
                 };
                 if (typeof value === 'number') {
                     if (value > 0) {
-                        ;
                         opts.max = value * 2;
                         opts.step = value / 10;
                         opts.min = 0;
                     }
                     else if (value == 0) {
-                        ;
                         opts.min = -1;
                         opts.step = 0.01;
                         opts.max = 1;
                     }
                     else {
-                        ;
                         opts.min = value * 2;
                         opts.step = value / 10;
                         opts.max = 0;
@@ -814,21 +823,44 @@ export class Folder {
     //⌟
     //· SVG's ····················································································¬
     async _createGraphics(headerless = false) {
+        if (this.isRootFolder())
+            return;
         this._log.fn('createGraphics').debug({ this: this });
-        await Promise.resolve();
+        // await Promise.resolve()
+        await new Promise(resolve => setTimeout(resolve, 0));
         if (!this.isRootFolder()) {
             this.graphics = { icon: createFolderSvg(this) };
             this.elements.header.prepend(this.graphics.icon);
             if (!headerless) {
-                this.graphics.connector = createFolderConnector(this);
-                this.element.prepend(this.graphics.connector.container);
+                this.initialHeaderHeight ??= this._resolveHeaderHeight();
+                // this.initialHeaderHeight = this._resolveHeaderHeight()
+                this.graphics.connector = createFolderConnector(this, this.graphics.icon);
+                // this.element.prepend(this.graphics.connector.container)
             }
         }
-        if (DEV)
-            new TerminalSvg(this);
     }
-    _createSvgs() {
-        this._log.fn('#createSvgs').debug({ this: this });
+    _resolveHeaderHeight() {
+        // Get the _pixel_ value of the `--fracgui-header_height` variable for SVG generation.
+        let height = 16 * 1.75;
+        const wrapper = this.root?.gui?.wrapper;
+        if (!wrapper) {
+            throw new Error('No wrapper found!  This should never happen...');
+        }
+        const prop = getComputedStyle(wrapper).getPropertyValue('--fracgui-header_height');
+        if (prop.endsWith('px')) {
+            height = parseFloat(prop);
+        }
+        else if (prop.endsWith('em')) {
+            let fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+            height = parseFloat(prop) * fontSize;
+        }
+        else {
+            console.error('Invalid header height for', this.title);
+            console.error({
+                prop,
+            });
+        }
+        return height;
     }
     get hue() {
         const localIndex = this.parentFolder.children.indexOf(this);
@@ -869,3 +901,6 @@ export class Folder {
         this.disposed = true;
     }
 }
+
+export { Folder };
+//# sourceMappingURL=Folder.js.map

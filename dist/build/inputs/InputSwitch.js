@@ -1,8 +1,9 @@
-import { Logger } from '../shared/logger';
-import { create } from '../shared/create';
-import { state } from '../shared/state';
-import { Input } from './Input';
-export const SWITCH_INPUT_DEFAULTS = {
+import { Logger } from '../shared/logger.js';
+import { create } from '../shared/create.js';
+import { state } from '../shared/state.js';
+import { Input } from './Input.js';
+
+const SWITCH_INPUT_DEFAULTS = {
     __type: 'SwitchInputOptions',
     value: true,
     labels: {
@@ -19,7 +20,7 @@ export const SWITCH_INPUT_DEFAULTS = {
 /**
  * A switch {@link Input} for booleans.
  */
-export class InputSwitch extends Input {
+class InputSwitch extends Input {
     __type = 'InputSwitch';
     state;
     initialValue;
@@ -123,3 +124,6 @@ export class InputSwitch extends Input {
         super.dispose();
     }
 }
+
+export { InputSwitch, SWITCH_INPUT_DEFAULTS };
+//# sourceMappingURL=InputSwitch.js.map

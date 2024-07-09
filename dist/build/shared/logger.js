@@ -1,21 +1,16 @@
-import { CSS_COLORS, randomCSSColorName } from './css-colors';
-import { r, y, gr, dim, hex } from './l';
-import { stringify } from './stringify';
-import { DEV, BROWSER } from 'esm-env';
-import { defer } from './defer';
-import { tldr } from './tldr';
-// todo - Is there a reliable way to type an ImportMetaEnv entry globally for consumers?
-const ENABLED = DEV &&
-    // @ts-ignore
-    import.meta?.env?.VITE_FRACTILS_LOG_LEVEL !== 'off' &&
-    // @ts-ignore
-    !(import.meta?.env?.VITEST && !import.meta?.env?.VITE_FRACTILS_LOG_VITEST);
-export class Logger {
+import { randomCSSColorName, CSS_COLORS } from './css-colors.js';
+import { hex, y, r, dim, gr } from './l.js';
+import { stringify } from './stringify.js';
+import { defer } from './defer.js';
+import { tldr } from './tldr.js';
+
+class Logger {
     static _BYPASS_STYLES = false;
     static _BYPASS_DEFER = true;
     title = '';
     options;
     // color: ChalkInstance
+    // color: string
     color;
     #logger;
     constructor(titleOrOptions, options) {
@@ -29,9 +24,10 @@ export class Logger {
         }
         const colorname = options?.fg?.toLowerCase() ?? randomCSSColorName();
         const fg = colorname in CSS_COLORS ? CSS_COLORS[colorname] : colorname;
-        // this.color = hex(fg)
-        this.color = fg;
+        this.color = hex(fg);
+        // this.color = fg
         this.#logger = Logger.createLogger(this.title, this.options);
+        // console.log('Logger', this.title, this.#logger)
         return this;
     }
     get deferred() {
@@ -147,11 +143,11 @@ export class Logger {
     }
     static createLogger(title, options) {
         options ??= {};
-        const browser = options.browser ?? true;
-        const server = options.server ?? false;
-        if (BROWSER && !browser)
+        const BROWSER = typeof globalThis.window !== 'undefined';
+        const SERVER = !BROWSER;
+        if (!BROWSER || options.browser === false)
             return () => void 0;
-        if (!BROWSER && !server)
+        if (SERVER && options.server !== true)
             return () => void 0;
         const fg = options.fg || randomCSSColorName();
         const bg = options.bg || 'transparent';
@@ -162,8 +158,6 @@ export class Logger {
         const deferred = options.deferred &&
             !Logger._BYPASS_DEFER &&
             /^((?!chrome|android).)*safari/i.test(navigator.userAgent); // Safari explosed from requestIdleCallback
-        if (!ENABLED)
-            return () => void 0;
         let callsite = undefined;
         let messageConfigBase = '%c%s%c';
         // This is my smelly attempt to dim trailing title
@@ -217,6 +211,9 @@ export class Logger {
         return (...args) => defer(() => log(...args));
     }
 }
-export const logger = (title = 'LOG', options) => {
+const logger = (title = 'LOG', options) => {
     return Logger.createLogger(title, options);
 };
+
+export { Logger, logger };
+//# sourceMappingURL=logger.js.map

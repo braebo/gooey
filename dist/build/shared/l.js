@@ -1,4 +1,4 @@
-export const CONSOLE_COLOR_CODES = {
+const CONSOLE_COLOR_CODES = {
     reset: '\x1b[0m',
     // Foreground colors
     black: '\x1b[30m',
@@ -33,19 +33,20 @@ const hexToRgb = (hex) => {
         : null;
 };
 // Function to create hex color
-export const hex = (hexColor) => (str) => {
+const hex = (hexColor) => (str) => {
     const rgb = hexToRgb(hexColor);
     if (!rgb)
         return str;
     return `\x1b[38;2;${rgb[0]};${rgb[1]};${rgb[2]}m${str}\x1b[0m`;
 };
-export const color = (colorName) => (str) => `${CONSOLE_COLOR_CODES[colorName]}${str}${CONSOLE_COLOR_CODES.reset}`;
-export const r = color('red');
-export const g = color('green');
-export const y = color('yellow');
-export const b = color('blue');
-export const m = color('magenta');
-export const c = color('cyan');
-export const gr = color('gray');
-export const dim = color('dim');
-export const o = hex('#ff7f50');
+const color = (colorName) => (str) => `${CONSOLE_COLOR_CODES[colorName]}${str}${CONSOLE_COLOR_CODES.reset}`;
+const r = color('red');
+const g = color('green');
+const y = color('yellow');
+const c = color('cyan');
+const gr = color('gray');
+const dim = color('dim');
+const o = hex('#ff7f50');
+
+export { CONSOLE_COLOR_CODES, c, color, dim, g, gr, hex, o, r, y };
+//# sourceMappingURL=l.js.map

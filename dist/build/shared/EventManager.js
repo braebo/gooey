@@ -1,9 +1,10 @@
-import { Logger } from './logger';
-import { nanoid } from './nanoid';
+import { Logger } from './logger.js';
+import { nanoid } from './nanoid.js';
+
 /**
  * Represents an event manager that provides methods for adding and removing event listeners.
  */
-export class EventManager {
+class EventManager {
     _unlisteners = new Map();
     /**
      * The event handlers for each registered custom event type, and their respective callbacks.
@@ -155,3 +156,6 @@ export class EventManager {
         this.clearHandlers();
     }
 }
+
+export { EventManager };
+//# sourceMappingURL=EventManager.js.map

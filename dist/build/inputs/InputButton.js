@@ -1,14 +1,14 @@
-import { ButtonController } from '../controllers/ButtonController';
-import { Logger } from '../shared/logger';
-import { create } from '../shared/create';
-import { state } from '../shared/state';
-import { Input } from './Input';
-import { DEV } from 'esm-env';
-export const BUTTON_INPUT_DEFAULTS = {
+import { ButtonController } from '../controllers/ButtonController.js';
+import { Logger } from '../shared/logger.js';
+import { create } from '../shared/create.js';
+import { state } from '../shared/state.js';
+import { Input } from './Input.js';
+
+const BUTTON_INPUT_DEFAULTS = {
     __type: 'ButtonInputOptions',
     text: () => 'click me',
 };
-export class InputButton extends Input {
+class InputButton extends Input {
     __type = 'InputButton';
     initialValue = {};
     state = state({});
@@ -27,11 +27,7 @@ export class InputButton extends Input {
             this.onClick = opts.value;
         else if (opts.onClick)
             this.onClick = opts.onClick;
-        else {
-            if (DEV) {
-                console.error(`${this.title} created with no onClick function. Use the 'value' or 'onClick' property to assign one.`);
-            }
-        }
+        else ;
         const container = create('div', {
             classes: ['fracgui-input-button-container'],
             parent: this.elements.content,
@@ -75,7 +71,6 @@ export class InputButton extends Input {
      */
     set = (v) => {
         if (ButtonController.is(v)) {
-            v; //=>
             this.state.set(v);
         }
     };
@@ -92,3 +87,6 @@ export class InputButton extends Input {
         super.dispose();
     }
 }
+
+export { BUTTON_INPUT_DEFAULTS, InputButton };
+//# sourceMappingURL=InputButton.js.map

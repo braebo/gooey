@@ -17,7 +17,7 @@
  * Object.entries(foo1) // [string, string | number][]
  * ```
  */
-export function entries(object) {
+function entries(object) {
     if (typeof object !== 'object' || object === null) {
         console.error('Error: Invalid object', object);
         throw new Error('`entries()` util called with invalid object: ' + object);
@@ -43,7 +43,7 @@ export function entries(object) {
  * Object.keys(foo1) // string[]
  * ```
  */
-export function keys(object) {
+function keys(object) {
     if (typeof object !== 'object' && object === null) {
         console.error('Error: Invalid object', object);
         throw new Error('`keys()` util called with invalid object.');
@@ -69,10 +69,13 @@ export function keys(object) {
  * Object.values(foo1) // (number | string)[]
  * ```
  */
-export function values(object) {
+function values(object) {
     if (typeof object !== 'object' && object === null) {
         console.error('Error: Invalid object', object);
         throw new Error('`values()` util called with invalid object.');
     }
     return Object.values(object);
 }
+
+export { entries, keys, values };
+//# sourceMappingURL=object.js.map

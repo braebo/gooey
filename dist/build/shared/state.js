@@ -1,5 +1,6 @@
-import { localStorageStore } from './localStorageStore';
-import { get, writable } from './store';
+import { localStorageStore } from './localStorageStore.js';
+import { writable, get } from './store.js';
+
 /**
  * An advanced store factory with additional features:
  *
@@ -31,7 +32,7 @@ import { get, writable } from './store';
  * <h1>{$foo} {$bar} {$baz}</h1>
  * ```
  */
-export function state(defaultValue, options) {
+function state(defaultValue, options) {
     const store = options?.key
         ? localStorageStore(options.key, defaultValue, {
             debounce: options?.debounce,
@@ -97,11 +98,11 @@ export function state(defaultValue, options) {
         },
     };
 }
-export function isState(v) {
+function isState(v) {
     // if (typeof v === 'undefined') return false
     return v.isState === true;
 }
-export function fromState(state) {
+function fromState(state) {
     return (isState(state) ? state.value : state);
 }
 // //- Test cases
@@ -123,3 +124,6 @@ export function fromState(state) {
 // 	const myObject = state<Foo>({ foo: 'bar' })
 // 	myObject.set({ foo: 'baz' })
 // }
+
+export { fromState, isState, state };
+//# sourceMappingURL=state.js.map

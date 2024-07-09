@@ -1,23 +1,15 @@
+import { __decorate, __metadata } from '../../node_modules/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.18.1_tslib@2.6.3_typescript@5.5.3/node_modules/tslib/tslib.es6.js';
+import { disableable } from '../../shared/decorators/disableable-class-decorator.js';
+import { clamp } from '../../shared/clamp.js';
+import { EventManager } from '../../shared/EventManager.js';
+import { mapRange } from '../../shared/mapRange.js';
+import { debounce } from '../../shared/debounce.js';
+import { tooltip } from '../../shared/Tooltip.js';
+import { Logger } from '../../shared/logger.js';
+import { create } from '../../shared/create.js';
+
 // Box methods adapted from irojs: https://github.com/jaames/iro.js
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { disableable } from '../../shared/decorators/disableable-class-decorator';
-import { Color } from '../../shared/color/color';
-import { EventManager } from '../../shared/EventManager';
-import { mapRange } from '../../shared/mapRange';
-import { debounce } from '../../shared/debounce';
-import { tooltip } from '../../shared/Tooltip';
-import { Logger } from '../../shared/logger';
-import { create } from '../../shared/create';
-import { clamp } from '../../shared/clamp';
-export const COLOR_PICKER_DEFAULTS = {
+const COLOR_PICKER_DEFAULTS = {
     color: '#fff',
     swatches: [],
     handleSize: 10,
@@ -314,4 +306,6 @@ ColorPicker = __decorate([
     disableable,
     __metadata("design:paramtypes", [Function, Object])
 ], ColorPicker);
-export { ColorPicker };
+
+export { COLOR_PICKER_DEFAULTS, ColorPicker };
+//# sourceMappingURL=ColorPicker.js.map

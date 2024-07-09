@@ -1,14 +1,15 @@
-import { textController } from '../controllers/text';
-import { create } from '../shared/create';
-import { Logger } from '../shared/logger';
-import { state } from '../shared/state';
-import { Input } from './Input';
-export const TEXT_INPUT_DEFAULTS = {
+import { textController } from '../controllers/text.js';
+import { create } from '../shared/create.js';
+import { Logger } from '../shared/logger.js';
+import { state } from '../shared/state.js';
+import { Input } from './Input.js';
+
+const TEXT_INPUT_DEFAULTS = {
     __type: 'TextInputOptions',
     value: 'foo',
     maxLength: 50,
 };
-export class InputText extends Input {
+class InputText extends Input {
     __type = 'InputText';
     initialValue;
     state;
@@ -81,3 +82,6 @@ export class InputText extends Input {
         super.dispose();
     }
 }
+
+export { InputText, TEXT_INPUT_DEFAULTS };
+//# sourceMappingURL=InputText.js.map

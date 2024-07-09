@@ -1,9 +1,8 @@
-export const randomCSSColor = () => CSS_COLORS[randomCSSColorName()];
-export const randomCSSColorName = () => CSS_COLOR_NAMES[Math.floor(Math.random() * CSS_COLOR_NAMES.length)];
+const randomCSSColorName = () => CSS_COLOR_NAMES[Math.floor(Math.random() * CSS_COLOR_NAMES.length)];
 /**
  * All valid CSS color names and their hex values.
  */
-export const CSS_COLORS = Object.freeze({
+const CSS_COLORS = Object.freeze({
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',
     aqua: '#00ffff',
@@ -156,4 +155,7 @@ export const CSS_COLORS = Object.freeze({
 /**
  * All valid CSS color names.
  */
-export const CSS_COLOR_NAMES = Object.keys(CSS_COLORS);
+const CSS_COLOR_NAMES = Object.keys(CSS_COLORS);
+
+export { CSS_COLORS, CSS_COLOR_NAMES, randomCSSColorName };
+//# sourceMappingURL=css-colors.js.map

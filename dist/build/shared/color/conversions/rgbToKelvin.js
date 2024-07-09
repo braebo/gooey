@@ -1,11 +1,12 @@
-import { kelvinToRgb } from './kelvinToRgb';
+import { kelvinToRgb } from './kelvinToRgb.js';
+
 const KELVIN_MIN = 2000;
 const KELVIN_MAX = 40000;
 /**
  * Convert an {@link RgbColor} object to an approximate {@link KelvinColor['kelvin'] | kelvin} temperature.
  * @param kelvin - {@link KelvinColor['kelvin'] | kelvin} temperature to convert.
  */
-export function rgbToKelvin(rgb) {
+function rgbToKelvin(rgb) {
     const { r, b } = rgb;
     const eps = 0.4;
     let minTemp = KELVIN_MIN;
@@ -23,3 +24,6 @@ export function rgbToKelvin(rgb) {
     }
     return temp;
 }
+
+export { rgbToKelvin };
+//# sourceMappingURL=rgbToKelvin.js.map

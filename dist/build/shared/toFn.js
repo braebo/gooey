@@ -1,9 +1,12 @@
 /**
  * Coerces a value to a function.
  */
-export function toFn(v) {
+function toFn(v) {
     if (typeof v === 'function') {
         return v;
     }
     return () => v;
 }
+
+export { toFn };
+//# sourceMappingURL=toFn.js.map

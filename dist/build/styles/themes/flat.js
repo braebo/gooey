@@ -1,5 +1,6 @@
-import { resolveTheme } from '../../styles/themer/resolveTheme';
-export default resolveTheme({
+import { resolveTheme } from '../themer/resolveTheme.js';
+
+var theme_flat = resolveTheme({
     title: 'flat',
     prefix: 'fracgui',
     vars: {
@@ -29,3 +30,6 @@ export default resolveTheme({
         },
     },
 });
+
+export { theme_flat as default };
+//# sourceMappingURL=flat.js.map

@@ -9,7 +9,7 @@
  * - `0` is accepted.
  * @todo More options would be nice.
  */
-export function deepMergeOpts(objects, options) {
+function deepMergeOpts(objects, options) {
     const [target, ...sources] = objects;
     const { concatArrays = true } = options ?? {};
     return sources.reduce((acc, curr) => {
@@ -51,3 +51,6 @@ export function deepMergeOpts(objects, options) {
         return acc;
     }, { ...target });
 }
+
+export { deepMergeOpts };
+//# sourceMappingURL=deepMergeOpts.js.map

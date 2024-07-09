@@ -1,11 +1,12 @@
-import { create } from '../create';
+import { create } from '../create.js';
+
 /**
  * A class decorator that creates a style element in the head of the document when the class is
  * instantiated.  The style element is created with the `style` property of the class.  The style
  * element is only created once, and subsequent instantiations of the class will not create another
  * style element.
  */
-export function styled(constructor) {
+function styled(constructor) {
     return class extends constructor {
         static initialized = false;
         static stylesheet;
@@ -28,3 +29,6 @@ export function styled(constructor) {
         }
     };
 }
+
+export { styled };
+//# sourceMappingURL=styled.js.map

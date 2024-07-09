@@ -1,4 +1,5 @@
-import { deepMergeOpts } from './deepMergeOpts';
+import { deepMergeOpts } from './deepMergeOpts.js';
+
 /**
  * - If {@link maybeT} is `undefined`, returns {@link tDefaults}.
  * - If {@link maybeT} is `true`, returns {@link tDefaults}.
@@ -8,7 +9,7 @@ import { deepMergeOpts } from './deepMergeOpts';
  * @param tDefaults The fallback options to use if {@link maybeT} is `true`.  If
  * {@link maybeT} is an object, it will be merged with these defaults.
  */
-export function resolveOpts(maybeT, tDefaults) {
+function resolveOpts(maybeT, tDefaults) {
     if (typeof maybeT === 'undefined') {
         return tDefaults;
     }
@@ -23,3 +24,6 @@ export function resolveOpts(maybeT, tDefaults) {
     }
     return maybeT;
 }
+
+export { resolveOpts };
+//# sourceMappingURL=resolveOpts.js.map

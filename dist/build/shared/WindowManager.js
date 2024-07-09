@@ -1,22 +1,20 @@
-import { Resizable, RESIZABLE_DEFAULTS } from './resizable';
-import { DRAGGABLE_DEFAULTS, Draggable } from './draggable';
-import { EventManager } from './EventManager';
-import { resolveOpts } from './resolveOpts';
-import { Logger } from './logger';
-import { nanoid } from './nanoid';
-import { state } from './state';
-// import { isObject } from './is'
-function isObject(thing) {
-    return typeof thing === 'object' && thing !== null;
-}
-export const WINDOWMANGER_STORAGE_DEFAULTS = {
+import { Resizable, RESIZABLE_DEFAULTS } from './resizable.js';
+import { Draggable, DRAGGABLE_DEFAULTS } from './draggable.js';
+import { EventManager } from './EventManager.js';
+import { resolveOpts } from './resolveOpts.js';
+import { Logger } from './logger.js';
+import { nanoid } from './nanoid.js';
+import { isObject } from './is.js';
+import { state } from './state.js';
+
+const WINDOWMANGER_STORAGE_DEFAULTS = {
     __type: 'WindowManagerStorageOptions',
     key: 'window-manager',
     size: true,
     position: true,
     debounce: 50,
 };
-export const WINDOWMANAGER_DEFAULTS = {
+const WINDOWMANAGER_DEFAULTS = {
     __type: 'WindowManagerOptions',
     resizable: RESIZABLE_DEFAULTS,
     draggable: DRAGGABLE_DEFAULTS,
@@ -33,7 +31,7 @@ export const WINDOWMANAGER_DEFAULTS = {
  * z-index values are managed to ensure the most recently selected element is on top.
  * @todo Add examples
  */
-export class WindowManager {
+class WindowManager {
     /**
      * A map of all windows managed by the instance.  The key is the window's id specified in the
      * options for each window.
@@ -176,7 +174,7 @@ export class WindowManager {
 /**
  * A single window in a window manager.
  */
-export class WindowInstance {
+class WindowInstance {
     manager;
     node;
     draggableInstance;
@@ -247,3 +245,6 @@ export class WindowInstance {
         this.draggableInstance?.dispose();
     }
 }
+
+export { WINDOWMANAGER_DEFAULTS, WINDOWMANGER_STORAGE_DEFAULTS, WindowInstance, WindowManager };
+//# sourceMappingURL=WindowManager.js.map

@@ -13,9 +13,6 @@ function subscribe_to_store(store, run, invalidate) {
     if (store == null) {
         // @ts-expect-error
         run(undefined);
-        // @ts-expect-error
-        if (invalidate)
-            invalidate(undefined);
         return noop;
     }
     // Svelte store takes a private second argument
@@ -27,22 +24,12 @@ function subscribe_to_store(store, run, invalidate) {
 }
 const subscriber_queue = [];
 /**
- * Creates a `Readable` store that allows reading by subscription.
- *
- * https://svelte.dev/docs/svelte-store#readable
- */
-export function readable(value, start) {
-    return {
-        subscribe: writable(value, start).subscribe,
-    };
-}
-/**
  * Create a `Writable` store that allows both updating and reading by subscription.
  *
  * https://svelte.dev/docs/svelte-store#writable
  * @param value - initial value
  */
-export function writable(value, start = noop) {
+function writable(value, start = noop) {
     let stop = null;
     const subscribers = new Set();
     function set(new_value) {
@@ -93,8 +80,11 @@ export function writable(value, start = noop) {
  * @param {Readable<T>} store
  * @returns {T}
  */
-export function get(store) {
+function get(store) {
     let value;
     subscribe_to_store(store, _ => (value = _))();
     return value;
 }
+
+export { get, writable };
+//# sourceMappingURL=store.js.map

@@ -1,4 +1,5 @@
-import { entries } from './object';
+import { entries } from './object.js';
+
 /**
  * Converts a {@link ThemeVars} object into a flat object of CSS variables.
  * @example
@@ -8,7 +9,7 @@ import { entries } from './object';
  * destructureVars(vars) // { '--root-header_width': '1rem' }
  * ```
  */
-export function destructureVars(vars, _prefix) {
+function destructureVars(vars, _prefix) {
     const flatVars = {};
     function destructure(o, prefix = '') {
         for (const [k, v] of entries(o)) {
@@ -23,52 +24,6 @@ export function destructureVars(vars, _prefix) {
     destructure(vars);
     return flatVars;
 }
-/**
- * Converts a flat object/map/entries of CSS variables into a {@link ThemeVars} object.
- *
- * @example
- * ```ts
- * // This array of entries:
- * restructure([[ '--root-folder_max-height', '1rem' ]])
- * // is structured into:
- * { root: { folder: { 'max-height': '1rem' } }
- * ```
- */
-export function restructureVars(entries) {
-    if (entries instanceof Map) {
-        return unroll(entries.entries());
-    }
-    else if (Array.isArray(entries)) {
-        return unroll(entries);
-    }
-    else {
-        return unroll(Object.entries(entries));
-    }
-}
-function unroll(entries) {
-    const structuredVars = {};
-    for (const [key, value] of entries) {
-        const parts = key.split(/[_-]/);
-        let current = structuredVars;
-        for (let i = 0; i < parts.length - 1; i++) {
-            current[parts[i]] ||= {};
-            current = current[parts[i]];
-        }
-        current[parts[parts.length - 1]] = value;
-    }
-    return structuredVars;
-}
-/**
- * Regex to extract the inner variable name from a CSS variable.
- * @example
- * | `rgba(var(--my-color), 0.5)`.match(CSS_VAR_INNER)[0]
- * > '--my-color'
- */
-export const CSS_VAR_INNER = /\bvar\((--[a-zA-Z0-9_-]+)\)/g;
-/**
- * Regex to match a CSS variable.
- * @example
- * | `rgba(var(--my-color), 0.5)`.match(CSS_VAR)[0]
- * > 'var(--my-color)'
- */
-export const CSS_VAR_OUTER = /(?:var\()(!?[a-z-]+)/g;
+
+export { destructureVars };
+//# sourceMappingURL=css-custom-properties.js.map

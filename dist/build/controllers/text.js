@@ -1,5 +1,6 @@
-import { create } from '../shared/create';
-export const textController = (input, _opts, parent) => {
+import { create } from '../shared/create.js';
+
+const textController = (input, _opts, parent) => {
     const controller = create('input', {
         type: 'textarea',
         classes: ['fracgui-controller', 'fracgui-controller-text'],
@@ -11,3 +12,6 @@ export const textController = (input, _opts, parent) => {
     });
     return controller;
 };
+
+export { textController };
+//# sourceMappingURL=text.js.map

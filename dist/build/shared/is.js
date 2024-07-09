@@ -1,18 +1,15 @@
-export function isTouchEvent(e) {
-    return e.type.startsWith('touch');
-}
-export function isMouseEvent(e) {
-    return e.type.startsWith('mouse');
-}
-export function isDefined(value) {
+function isDefined(value) {
     return value !== undefined;
 }
-export function isString(value) {
+function isString(value) {
     return typeof value === 'string';
 }
-export function isHTMLElement(value) {
+function isHTMLElement(value) {
     return value instanceof HTMLElement;
 }
-export function isObject(value) {
+function isObject(value) {
     return !!value && typeof value === 'object';
 }
+
+export { isDefined, isHTMLElement, isObject, isString };
+//# sourceMappingURL=is.js.map
