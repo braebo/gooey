@@ -1,15 +1,12 @@
+import { sveltePreprocess } from 'svelte-preprocess'
 import mdsvexConfig from './mdsvex.config.js'
 import adapter from '@sveltejs/adapter-auto'
-import preprocess from 'svelte-preprocess'
 import { mdsvex } from 'mdsvex'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	extensions: ['.svelte', ...mdsvexConfig.extensions],
-	preprocess: [
-		preprocess(),
-		mdsvex(mdsvexConfig)
-	],
+	preprocess: [sveltePreprocess(), mdsvex(mdsvexConfig)],
 	kit: { adapter: adapter() },
 	vitePlugin: {
 		inspector: {
@@ -18,6 +15,10 @@ const config = {
 			showToggleButton: 'active',
 			holdMode: true
 		}
+	},
+	onwarn: (warning, handler) => {
+		if (warning.code === 'element_invalid_self_closing_tag') return
+		handler(warning)
 	}
 }
 

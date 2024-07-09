@@ -13,8 +13,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "vite build",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --compiler-warnings 'element_invalid_self_closing_tag:ignore'",
+		"check:watch": "svelte-kit sync && svelte-check --watch --tsconfig ./tsconfig.json --compiler-warnings 'element_invalid_self_closing_tag:ignore'",
 		"dev": "vite dev",
 		"extras": "pnpm i -D type-fest froebel nanostores rxjs",
 		"format": "prettier --write --plugin-search-dir=. .",
@@ -35,6 +35,7 @@
 		"autoprefixer": "10.4.19",
 		"cookie": "^0.6.0",
 		"cssnano": "7.0.2",
+		"esm-env": "^1.0.0",
 		"fractils": "3.1.3",
 		"gooey": "link:..",
 		"greset": "2.0.0",
