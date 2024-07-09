@@ -2,7 +2,7 @@ import { resolveTheme } from '../themer/resolveTheme.js';
 
 var theme_flat = resolveTheme({
     title: 'flat',
-    prefix: 'fracgui',
+    prefix: 'gooey',
     vars: {
         color: {
             base: {
@@ -25,7 +25,7 @@ var theme_flat = resolveTheme({
         },
         core: {
             dark: {
-                'input-number-range_outline': `1px solid color-mix(in sRGB, var(--fracgui-bg-c) 33%, transparent)`,
+                'input-number-range_outline': `1px solid color-mix(in sRGB, var(--gooey-bg-c) 33%, transparent)`,
             },
         },
     },

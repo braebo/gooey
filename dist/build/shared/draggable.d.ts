@@ -12,7 +12,7 @@ export interface VirtualRect {
 }
 export type DraggablePlacementOptions = PlacementOptions & {
     /**
-     * The position to place the gui.
+     * The position to place the gooey.
      */
     position: Placement | {
         x: number;

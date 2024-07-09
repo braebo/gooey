@@ -6,13 +6,13 @@ test('InputSelect', () => {
 
 // import { describe, expect, it, beforeEach, test } from 'vitest'
 // import { isState, state } from '../shared/state'
-// import { Gui } from '../Gui'
+// import { Gooey } from '../Gooey'
 
 // // cases to test:
 // // for both bound and unbound, test:
 // // Raw Value | State<Raw Value> | LabeledOption<Raw Value> | State<LabeledOption<Raw Value>>
 
-// const gui = new Gui()
+// const gooey = new Gooey()
 
 // const RAW_VALUE = 1
 // const RAW_OPTIONS = [RAW_VALUE, 2]
@@ -99,13 +99,13 @@ test('InputSelect', () => {
 // 		if ('error' in def) {
 // 			it('should throw an error', () => {
 // 				expect(() => {
-// 					gui.addSelect({ value, options })
+// 					gooey.addSelect({ value, options })
 // 				}).toThrow()
 // 			})
 // 			return
 // 		}
 
-// 		const select = gui.addSelect({ value, options })
+// 		const select = gooey.addSelect({ value, options })
 
 // 		const v = isState(value) ? value.value : value
 
@@ -147,7 +147,7 @@ test('InputSelect', () => {
 // 			},
 // 		}
 
-// 		const select = gui.addSelect({
+// 		const select = gooey.addSelect({
 // 			options: ['baz', 'qux'],
 // 			binding: {
 // 				target: params.foo,
@@ -167,7 +167,7 @@ test('InputSelect', () => {
 // 			},
 // 		}
 
-// 		const select = gui.addSelect({
+// 		const select = gooey.addSelect({
 // 			options: [
 // 				{ label: 'baz', value: 1 },
 // 				{ label: 'qux', value: 2 },

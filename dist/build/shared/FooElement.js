@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { styled } from '../../decorators/styled';
 let TerminalSvg = class TerminalSvg {
-    class = 'fracgui-terminal-icon';
+    class = 'gooey-terminal-icon';
     tagname = 'div';
     onclick = (e) => {
         e.stopPropagation();
@@ -21,7 +21,7 @@ let TerminalSvg = class TerminalSvg {
         super(opts);
     }
     static style = /*css*/ `
-        .fracgui-terminal-icon {
+        .gooey-terminal-icon {
             position: absolute;
             right: -1.5rem;
             top: 0;
@@ -32,21 +32,21 @@ let TerminalSvg = class TerminalSvg {
             opacity: 0;
         }
 
-        .fracgui-terminal-icon:hover {
+        .gooey-terminal-icon:hover {
             opacity: 1;
         }
 
-        .fracgui-terminal-icon svg {
+        .gooey-terminal-icon svg {
             width: 100%;
             height: 100%;
         }
 
-        .fracgui-terminal-icon svg .icon {
-            stroke: var(--fracgui-fg-c);
+        .gooey-terminal-icon svg .icon {
+            stroke: var(--gooey-fg-c);
         }
 
-        .fracgui-terminal-icon svg .icon:hover {
-            stroke: var(--fracgui-theme-a);
+        .gooey-terminal-icon svg .icon:hover {
+            stroke: var(--gooey-theme-a);
         }
     `;
 };

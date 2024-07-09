@@ -25,7 +25,7 @@ export class InputTextArea extends Input {
         this.initialValue = this.resolveInitialValue(opts);
         this.state = this.resolveState(opts);
         const container = create('div', {
-            classes: ['fracgui-input-textarea-container'],
+            classes: ['gooey-input-textarea-container'],
             parent: this.elements.content,
         });
         this.elements.controllers = {

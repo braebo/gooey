@@ -1,12 +1,12 @@
 import type { DestructuredVars, ThemeVars } from '../shared/css-custom-properties'
-import type { ExtendedVars } from '../styles/themer/types'
+import type { ExtendedVars } from './themer/types'
 
 import { destructureVars } from '../shared/css-custom-properties'
 import defaultTheme from './themes/default'
 
-export type GuiCoreVars = DestructuredVars<typeof GUI_VARS_STRUCTURED, typeof VAR_PREFIX>
+export type GooeyCoreVars = DestructuredVars<typeof GUI_VARS_STRUCTURED, typeof VAR_PREFIX>
 
-export const VAR_PREFIX = 'fracgui' as const
+export const VAR_PREFIX = 'gooey' as const
 
 const GUI_VARS_UTILITY = {
 	base: {

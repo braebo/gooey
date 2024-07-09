@@ -2,7 +2,7 @@ import { resolveTheme } from '../themer/resolveTheme.js';
 
 var theme_default = resolveTheme({
     title: 'default',
-    prefix: 'fracgui',
+    prefix: 'gooey',
     vars: {
         color: {
             base: {
@@ -25,8 +25,8 @@ var theme_default = resolveTheme({
         },
         core: {
             light: {
-                // 'controller-dim_background': 'rgba(var(--fracgui-bg-a-rgb), 0.75)',
-                'controller-dim_background': 'color-mix(in sRGB, var(--fracgui-bg-a) 75%, transparent)',
+                // 'controller-dim_background': 'rgba(var(--gooey-bg-a-rgb), 0.75)',
+                'controller-dim_background': 'color-mix(in sRGB, var(--gooey-bg-a) 75%, transparent)',
             },
         },
     },

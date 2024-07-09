@@ -64,13 +64,13 @@ export class ColorComponents {
 		const parent = opts.container ?? input.elements.controllers.container
 
 		const componentsContainer = create('div', {
-			classes: ['fracgui-input-color-components-container'],
+			classes: ['gooey-input-color-components-container'],
 			parent: parent,
 		})
 		this.element = componentsContainer
 
 		const selectContainer = create('div', {
-			classes: ['fracgui-input-color-components-select-container'],
+			classes: ['gooey-input-color-components-select-container'],
 			parent: componentsContainer,
 		})
 
@@ -86,7 +86,7 @@ export class ColorComponents {
 		})
 
 		const numbersContainer = create('div', {
-			classes: ['fracgui-input-color-components-numbers-container'],
+			classes: ['gooey-input-color-components-numbers-container'],
 			parent: componentsContainer,
 		})
 
@@ -117,9 +117,9 @@ export class ColorComponents {
 
 		const text = create('input', {
 			classes: [
-				'fracgui-controller',
-				'fracgui-controller-text',
-				'fracgui-input-color-components-text',
+				'gooey-controller',
+				'gooey-controller-text',
+				'gooey-input-color-components-text',
 			],
 			parent: componentsContainer,
 		})

@@ -1,7 +1,7 @@
 import type { Waves } from './Waves'
 
 import { WAVE_PRESETS } from '../beats/BinauralBeats'
-import { Gui } from 'gooey'
+import { Gooey } from 'gooey'
 
 const dims = {
 	mx: 10,
@@ -10,7 +10,7 @@ const dims = {
 	h: 250
 }
 
-export class WavesGui extends Gui {
+export class WavesGooey extends Gooey {
 	constructor(
 		public waves: Waves,
 		public kind: keyof typeof WAVE_PRESETS
@@ -37,7 +37,7 @@ export class WavesGui extends Gui {
 		super({
 			title: kind,
 			closed: false,
-			_windowManager: waves.beats.gui!.windowManager,
+			_windowManager: waves.beats.gooey!.windowManager,
 			position: positions[kind],
 			storage: false
 		})
@@ -82,7 +82,7 @@ export class WavesGui extends Gui {
 		const folderL = this.addFolder('Left')
 
 		// todo - handle state so we can do:
-		// gui.add({
+		// gooey.add({
 		// 	title: 'Right Frequency',
 		// 	value: params.freqL,
 		// })

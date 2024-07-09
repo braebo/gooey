@@ -1,4 +1,4 @@
-import type { Gui, GuiPreset } from './Gui';
+import type { Gooey, GooeyPreset } from './Gooey';
 import type { State } from './shared/state';
 import type { Folder } from './Folder';
 export interface PresetManagerOptions {
@@ -8,12 +8,12 @@ export interface PresetManagerOptions {
      * Optionsal existing presets.
      * @default []
      */
-    presets?: GuiPreset[];
+    presets?: GooeyPreset[];
     /**
      * The default preset to use.
      * @default undefined
      */
-    defaultPreset?: GuiPreset;
+    defaultPreset?: GooeyPreset;
     /**
      * The key to use for storage.  If not provided, storage is disabled.
      * @default undefined
@@ -22,13 +22,13 @@ export interface PresetManagerOptions {
     autoInit?: boolean;
 }
 export declare class PresetManager {
-    gui: Gui;
+    gooey: Gooey;
     parentFolder: Folder;
     readonly __type: string;
     readonly __version: string;
-    defaultPreset: GuiPreset;
-    activePreset: State<GuiPreset>;
-    presets: State<GuiPreset[]>;
+    defaultPreset: GooeyPreset;
+    activePreset: State<GooeyPreset>;
+    presets: State<GooeyPreset[]>;
     folder: Folder;
     private _defaultPresetId;
     private _defaultPresetTitle;
@@ -38,18 +38,18 @@ export declare class PresetManager {
     private _renamePresetButton;
     private _initialized;
     private _log;
-    constructor(gui: Gui, parentFolder: Folder, options: PresetManagerOptions);
+    constructor(gooey: Gooey, parentFolder: Folder, options: PresetManagerOptions);
     opts: PresetManagerOptions;
     get defaultPresetIsActive(): boolean;
     init(): Promise<this | undefined>;
     /**
      * Set the active preset.
      */
-    set(value: GuiPreset): void;
+    set(value: GooeyPreset): void;
     private _renamePreset;
     private _resolveUnusedTitle;
     private _resolveDefaultPreset;
-    addGui(parentFolder: Folder, defaultPreset?: GuiPreset): Promise<Folder>;
+    addGooey(parentFolder: Folder, defaultPreset?: GooeyPreset): Promise<Folder>;
     /**
      * Updates a preset if it exists, adds it as a new preset if not, or creates a new one from the
      * current state and adds it if none is provided.
@@ -58,11 +58,11 @@ export declare class PresetManager {
     /**
      * The preset to update or add.  If not provided, a new preset is created from the current state.
      */
-    preset?: GuiPreset): void;
+    preset?: GooeyPreset): void;
     /**
      * Delete a preset.
      */
-    delete(preset: GuiPreset | GuiPreset['id']): void;
+    delete(preset: GooeyPreset | GooeyPreset['id']): void;
     private _isInitialized;
     private _toggleRename;
     /**

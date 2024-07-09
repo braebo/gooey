@@ -34,7 +34,7 @@ class InputText extends Input {
             this.state = state(opts.value);
         }
         const container = create('div', {
-            classes: ['fracgui-input-text-container'],
+            classes: ['gooey-input-text-container'],
             parent: this.elements.content,
         });
         this.elements.controllers = {

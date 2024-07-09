@@ -81,12 +81,12 @@ let Select = class Select {
         this._selected = this._currentSelection = this.initialValue = this._opts.selected;
         this.options = this.initialOptions = this._opts.options;
         const container = create('div', {
-            classes: ['fracgui-controller-select-container'],
+            classes: ['gooey-controller-select-container'],
             parent: options.container,
         });
         this.element = container;
         const selected = create('div', {
-            classes: ['fracgui-controller-select-selected'],
+            classes: ['gooey-controller-select-selected'],
             parent: container,
             textContent: String(this.getLabel(this.selected)),
         });
@@ -96,7 +96,7 @@ let Select = class Select {
             }
             this.toggle();
         });
-        const dropdown = create('div', { classes: ['fracgui-controller-select-dropdown'] });
+        const dropdown = create('div', { classes: ['gooey-controller-select-dropdown'] });
         this.elements = {
             container,
             selected,
@@ -142,7 +142,7 @@ let Select = class Select {
     add(option) {
         const opt = toLabeledOption(option);
         const el = create('div', {
-            classes: ['fracgui-controller-select-option'],
+            classes: ['gooey-controller-select-option'],
             parent: this.elements.dropdown,
             innerText: opt.label,
         });
@@ -277,7 +277,7 @@ let Select = class Select {
      */
     open = () => {
         this.expanded = true;
-        this._opts.input.folder.gui.wrapper.appendChild(this.elements.dropdown);
+        this._opts.input.folder.gooey.wrapper.appendChild(this.elements.dropdown);
         this.elements.dropdown.classList.add('expanded');
         this.elements.selected.classList.add('active');
         this.updatePosition();
@@ -314,10 +314,10 @@ let Select = class Select {
         this.elements.dropdown.style.setProperty('width', 'unset');
         this.elements.dropdown.style.setProperty('top', 'unset');
         const { dropdown, selected } = this.elements;
-        const guiScrollTop = this._opts.input.folder.root.elements.content.scrollTop;
+        const gooeyScrollTop = this._opts.input.folder.root.elements.content.scrollTop;
         const { top, left } = selected.getBoundingClientRect();
         this.elements.dropdown.style.setProperty('width', `${Math.max(selected.offsetWidth, dropdown.offsetWidth)}px`);
-        this.elements.dropdown.style.setProperty('top', `${top + selected.offsetHeight - guiScrollTop}px`);
+        this.elements.dropdown.style.setProperty('top', `${top + selected.offsetHeight - gooeyScrollTop}px`);
         this.elements.dropdown.style.setProperty('left', `${left + selected.offsetWidth / 2 - dropdown.offsetWidth / 2}px`);
     };
     /**

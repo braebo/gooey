@@ -5,7 +5,7 @@ import { create } from '../shared/create'
 export const textController: ControllerFactory<HTMLInputElement> = (input, _opts, parent) => {
 	const controller = create('input', {
 		type: 'textarea',
-		classes: ['fracgui-controller', 'fracgui-controller-text'],
+		classes: ['gooey-controller', 'gooey-controller-text'],
 		value: input.state.value,
 		parent,
 		attributes: {

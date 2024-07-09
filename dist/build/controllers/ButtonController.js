@@ -36,7 +36,7 @@ class ButtonController {
             ? opts.element
             : create('button', {
                 id: opts.id ?? nanoid(8),
-                classes: ['fracgui-controller', 'fracgui-controller-button'],
+                classes: ['gooey-controller', 'gooey-controller-button'],
                 parent: opts.parent,
             });
         this.text = opts.text;

@@ -10,7 +10,7 @@ import { InputNumber, type NumberInputOptions } from './inputs/InputNumber';
 import { InputColor, type ColorInputOptions } from './inputs/InputColor';
 import { InputText, type TextInputOptions } from './inputs/InputText';
 import { EventManager } from './shared/EventManager';
-import { Gui } from './Gui';
+import { Gooey } from './Gooey';
 export type BindingFactory<TTarget extends Record<string, any>, TOptions extends InputOptions, TInput extends ValidInput, TTargetKey extends keyof TTarget> = (target: TTarget, key: TTargetKey, options: Partial<TOptions>) => TInput;
 export type InferOptions<T> = T extends number ? NumberInputOptions : T extends boolean ? SwitchInputOptions : T extends Array<infer T> ? SelectInputOptions<T> : T extends Option<infer T> ? SelectInputOptions<T> : T extends ColorFormat ? ColorInputOptions : T extends string ? TextInputOptions : InputOptions;
 export type InferInput<T> = T extends number ? InputNumber : T extends boolean ? InputSwitch : T extends Array<infer T> ? InputSelect<T> : T extends Option<infer T> ? InputSelect<T> : T extends ColorFormat ? InputColor : T extends string ? InputText : ValidInput;
@@ -58,7 +58,7 @@ export interface FolderOptions {
     controls?: Map<string, ValidInput>;
     /**
      * Whether this Folder should be saved as a {@link FolderPreset} when saving the
-     * {@link GuiPreset} for the {@link Gui} this Folder belongs to.  If `false`, this Input will
+     * {@link GooeyPreset} for the {@link Gooey} this Folder belongs to.  If `false`, this Input will
      * be skipped.
      * @defaultValue `true`
      */
@@ -82,11 +82,11 @@ export interface InternalFolderOptions {
     /**
      * The GUI instance this folder belongs to.
      */
-    gui?: Gui;
+    gooey?: Gooey;
     /**
      * Whether this folder is the root folder.  Always true when
      * creating a `new Folder()`. Always false inside of the
-     * `gui.addFolder` and `folder.addFolder` methods.
+     * `gooey.addFolder` and `folder.addFolder` methods.
      * Be wary of infinite loops when setting manually.
      * @defaultValue `true`
      * @internal
@@ -151,12 +151,12 @@ export interface FolderEvents {
 /**
  * Folder is a container for organizing and grouping {@link Input|Inputs} and child Folders.
  *
- * This class should not be instantiated directly.  Instead, use the {@link Gui.addFolder} method.
+ * This class should not be instantiated directly.  Instead, use the {@link Gooey.addFolder} method.
  *
  * @example
  * ```typescript
- * const gui = new Gui()
- * const folder = gui.addFolder({ title: 'My Folder' })
+ * const gooey = new Gooey()
+ * const folder = gooey.addFolder({ title: 'My Folder' })
  * folder.addNumber({ title: 'foo', value: 5 })
  * ```
  */
@@ -165,7 +165,7 @@ export declare class Folder {
     __type: "Folder";
     isRoot: boolean;
     id: string;
-    gui?: Gui;
+    gooey?: Gooey;
     /**
      * A preset namespace to use for saving/loading.  By default, the {@link title|`title`}
      * is used, in combiniation with the parent folder's title (and so on up the hierarchy).
@@ -178,7 +178,7 @@ export declare class Folder {
     presetId: string;
     /**
      * Whether this Folder should be saved as a {@link FolderPreset} when saving the
-     * {@link GuiPreset} for the {@link Gui} this Folder belongs to.  If `false`, this Input will
+     * {@link GooeyPreset} for the {@link Gooey} this Folder belongs to.  If `false`, this Input will
      * be skipped.
      * @defaultValue `true`
      */
@@ -300,9 +300,9 @@ export declare class Folder {
      * of the value at the {@link target} object's {@link key}.
      * @example
      * ```ts
-     * const gui = new Gui()
+     * const gooey = new Gooey()
      * const params = { foo: 5, bar: 'baz' }
-     * const folder = gui.addFolder('params')
+     * const folder = gooey.addFolder('params')
      *
      * const numberInput = folder.bind(params, 'foo', { min: 0, max: 10, step: 1 })
      * //    ^? `InputNumber`

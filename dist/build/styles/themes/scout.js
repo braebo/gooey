@@ -2,7 +2,7 @@ import { resolveTheme } from '../themer/resolveTheme.js';
 
 var theme_scout = resolveTheme({
     title: 'scout',
-    prefix: 'fracgui',
+    prefix: 'gooey',
     vars: {
         color: {
             base: {
@@ -30,8 +30,8 @@ var theme_scout = resolveTheme({
         },
         core: {
             dark: {
-                // 'input-container_background': 'color-mix(in sRGB, var(--fracgui-bg-a) 50%, transparent)',
-                'folder-header_background': 'color-mix(in sRGB, var(--fracgui-bg-a) 100%, transparent)',
+                // 'input-container_background': 'color-mix(in sRGB, var(--gooey-bg-a) 50%, transparent)',
+                'folder-header_background': 'color-mix(in sRGB, var(--gooey-bg-a) 100%, transparent)',
             },
             light: {
                 'controller-dim_background': '#96a09c',

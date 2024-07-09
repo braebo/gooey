@@ -4,9 +4,9 @@ import { create } from '../shared/create'
 
 @styled
 export class RenameSVG {
-	class = 'fracgui-icon-rename'
+	class = 'gooey-icon-rename'
 	element: HTMLElement & { tooltip: Tooltip }
-	classes = [this.class, 'fracgui-icon']
+	classes = [this.class, 'gooey-icon']
 
 	constructor() {
 		this.element = create('div', {
@@ -23,14 +23,14 @@ export class RenameSVG {
 	}
 
 	static style = /*css*/ `
-        .fracgui-icon-rename {
+        .gooey-icon-rename {
             width: 1.5rem;
             height: 1.5rem;
 
             margin-right: 0.5rem;
             padding: 0.125rem;
 
-            color: var(--fracgui-controller-dim_color);
+            color: var(--gooey-controller-dim_color);
             opacity: 0.5;
 
             transition: opacity 0.15s;
@@ -41,22 +41,22 @@ export class RenameSVG {
             pointer-events: all;
         }
 
-        .fracgui-icon-rename:hover {
+        .gooey-icon-rename:hover {
             opacity: 1;
         }
 
-        .fracgui-icon-rename svg {
+        .gooey-icon-rename svg {
             width: 100%;
             height: 100%;
 
             pointer-events: none;
         }
 
-        .fracgui-icon-rename path {
-            color: var(--fracgui-controller-dim_color);
-            /* stroke: var(--fracgui-controller-dim_color); */
+        .gooey-icon-rename path {
+            color: var(--gooey-controller-dim_color);
+            /* stroke: var(--gooey-controller-dim_color); */
         }
-        .fracgui-icon-rename .cursor {
+        .gooey-icon-rename .cursor {
             transform: translate(2px, 0) scale(1, 0.9);
 
             transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -64,12 +64,12 @@ export class RenameSVG {
             transition-property: opacity, transform;
             transform-origin: center;
         }
-        .fracgui-icon-rename:hover .cursor, .fracgui-icon-rename.active .cursor {
+        .gooey-icon-rename:hover .cursor, .gooey-icon-rename.active .cursor {
             transform: translate(0, 0);
             transform: translate(0, 0) scale(1, 0.9);
         }
-        .fracgui-icon-rename.active .cursor {
-            color: var(--fracgui-theme-a);
+        .gooey-icon-rename.active .cursor {
+            color: var(--gooey-theme-a);
             animation: blink 1.5s infinite;
             animation-delay: 0.5s;
         }
@@ -83,8 +83,8 @@ export class RenameSVG {
             }
         }
 
-        .fracgui-icon-rename .box {
-            color: var(--fracgui-folder-dim_color);
+        .gooey-icon-rename .box {
+            color: var(--gooey-folder-dim_color);
 
             opacity: 0;
             transform: scale(0);
@@ -93,16 +93,16 @@ export class RenameSVG {
             transition-property: opacity, transform;
             transform-origin: center;
         }
-        .fracgui-icon-rename:hover .box, .fracgui-icon-rename.active .box {
+        .gooey-icon-rename:hover .box, .gooey-icon-rename.active .box {
             opacity: 0.25;
             transform: scale(1.1);
-            color: var(--fracgui-controller_color);
+            color: var(--gooey-controller_color);
         }
-        .fracgui-icon-rename:hover .box {
+        .gooey-icon-rename:hover .box {
             transform: scale(1);
         }
         
-        .fracgui-icon-rename.disabled {
+        .gooey-icon-rename.disabled {
             opacity: 0;
             pointer-events: none;
             cursor: default;

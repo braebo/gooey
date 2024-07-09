@@ -2,7 +2,7 @@ import { __decorate, __metadata } from './external/.pnpm/@rollup_plugin-typescri
 import theme_default from './styles/themes/default.js';
 import theme_scout from './styles/themes/scout.js';
 import theme_flat from './styles/themes/flat.js';
-import style from './styles/gui.scss.js';
+import style from './styles/gooey.scss.js';
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager.js';
 import { deepMergeOpts } from './shared/deepMergeOpts.js';
 import { styled } from './shared/decorators/styled.js';
@@ -10,7 +10,7 @@ import { resolveOpts } from './shared/resolveOpts.js';
 import { PresetManager } from './PresetManager.js';
 import { Themer } from './styles/themer/Themer.js';
 import settingsIcon from './svg/settings-icon.js';
-import { GUI_VARS } from './styles/GUI_VARS.js';
+import { GUI_VARS } from './styles/GOOEY_VARS.js';
 import { UndoManager } from './UndoManager.js';
 import { select } from './shared/select.js';
 import { nanoid } from './shared/nanoid.js';
@@ -21,12 +21,12 @@ import { place } from './shared/place.js';
 import { Folder } from './Folder.js';
 import { o } from './shared/l.js';
 
-var Gui_1;
+var Gooey_1;
 //⌟
 //· Constants ····················································································¬
 const GUI_STORAGE_DEFAULTS = {
-    __type: 'GuiStorageOptions',
-    key: 'fracgui',
+    __type: 'GooeyStorageOptions',
+    key: 'gooey',
     closed: true,
     theme: true,
     presets: true,
@@ -48,16 +48,16 @@ const GUI_WINDOWMANAGER_DEFAULTS = {
     draggable: {
         bounds: undefined,
         classes: {
-            default: 'fracgui-draggable',
-            dragging: 'fracgui-dragging',
-            cancel: 'fracgui-cancel',
-            dragged: 'fracgui-dragged',
+            default: 'gooey-draggable',
+            dragging: 'gooey-dragging',
+            cancel: 'gooey-cancel',
+            dragged: 'gooey-dragged',
         },
     },
 };
 const GUI_DEFAULTS = {
-    __type: 'GuiOptions',
-    title: 'gui',
+    __type: 'GooeyOptions',
+    title: 'gooey',
     storage: false,
     closed: false,
     position: 'top-right',
@@ -72,26 +72,26 @@ const GUI_DEFAULTS = {
 };
 //⌟
 /**
- * The root Gui instance.  This is the entry point for creating
- * a gui.  You can create multiple root guis, but each gui
+ * The root Gooey instance.  This is the entry point for creating
+ * a gooey.  You can create multiple root gooeys, but each gooey
  * can only have one root.
  */
-let Gui = class Gui {
-    static { Gui_1 = this; }
-    __type = 'Gui';
+let Gooey = class Gooey {
+    static { Gooey_1 = this; }
+    __type = 'Gooey';
     id = nanoid();
     folder;
     static style = style;
     /**
-     * The initial options passed to the gui.
+     * The initial options passed to the gooey.
      */
     opts;
     /**
-     * Whether the gui root folder is currently collapsed.
+     * Whether the gooey root folder is currently collapsed.
      */
     closed;
     /**
-     * The {@link PresetManager} instance for the gui.
+     * The {@link PresetManager} instance for the gooey.
      */
     presetManager;
     /**
@@ -101,9 +101,9 @@ let Gui = class Gui {
     wrapper;
     container;
     settingsFolder;
-    static settingsFolderTitle = 'fracgui-settings-folder';
+    static settingsFolderTitle = 'gooey-settings-folder';
     /**
-     * The {@link UndoManager} instance for the gui, handling undo/redo functionality.
+     * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
      * @internal
      */
     _undoManager = new UndoManager();
@@ -111,14 +111,14 @@ let Gui = class Gui {
     // themeEditor?: ThemeEditor
     windowManager;
     /**
-     * `false` if this {@link Gui}'s {@link WindowManager} belongs to an existing, external
-     * instance _(i.e. a separate {@link Gui} instance or custom {@link WindowManager})_.  The
-     * {@link WindowManager} will be disposed when this {@link Gui} is disposed.
+     * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
+     * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
+     * {@link WindowManager} will be disposed when this {@link Gooey} is disposed.
      * @internal
      */
     _isWindowManagerOwner = false;
     /**
-     * The time of the gui's creation.
+     * The time of the gooey's creation.
      * @internal
      */
     _birthday = Date.now();
@@ -139,7 +139,7 @@ let Gui = class Gui {
         return this.folder.addFolder(title, {
             ...options,
             // @ts-expect-error @internal
-            gui: this,
+            gooey: this,
         });
     }
     add;
@@ -178,7 +178,7 @@ let Gui = class Gui {
             reposition = true;
         }
         this.opts = opts;
-        this._log = new Logger(`Gui ${this.opts.title}`, { fg: 'palevioletred' });
+        this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' });
         this._log.fn('constructor').info({ options, opts });
         if (this.opts.loadDefaultFont !== false) {
             const ff = new FontFace('fredoka', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2')})`, {
@@ -195,7 +195,7 @@ let Gui = class Gui {
         }
         this.container = select(this.opts.container)[0];
         this.wrapper = create('div', {
-            classes: ['fracgui-wrapper'],
+            classes: ['gooey-wrapper'],
             style: {
                 display: 'contents',
             },
@@ -206,7 +206,7 @@ let Gui = class Gui {
             __type: 'FolderOptions',
             container: this.wrapper,
             // @ts-expect-error @internal
-            gui: this,
+            gooey: this,
         });
         // Not stoked about this.
         this.on = this.folder.on.bind(this.folder);
@@ -245,12 +245,12 @@ let Gui = class Gui {
             key: this.opts.storage ? `${this.opts.storage.key}::closed` : undefined,
         });
         this.folder.elements.toolbar.settingsButton = this._createSettingsButton(this.folder.elements.toolbar.container);
-        this.settingsFolder = this.addFolder(Gui_1.settingsFolderTitle, {
+        this.settingsFolder = this.addFolder(Gooey_1.settingsFolderTitle, {
             closed: false,
             // @ts-expect-error @internal
             _headerless: true,
         });
-        this.settingsFolder.element.classList.add('fracgui-folder-alt');
+        this.settingsFolder.element.classList.add('gooey-folder-alt');
         this.themer = this.opts._themer ?? this._createThemer(this.settingsFolder);
         this.theme = this.opts.theme;
         this.presetManager = this._createPresetManager(this.settingsFolder);
@@ -366,7 +366,7 @@ let Gui = class Gui {
         return this._theme;
     }
     /**
-     * Saves the current gui state as a preset.
+     * Saves the current gooey state as a preset.
      */
     save(
     /**
@@ -379,7 +379,7 @@ let Gui = class Gui {
      */
     id = nanoid(10)) {
         const preset = {
-            __type: 'GuiPreset',
+            __type: 'GooeyPreset',
             __version: 0,
             id,
             title,
@@ -388,7 +388,7 @@ let Gui = class Gui {
         return preset;
     }
     /**
-     * Loads a given preset into the gui, updating all inputs.
+     * Loads a given preset into the gooey, updating all inputs.
      */
     load(preset) {
         this._log.fn('load').info({ preset });
@@ -491,7 +491,7 @@ let Gui = class Gui {
     _createSettingsButton(parent) {
         const button = create('button', {
             parent,
-            classes: ['fracgui-toolbar-item', 'fracgui-settings-button'],
+            classes: ['gooey-toolbar-item', 'gooey-settings-button'],
             innerHTML: settingsIcon,
             tooltip: {
                 text: () => {
@@ -521,10 +521,10 @@ let Gui = class Gui {
         this.folder?.dispose();
     };
 };
-Gui = Gui_1 = __decorate([
+Gooey = Gooey_1 = __decorate([
     styled,
     __metadata("design:paramtypes", [Object])
-], Gui);
+], Gooey);
 
-export { GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS, Gui };
-//# sourceMappingURL=Gui.js.map
+export { GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS, Gooey };
+//# sourceMappingURL=Gooey.js.map

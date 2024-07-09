@@ -11,14 +11,14 @@ class NumberButtonsController {
         this.opts = opts;
         this.parent = parent;
         this.elements.container = create('div', {
-            classes: ['fracgui-input-number-buttons-container'],
+            classes: ['gooey-input-number-buttons-container'],
             parent,
         });
         this.elements.increment = create('div', {
             classes: [
-                'fracgui-controller',
-                'fracgui-input-number-button',
-                'fracgui-input-number-buttons-increment',
+                'gooey-controller',
+                'gooey-input-number-button',
+                'gooey-input-number-buttons-increment',
             ],
             parent: this.elements.container,
         });
@@ -26,9 +26,9 @@ class NumberButtonsController {
         input.listen(this.elements.increment, 'pointerdown', this.rampChangeUp.bind(this));
         this.elements.decrement = create('div', {
             classes: [
-                'fracgui-controller',
-                'fracgui-input-number-button',
-                'fracgui-input-number-buttons-decrement',
+                'gooey-controller',
+                'gooey-input-number-button',
+                'gooey-input-number-buttons-decrement',
             ],
             parent: this.elements.container,
         });

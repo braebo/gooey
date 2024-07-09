@@ -1,7 +1,7 @@
 import type { BinauralBeats } from '../beats/BinauralBeats'
 
 import { WAVE_PRESETS } from '../beats/BinauralBeats'
-import { WavesGui } from './WavesGui'
+import { WavesGooey } from './WavesGooey'
 import { BROWSER } from 'esm-env'
 
 export class Waves {
@@ -16,7 +16,7 @@ export class Waves {
 	playing = false
 	stopping = false
 
-	gui?: WavesGui
+	gooey?: WavesGooey
 
 	constructor(
 		public beats: BinauralBeats,
@@ -38,7 +38,7 @@ export class Waves {
 
 		this.merger = new ChannelMergerNode(this.ctx, { numberOfInputs: 2 })
 
-		this.addGui(kind)
+		this.addGooey(kind)
 	}
 
 	get ctx() {
@@ -132,13 +132,13 @@ export class Waves {
 		}, fade_out * 1000)
 	}
 
-	addGui(kind: keyof typeof WAVE_PRESETS) {
-		this.gui = new WavesGui(this, kind)
+	addGooey(kind: keyof typeof WAVE_PRESETS) {
+		this.gooey = new WavesGooey(this, kind)
 	}
 
 	dispose() {
 		this.stop()
 		this.merger.disconnect()
-		this.gui?.dispose()
+		this.gooey?.dispose()
 	}
 }

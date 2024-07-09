@@ -28,24 +28,24 @@
 // 		super(input)
 
 // 		const container = create('div', {
-// 			classes: ['fracgui-input-color-picker-container'],
+// 			classes: ['gooey-input-color-picker-container'],
 // 			parent: input.elements.controllers.container,
 // 		})
 
 // 		const canvas = create('canvas', {
-// 			classes: ['fracgui-input-color-picker-canvas'],
+// 			classes: ['gooey-input-color-picker-canvas'],
 // 			parent: container,
 // 			height: this.#height,
 // 		})
 
 // 		const cursor = create('div', {
-// 			classes: ['fracgui-input-color-picker-cursor'],
+// 			classes: ['gooey-input-color-picker-cursor'],
 // 			parent: container,
 // 		})
 
 // 		const hueSlider = create('input', {
 // 			type: 'range',
-// 			classes: ['fracgui-input-range', 'fracgui-input-color-picker-hue'],
+// 			classes: ['gooey-input-range', 'gooey-input-color-picker-hue'],
 // 			parent: container,
 // 			min: '0',
 // 			max: '359',
@@ -54,7 +54,7 @@
 
 // 		const alphaSlider = create('input', {
 // 			type: 'range',
-// 			classes: ['fracgui-input-range', 'fracgui-input-color-picker-alpha'],
+// 			classes: ['gooey-input-range', 'gooey-input-color-picker-alpha'],
 // 			parent: container,
 // 			min: '0',
 // 			max: '1',

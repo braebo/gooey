@@ -8,7 +8,7 @@ import { state } from './shared/state.js';
 import { r } from './shared/l.js';
 
 class PresetManager {
-    gui;
+    gooey;
     parentFolder;
     __type = Object.freeze('PresetManager');
     __version = Object.freeze('1.0.0');
@@ -16,7 +16,7 @@ class PresetManager {
     activePreset;
     presets;
     folder;
-    _defaultPresetId = 'fracgui-default-preset';
+    _defaultPresetId = 'gooey-default-preset';
     _defaultPresetTitle = 'default';
     _presetSnapshot;
     _presetsInput;
@@ -24,13 +24,13 @@ class PresetManager {
     _renamePresetButton;
     _initialized = false;
     _log;
-    constructor(gui, parentFolder, options) {
-        this.gui = gui;
+    constructor(gooey, parentFolder, options) {
+        this.gooey = gooey;
         this.parentFolder = parentFolder;
-        this._log = new Logger(`PresetManager ${gui.folder.title}`, { fg: 'slateblue' });
+        this._log = new Logger(`PresetManager ${gooey.folder.title}`, { fg: 'slateblue' });
         this._log.fn('constructor').debug({ options, this: this });
         this.opts = options;
-        this.opts.localStorageKey ??= 'fracgui::presets';
+        this.opts.localStorageKey ??= 'gooey::presets';
         this.activePreset = state(this.opts.defaultPreset ?? {}, {
             key: this.opts.localStorageKey + '::active',
         });
@@ -44,8 +44,8 @@ class PresetManager {
             this.activePreset.value.id !== this._defaultPresetId) {
             Promise.resolve().then(() => {
                 console.log('loading active preset', this.activePreset.value);
-                this.gui.load(this.activePreset.value);
-                this.gui._undoManager.clear();
+                this.gooey.load(this.activePreset.value);
+                this.gooey._undoManager.clear();
             });
         }
     }
@@ -59,7 +59,7 @@ class PresetManager {
             return;
         }
         this._initialized = true;
-        this.folder = await this.addGui(this.parentFolder, this.opts.defaultPreset);
+        this.folder = await this.addGooey(this.parentFolder, this.opts.defaultPreset);
         return this;
     }
     /**
@@ -104,12 +104,12 @@ class PresetManager {
             throw new Error('PresetManager not initialized.');
         defaultPreset ??= this.presets.value.find(p => p.id === this._defaultPresetId);
         if (!defaultPreset) {
-            defaultPreset = this.gui.save(this._defaultPresetTitle, this._defaultPresetId);
+            defaultPreset = this.gooey.save(this._defaultPresetTitle, this._defaultPresetId);
             this.presets.push(defaultPreset);
         }
         return defaultPreset;
     }
-    async addGui(parentFolder, defaultPreset) {
+    async addGooey(parentFolder, defaultPreset) {
         this._log.fn('add').debug({ this: this, parentFolder, defaultPreset });
         if (!this._isInitialized())
             throw new Error('PresetManager not initialized.');
@@ -118,10 +118,10 @@ class PresetManager {
             // hidden: false,
             // children: [],
             // @ts-expect-error - @internal
-            gui: this.gui,
+            gooey: this.gooey,
         });
         // todo - use this class and remove all that styling 🍝
-        presetsFolder.element.classList.add('fracgui-folder-alt');
+        presetsFolder.element.classList.add('gooey-folder-alt');
         // Fully desaturate the presets folder's header connector to svg.
         presetsFolder.on('mount', () => {
             // presetsFolder.graphics!.connector!.update()
@@ -143,7 +143,7 @@ class PresetManager {
          */
         const download = (preset) => {
             // const preset = this.activePreset.value
-            const title = Array.isArray(preset) ? this.gui.folder.title + ' presets' : preset.title;
+            const title = Array.isArray(preset) ? this.gooey.folder.title + ' presets' : preset.title;
             const blob = new Blob([JSON.stringify(preset, null, 2)], {
                 type: 'application/json',
             });
@@ -168,7 +168,7 @@ class PresetManager {
                     const data = JSON.parse(text);
                     if (Array.isArray(data)) {
                         for (const preset of data) {
-                            if (isType(preset, 'GuiPreset')) {
+                            if (isType(preset, 'GooeyPreset')) {
                                 this.put(preset);
                             }
                             else {
@@ -177,7 +177,7 @@ class PresetManager {
                         }
                     }
                     else {
-                        if (isType(data, 'GuiPreset')) {
+                        if (isType(data, 'GooeyPreset')) {
                             this.put(data);
                         }
                         else {
@@ -191,7 +191,7 @@ class PresetManager {
             input.click();
         };
         const createIcon = (name, contents) => 
-        /*html*/ `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="fracgui-icon fracgui-icon-${name}">${contents}</svg>`;
+        /*html*/ `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="gooey-icon gooey-icon-${name}">${contents}</svg>`;
         //? Preset Management Buttons
         this._manageInput = presetsFolder.addButtonGrid({
             value: [
@@ -201,7 +201,7 @@ class PresetManager {
                         id: 'update',
                         onClick: () => {
                             const { id, title } = this.activePreset.value;
-                            const current = this.gui.save(title, id);
+                            const current = this.gooey.save(title, id);
                             this.put(current);
                         },
                         disabled: () => this.defaultPresetIsActive,
@@ -255,7 +255,7 @@ class PresetManager {
                                 if (text) {
                                     const preset = JSON.parse(text);
                                     if (typeof preset === 'object' &&
-                                        preset.__type === 'GuiPreset') {
+                                        preset.__type === 'GooeyPreset') {
                                         this.put(preset);
                                     }
                                 }
@@ -334,18 +334,18 @@ class PresetManager {
         });
         this._presetsInput.on('change', ({ value }) => {
             this._log.fn('_presetsInput.on(change)').debug({ value, this: this });
-            this.gui.load(value);
+            this.gooey.load(value);
             this.activePreset.set(value);
             this._refreshInputs();
         });
         this._presetsInput.on('open', () => {
             this._log.fn('_presetsInput.on(open)').debug();
-            this._presetSnapshot = this.gui.save('__snapshot__');
+            this._presetSnapshot = this.gooey.save('__snapshot__');
         });
         this._presetsInput.on('cancel', () => {
             this._log.fn('_presetsInput.on(cancel)').debug();
             if (this._presetSnapshot) {
-                this.gui.load(this._presetSnapshot);
+                this.gooey.load(this._presetSnapshot);
                 this._refreshInputs();
             }
         });
@@ -399,7 +399,7 @@ class PresetManager {
         if (!this._presetsInput) {
             throw new Error('No select input.');
         }
-        preset ??= this.gui.save(this._resolveUnusedTitle('preset'), nanoid());
+        preset ??= this.gooey.save(this._resolveUnusedTitle('preset'), nanoid());
         const existing = this.presets.value.find(p => p.id === preset.id);
         if (!existing) {
             this._log.fn('put').debug('pushing preset:', { preset, existing });

@@ -294,33 +294,33 @@ export abstract class Input<
 		this._dirty = () => this.value !== this.initialValue
 
 		this.elements.container = create('div', {
-			classes: ['fracgui-input-container'],
+			classes: ['gooey-input-container'],
 			parent: this.folder.elements.content,
 		})
 
 		// Make the right side full-width if the title is empty.
 		if (!this.title) {
-			this.element.style.setProperty('--fracgui-input-section-1_width', '0px')
+			this.element.style.setProperty('--gooey-input-section-1_width', '0px')
 		}
 
 		this.elements.drawerToggle = create('div', {
-			classes: ['fracgui-input-drawer-toggle'],
+			classes: ['gooey-input-drawer-toggle'],
 			parent: this.elements.container,
 		})
 
 		this.elements.title = create('div', {
-			classes: ['fracgui-input-title'],
+			classes: ['gooey-input-title'],
 			parent: this.elements.container,
 			textContent: this.title,
 		})
 
 		this.elements.content = create('div', {
-			classes: ['fracgui-input-content'],
+			classes: ['gooey-input-content'],
 			parent: this.elements.container,
 		})
 
 		this.elements.resetBtn = create('div', {
-			classes: ['fracgui-input-reset-btn'],
+			classes: ['gooey-input-reset-btn'],
 			// parent: this.elements.content,
 			parent: this.elements.title,
 			tooltip: {
@@ -335,7 +335,7 @@ export abstract class Input<
 		})
 
 		this.elements.drawer = create('div', {
-			classes: ['fracgui-input-drawer'],
+			classes: ['gooey-input-drawer'],
 			parent: this.elements.content,
 		})
 
@@ -384,7 +384,7 @@ export abstract class Input<
 	}
 
 	get undoManager() {
-		return this.folder.gui?._undoManager
+		return this.folder.gooey?._undoManager
 	}
 
 	/**

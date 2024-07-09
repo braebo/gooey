@@ -29,7 +29,7 @@ class InputButton extends Input {
             this.onClick = opts.onClick;
         else ;
         const container = create('div', {
-            classes: ['fracgui-input-button-container'],
+            classes: ['gooey-input-button-container'],
             parent: this.elements.content,
         });
         this.button = new ButtonController({

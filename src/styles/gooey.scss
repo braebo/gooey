@@ -1,9 +1,9 @@
 //· Mixins ···································································¬
 
 @mixin fontMono {
-	font-family: var(--fracgui-controller_font-family);
-	// font-size: var(--fracgui-controller_font-size);
-	font-size: calc(var(--fracgui-font-size) * 0.85);
+	font-family: var(--gooey-controller_font-family);
+	// font-size: var(--gooey-controller_font-size);
+	font-size: calc(var(--gooey-font-size) * 0.85);
 	font-variation-settings: 'wght' 400;
 	text-align: center;
 }
@@ -16,13 +16,13 @@
 }
 
 @mixin scrollbarThumb {
-	background: var(--fracgui-controller_background);
+	background: var(--gooey-controller_background);
 	border: none;
 }
 
 @mixin scrollbarTrack {
-	background: var(--fracgui-folder-header_background);
-	border-bottom-right-radius: var(--fracgui-radius-sm);
+	background: var(--gooey-folder-header_background);
+	border-bottom-right-radius: var(--gooey-radius-sm);
 }
 
 @mixin scrollable {
@@ -53,25 +53,25 @@
 
 //· Stacking Context ···································································¬
 
-.fracgui-root {
+.gooey-root {
 	z-index: 0;
 }
 
-.fracgui-header {
+.gooey-header {
 	z-index: 2;
 }
 
-.fracgui-toolbar {
+.gooey-toolbar {
 	z-index: 3;
 }
 //⌟
 
 //· Open / Close Animations ··················································¬
 
-.fracgui-root,
-.fracgui-folder {
-	.fracgui-content,
-	.fracgui-content-wrapper {
+.gooey-root,
+.gooey-folder {
+	.gooey-content,
+	.gooey-content-wrapper {
 		display: grid;
 		grid-template-rows: 1fr;
 
@@ -80,39 +80,39 @@
 		animation-fill-mode: forwards;
 		animation-timing-function: cubic-bezier(0.1, 1, 0.1, 1);
 	}
-	.fracgui-header {
-		height: var(--fracgui-header_height);
-		max-height: var(--fracgui-header_height);
+	.gooey-header {
+		height: var(--gooey-header_height);
+		max-height: var(--gooey-header_height);
 	}
 
 	&.closed {
-		.fracgui-content,
-		.fracgui-content-wrapper {
+		.gooey-content,
+		.gooey-content-wrapper {
 			animation-name: close;
 			animation-duration: 0.25s;
 			animation-fill-mode: forwards;
 			animation-timing-function: cubic-bezier(0.05, 1, 0.2, 1);
 		}
 
-		.fracgui-folder .fracgui-header {
+		.gooey-folder .gooey-header {
 			max-height: 0;
 		}
 	}
 
 	&.instant {
-		.fracgui-content-wrapper {
+		.gooey-content-wrapper {
 			grid-template-rows: 1fr;
 			animation: none;
 		}
 
-		.fracgui-folder .fracgui-header {
-			height: var(--fracgui-header_height);
-			max-height: var(--fracgui-header_height);
+		.gooey-folder .gooey-header {
+			height: var(--gooey-header_height);
+			max-height: var(--gooey-header_height);
 		}
 	}
 }
 
-.fracgui-root.closed .fracgui-content {
+.gooey-root.closed .gooey-content {
 	transition: opacity 0.1s;
 	transition-delay: 0.1s;
 	opacity: 0 !important;
@@ -122,12 +122,12 @@
 	}
 }
 
-.fracgui-root,
-.fracgui-folder {
+.gooey-root,
+.gooey-folder {
 	&.animating,
 	&.closed {
-		.fracgui-content,
-		.fracgui-content-wrapper {
+		.gooey-content,
+		.gooey-content-wrapper {
 			will-change: transform;
 			backface-visibility: hidden;
 			transform: translateZ(0);
@@ -177,23 +177,23 @@
 
 //⌟
 
-//· Gui Folders ······························································¬
+//· Gooey Folders ······························································¬
 
-.fracgui-folder {
+.gooey-folder {
 	contain: content;
 	height: fit-content;
-	// background: var(--fracgui-folder_background);
+	// background: var(--gooey-folder_background);
 
 	&.hidden {
 		display: none;
 	}
 
-	&:not(.fracgui-root) {
+	&:not(.gooey-root) {
 		position: relative;
 	}
 }
 
-.fracgui-folder .fracgui-header {
+.gooey-folder .gooey-header {
 	contain: strict;
 	position: relative;
 
@@ -202,58 +202,58 @@
 	gap: 0.5rem;
 
 	width: 100%;
-	padding-left: var(--fracgui-folder-header_padding-left);
+	padding-left: var(--gooey-folder-header_padding-left);
 
 	outline-offset: -1px;
-	color: var(--fracgui-folder-header-dim_color);
-	background: var(--fracgui-folder-header_background);
-	//! outline: var(--fracgui-folder-header_outline, 1px solid rgba(var(--fracgui-bg-b-rgb), 0.5));
+	color: var(--gooey-folder-header-dim_color);
+	background: var(--gooey-folder-header_background);
+	//! outline: var(--gooey-folder-header_outline, 1px solid rgba(var(--gooey-bg-b-rgb), 0.5));
 	outline: var(
-		--fracgui-folder-header_outline,
-		1px solid color-mix(in sRGB, var(--fracgui-bg-b) 50%, transparent)
+		--gooey-folder-header_outline,
+		1px solid color-mix(in sRGB, var(--gooey-bg-b) 50%, transparent)
 	);
-	box-shadow: var(--fracgui-folder-header_box-shadow, 0 0 0.1rem #000 inset);
+	box-shadow: var(--gooey-folder-header_box-shadow, 0 0 0.1rem #000 inset);
 
-	transition: opacity var(--fracgui-transition-duration);
+	transition: opacity var(--gooey-transition-duration);
 	cursor: pointer;
 
-	.fracgui-title {
+	.gooey-title {
 		contain: layout style paint;
 		position: relative;
 		width: fit-content;
 
-		font-size: calc(var(--fracgui-font-size) * 0.9);
-		// font-weight: var(--fracgui-folder-header_font-weight);
-		letter-spacing: var(--fracgui-folder-header_letter-spacing);
+		font-size: calc(var(--gooey-font-size) * 0.9);
+		// font-weight: var(--gooey-folder-header_font-weight);
+		letter-spacing: var(--gooey-folder-header_letter-spacing);
 		// font-variation-settings:
-		// 	'wght' var(--fracgui-folder-header_font-weight),
+		// 	'wght' var(--gooey-folder-header_font-weight),
 		// 	'wdth' 100;
 
-		transition: color var(--fracgui-transition-duration);
+		transition: color var(--gooey-transition-duration);
 	}
 
-	.fracgui-folder-icon-container {
+	.gooey-folder-icon-container {
 		contain: strict;
 		width: 1.1rem !important;
 		height: 1.1rem !important;
 
-		color: var(--fracgui-fg-c);
+		color: var(--gooey-fg-c);
 		backface-visibility: hidden;
 
-		.fracgui-folder-icon {
-			transition: opacity var(--fracgui-transition-duration);
+		.gooey-folder-icon {
+			transition: opacity var(--gooey-transition-duration);
 			// opacity: 0.75;
 			contain: strict;
 			backface-visibility: hidden;
 		}
 	}
 
-	// &:hover .fracgui-folder-icon-container .fracgui-folder-icon {
+	// &:hover .gooey-folder-icon-container .gooey-folder-icon {
 	// 	opacity: 1;
 	// }
 }
 
-.fracgui-connector-svg {
+.gooey-connector-svg {
 	contain: layout style;
 	display: flex;
 	position: absolute;
@@ -268,76 +268,76 @@
 	backface-visibility: hidden;
 }
 
-.fracgui-folder {
+.gooey-folder {
 	contain: content;
-	.fracgui-content {
+	.gooey-content {
 		contain: content;
 		display: flex;
 		flex-direction: column;
 
 		width: 100%;
 		// &:not(:has(&)) {
-		// 	background: var(--fracgui-folder_background);
+		// 	background: var(--gooey-folder_background);
 		// }
-		// background: var(--fracgui-folder-content_background, var(--fracgui-folder_background));
-		// background: var(--fracgui-folder_background);
-		// background: var(--fracgui-folder-content_background);
-		border-left: var(--fracgui-folder-content_padding-left) solid
-			var(--fracgui-folder-header_background);
+		// background: var(--gooey-folder-content_background, var(--gooey-folder_background));
+		// background: var(--gooey-folder_background);
+		// background: var(--gooey-folder-content_background);
+		border-left: var(--gooey-folder-content_padding-left) solid
+			var(--gooey-folder-header_background);
 
 		// transition: 0.1s;
 	}
 }
 
-.fracgui-folder-alt {
+.gooey-folder-alt {
 	box-shadow:
-		0px 0px 10px 0px hsl(10deg, 0%, var(--fracgui-shadow-lightness)),
+		0px 0px 10px 0px hsl(10deg, 0%, var(--gooey-shadow-lightness)),
 		inset;
-	background: color-mix(in sRGB, var(--fracgui-bg-b) 100%, transparent);
+	background: color-mix(in sRGB, var(--gooey-bg-b) 100%, transparent);
 
-	--fracgui-input-container_color: var(--fracgui-fg-b);
-	--fracgui-folder-header_background: color-mix(in sRGB, var(--fracgui-bg-a) 75%, transparent);
-	--fracgui-controller-dim_background: color-mix(in sRGB, var(--fracgui-bg-a) 50%, transparent);
-	// --fracgui-controller_background: color-mix(in sRGB, var(--fracgui-bg-c) 50%, transparent);
-	--fracgui-controller_background: color-mix(
+	--gooey-input-container_color: var(--gooey-fg-b);
+	--gooey-folder-header_background: color-mix(in sRGB, var(--gooey-bg-a) 75%, transparent);
+	--gooey-controller-dim_background: color-mix(in sRGB, var(--gooey-bg-a) 50%, transparent);
+	// --gooey-controller_background: color-mix(in sRGB, var(--gooey-bg-c) 50%, transparent);
+	--gooey-controller_background: color-mix(
 		in sRGB,
-		var(--fracgui-bg-a) 80%,
-		var(--fracgui-bg-b)
+		var(--gooey-bg-a) 80%,
+		var(--gooey-bg-b)
 	);
 
-	@at-root .fracgui-root[mode='light'] & {
-		--fracgui-folder-header_background: color-mix(
+	@at-root .gooey-root[mode='light'] & {
+		--gooey-folder-header_background: color-mix(
 			in sRGB,
-			var(--fracgui-bg-a) 75%,
-			var(--fracgui-bg-b)
+			var(--gooey-bg-a) 75%,
+			var(--gooey-bg-b)
 		);
-		--fracgui-controller_background: var(--fracgui-light-a);
+		--gooey-controller_background: var(--gooey-light-a);
 	}
 }
 //⌟
 
-//· Gui Root ·································································¬
+//· Gooey Root ·································································¬
 
-.fracgui-root {
+.gooey-root {
 	contain: content;
 	position: absolute;
 	display: flex;
 	flex-direction: column;
 	inset: 0;
 
-	width: var(--fracgui-root_width);
-	min-width: var(--fracgui-root_min-width);
-	max-width: var(--fracgui-root_max-width);
+	width: var(--gooey-root_width);
+	min-width: var(--gooey-root_min-width);
+	max-width: var(--gooey-root_max-width);
 
 	height: fit-content; //- required for animations
 
-	background: var(--fracgui-folder_background);
-	border-radius: var(--fracgui-radius-md);
-	filter: var(--fracgui-filter);
+	background: var(--gooey-folder_background);
+	border-radius: var(--gooey-radius-md);
+	filter: var(--gooey-filter);
 
-	font-family: var(--fracgui-font-family);
-	font-weight: var(--fracgui-folder-content_font-weight);
-	// font-size: var(--fracgui-font-size);
+	font-family: var(--gooey-font-family);
+	font-weight: var(--gooey-folder-content_font-weight);
+	// font-size: var(--gooey-font-size);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
@@ -346,7 +346,7 @@
 	z-index: 99;
 }
 
-.fracgui-root > .fracgui-header {
+.gooey-root > .gooey-header {
 	contain: strict;
 	position: relative;
 
@@ -356,32 +356,32 @@
 	gap: 0.5rem;
 
 	width: 100%;
-	min-height: var(--fracgui-root-header_height);
+	min-height: var(--gooey-root-header_height);
 
-	color: var(--fracgui-fg-c);
-	background: var(--fracgui-bg-a);
-	border-radius: var(--fracgui-radius-md);
-	border-bottom-left-radius: var(--fracgui-radius-xs);
-	border-bottom-right-radius: var(--fracgui-radius-xs);
-	// box-shadow: var(--fracgui-root_box-shadow);
+	color: var(--gooey-fg-c);
+	background: var(--gooey-bg-a);
+	border-radius: var(--gooey-radius-md);
+	border-bottom-left-radius: var(--gooey-radius-xs);
+	border-bottom-right-radius: var(--gooey-radius-xs);
+	// box-shadow: var(--gooey-root_box-shadow);
 
 	cursor: pointer;
 	cursor: grab;
 
-	.fracgui-title {
+	.gooey-title {
 		contain: layout style paint;
 		position: relative;
 		width: fit-content;
-		height: var(--fracgui-root-header_height);
+		height: var(--gooey-root-header_height);
 
-		// font-size: var(--fracgui-root-header_font-size);
-		font-size: var(--fracgui-font-size);
-		// font-weight: var(--fracgui-root-header_font-weight);
+		// font-size: var(--gooey-root-header_font-size);
+		font-size: var(--gooey-font-size);
+		// font-weight: var(--gooey-root-header_font-weight);
 		font-variation-settings:
-			'wght' var(--fracgui-root-header_font-weight),
+			'wght' var(--gooey-root-header_font-weight),
 			'wdth' 100;
-		letter-spacing: var(--fracgui-root-header_letter-spacing);
-		line-height: var(--fracgui-root-header_height);
+		letter-spacing: var(--gooey-root-header_letter-spacing);
+		line-height: var(--gooey-root-header_height);
 
 		overflow: hidden;
 		white-space: nowrap;
@@ -391,26 +391,26 @@
 	}
 }
 
-.fracgui-root > .fracgui-content-wrapper > .fracgui-content {
+.gooey-root > .gooey-content-wrapper > .gooey-content {
 	display: flex;
 	flex-direction: column;
 
 	width: 100%;
 	margin: 0;
-	max-height: var(--fracgui-root_max-height);
+	max-height: var(--gooey-root_max-height);
 
-	border-radius: var(--fracgui-radius-md);
-	border-top-left-radius: var(--fracgui-radius-sm);
-	border-top-right-radius: var(--fracgui-radius-sm);
-	background: var(--fracgui-root-content_background);
-	backdrop-filter: var(--fracgui-backdrop-filter);
+	border-radius: var(--gooey-radius-md);
+	border-top-left-radius: var(--gooey-radius-sm);
+	border-top-right-radius: var(--gooey-radius-sm);
+	background: var(--gooey-root-content_background);
+	backdrop-filter: var(--gooey-backdrop-filter);
 	outline-offset: -1px;
 
-	//! box-shadow: 0 0 1.5px 0.5px rgba(var(--fracgui-bg-d-rgb), 0.5) inset;
-	// box-shadow: 0 0 1.5px 0.5px color-mix(in sRGB, var(--fracgui-dark-d) 50%, transparent) inset;
-	// box-shadow: 0 0 1.5px 0.5px hsla(250, 10%, var(--fracgui-shadow-lightness), var(--fracgui-shadow-opacity)) inset;
+	//! box-shadow: 0 0 1.5px 0.5px rgba(var(--gooey-bg-d-rgb), 0.5) inset;
+	// box-shadow: 0 0 1.5px 0.5px color-mix(in sRGB, var(--gooey-dark-d) 50%, transparent) inset;
+	// box-shadow: 0 0 1.5px 0.5px hsla(250, 10%, var(--gooey-shadow-lightness), var(--gooey-shadow-opacity)) inset;
 	box-shadow: 0 0 4.5px 0.5px
-		hsla(0, 10%, var(--fracgui-shadow-lightness), var(--fracgui-shadow-opacity)) inset;
+		hsla(0, 10%, var(--gooey-shadow-lightness), var(--gooey-shadow-opacity)) inset;
 
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -419,7 +419,7 @@
 	@-moz-document url-prefix() {
 		& {
 			transition: none !important;
-			scrollbar-color: var(--fracgui-bg-b) var(--fracgui-bg-a);
+			scrollbar-color: var(--gooey-bg-b) var(--gooey-bg-a);
 			scrollbar-width: thin;
 			scrollbar-gutter: auto;
 		}
@@ -430,7 +430,7 @@
 	backface-visibility: hidden;
 }
 
-.fracgui-root.animating > .fracgui-content-wrapper > .fracgui-content {
+.gooey-root.animating > .gooey-content-wrapper > .gooey-content {
 	@-moz-document url-prefix() {
 		& {
 			overflow: hidden;
@@ -438,7 +438,7 @@
 	}
 }
 
-// .fracgui-root > .fracgui-content-wrapper > .fracgui-folder {
+// .gooey-root > .gooey-content-wrapper > .gooey-folder {
 // 	padding-right: 0.25rem;
 // 	background: #15161d;
 // }
@@ -446,45 +446,45 @@
 
 //· Controllers ······························································¬
 
-.fracgui-controller,
-.fracgui-controller-text,
-.fracgui-controller-switch,
-.fracgui-controller-button {
-	color: var(--fracgui-controller-dim_color);
-	background: var(--fracgui-controller-dim_background);
+.gooey-controller,
+.gooey-controller-text,
+.gooey-controller-switch,
+.gooey-controller-button {
+	color: var(--gooey-controller-dim_color);
+	background: var(--gooey-controller-dim_background);
 
 	&.disabled {
 		opacity: 0.75;
 		filter: brightness(0.75);
-		color: var(--fracgui-bg-e);
+		color: var(--gooey-bg-e);
 		pointer-events: none;
 	}
 }
 
-.fracgui-controller {
+.gooey-controller {
 	contain: layout style;
 	width: 100%;
 
-	box-shadow: var(--fracgui-controller_box-shadow);
-	border-radius: var(--fracgui-controller_border-radius);
-	outline: var(--fracgui-controller_outline);
+	box-shadow: var(--gooey-controller_box-shadow);
+	border-radius: var(--gooey-controller_border-radius);
+	outline: var(--gooey-controller_outline);
 
 	&:hover,
 	&:focus-visible,
 	&:active {
 		&:not(:disabled) {
 			opacity: 1;
-			color: var(--fracgui-controller_color);
-			background: var(--fracgui-controller_background);
+			color: var(--gooey-controller_color);
+			background: var(--gooey-controller_background);
 		}
 	}
 
 	// transition: 0.15s;
-	transition-duration: var(--fracgui-transition-duration);
+	transition-duration: var(--gooey-transition-duration);
 	transition-property: color, background, opacity;
 }
 
-.fracgui-controller-button {
+.gooey-controller-button {
 	contain: strict;
 	cursor: pointer;
 
@@ -498,18 +498,18 @@
 	padding: 0;
 
 	border: none;
-	border-radius: var(--fracgui-controller_border-radius);
-	outline: var(--fracgui-controller_outline);
+	border-radius: var(--gooey-controller_border-radius);
+	outline: var(--gooey-controller_outline);
 	outline-offset: -1px;
 	// prettier-ignore
 	box-shadow:
-		1px 2px 6px var(--fracgui-shadow-color),
-		1px -1px 1px hsla(250, 10%, calc(var(--fracgui-shadow-lightness)), calc(var(--fracgui-shadow-opacity))) inset,
-		1px -1px 1px hsla(250, 10%, calc(var(--fracgui-shadow-lightness)), calc(var(--fracgui-shadow-opacity))) inset,
-		-0.5px 0.5px 0.5px hsla(250, 10%, 50%, calc(var(--fracgui-shadow-opacity))) inset
+		1px 2px 6px var(--gooey-shadow-color),
+		1px -1px 1px hsla(250, 10%, calc(var(--gooey-shadow-lightness)), calc(var(--gooey-shadow-opacity))) inset,
+		1px -1px 1px hsla(250, 10%, calc(var(--gooey-shadow-lightness)), calc(var(--gooey-shadow-opacity))) inset,
+		-0.5px 0.5px 0.5px hsla(250, 10%, 50%, calc(var(--gooey-shadow-opacity))) inset
 	;
 
-	@at-root .fracgui-root[mode='dark'] & {
+	@at-root .gooey-root[mode='dark'] & {
 		outline: none;
 	}
 
@@ -519,28 +519,28 @@
 	transform: scale(1);
 	backface-visibility: hidden;
 
-	transition-duration: var(--fracgui-transition-duration);
+	transition-duration: var(--gooey-transition-duration);
 	transition-property: background, color, transform, box-shadow;
 
 	&:hover,
 	&:active {
 		&:not(:disabled) {
-			background: var(--fracgui-controller_background);
-			color: var(--fracgui-controller_color);
+			background: var(--gooey-controller_background);
+			color: var(--gooey-controller_color);
 		}
 	}
 
 	&:active {
 		// scale: 0.975;
 		transform: scale(0.975);
-		color: var(--fracgui-theme-a);
+		color: var(--gooey-theme-a);
 
 		// prettier-ignore
 		box-shadow:
-			0px 0px 3px var(--fracgui-shadow-color),
-			0px 0px 5px hsla(250, 10%, calc(var(--fracgui-shadow-lightness) / 3), calc(var(--fracgui-shadow-opacity) / 1)) inset,
-			0px 0px 10px hsla(250, 10%, calc(var(--fracgui-shadow-lightness) / 2), calc(var(--fracgui-shadow-opacity) / 2)) inset,
-			0px 0px 20px hsla(250, 10%, calc(var(--fracgui-shadow-lightness) / 1), calc(var(--fracgui-shadow-opacity) / 2)) inset
+			0px 0px 3px var(--gooey-shadow-color),
+			0px 0px 5px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 3), calc(var(--gooey-shadow-opacity) / 1)) inset,
+			0px 0px 10px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 2), calc(var(--gooey-shadow-opacity) / 2)) inset,
+			0px 0px 20px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 1), calc(var(--gooey-shadow-opacity) / 2)) inset
 		;
 	}
 
@@ -554,29 +554,29 @@
 
 //·· Select ························································¬
 
-.fracgui-controller-select-container {
+.gooey-controller-select-container {
 	contain: content;
 	position: relative;
 	outline: none;
 	border: none;
 
-	&[contenteditable='true'] .fracgui-controller-select-selected {
+	&[contenteditable='true'] .gooey-controller-select-selected {
 		cursor: text;
-		outline: 1px solid var(--fracgui-theme-a);
+		outline: 1px solid var(--gooey-theme-a);
 	}
 }
 
-.fracgui-controller-select-selected {
-	border-radius: var(--fracgui-radius-xs);
-	// outline: 1px solid rgba(var(--fracgui-bg-d-rgb), 0);
-	outline: 1px solid color-mix(in sRGB, var(--fracgui-bg-d) 0%, transparent);
+.gooey-controller-select-selected {
+	border-radius: var(--gooey-radius-xs);
+	// outline: 1px solid rgba(var(--gooey-bg-d-rgb), 0);
+	outline: 1px solid color-mix(in sRGB, var(--gooey-bg-d) 0%, transparent);
 
 	text-align: center;
-	letter-spacing: var(--fracgui-folder-content_letter-spacing);
+	letter-spacing: var(--gooey-folder-content_letter-spacing);
 
 	overflow: hidden;
 	// transition-duration: 0.15s;
-	transition-duration: var(--fracgui-transition-duration);
+	transition-duration: var(--gooey-transition-duration);
 	transition-property: background, color, filter;
 	cursor: pointer;
 
@@ -597,7 +597,7 @@
 	}
 }
 
-.fracgui-controller-select-dropdown {
+.gooey-controller-select-dropdown {
 	contain: layout style;
 	backface-visibility: hidden;
 	display: none;
@@ -613,20 +613,20 @@
 
 	background: color-mix(
 		in sRGB,
-		var(--fracgui-folder-header_background) calc(var(--fracgui-opacity) / 4 * 100%),
+		var(--gooey-folder-header_background) calc(var(--gooey-opacity) / 4 * 100%),
 		transparent
 	);
-	color: var(--fracgui-controller-dim_color);
-	backdrop-filter: var(--fracgui-backdrop-filter);
-	outline: 1px solid var(--fracgui-bg-b);
-	border-radius: var(--fracgui-radius);
+	color: var(--gooey-controller-dim_color);
+	backdrop-filter: var(--gooey-backdrop-filter);
+	outline: 1px solid var(--gooey-bg-b);
+	border-radius: var(--gooey-radius);
 	box-shadow:
-		0px 0.3px 0.3px hsla(var(--fracgui-shadow-lightness), 0.49),
-		-0.1px 2.1px 2.2px -0.6px hsla(var(--fracgui-shadow-lightness), 0.47),
-		-0.2px 4.6px 4.9px -1.2px hsla(var(--fracgui-shadow-lightness), 0.45),
-		-0.4px 9.2px 9.8px -1.7px hsla(var(--fracgui-shadow-lightness), 0.42),
-		-0.7px 17.4px 18.5px -2.3px hsla(var(--fracgui-shadow-lightness), 0.4),
-		-1.2px 30.6px 32.6px -2.9px hsla(var(--fracgui-shadow-lightness), 0.38);
+		0px 0.3px 0.3px hsla(var(--gooey-shadow-lightness), 0.49),
+		-0.1px 2.1px 2.2px -0.6px hsla(var(--gooey-shadow-lightness), 0.47),
+		-0.2px 4.6px 4.9px -1.2px hsla(var(--gooey-shadow-lightness), 0.45),
+		-0.4px 9.2px 9.8px -1.7px hsla(var(--gooey-shadow-lightness), 0.42),
+		-0.7px 17.4px 18.5px -2.3px hsla(var(--gooey-shadow-lightness), 0.4),
+		-1.2px 30.6px 32.6px -2.9px hsla(var(--gooey-shadow-lightness), 0.38);
 
 	z-index: 100;
 	transition:
@@ -650,51 +650,51 @@
 	}
 }
 
-.fracgui-controller-select-option {
+.gooey-controller-select-option {
 	contain: content;
 	padding: 0.1rem 0.75rem;
 	line-height: 1.5rem;
 
-	font-family: var(--fracgui-font, var(--font-d));
-	font-size: calc(var(--fracgui-font-size) * 0.8);
+	font-family: var(--gooey-font, var(--font-d));
+	font-size: calc(var(--gooey-font-size) * 0.8);
 	letter-spacing: 0.5px;
-	color: var(--fracgui-fg-d);
+	color: var(--gooey-fg-d);
 
 	transition-duration: 0.15s;
 	transition-property: background, color, filter;
 
 	&:hover,
 	&:focus-visible {
-		color: var(--fracgui-controller_color);
+		color: var(--gooey-controller_color);
 		background: color-mix(
 			in sRGB,
-			var(--fracgui-controller_background) 50%,
-			var(--fracgui-folder_background)
+			var(--gooey-controller_background) 50%,
+			var(--gooey-folder_background)
 		);
 	}
 
 	cursor: pointer;
 
 	&:first-of-type {
-		border-top-left-radius: var(--fracgui-radius-sm);
-		border-top-right-radius: var(--fracgui-radius-sm);
+		border-top-left-radius: var(--gooey-radius-sm);
+		border-top-right-radius: var(--gooey-radius-sm);
 	}
 
 	&:last-of-type {
-		border-bottom-left-radius: var(--fracgui-radius-sm);
-		border-bottom-right-radius: var(--fracgui-radius-sm);
+		border-bottom-left-radius: var(--gooey-radius-sm);
+		border-bottom-right-radius: var(--gooey-radius-sm);
 	}
 
 	&.selected,
 	&:hover {
-		color: var(--fracgui-fg-a);
+		color: var(--gooey-fg-a);
 	}
 }
 
-@at-root .fracgui-wrapper[mode='light'] .fracgui-controller-select-option {
+@at-root .gooey-wrapper[mode='light'] .gooey-controller-select-option {
 	&.selected,
 	&:hover {
-		background: var(--fracgui-folder-header_background);
+		background: var(--gooey-folder-header_background);
 	}
 }
 
@@ -703,7 +703,7 @@
 
 //· Toolbar ···································································¬
 
-.fracgui-toolbar {
+.gooey-toolbar {
 	contain: content;
 	backface-visibility: hidden;
 
@@ -725,7 +725,7 @@
 $icon-width: 1.5rem;
 $icon-height: 0.9rem;
 
-.fracgui-toolbar-item {
+.gooey-toolbar-item {
 	svg {
 		max-height: 1rem;
 	}
@@ -735,7 +735,7 @@ $icon-height: 0.9rem;
 
 //? Search Container
 
-.fracgui-search-container {
+.gooey-search-container {
 	contain: content;
 	backface-visibility: hidden;
 
@@ -753,11 +753,11 @@ $icon-height: 0.9rem;
 
 //? Search Button
 
-.fracgui-header:hover .fracgui-search-button {
+.gooey-header:hover .gooey-search-button {
 	opacity: 1;
 }
 
-.fracgui-search-button {
+.gooey-search-button {
 	contain: strict;
 	all: unset;
 
@@ -792,21 +792,21 @@ $icon-height: 0.9rem;
 
 //- Search Hover
 
-.fracgui-search-button {
-	color: var(--fracgui-toolbar-icon-dim_color);
+.gooey-search-button {
+	color: var(--gooey-toolbar-icon-dim_color);
 	opacity: 0;
 }
-.fracgui-search-button:hover {
-	color: var(--fracgui-fg-e);
+.gooey-search-button:hover {
+	color: var(--gooey-fg-e);
 	opacity: 1;
 
 	transition-duration: 0.15s;
 }
-.fracgui-search-button:active {
+.gooey-search-button:active {
 	transition-duration: 0.05s;
 
 	background: transparent;
-	color: var(--fracgui-fg-d);
+	color: var(--gooey-fg-d);
 	opacity: 1;
 
 	scale: 0.9;
@@ -814,8 +814,8 @@ $icon-height: 0.9rem;
 
 //- Search Active
 
-.fracgui-search-container.active .fracgui-search-button {
-	color: var(--fracgui-bg-e);
+.gooey-search-container.active .gooey-search-button {
+	color: var(--gooey-bg-e);
 	opacity: 1;
 
 	path {
@@ -824,47 +824,47 @@ $icon-height: 0.9rem;
 	}
 
 	circle {
-		fill: var(--fracgui-bg-e);
+		fill: var(--gooey-bg-e);
 		transform: translate(-10%, 20%) scale(0.75);
 	}
 }
 
 //? Search Input
 
-input.fracgui-search-input {
+input.gooey-search-input {
 	contain: content;
 	width: 6rem;
 	height: 1rem;
 	padding: 0 0.25rem;
 
-	color: var(--fracgui-fg-c);
-	background: var(--fracgui-bg-b);
-	border-radius: var(--fracgui-radius-sm);
+	color: var(--gooey-fg-c);
+	background: var(--gooey-bg-b);
+	border-radius: var(--gooey-radius-sm);
 	box-shadow: 0 0 11px #0004 inset;
 	outline: none;
 	border: none;
 
-	font-size: calc(var(--fracgui-font-size) * 0.75);
-	caret-color: var(--fracgui-bg-e);
+	font-size: calc(var(--gooey-font-size) * 0.75);
+	caret-color: var(--gooey-bg-e);
 	caret-shape: block;
 	line-height: 4px !important;
 
 	transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
 
-	@at-root .fracgui-root[mode='light'] & {
+	@at-root .gooey-root[mode='light'] & {
 		box-shadow: 0 0 4px #0001 inset;
 	}
 }
 
 //- Search Input Active
 
-.fracgui-search-input {
+.gooey-search-input {
 	max-width: 0rem;
 	opacity: 0;
 	pointer-events: none;
 	transition-duration: 1s;
 }
-.fracgui-search-container.active .fracgui-search-input {
+.gooey-search-container.active .gooey-search-input {
 	max-width: 6rem;
 	opacity: 1;
 	pointer-events: all;
@@ -874,7 +874,7 @@ input.fracgui-search-input {
 
 //·· Settings Button ···································································¬
 
-.fracgui-settings-button {
+.gooey-settings-button {
 	contain: layout style;
 	display: flex;
 	align-items: center;
@@ -890,14 +890,14 @@ input.fracgui-search-input {
 	padding: 0;
 	margin-right: 0.5rem;
 
-	color: var(--fracgui-toolbar-icon-dim_color);
+	color: var(--gooey-toolbar-icon-dim_color);
 	background: none;
 
 	cursor: pointer;
 	transition: color 0.15s;
 
 	&:hover {
-		color: var(--fracgui-toolbar-icon_color);
+		color: var(--gooey-toolbar-icon_color);
 	}
 
 	.gear,
@@ -983,7 +983,7 @@ input.fracgui-search-input {
 
 //·· Copy ··························································¬
 
-.fracgui-folder {
+.gooey-folder {
 	.copy-button {
 		contain: content;
 		cursor: pointer;
@@ -992,9 +992,9 @@ input.fracgui-search-input {
 		height: 2rem;
 		padding: 10%;
 
-		color: var(--fracgui-fg-a);
-		//! background: rgba(var(--fracgui-bg-a-rgb), 0);
-		background: color-mix(in sRGB, var(--fracgui-bg-a) 0%, transparent);
+		color: var(--gooey-fg-a);
+		//! background: rgba(var(--gooey-bg-a-rgb), 0);
+		background: color-mix(in sRGB, var(--gooey-bg-a) 0%, transparent);
 		outline: 1px solid transparent;
 		border-radius: 0.2rem;
 		// backdrop-filter: blur(0px);
@@ -1005,10 +1005,10 @@ input.fracgui-search-input {
 
 		&:not(.active, .outro) {
 			&:hover {
-				color: var(--fracgui-fg-b);
+				color: var(--gooey-fg-b);
 				// backdrop-filter: blur(2px);
-				//! background: rgba(var(--fracgui-bg-a-rgb), 0.75);
-				background: color-mix(in sRGB, var(--fracgui-bg-a) 75%, transparent);
+				//! background: rgba(var(--gooey-bg-a-rgb), 0.75);
+				background: color-mix(in sRGB, var(--gooey-bg-a) 75%, transparent);
 
 				transition-duration: 0.15s, 0.25s;
 				transition-delay: 0s;
@@ -1016,17 +1016,17 @@ input.fracgui-search-input {
 
 			&:active,
 			&:focus {
-				color: var(--fracgui-fg-c);
-				background: var(--fracgui-bg-c);
+				color: var(--gooey-fg-c);
+				background: var(--gooey-bg-c);
 			}
 		}
 
 		&.active,
 		&.outro {
-			color: var(--fracgui-fg-a);
+			color: var(--gooey-fg-a);
 			outline-color: transparent !important;
-			//! background: rgba(var(--fracgui-bg-a-rgb), 0);
-			background: color-mix(in sRGB, var(--fracgui-bg-a) 0%, transparent);
+			//! background: rgba(var(--gooey-bg-a-rgb), 0);
+			background: color-mix(in sRGB, var(--gooey-bg-a) 0%, transparent);
 			opacity: 1 !important;
 
 			transition-delay: 0s;
@@ -1034,7 +1034,7 @@ input.fracgui-search-input {
 		}
 
 		font-size: 0.8rem;
-		font-family: var(--fracgui-font-family);
+		font-family: var(--gooey-font-family);
 	}
 
 	.copy-button-svg-container {
@@ -1100,7 +1100,7 @@ input.fracgui-search-input {
 			}
 
 			.check {
-				stroke: var(--fracgui-light-a);
+				stroke: var(--gooey-light-a);
 
 				opacity: 0;
 
@@ -1122,7 +1122,7 @@ input.fracgui-search-input {
 
 //· Inputs ···································································¬
 
-.fracgui-input-drawer-toggle {
+.gooey-input-drawer-toggle {
 	contain: strict;
 	right: 0.5rem;
 	top: 0.5rem;
@@ -1130,37 +1130,37 @@ input.fracgui-search-input {
 	min-width: 0.33rem;
 	height: 75%;
 
-	color: var(--fracgui-fg-c);
-	background: var(--fracgui-drawer-toggle_background);
-	transition: background var(--fracgui-transition-duration);
-	box-shadow: -1px 0 1px 0.5px color-mix(in sRGB, var(--fracgui-bg-a) 50%, transparent) inset;
+	color: var(--gooey-fg-c);
+	background: var(--gooey-drawer-toggle_background);
+	transition: background var(--gooey-transition-duration);
+	box-shadow: -1px 0 1px 0.5px color-mix(in sRGB, var(--gooey-bg-a) 50%, transparent) inset;
 
-	border-top-right-radius: var(--fracgui-radius-sm);
-	border-bottom-right-radius: var(--fracgui-radius-sm);
+	border-top-right-radius: var(--gooey-radius-sm);
+	border-bottom-right-radius: var(--gooey-radius-sm);
 
 	cursor: pointer;
 
 	&:hover {
-		background: var(--fracgui-bg-c);
+		background: var(--gooey-bg-c);
 	}
 }
 
-@property --fracgui-resetbtn-gradstart {
+@property --gooey-resetbtn-gradstart {
 	syntax: '<percentage>';
 	inherits: false;
 	initial-value: 0%;
 }
 
-@property --fracgui-resetbtn-gradend {
+@property --gooey-resetbtn-gradend {
 	syntax: '<percentage>';
 	inherits: false;
 	initial-value: 100%;
 }
 
-.fracgui-input-reset-btn {
+.gooey-input-reset-btn {
 	contain: strict;
-	--fracgui-resetbtn-gradstart: 5%;
-	--fracgui-resetbtn-gradend: 16%;
+	--gooey-resetbtn-gradstart: 5%;
+	--gooey-resetbtn-gradend: 16%;
 	position: absolute;
 	right: 5px;
 	top: 0;
@@ -1174,12 +1174,12 @@ input.fracgui-search-input {
 
 	opacity: 0;
 	border-radius: 50%;
-	color: var(--fracgui-fg-c);
+	color: var(--gooey-fg-c);
 	background-image: radial-gradient(
 		circle,
-		var(--fracgui-theme-a) 0%,
-		var(--fracgui-theme-a) var(--fracgui-resetbtn-gradstart),
-		transparent var(--fracgui-resetbtn-gradend),
+		var(--gooey-theme-a) 0%,
+		var(--gooey-theme-a) var(--gooey-resetbtn-gradstart),
+		transparent var(--gooey-resetbtn-gradend),
 		transparent 100%
 	);
 
@@ -1188,12 +1188,12 @@ input.fracgui-search-input {
 
 	transition:
 		opacity 0.25s cubic-bezier(0.215, 0.61, 0.355, 1),
-		--fracgui-resetbtn-gradstart 0.25s cubic-bezier(0.215, 0.61, 0.355, 1),
-		--fracgui-resetbtn-gradend 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
+		--gooey-resetbtn-gradstart 0.25s cubic-bezier(0.215, 0.61, 0.355, 1),
+		--gooey-resetbtn-gradend 0.25s cubic-bezier(0.215, 0.61, 0.355, 1);
 
 	&:hover {
-		--fracgui-resetbtn-gradStart: 37.5%;
-		--fracgui-resetbtn-gradend: 45%;
+		--gooey-resetbtn-gradStart: 37.5%;
+		--gooey-resetbtn-gradend: 45%;
 	}
 
 	&.dirty {
@@ -1202,38 +1202,38 @@ input.fracgui-search-input {
 	}
 }
 
-.fracgui-input-title {
+.gooey-input-title {
 	position: relative;
 	contain: content;
 
-	max-width: var(--fracgui-input-section-1_width);
-	min-width: var(--fracgui-input-section-1_width);
+	max-width: var(--gooey-input-section-1_width);
+	min-width: var(--gooey-input-section-1_width);
 	text-wrap: balance;
 	padding-left: 8px;
 
-	font-size: calc(var(--fracgui-font-size) * 0.85);
-	letter-spacing: var(--fracgui-folder-content_letter-spacing);
+	font-size: calc(var(--gooey-font-size) * 0.85);
+	letter-spacing: var(--gooey-folder-content_letter-spacing);
 
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 
-	transition-duration: var(--fracgui-transition-duration);
+	transition-duration: var(--gooey-transition-duration);
 	transition-property: color;
 }
 
-.fracgui-input-container {
+.gooey-input-container {
 	position: relative;
 	display: flex;
 	align-items: center;
 
 	width: 100%;
 	height: 0%;
-	min-height: var(--fracgui-input_height);
+	min-height: var(--gooey-input_height);
 
-	color: var(--fracgui-input-container_color);
-	outline: var(--fracgui-input-container_outline);
-	box-shadow: var(--fracgui-input-container_box-shadow);
+	color: var(--gooey-input-container_color);
+	outline: var(--gooey-input-container_outline);
+	box-shadow: var(--gooey-input-container_box-shadow);
 
 	transition: opacity 0.15s ease-in 0.2s;
 
@@ -1242,8 +1242,8 @@ input.fracgui-search-input {
 	$inverted-border-radius-bottom: 0.25rem;
 
 	&:first-of-type {
-		border-top-left-radius: var(--fracgui-radius-sm);
-		border-top-right-radius: var(--fracgui-radius-sm);
+		border-top-left-radius: var(--gooey-radius-sm);
+		border-top-right-radius: var(--gooey-radius-sm);
 
 		// top left corner
 		&::before {
@@ -1254,7 +1254,7 @@ input.fracgui-search-input {
 			width: $inverted-border-size;
 			height: $inverted-border-size * 2;
 			border-top-left-radius: $inverted-border-radius;
-			box-shadow: 0 -#{$inverted-border-size} 0 0 var(--fracgui-folder-header_background);
+			box-shadow: 0 -#{$inverted-border-size} 0 0 var(--gooey-folder-header_background);
 
 			clip-path: inset(0 0 0 0);
 			opacity: 1;
@@ -1270,7 +1270,7 @@ input.fracgui-search-input {
 			width: $inverted-border-size;
 			min-height: $inverted-border-size * 2;
 			border-top-right-radius: $inverted-border-radius;
-			box-shadow: 0 -#{$inverted-border-size} 0 0 var(--fracgui-folder-header_background);
+			box-shadow: 0 -#{$inverted-border-size} 0 0 var(--gooey-folder-header_background);
 
 			clip-path: inset(0 0 0 0);
 			opacity: 1;
@@ -1278,9 +1278,9 @@ input.fracgui-search-input {
 		}
 	}
 
-	@at-root .fracgui-folder:not(:last-of-type) .fracgui-input-container:last-of-type {
-		border-bottom-left-radius: var(--fracgui-radius-sm);
-		border-bottom-right-radius: var(--fracgui-radius-sm);
+	@at-root .gooey-folder:not(:last-of-type) .gooey-input-container:last-of-type {
+		border-bottom-left-radius: var(--gooey-radius-sm);
+		border-bottom-right-radius: var(--gooey-radius-sm);
 
 		// bottom left corner
 		&::before {
@@ -1291,7 +1291,7 @@ input.fracgui-search-input {
 			height: $inverted-border-size * 2;
 			width: $inverted-border-size;
 			border-bottom-left-radius: $inverted-border-radius-bottom;
-			box-shadow: 0 $inverted-border-size 0 0 var(--fracgui-folder-header_background);
+			box-shadow: 0 $inverted-border-size 0 0 var(--gooey-folder-header_background);
 			clip-path: inset(0 0 0 0);
 		}
 		// bottom right corner
@@ -1304,36 +1304,36 @@ input.fracgui-search-input {
 			height: $inverted-border-size * 2;
 			width: $inverted-border-size;
 			border-bottom-right-radius: $inverted-border-radius-bottom;
-			box-shadow: 0 $inverted-border-size 0 0 var(--fracgui-folder-header_background);
+			box-shadow: 0 $inverted-border-size 0 0 var(--gooey-folder-header_background);
 			clip-path: inset(0 0 0 0);
 		}
 	}
 
 	&:hover {
-		color: var(--fracgui-fg-b);
+		color: var(--gooey-fg-b);
 	}
 
 	&:has(input:active),
-	&:has(.fracgui-controller:active) {
-		.fracgui-controller-number {
+	&:has(.gooey-controller:active) {
+		.gooey-controller-number {
 			opacity: 1;
-			background: var(--fracgui-controller_background);
+			background: var(--gooey-controller_background);
 		}
 
-		.fracgui-input-title {
-			color: var(--fracgui-theme-a);
-		}
-	}
-
-	&.fracgui-search-hit {
-		min-height: var(--fracgui-input_height);
-
-		.fracgui-input-title {
-			color: var(--fracgui-theme-a);
+		.gooey-input-title {
+			color: var(--gooey-theme-a);
 		}
 	}
 
-	&.fracgui-search-miss {
+	&.gooey-search-hit {
+		min-height: var(--gooey-input_height);
+
+		.gooey-input-title {
+			color: var(--gooey-theme-a);
+		}
+	}
+
+	&.gooey-search-miss {
 		min-height: 0rem;
 		overflow: hidden;
 
@@ -1348,12 +1348,12 @@ input.fracgui-search-input {
 	}
 
 	&.expanded {
-		.fracgui-input-container {
+		.gooey-input-container {
 			min-height: unset;
 		}
 	}
 
-	.fracgui-input-content {
+	.gooey-input-content {
 		contain: content;
 		position: relative;
 		display: flex;
@@ -1366,7 +1366,7 @@ input.fracgui-search-input {
 
 		//? Number Input
 
-		.fracgui-input-number-container {
+		.gooey-input-number-container {
 			contain: content;
 			position: relative;
 
@@ -1378,9 +1378,9 @@ input.fracgui-search-input {
 			width: 100%;
 			height: 90%;
 
-			border-radius: var(--fracgui-radius-sm);
+			border-radius: var(--gooey-radius-sm);
 
-			.fracgui-input-number-buttons-container {
+			.gooey-input-number-buttons-container {
 				contain: strict;
 				display: flex;
 				flex-direction: column;
@@ -1394,7 +1394,7 @@ input.fracgui-search-input {
 				margin-left: 0.1rem;
 				margin-right: 0.1rem;
 
-				.fracgui-input-number-button {
+				.gooey-input-number-button {
 					contain: strict;
 					cursor: pointer;
 
@@ -1409,24 +1409,24 @@ input.fracgui-search-input {
 					opacity: 0.5;
 
 					border: none;
-					border-radius: var(--fracgui-radius-xs);
+					border-radius: var(--gooey-radius-xs);
 					box-shadow: none;
 
 					//- ?
 					background: transparent;
 
-					transition-duration: var(--fracgui-transition-duration);
+					transition-duration: var(--gooey-transition-duration);
 					transition-property: color, background, box-shadow, opacity;
 
 					svg {
 						width: 1rem;
 						height: 1rem;
 
-						color: var(--fracgui-fg-d);
+						color: var(--gooey-fg-d);
 						opacity: 0.1;
 
 						scale: 1;
-						transition-duration: var(--fracgui-transition-duration);
+						transition-duration: var(--gooey-transition-duration);
 						transition-property: color, opacity;
 
 						user-select: none;
@@ -1437,7 +1437,7 @@ input.fracgui-search-input {
 					&:active {
 						opacity: 1;
 						box-shadow: 0px 0px 1px 0px hsl(0, 0%, 0%) inset;
-						@at-root .fracgui-root[mode='light'] & {
+						@at-root .gooey-root[mode='light'] & {
 							box-shadow: 0px 0px 1px 0px hsl(0, 0%, 100%) inset;
 						}
 
@@ -1448,25 +1448,25 @@ input.fracgui-search-input {
 
 					&:active {
 						svg {
-							color: var(--fracgui-theme-a);
+							color: var(--gooey-theme-a);
 						}
 					}
 				}
 
-				.fracgui-input-number-buttons-increment {
-					border-top-left-radius: var(--fracgui-radius);
-					border-top-right-radius: var(--fracgui-radius);
+				.gooey-input-number-buttons-increment {
+					border-top-left-radius: var(--gooey-radius);
+					border-top-right-radius: var(--gooey-radius);
 				}
-				.fracgui-input-number-buttons-decrement {
-					border-bottom-left-radius: var(--fracgui-radius);
-					border-bottom-right-radius: var(--fracgui-radius);
+				.gooey-input-number-buttons-decrement {
+					border-bottom-left-radius: var(--gooey-radius);
+					border-bottom-right-radius: var(--gooey-radius);
 				}
 			}
 		}
 
 		//- Range <input>
 
-		input.fracgui-input-number-range {
+		input.gooey-input-number-range {
 			contain: layout style size;
 			-webkit-appearance: none;
 			appearance: none;
@@ -1474,11 +1474,11 @@ input.fracgui-search-input {
 			width: 100%;
 			height: 0.5rem;
 
-			accent-color: var(--fracgui-input-number-range_color);
-			background: var(--fracgui-input-number-range_background);
-			border-radius: var(--fracgui-radius-xs);
-			box-shadow: var(--fracgui-input-number-range_box-shadow);
-			outline: var(--fracgui-input-number-range_outline);
+			accent-color: var(--gooey-input-number-range_color);
+			background: var(--gooey-input-number-range_background);
+			border-radius: var(--gooey-radius-xs);
+			box-shadow: var(--gooey-input-number-range_box-shadow);
+			outline: var(--gooey-input-number-range_outline);
 
 			opacity: 0.7;
 			transition: 0.15s;
@@ -1492,8 +1492,8 @@ input.fracgui-search-input {
 			&:active {
 				background: color-mix(
 					in lch,
-					var(--fracgui-theme-a),
-					var(--fracgui-input-number-range_background)
+					var(--gooey-theme-a),
+					var(--gooey-input-number-range_background)
 				);
 			}
 
@@ -1504,8 +1504,8 @@ input.fracgui-search-input {
 				width: 0.5rem;
 				height: 1rem;
 
-				background: var(--fracgui-input-number-range_color);
-				border-radius: var(--fracgui-radius-xs);
+				background: var(--gooey-input-number-range_color);
+				border-radius: var(--gooey-radius-xs);
 				border: none;
 
 				transition: 0.15s;
@@ -1521,8 +1521,8 @@ input.fracgui-search-input {
 			}
 
 			@mixin rangeThumbActive {
-				background: var(--fracgui-theme-a);
-				box-shadow: 0 0 20px var(--fracgui-theme-a);
+				background: var(--gooey-theme-a);
+				box-shadow: 0 0 20px var(--gooey-theme-a);
 				opacity: 1;
 			}
 			&:active {
@@ -1539,7 +1539,7 @@ input.fracgui-search-input {
 				-moz-appearance: none;
 				appearance: none;
 
-				border-radius: var(--fracgui-radius-sm);
+				border-radius: var(--gooey-radius-sm);
 				border: none;
 				cursor: pointer;
 				z-index: 9;
@@ -1554,23 +1554,23 @@ input.fracgui-search-input {
 
 		//- Text and Number <input>
 
-		.fracgui-controller-number,
-		.fracgui-controller-text {
+		.gooey-controller-number,
+		.gooey-controller-text {
 			-webkit-appearance: textfield;
 			-moz-appearance: textfield;
 			appearance: textfield;
 
 			width: 100%;
 			min-width: 2rem;
-			max-width: var(--fracgui-input-section-2_width);
+			max-width: var(--gooey-input-section-2_width);
 			height: 1.25rem;
 
 			border: none;
-			outline: var(--fracgui-controller_outline);
+			outline: var(--gooey-controller_outline);
 
 			@include fontMono;
 
-			transition-duration: var(--fracgui-transition-duration);
+			transition-duration: var(--gooey-transition-duration);
 			transition-property: color, background, box-shadow;
 			overflow: visible;
 
@@ -1583,14 +1583,14 @@ input.fracgui-search-input {
 			}
 
 			&.dragging {
-				outline: 1px solid color-mix(in sRGB, var(--fracgui-theme-a) 50%, transparent);
-				box-shadow: 0 0 0.75rem color-mix(in sRGB, var(--fracgui-theme-a) 33%, transparent);
+				outline: 1px solid color-mix(in sRGB, var(--gooey-theme-a) 50%, transparent);
+				box-shadow: 0 0 0.75rem color-mix(in sRGB, var(--gooey-theme-a) 33%, transparent);
 			}
 		}
 
 		//? Text Input
 
-		.fracgui-input-text-container {
+		.gooey-input-text-container {
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
@@ -1599,13 +1599,13 @@ input.fracgui-search-input {
 			width: 100%;
 			height: 100%;
 
-			.fracgui-controller-text {
+			.gooey-controller-text {
 				width: 100%;
 				max-width: unset;
 				height: 1.25rem;
 
 				border: none;
-				outline: var(--fracgui-controller_outline);
+				outline: var(--gooey-controller_outline);
 
 				@include fontMono;
 				text-align: start;
@@ -1615,15 +1615,15 @@ input.fracgui-search-input {
 				overflow: visible;
 
 				&:hover {
-					color: var(--fracgui-controller_color);
-					background: var(--fracgui-controller_background);
+					color: var(--gooey-controller_color);
+					background: var(--gooey-controller_background);
 				}
 			}
 		}
 
 		//? Color Input
 
-		.fracgui-input-color-container {
+		.gooey-input-color-container {
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
@@ -1634,7 +1634,7 @@ input.fracgui-search-input {
 
 			//- Current Color
 
-			.fracgui-input-color-current-color-container {
+			.gooey-input-color-current-color-container {
 				position: relative;
 
 				.copy-button {
@@ -1646,23 +1646,23 @@ input.fracgui-search-input {
 					padding: 3px;
 					background: none !important;
 
-					color: var(--fracgui-fg-d);
+					color: var(--gooey-fg-d);
 					filter: brightness(0.75) contrast(0.8);
 					backdrop-filter: none;
 					svg {
 						.back {
-							fill: var(--fracgui-fg-d);
-							stroke: var(--fracgui-fg-d);
+							fill: var(--gooey-fg-d);
+							stroke: var(--gooey-fg-d);
 						}
 					}
 					&:hover {
 						filter: brightness(1) contrast(1);
 						backdrop-filter: none;
-						color: var(--fracgui-fg-a);
+						color: var(--gooey-fg-a);
 						svg {
 							.back {
-								fill: var(--fracgui-fg-a);
-								stroke: var(--fracgui-fg-a);
+								fill: var(--gooey-fg-a);
+								stroke: var(--gooey-fg-a);
 							}
 						}
 					}
@@ -1678,13 +1678,13 @@ input.fracgui-search-input {
 				}
 			}
 
-			.fracgui-input-color-current-color-background {
+			.gooey-input-color-current-color-background {
 				$size: 8px;
 				$size2: $size * 2;
-				$color: var(--fracgui-bg-a);
+				$color: var(--gooey-bg-a);
 
-				width: var(--fracgui-input-section-2_width);
-				min-width: var(--fracgui-input-section-2_width);
+				width: var(--gooey-input-section-2_width);
+				min-width: var(--gooey-input-section-2_width);
 				height: 1.5rem;
 
 				background-image: linear-gradient(45deg, $color 25%, transparent 25%),
@@ -1697,21 +1697,21 @@ input.fracgui-search-input {
 					0 $size,
 					$size (-$size),
 					(-$size) 0px;
-				border-radius: var(--fracgui-radius-sm);
+				border-radius: var(--gooey-radius-sm);
 				overflow: hidden;
 
 				cursor: pointer;
 
-				clip-path: xywh(0 12% 100% 72% round var(--fracgui-radius-sm));
+				clip-path: xywh(0 12% 100% 72% round var(--gooey-radius-sm));
 			}
 
-			.fracgui-input-color-current-color-display {
+			.gooey-input-color-current-color-display {
 				height: 100%;
 			}
 
 			//? Body
 
-			.fracgui-input-color-body {
+			.gooey-input-color-body {
 				position: relative;
 				display: flex;
 				flex-direction: column;
@@ -1719,29 +1719,29 @@ input.fracgui-search-input {
 				// gap: 0.5rem;
 
 				min-width: 0;
-				width: var(--fracgui-input-section-3_width);
+				width: var(--gooey-input-section-3_width);
 
 				//- Canvas
 
-				.fracgui-input-color-picker-container {
+				.gooey-input-color-picker-container {
 					position: relative;
 					display: flex;
 					flex-direction: column;
 					// gap: 0.25rem;
 
-					.fracgui-input-color-picker-canvas {
+					.gooey-input-color-picker-canvas {
 						display: flex;
 
 						width: 100%;
 						height: 3rem;
 
-						border-radius: var(--fracgui-radius);
+						border-radius: var(--gooey-radius);
 
 						cursor: pointer;
 						overflow: hidden;
 					}
 
-					.fracgui-input-color-picker-handle {
+					.gooey-input-color-picker-handle {
 						position: absolute;
 						top: 0;
 						left: 0;
@@ -1751,8 +1751,8 @@ input.fracgui-search-input {
 						translate: -50% -50%;
 
 						border-radius: 50%;
-						border: 1px solid var(--fracgui-fg-a);
-						box-shadow: 0 0 0.25rem 0rem var(--fracgui-bg-d);
+						border: 1px solid var(--gooey-fg-a);
+						box-shadow: 0 0 0.25rem 0rem var(--gooey-bg-d);
 						opacity: 0;
 
 						transition-property: all, opacity;
@@ -1764,7 +1764,7 @@ input.fracgui-search-input {
 					}
 
 					&.expanded {
-						.fracgui-input-color-picker-handle {
+						.gooey-input-color-picker-handle {
 							opacity: 1;
 							transition-delay: 0s, 0.25s;
 						}
@@ -1779,7 +1779,7 @@ input.fracgui-search-input {
 						height: 0.5rem;
 						padding: 0;
 
-						background-color: var(--fracgui-input-number-range_color);
+						background-color: var(--gooey-input-number-range_color);
 						border: none;
 
 						transition: 0.15s;
@@ -1788,11 +1788,11 @@ input.fracgui-search-input {
 						z-index: 10;
 					}
 
-					.fracgui-input-color-picker-hue {
+					.gooey-input-color-picker-hue {
 						appearance: none;
 
 						width: 99%;
-						border-radius: var(--fracgui-radius-sm);
+						border-radius: var(--gooey-radius-sm);
 						background: none;
 						height: 0.5rem;
 
@@ -1817,7 +1817,7 @@ input.fracgui-search-input {
 								hsl(360, 100%, 50%)
 							);
 
-							border-radius: var(--fracgui-radius-sm);
+							border-radius: var(--gooey-radius-sm);
 							border: none;
 							cursor: pointer;
 							z-index: 1;
@@ -1833,11 +1833,11 @@ input.fracgui-search-input {
 
 					//- Alpha Slider
 
-					.fracgui-input-color-picker-alpha {
+					.gooey-input-color-picker-alpha {
 						appearance: none;
 
 						width: 99%;
-						border-radius: var(--fracgui-radius-sm);
+						border-radius: var(--gooey-radius-sm);
 						background-color: transparent;
 
 						&::-webkit-slider-thumb {
@@ -1852,7 +1852,7 @@ input.fracgui-search-input {
 
 							background: linear-gradient(to right, transparent, currentColor);
 
-							border-radius: var(--fracgui-radius-sm);
+							border-radius: var(--gooey-radius-sm);
 							border: none;
 							cursor: pointer;
 							z-index: 1;
@@ -1862,7 +1862,7 @@ input.fracgui-search-input {
 
 							background: linear-gradient(to right, transparent, currentColor);
 
-							border-radius: var(--fracgui-radius-sm);
+							border-radius: var(--gooey-radius-sm);
 							border: none;
 							cursor: pointer;
 							z-index: 1;
@@ -1874,82 +1874,82 @@ input.fracgui-search-input {
 
 				$selectWidth: 2rem;
 
-				.fracgui-input-color-components-container {
+				.gooey-input-color-components-container {
 					display: grid;
 					grid-template-columns: $selectWidth 1fr;
 					align-items: center;
 					gap: 0.75rem;
 
-					.fracgui-input-color-components-select-container {
+					.gooey-input-color-components-select-container {
 						width: $selectWidth;
 						grid-area: 1/1;
 
-						color: var(--fracgui-fg-d);
-						@at-root .fracgui-root[mode='light'] & {
-							color: var(--fracgui-bg-e);
+						color: var(--gooey-fg-d);
+						@at-root .gooey-root[mode='light'] & {
+							color: var(--gooey-bg-e);
 						}
 
-						font-size: var(--fracgui-font-size);
+						font-size: var(--gooey-font-size);
 
 						span {
 							transition: 0.4s;
 							text-shadow: 0 0 0 transparent;
 						}
 
-						.fracgui-controller-select-selected {
-							font-size: calc(var(--fracgui-font-size) * 0.8);
+						.gooey-controller-select-selected {
+							font-size: calc(var(--gooey-font-size) * 0.8);
 						}
 					}
 
 					&:has(input.a.hovering) {
-						.fracgui-input-color-components-select-container span.a {
-							color: var(--fracgui-fg-a);
+						.gooey-input-color-components-select-container span.a {
+							color: var(--gooey-fg-a);
 						}
 					}
 					&:has(input.a.dragging) {
-						.fracgui-input-color-components-select-container span.a {
-							color: var(--fracgui-theme-a);
-							text-shadow: 0 0 0.5rem var(--fracgui-theme-a);
+						.gooey-input-color-components-select-container span.a {
+							color: var(--gooey-theme-a);
+							text-shadow: 0 0 0.5rem var(--gooey-theme-a);
 						}
 					}
 
 					&:has(input.b.hovering) {
-						.fracgui-input-color-components-select-container span.b {
-							color: var(--fracgui-fg-a);
+						.gooey-input-color-components-select-container span.b {
+							color: var(--gooey-fg-a);
 						}
 					}
 					&:has(input.b.dragging) {
-						.fracgui-input-color-components-select-container span.b {
-							color: var(--fracgui-theme-a);
-							text-shadow: 0 0 0.5rem var(--fracgui-theme-a);
+						.gooey-input-color-components-select-container span.b {
+							color: var(--gooey-theme-a);
+							text-shadow: 0 0 0.5rem var(--gooey-theme-a);
 						}
 					}
 
 					&:has(input.c.hovering) {
-						.fracgui-input-color-components-select-container span.c {
-							color: var(--fracgui-fg-a);
+						.gooey-input-color-components-select-container span.c {
+							color: var(--gooey-fg-a);
 						}
 					}
 					&:has(input.c.dragging) {
-						.fracgui-input-color-components-select-container span.c {
-							color: var(--fracgui-theme-a);
-							text-shadow: 0 0 0.5rem var(--fracgui-theme-a);
+						.gooey-input-color-components-select-container span.c {
+							color: var(--gooey-theme-a);
+							text-shadow: 0 0 0.5rem var(--gooey-theme-a);
 						}
 					}
 
 					&:has(input.d.hovering) {
-						.fracgui-input-color-components-select-container span.d {
-							color: var(--fracgui-fg-a);
+						.gooey-input-color-components-select-container span.d {
+							color: var(--gooey-fg-a);
 						}
 					}
 					&:has(input.d.dragging) {
-						.fracgui-input-color-components-select-container span.d {
-							color: var(--fracgui-theme-a);
-							text-shadow: 0 0 0.5rem var(--fracgui-theme-a);
+						.gooey-input-color-components-select-container span.d {
+							color: var(--gooey-theme-a);
+							text-shadow: 0 0 0.5rem var(--gooey-theme-a);
 						}
 					}
 
-					.fracgui-input-color-components-text {
+					.gooey-input-color-components-text {
 						max-width: 5rem;
 						grid-area: 1/2;
 
@@ -1963,7 +1963,7 @@ input.fracgui-search-input {
 						}
 					}
 
-					.fracgui-input-color-components-numbers-container {
+					.gooey-input-color-components-numbers-container {
 						grid-area: 1/2;
 						display: flex;
 						align-items: center;
@@ -1972,7 +1972,7 @@ input.fracgui-search-input {
 
 						width: 90%;
 
-						.fracgui-controller-number {
+						.gooey-controller-number {
 							height: 1.25rem;
 							max-width: unset;
 
@@ -1996,7 +1996,7 @@ input.fracgui-search-input {
 
 		//? Button Input
 
-		.fracgui-input-button-container {
+		.gooey-input-button-container {
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -2006,7 +2006,7 @@ input.fracgui-search-input {
 		}
 
 		//? Switch Input
-		.fracgui-input-switch-container {
+		.gooey-input-switch-container {
 			position: relative;
 
 			display: flex;
@@ -2016,15 +2016,15 @@ input.fracgui-search-input {
 
 			width: 100%;
 			height: 100%;
-			height: var(--fracgui-input_height);
+			height: var(--gooey-input_height);
 
 			// border-radius: unset;
 
-			$w: var(--fracgui-input-section-1_width);
+			$w: var(--gooey-input-section-1_width);
 			// $w: 8rem;
 			$tw: 1.5rem;
 
-			.fracgui-controller-switch {
+			.gooey-controller-switch {
 				position: relative;
 				display: flex;
 				align-items: center;
@@ -2035,7 +2035,7 @@ input.fracgui-search-input {
 				margin: 0;
 				padding: 0;
 
-				border-radius: var(--fracgui-radius-sm);
+				border-radius: var(--gooey-radius-sm);
 				overflow: hidden;
 				border: none;
 				outline: none;
@@ -2046,42 +2046,42 @@ input.fracgui-search-input {
 				&:hover,
 				&:focus-visible {
 					&:not(:disabled) {
-						color: var(--fracgui-controller_color);
+						color: var(--gooey-controller_color);
 					}
 				}
 
 				box-shadow:
-					-1px 1px 7px 0px hsla(250, 10%, var(--fracgui-shadow-lightness), 0.33) inset,
-					-1px 1px 1px 0px hsla(250, 10%, var(--fracgui-shadow-lightness), 0.5) inset;
+					-1px 1px 7px 0px hsla(250, 10%, var(--gooey-shadow-lightness), 0.33) inset,
+					-1px 1px 1px 0px hsla(250, 10%, var(--gooey-shadow-lightness), 0.5) inset;
 
-				background: var(--fracgui-input-number-range_background);
+				background: var(--gooey-input-number-range_background);
 				background-image: radial-gradient(
 					circle at 25% 50% in lab,
-					var(--fracgui-theme-a) 0%,
-					color-mix(in sRGB, var(--fracgui-theme-a) 50%, transparent) 3%,
-					color-mix(in sRGB, var(--fracgui-theme-a) 20%, transparent) 10%,
-					color-mix(in sRGB, var(--fracgui-theme-a) 15%, transparent) 20%,
-					color-mix(in sRGB, var(--fracgui-theme-a) 10%, transparent) 30%,
-					color-mix(in sRGB, var(--fracgui-theme-a) 10%, transparent) 50%,
-					var(--fracgui-input-number-range_background) 100%
-						// var(--fracgui-controller-dim_background) 100%
+					var(--gooey-theme-a) 0%,
+					color-mix(in sRGB, var(--gooey-theme-a) 50%, transparent) 3%,
+					color-mix(in sRGB, var(--gooey-theme-a) 20%, transparent) 10%,
+					color-mix(in sRGB, var(--gooey-theme-a) 15%, transparent) 20%,
+					color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 30%,
+					color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 50%,
+					var(--gooey-input-number-range_background) 100%
+						// var(--gooey-controller-dim_background) 100%
 				);
 
-				@at-root .fracgui-root[mode='light'] & {
+				@at-root .gooey-root[mode='light'] & {
 					box-shadow:
 						-1px 1px 7px 0px #0002 inset,
 						-1px 1px 1px 0px #0002 inset;
 
 					background-image: radial-gradient(
 						circle at 25% 50% in lab,
-						var(--fracgui-theme-a) 3%,
-						color-mix(in sRGB, var(--fracgui-theme-a) 40%, transparent) 3%,
-						color-mix(in sRGB, var(--fracgui-theme-a) 30%, transparent) 10%,
-						color-mix(in sRGB, var(--fracgui-theme-a) 20%, transparent) 20%,
-						color-mix(in sRGB, var(--fracgui-theme-a) 10%, transparent) 30%,
-						color-mix(in sRGB, var(--fracgui-theme-a) 5%, transparent) 50%,
-						var(--fracgui-input-number-range_background) 100%
-							// var(--fracgui-controller-dim_background) 100%
+						var(--gooey-theme-a) 3%,
+						color-mix(in sRGB, var(--gooey-theme-a) 40%, transparent) 3%,
+						color-mix(in sRGB, var(--gooey-theme-a) 30%, transparent) 10%,
+						color-mix(in sRGB, var(--gooey-theme-a) 20%, transparent) 20%,
+						color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 30%,
+						color-mix(in sRGB, var(--gooey-theme-a) 5%, transparent) 50%,
+						var(--gooey-input-number-range_background) 100%
+							// var(--gooey-controller-dim_background) 100%
 					);
 				}
 
@@ -2099,11 +2099,11 @@ input.fracgui-search-input {
 					width: 100%;
 					height: 100%;
 
-					background: var(--fracgui-input-number-range_background);
+					background: var(--gooey-input-number-range_background);
 					box-shadow:
 						-1px 1px 7px 0px #000c inset,
 						-1px 1px 1px 0px #000c inset;
-					@at-root .fracgui-root[mode='light'] & {
+					@at-root .gooey-root[mode='light'] & {
 						box-shadow:
 							-1px 1px 7px 0px #0002 inset,
 							-1px 1px 1px 0px #0002 inset;
@@ -2118,15 +2118,15 @@ input.fracgui-search-input {
 					opacity: 0;
 				}
 
-				.fracgui-controller-switch-thumb,
-				.fracgui-controller-switch-left,
-				.fracgui-controller-switch-right {
+				.gooey-controller-switch-thumb,
+				.gooey-controller-switch-left,
+				.gooey-controller-switch-right {
 					transition-duration: 0.25s;
 					transition-timing-function: cubic-bezier(0.01, 1.06, 0.8, 1.01);
 				}
 
 				//? Thumb
-				.fracgui-controller-switch-thumb {
+				.gooey-controller-switch-thumb {
 					display: flex;
 					position: absolute;
 					right: 0.25rem;
@@ -2134,9 +2134,9 @@ input.fracgui-search-input {
 					width: $tw;
 					min-height: 66%;
 
-					background: var(--fracgui-controller_background);
-					border: 1px solid var(--fracgui-input-dim_color);
-					border-radius: var(--fracgui-radius-xs);
+					background: var(--gooey-controller_background);
+					border: 1px solid var(--gooey-input-dim_color);
+					border-radius: var(--gooey-radius-xs);
 					box-shadow:
 						0px 0px #a6a7ad69,
 						1px -1px 0px #0002 inset;
@@ -2147,18 +2147,18 @@ input.fracgui-search-input {
 				}
 
 				//- Positioning
-				.fracgui-controller-switch-thumb {
+				.gooey-controller-switch-thumb {
 					right: calc(100% - $tw - 0.25rem);
 				}
 				&.active {
-					.fracgui-controller-switch-thumb {
+					.gooey-controller-switch-thumb {
 						right: 10%;
 						box-shadow:
 							-2px 0px #00000069,
-							-2px 0px color-mix(in sRGB, var(--fracgui-theme-a) 10%, transparent),
+							-2px 0px color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent),
 							1px -1px 1px #0002 inset;
 
-						@at-root .fracgui-root[mode='light'] & {
+						@at-root .gooey-root[mode='light'] & {
 							box-shadow:
 								-2px 0px #a6a7ad69,
 								1px -1px 1px #0002 inset;
@@ -2169,13 +2169,13 @@ input.fracgui-search-input {
 		}
 	}
 
-	&:has(.fracgui-input-buttongrid-container) {
+	&:has(.gooey-input-buttongrid-container) {
 		height: unset;
 	}
 
-	.fracgui-input-content {
+	.gooey-input-content {
 		//? ButtonGrid Input
-		.fracgui-input-buttongrid-container {
+		.gooey-input-buttongrid-container {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -2185,27 +2185,27 @@ input.fracgui-search-input {
 			width: 100%;
 			padding: 0.25rem 0;
 
-			.fracgui-controller-buttongrid-row {
+			.gooey-controller-buttongrid-row {
 				display: flex;
 				gap: $gap;
 
 				width: 100%;
 			}
 
-			.fracgui-controller-buttongrid-button {
+			.gooey-controller-buttongrid-button {
 				&.active {
-					background: var(--fracgui-controller_background);
-					color: var(--fracgui-controller_color);
-					color: var(--fracgui-theme-a);
+					background: var(--gooey-controller_background);
+					color: var(--gooey-controller_color);
+					color: var(--gooey-theme-a);
 
 					// font-variation-settings: 'wght' 800;
 				}
-				@at-root .fracgui-root[mode='light'] & {
-					background: var(--fracgui-controller-dim_background);
-					color: var(--fracgui-controller_color);
+				@at-root .gooey-root[mode='light'] & {
+					background: var(--gooey-controller-dim_background);
+					color: var(--gooey-controller_color);
 					&.active {
-						color: var(--fracgui-theme-a);
-						background: var(--fracgui-controller_background);
+						color: var(--gooey-theme-a);
+						background: var(--gooey-controller_background);
 					}
 				}
 			}
@@ -2215,13 +2215,13 @@ input.fracgui-search-input {
 	//* Accents for when an input's content section is hovered over.
 
 	&:hover {
-		.fracgui-controller-number {
-			background: var(--fracgui-controller_background);
+		.gooey-controller-number {
+			background: var(--gooey-controller_background);
 		}
 
-		.fracgui-input-number-container {
-			.fracgui-input-number-buttons-container {
-				.fracgui-input-number-button {
+		.gooey-input-number-container {
+			.gooey-input-number-buttons-container {
+				.gooey-input-number-button {
 					svg {
 						opacity: 0.75;
 					}
@@ -2229,38 +2229,38 @@ input.fracgui-search-input {
 			}
 		}
 
-		.fracgui-controller-number {
-			color: var(--fracgui-fg-b);
+		.gooey-controller-number {
+			color: var(--gooey-fg-b);
 		}
 
-		input.fracgui-input-number-range::-webkit-slider-thumb {
-			background-color: var(--fracgui-bg-d);
+		input.gooey-input-number-range::-webkit-slider-thumb {
+			background-color: var(--gooey-bg-d);
 			transition: 0.15s;
 			opacity: 1;
 
 			&:active {
-				background-color: var(--fracgui-theme-a);
+				background-color: var(--gooey-theme-a);
 			}
 		}
 	}
 
-	.fracgui-input-content {
+	.gooey-input-content {
 		//
 		//? Select Input
 
-		.fracgui-input-select-container {
+		.gooey-input-select-container {
 			contain: content;
 			width: 100%;
 			height: 100%;
 
-			font-size: calc(var(--fracgui-font-size) * 0.8);
+			font-size: calc(var(--gooey-font-size) * 0.8);
 
-			.fracgui-controller-select-selected {
+			.gooey-controller-select-selected {
 				line-height: 1.25rem;
 				height: 1.25rem;
 				box-sizing: content-box;
 
-				background: var(--fracgui-controller-dim_background);
+				background: var(--gooey-controller-dim_background);
 
 				border-width: 1px;
 				border-style: solid;
@@ -2275,10 +2275,10 @@ input.fracgui-search-input {
 
 					margin: auto;
 
-					color: var(--fracgui-bg-d);
+					color: var(--gooey-bg-d);
 					transform: rotate(90deg) translateX(0);
 
-					transition-duration: var(--fracgui-transition-duration);
+					transition-duration: var(--gooey-transition-duration);
 					transition-property: color, transform, border-color;
 				}
 
@@ -2288,17 +2288,17 @@ input.fracgui-search-input {
 				&:hover,
 				&:focus-visible,
 				&:active {
-					background: var(--fracgui-controller_background);
+					background: var(--gooey-controller_background);
 					&[contenteditable='true'] {
-						border-color: var(--fracgui-controller-dim_color);
+						border-color: var(--gooey-controller-dim_color);
 					}
 					&::before {
-						color: var(--fracgui-bg-e);
+						color: var(--gooey-bg-e);
 					}
 				}
 				&.active {
 					&::before {
-						color: var(--fracgui-fg-d);
+						color: var(--gooey-fg-d);
 						transform: rotate(90deg) translateX(2px);
 					}
 				}
@@ -2306,7 +2306,7 @@ input.fracgui-search-input {
 					cursor: text;
 					&:focus-visible,
 					&:active {
-						border-color: var(--fracgui-theme-a);
+						border-color: var(--gooey-theme-a);
 					}
 				}
 			}

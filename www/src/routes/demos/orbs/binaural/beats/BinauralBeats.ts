@@ -1,4 +1,4 @@
-import { BinauralBeatsGui } from './BinauralBeatsGui'
+import { BinauralBeatsGooey } from './BinauralBeatsGooey'
 import { Waves } from '../waves/Waves'
 import { BROWSER } from 'esm-env'
 
@@ -28,7 +28,7 @@ export const WAVE_PRESETS = {
 } as const
 
 export class BinauralBeats {
-	gui?: BinauralBeatsGui
+	gooey?: BinauralBeatsGooey
 
 	ctx!: AudioContext
 	gain_node!: GainNode
@@ -51,7 +51,7 @@ export class BinauralBeats {
 		this.gain_node = new GainNode(this.ctx, { gain: this.#volume })
 		this.gain_node.connect(this.ctx.destination)
 
-		this.gui = new BinauralBeatsGui(this)
+		this.gooey = new BinauralBeatsGooey(this)
 	}
 
 	addWave = (kind: keyof typeof WAVE_PRESETS) => {

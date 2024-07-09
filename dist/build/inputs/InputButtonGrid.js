@@ -31,7 +31,7 @@ class InputButtonGrid extends Input {
         this._log = new Logger(`InputButtonGrid ${opts.title}`, { fg: 'cyan' });
         this._log.fn('constructor').debug({ opts, this: this });
         const container = create('div', {
-            classes: ['fracgui-input', 'fracgui-input-buttongrid-container'],
+            classes: ['gooey-input', 'gooey-input-buttongrid-container'],
             parent: this.elements.content,
         });
         this.elements.controllers = {
@@ -61,7 +61,7 @@ class InputButtonGrid extends Input {
         this.buttons.clear();
         for (let i = 0; i < rows; i++) {
             const row = create('div', {
-                classes: ['fracgui-controller-buttongrid-row'],
+                classes: ['gooey-controller-buttongrid-row'],
                 parent: this.elements.controllers.container,
                 style: { gap: '0.5em' },
             });
@@ -91,9 +91,9 @@ class InputButtonGrid extends Input {
         opts.element = create('button', {
             id,
             classes: [
-                'fracgui-controller',
-                'fracgui-controller-button',
-                'fracgui-controller-buttongrid-button',
+                'gooey-controller',
+                'gooey-controller-button',
+                'gooey-controller-buttongrid-button',
             ],
             innerHTML: text(),
             dataset: {

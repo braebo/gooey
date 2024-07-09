@@ -6,7 +6,7 @@ let SaveSVG = class SaveSVG {
     element;
     constructor() {
         this.element = create('div', {
-            classes: ['fracgui-icon-save', 'fracgui-icon'],
+            classes: ['gooey-icon-save', 'gooey-icon'],
             innerHTML: /*html*/ `
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <g class="Frame">
@@ -22,11 +22,11 @@ let SaveSVG = class SaveSVG {
         });
     }
     static style = /*css*/ `
-        .fracgui-icon-save {
+        .gooey-icon-save {
             width: 1.5rem;
             height: 1.5rem;
 
-            color: var(--fracgui-controller-dim_color);
+            color: var(--gooey-controller-dim_color);
             margin-right: 0.25rem;
             opacity: 0.5;
 
@@ -36,11 +36,11 @@ let SaveSVG = class SaveSVG {
             cursor: pointer;
         }
 
-        .fracgui-icon-save:hover {
+        .gooey-icon-save:hover {
             opacity: 1;
         }
 
-        .fracgui-icon-save .back-group {
+        .gooey-icon-save .back-group {
             transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transition-property: opacity, transform;
             transition-delay: 0s;
@@ -48,37 +48,37 @@ let SaveSVG = class SaveSVG {
             opacity: 0;
             transform: translate(-0.25rem, -0.25rem);
         }
-        .fracgui-icon-save:hover .back-group {
+        .gooey-icon-save:hover .back-group {
             opacity: 1;
             transition-delay: 0.25s;
             transform: translate(0, 0);
         }
 
-        .fracgui-icon-save .plus {
+        .gooey-icon-save .plus {
             transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transition-property: color, transform;
             transform-origin: center;
 
             transform: scale(1.5);
         }
-        .fracgui-icon-save:hover .plus {
+        .gooey-icon-save:hover .plus {
             transform: scale(1);
-            color: var(--fracgui-bg-a);
+            color: var(--gooey-bg-a);
         }
 
-        .fracgui-icon-save .front {
+        .gooey-icon-save .front {
             transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             transition-property: transform, opacity;
 
             transform: scale(1.25);
             opacity: 0;
         }
-        .fracgui-icon-save:hover .front {
+        .gooey-icon-save:hover .front {
             transform: scale(1);
             opacity: 1;
         }
 
-        .fracgui-icon-save svg {
+        .gooey-icon-save svg {
             width: 100%;
             height: 100%;
         }

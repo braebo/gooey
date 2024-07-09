@@ -20,7 +20,7 @@ class NumberController {
         this._log = new Logger(`NumberController ${this.input.title}`, { fg: 'darkgoldenrod' });
         this.element = create('input', {
             type: 'number',
-            classes: ['fracgui-controller', 'fracgui-controller-number'],
+            classes: ['gooey-controller', 'gooey-controller-number'],
             value: String(input.state.value),
             parent,
             tooltip: {
@@ -29,10 +29,10 @@ class NumberController {
                 delay: 1500,
                 parent,
                 styles: {
-                    background: 'var(--fracgui-bg-a)',
-                    color: 'var(--fracgui-fg-a)',
-                    '--fractils-hotkey_background': 'var(--fracgui-bg-b)',
-                    '--fractils-hotkey_color': 'var(--fracgui-fg-a)',
+                    background: 'var(--gooey-bg-a)',
+                    color: 'var(--gooey-fg-a)',
+                    '--fractils-hotkey_background': 'var(--gooey-bg-b)',
+                    '--fractils-hotkey_color': 'var(--gooey-fg-a)',
                 },
             },
         });

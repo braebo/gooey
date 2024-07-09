@@ -18,7 +18,7 @@ import { nanoid } from './shared/nanoid.js';
 import { state } from './shared/state.js';
 import { toFn } from './shared/toFn.js';
 import { DEV } from './external/.pnpm/esm-env@1.0.0/external/esm-env/prod-ssr.js';
-import { Gui } from './Gui.js';
+import { Gooey } from './Gooey.js';
 
 // The custom-regions extension is recommended for this file.
 //⌟
@@ -40,19 +40,19 @@ const INTERNAL_FOLDER_DEFAULTS = {
     parentFolder: undefined,
     isRoot: true,
     _skipAnimations: true,
-    gui: undefined,
+    gooey: undefined,
     _headerless: false,
 };
 //⌟
 /**
  * Folder is a container for organizing and grouping {@link Input|Inputs} and child Folders.
  *
- * This class should not be instantiated directly.  Instead, use the {@link Gui.addFolder} method.
+ * This class should not be instantiated directly.  Instead, use the {@link Gooey.addFolder} method.
  *
  * @example
  * ```typescript
- * const gui = new Gui()
- * const folder = gui.addFolder({ title: 'My Folder' })
+ * const gooey = new Gooey()
+ * const folder = gooey.addFolder({ title: 'My Folder' })
  * folder.addNumber({ title: 'foo', value: 5 })
  * ```
  */
@@ -61,7 +61,7 @@ class Folder {
     __type = 'Folder';
     isRoot = true;
     id = nanoid();
-    gui;
+    gooey;
     /**
      * A preset namespace to use for saving/loading.  By default, the {@link title|`title`}
      * is used, in combiniation with the parent folder's title (and so on up the hierarchy).
@@ -74,7 +74,7 @@ class Folder {
     presetId;
     /**
      * Whether this Folder should be saved as a {@link FolderPreset} when saving the
-     * {@link GuiPreset} for the {@link Gui} this Folder belongs to.  If `false`, this Input will
+     * {@link GooeyPreset} for the {@link Gooey} this Folder belongs to.  If `false`, this Input will
      * be skipped.
      * @defaultValue `true`
      */
@@ -118,7 +118,7 @@ class Folder {
             throw new Error('Folder must have a container.');
         }
         const opts = Object.assign({}, FOLDER_DEFAULTS, INTERNAL_FOLDER_DEFAULTS, {
-            gui: this.gui,
+            gooey: this.gooey,
             isRoot: true,
         }, options);
         // this.closed = state(opts.closed ?? false)
@@ -145,7 +145,7 @@ class Folder {
             this._depth = this.parentFolder._depth + 1;
             this.root = this.parentFolder.root;
         }
-        this.gui = opts.gui;
+        this.gooey = opts.gooey;
         this._title = opts.title ?? '';
         this.element = this._createElement(opts.container);
         this.elements = this._createElements(this.element);
@@ -260,12 +260,12 @@ class Folder {
         const defaults = Object.assign({}, INTERNAL_FOLDER_DEFAULTS, {
             parentFolder: this,
             depth: this._depth + 1,
-            gui: this.gui,
+            gooey: this.gooey,
         });
         const overrides = {
             __type: 'InternalFolderOptions',
             container: this.elements.content,
-            gui: this.gui,
+            gooey: this.gooey,
             isRoot: false,
         };
         const opts = Object.assign({}, defaults, options, overrides);
@@ -285,7 +285,7 @@ class Folder {
         this.element.removeEventListener('pointerup', this.toggle);
         this.element.addEventListener('pointerup', this.toggle, { once: true });
         // Abort if a toolbar button was clicked.
-        if (composedPathContains(event, 'fracgui-cancel'))
+        if (composedPathContains(event, 'gooey-cancel'))
             return this._disableClicks();
         // We need to watch for the mouseup event within a certain timeframe
         // to make sure we don't accidentally trigger a click after dragging.
@@ -328,8 +328,8 @@ class Folder {
             return;
         }
         // If the folder is being dragged, don't toggle.
-        if (this.element.classList.contains('fracgui-dragged')) {
-            this.element.classList.remove('fracgui-dragged');
+        if (this.element.classList.contains('gooey-dragged')) {
+            this.element.classList.remove('gooey-dragged');
             return;
         }
         const state = !this.closed.value;
@@ -408,7 +408,7 @@ class Folder {
             closed: this.closed.value,
             hidden: toFn(this._hidden)(),
             children: this.children
-                .filter(c => c.title !== Gui.settingsFolderTitle && c.saveable)
+                .filter(c => c.title !== Gooey.settingsFolderTitle && c.saveable)
                 .map(child => child.save()),
             inputs: Array.from(this.inputs.values())
                 .filter(i => i.opts.saveable)
@@ -514,9 +514,9 @@ class Folder {
      * of the value at the {@link target} object's {@link key}.
      * @example
      * ```ts
-     * const gui = new Gui()
+     * const gooey = new Gooey()
      * const params = { foo: 5, bar: 'baz' }
-     * const folder = gui.addFolder('params')
+     * const folder = gooey.addFolder('params')
      *
      * const numberInput = folder.bind(params, 'foo', { min: 0, max: 10, step: 1 })
      * //    ^? `InputNumber`
@@ -774,39 +774,39 @@ class Folder {
         this._log.fn('#createElement').debug({ el, this: this });
         if (this.isRoot) {
             return create('div', {
-                id: `fracgui-root_${this.id}`,
-                classes: ['fracgui-root', 'fracgui-folder', 'closed'],
-                dataset: { theme: this.gui.theme ?? 'default' },
+                id: `gooey-root_${this.id}`,
+                classes: ['gooey-root', 'gooey-folder', 'closed'],
+                dataset: { theme: this.gooey.theme ?? 'default' },
                 parent: el,
             });
         }
         return create('div', {
             parent: this.parentFolder.elements.content,
-            classes: ['fracgui-folder', 'closed'],
+            classes: ['gooey-folder', 'closed'],
         });
     }
     _createElements(element) {
         this._log.fn('#createElements').debug({ element, this: this });
         const header = create('div', {
             parent: element,
-            classes: ['fracgui-header'],
+            classes: ['gooey-header'],
         });
         header.addEventListener('pointerdown', this._handleClick.bind(this));
         const title = create('div', {
             parent: header,
-            classes: ['fracgui-title'],
+            classes: ['gooey-title'],
             textContent: this.title,
         });
         const toolbar = create('div', {
             parent: header,
-            classes: ['fracgui-toolbar'],
+            classes: ['gooey-toolbar'],
         });
         const contentWrapper = create('div', {
-            classes: ['fracgui-content-wrapper'],
+            classes: ['gooey-content-wrapper'],
             parent: element,
         });
         const content = create('div', {
-            classes: ['fracgui-content'],
+            classes: ['gooey-content'],
             parent: contentWrapper,
         });
         return {
@@ -840,13 +840,13 @@ class Folder {
         }
     }
     _resolveHeaderHeight() {
-        // Get the _pixel_ value of the `--fracgui-header_height` variable for SVG generation.
+        // Get the _pixel_ value of the `--gooey-header_height` variable for SVG generation.
         let height = 16 * 1.75;
-        const wrapper = this.root?.gui?.wrapper;
+        const wrapper = this.root?.gooey?.wrapper;
         if (!wrapper) {
             throw new Error('No wrapper found!  This should never happen...');
         }
-        const prop = getComputedStyle(wrapper).getPropertyValue('--fracgui-header_height');
+        const prop = getComputedStyle(wrapper).getPropertyValue('--gooey-header_height');
         if (prop.endsWith('px')) {
             height = parseFloat(prop);
         }

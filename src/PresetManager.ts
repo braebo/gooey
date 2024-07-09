@@ -1,6 +1,6 @@
 import type { InputButtonGrid } from './inputs/InputButtonGrid'
 import type { InputSelect } from './inputs/InputSelect'
-import type { Gui, GuiPreset } from './Gui'
+import type { Gooey, GooeyPreset } from './Gooey'
 import type { State } from './shared/state'
 import type { Folder } from './Folder'
 
@@ -20,13 +20,13 @@ export interface PresetManagerOptions {
 	 * Optionsal existing presets.
 	 * @default []
 	 */
-	presets?: GuiPreset[]
+	presets?: GooeyPreset[]
 
 	/**
 	 * The default preset to use.
 	 * @default undefined
 	 */
-	defaultPreset?: GuiPreset
+	defaultPreset?: GooeyPreset
 
 	/**
 	 * The key to use for storage.  If not provided, storage is disabled.
@@ -40,17 +40,17 @@ export class PresetManager {
 	readonly __type = Object.freeze('PresetManager')
 	readonly __version = Object.freeze('1.0.0')
 
-	defaultPreset!: GuiPreset
-	activePreset: State<GuiPreset>
-	presets!: State<GuiPreset[]>
+	defaultPreset!: GooeyPreset
+	activePreset: State<GooeyPreset>
+	presets!: State<GooeyPreset[]>
 	folder!: Folder
 
-	private _defaultPresetId = 'fracgui-default-preset'
+	private _defaultPresetId = 'gooey-default-preset'
 	private _defaultPresetTitle = 'default'
 
-	private _presetSnapshot?: GuiPreset
+	private _presetSnapshot?: GooeyPreset
 
-	private _presetsInput!: InputSelect<GuiPreset>
+	private _presetsInput!: InputSelect<GooeyPreset>
 	private _manageInput!: InputButtonGrid
 	private _renamePresetButton!: RenameSVG
 
@@ -58,17 +58,17 @@ export class PresetManager {
 	private _log: Logger
 
 	constructor(
-		public gui: Gui,
+		public gooey: Gooey,
 		public parentFolder: Folder,
 		options: PresetManagerOptions,
 	) {
-		this._log = new Logger(`PresetManager ${gui.folder.title}`, { fg: 'slateblue' })
+		this._log = new Logger(`PresetManager ${gooey.folder.title}`, { fg: 'slateblue' })
 		this._log.fn('constructor').debug({ options, this: this })
 
 		this.opts = options
-		this.opts.localStorageKey ??= 'fracgui::presets'
+		this.opts.localStorageKey ??= 'gooey::presets'
 
-		this.activePreset = state(this.opts.defaultPreset ?? ({} as GuiPreset), {
+		this.activePreset = state(this.opts.defaultPreset ?? ({} as GooeyPreset), {
 			key: this.opts.localStorageKey + '::active',
 		})
 
@@ -86,8 +86,8 @@ export class PresetManager {
 		) {
 			Promise.resolve().then(() => {
 				console.log('loading active preset', this.activePreset.value)
-				this.gui.load(this.activePreset.value)
-				this.gui._undoManager.clear()
+				this.gooey.load(this.activePreset.value)
+				this.gooey._undoManager.clear()
 			})
 		}
 	}
@@ -104,7 +104,7 @@ export class PresetManager {
 		}
 		this._initialized = true
 
-		this.folder = await this.addGui(this.parentFolder, this.opts.defaultPreset)
+		this.folder = await this.addGooey(this.parentFolder, this.opts.defaultPreset)
 
 		return this
 	}
@@ -112,7 +112,7 @@ export class PresetManager {
 	/**
 	 * Set the active preset.
 	 */
-	set(value: GuiPreset) {
+	set(value: GooeyPreset) {
 		this._log.fn('set').debug({ value, this: this })
 		this.activePreset.set(value)
 	}
@@ -156,19 +156,19 @@ export class PresetManager {
 		return newTitle
 	}
 
-	private _resolveDefaultPreset(defaultPreset?: GuiPreset) {
+	private _resolveDefaultPreset(defaultPreset?: GooeyPreset) {
 		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
 
 		defaultPreset ??= this.presets.value.find(p => p.id === this._defaultPresetId)
 		if (!defaultPreset) {
-			defaultPreset = this.gui.save(this._defaultPresetTitle, this._defaultPresetId)
+			defaultPreset = this.gooey.save(this._defaultPresetTitle, this._defaultPresetId)
 			this.presets.push(defaultPreset)
 		}
 
 		return defaultPreset
 	}
 
-	async addGui(parentFolder: Folder, defaultPreset?: GuiPreset) {
+	async addGooey(parentFolder: Folder, defaultPreset?: GooeyPreset) {
 		this._log.fn('add').debug({ this: this, parentFolder, defaultPreset })
 
 		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
@@ -178,11 +178,11 @@ export class PresetManager {
 			// hidden: false,
 			// children: [],
 			// @ts-expect-error - @internal
-			gui: this.gui,
+			gooey: this.gooey,
 		})
 
 		// todo - use this class and remove all that styling 🍝
-		presetsFolder.element.classList.add('fracgui-folder-alt')
+		presetsFolder.element.classList.add('gooey-folder-alt')
 
 		// Fully desaturate the presets folder's header connector to svg.
 		presetsFolder.on('mount', () => {
@@ -208,9 +208,9 @@ export class PresetManager {
 		/**
 		 * Download the active preset as a JSON file.
 		 */
-		const download = (preset: GuiPreset | GuiPreset[]) => {
+		const download = (preset: GooeyPreset | GooeyPreset[]) => {
 			// const preset = this.activePreset.value
-			const title = Array.isArray(preset) ? this.gui.folder.title + ' presets' : preset.title
+			const title = Array.isArray(preset) ? this.gooey.folder.title + ' presets' : preset.title
 			const blob = new Blob([JSON.stringify(preset, null, 2)], {
 				type: 'application/json',
 			})
@@ -236,14 +236,14 @@ export class PresetManager {
 					const data = JSON.parse(text)
 					if (Array.isArray(data)) {
 						for (const preset of data) {
-							if (isType<GuiPreset, 'GuiPreset'>(preset, 'GuiPreset')) {
+							if (isType<GooeyPreset, 'GooeyPreset'>(preset, 'GooeyPreset')) {
 								this.put(preset)
 							} else {
 								console.warn('Invalid preset:', preset)
 							}
 						}
 					} else {
-						if (isType<GuiPreset>(data, 'GuiPreset')) {
+						if (isType<GooeyPreset>(data, 'GooeyPreset')) {
 							this.put(data)
 						} else {
 							console.warn('Invalid preset:', data)
@@ -257,7 +257,7 @@ export class PresetManager {
 		}
 
 		const createIcon = (name: string, contents: string) =>
-			/*html*/ `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="fracgui-icon fracgui-icon-${name}">${contents}</svg>`
+			/*html*/ `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="gooey-icon gooey-icon-${name}">${contents}</svg>`
 
 		//? Preset Management Buttons
 		this._manageInput = presetsFolder.addButtonGrid({
@@ -268,7 +268,7 @@ export class PresetManager {
 						id: 'update',
 						onClick: () => {
 							const { id, title } = this.activePreset.value
-							const current = this.gui.save(title, id)
+							const current = this.gooey.save(title, id)
 							this.put(current)
 						},
 						disabled: () => this.defaultPresetIsActive,
@@ -331,7 +331,7 @@ export class PresetManager {
 									const preset = JSON.parse(text)
 									if (
 										typeof preset === 'object' &&
-										preset.__type === 'GuiPreset'
+										preset.__type === 'GooeyPreset'
 									) {
 										this.put(preset)
 									}
@@ -418,20 +418,20 @@ export class PresetManager {
 
 		this._presetsInput.on('change', ({ value }) => {
 			this._log.fn('_presetsInput.on(change)').debug({ value, this: this })
-			this.gui.load(value)
+			this.gooey.load(value)
 			this.activePreset.set(value)
 			this._refreshInputs()
 		})
 
 		this._presetsInput.on('open', () => {
 			this._log.fn('_presetsInput.on(open)').debug()
-			this._presetSnapshot = this.gui.save('__snapshot__')
+			this._presetSnapshot = this.gooey.save('__snapshot__')
 		})
 
 		this._presetsInput.on('cancel', () => {
 			this._log.fn('_presetsInput.on(cancel)').debug()
 			if (this._presetSnapshot) {
-				this.gui.load(this._presetSnapshot)
+				this.gooey.load(this._presetSnapshot)
 				this._refreshInputs()
 			}
 		})
@@ -482,7 +482,7 @@ export class PresetManager {
 		/**
 		 * The preset to update or add.  If not provided, a new preset is created from the current state.
 		 */
-		preset?: GuiPreset,
+		preset?: GooeyPreset,
 	) {
 		this._log.fn('saveNewPreset')
 
@@ -494,7 +494,7 @@ export class PresetManager {
 			throw new Error('No select input.')
 		}
 
-		preset ??= this.gui.save(this._resolveUnusedTitle('preset'), nanoid())
+		preset ??= this.gooey.save(this._resolveUnusedTitle('preset'), nanoid())
 
 		const existing = this.presets.value.find(p => p.id === preset.id)
 		if (!existing) {
@@ -518,7 +518,7 @@ export class PresetManager {
 	/**
 	 * Delete a preset.
 	 */
-	delete(preset: GuiPreset | GuiPreset['id']) {
+	delete(preset: GooeyPreset | GooeyPreset['id']) {
 		this._log.fn('delete').debug({ this: this, preset })
 
 		if (!this._isInitialized()) {
@@ -540,7 +540,7 @@ export class PresetManager {
 		this.activePreset.set(this.presets.value[0] ?? this.defaultPreset)
 	}
 
-	private _isInitialized(): this is { presets: State<GuiPreset[]>; folder: Folder } {
+	private _isInitialized(): this is { presets: State<GooeyPreset[]>; folder: Folder } {
 		return this._initialized
 	}
 

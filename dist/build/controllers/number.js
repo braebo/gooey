@@ -3,7 +3,7 @@ import { create } from '../shared/create.js';
 const rangeController = (input, opts, parent) => {
     const range = create('input', {
         type: 'range',
-        classes: ['fracgui-controller', 'fracgui-input-number-range'],
+        classes: ['gooey-controller', 'gooey-input-number-range'],
         value: String(input.state.value),
         parent,
     });

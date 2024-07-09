@@ -5,7 +5,7 @@
 	import Orbs from '$lib/components/orbs/Orbs.svelte'
 	import { stringify } from '$lib/utils/stringify'
 	import Code from '$lib/components/Code.svelte'
-	import { Gui } from 'gooey'
+	import { Gooey } from 'gooey'
 
 	import { code, showCode } from './stores'
 
@@ -13,7 +13,7 @@
 	import { fly } from 'svelte/transition'
 	import { onMount } from 'svelte'
 
-	let gui: Gui
+	let gooey: Gooey
 	let ready = false
 
 	onMount(() => {
@@ -22,22 +22,22 @@
 			p.width = Math.round(window.innerWidth / 7)
 			return p
 		})
-		gui = new Gui({
+		gooey = new Gooey({
 			title: 'addMany',
 			position: 'center',
 		})
 
 		ready = true
 
-		gui.addMany(params.value)
+		gooey.addMany(params.value)
 
-		gui.on('change', () => {
+		gooey.on('change', () => {
 			showCode.set(true)
 			code.set(stringify($params, 2))
 		})
 
 		return () => {
-			gui?.dispose()
+			gooey?.dispose()
 			globalThis.window?.location.reload()
 		}
 	})
@@ -71,7 +71,7 @@
 	{/if}
 
 	<div class="buttons">
-		<button on:click={() => console.log(gui)}>Log Gui</button>
+		<button on:click={() => console.log(gooey)}>Log Gooey</button>
 		<button on:click={() => localStorage.clear()}>Clear localStorage</button>
 	</div>
 

@@ -16,16 +16,16 @@ class Search {
     constructor(folder) {
         this.folder = folder;
         const container = create('div', {
-            classes: ['fracgui-toolbar-item', 'fracgui-search-container'],
+            classes: ['gooey-toolbar-item', 'gooey-search-container'],
         });
         folder.elements.toolbar.container.prepend(container);
         const input = create('input', {
-            classes: ['fracgui-controller-text', 'fracgui-search-input', 'fracgui-cancel'],
+            classes: ['gooey-controller-text', 'gooey-search-input', 'gooey-cancel'],
             parent: container,
         });
         this._evm.listen(input, 'input', e => this.search(e.target.value));
         const button = create('button', {
-            classes: ['fracgui-search-button', 'fracgui-cancel'],
+            classes: ['gooey-search-button', 'gooey-cancel'],
             parent: container,
         });
         this.tooltip = new Tooltip(button, {

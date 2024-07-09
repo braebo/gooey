@@ -126,7 +126,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 		//? Elements.
 		const container = create('div', {
-			classes: ['fracgui-input-color-container'],
+			classes: ['gooey-input-color-container'],
 			parent: this.elements.content,
 		})
 		this.elements.controllers.container = container
@@ -136,7 +136,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 		//- Body
 		const body = create('div', {
-			classes: ['fracgui-input-color-body'],
+			classes: ['gooey-input-color-body'],
 			parent: container,
 		})
 
@@ -231,17 +231,17 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 	private _createCurrentColor(parent: HTMLDivElement) {
 		const container = create('div', {
-			classes: ['fracgui-input-color-current-color-container'],
+			classes: ['gooey-input-color-current-color-container'],
 			parent,
 		})
 
 		const displayBackground = create('div', {
-			classes: ['fracgui-input-color-current-color-background'],
+			classes: ['gooey-input-color-current-color-background'],
 			parent: container,
 		})
 
 		const display = create('div', {
-			classes: ['fracgui-input-color-current-color-display'],
+			classes: ['gooey-input-color-current-color-display'],
 			parent: displayBackground,
 		})
 		this._evm.listen(display, 'click', this.togglePicker)
@@ -322,9 +322,9 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 		)
 		const containerAnim = this.elements.container.animate(
 			{
-				minHeight: 'var(--fracgui-input_height)',
-				maxHeight: 'var(--fracgui-input_height)',
-				height: 'var(--fracgui-input_height)',
+				minHeight: 'var(--gooey-input_height)',
+				maxHeight: 'var(--gooey-input_height)',
+				height: 'var(--gooey-input_height)',
 			},
 			{ duration: duration, easing: 'cubic-bezier(.13,.09,.02,.96)', fill: 'forwards' },
 		) as Animation | undefined

@@ -4,10 +4,10 @@ function createFolderSvg(folder) {
     const x = 12;
     const y = 12;
     const r = 4;
-    const fill = 'var(--fracgui-theme-a)';
-    const theme = 'var(--fracgui-theme-a)';
+    const fill = 'var(--gooey-theme-a)';
+    const theme = 'var(--gooey-theme-a)';
     const icon = document.createElement('div');
-    icon.classList.add('fracgui-folder-icon-container');
+    icon.classList.add('gooey-folder-icon-container');
     const count = folder.allChildren.length + folder.inputs.size;
     icon.style.setProperty('filter', `hue-rotate(${folder.hue}deg)`);
     const circs = [
@@ -65,12 +65,12 @@ function createFolderSvg(folder) {
     const bounce = 'cubic-bezier(0.36, 0, 0.66, -0.56)';
     const ease = 'cubic-bezier(0.23, 1, 0.320, 1)';
     const css = /*css*/ `
-			.fracgui-folder-icon {
+			.gooey-folder-icon {
 				overflow: visible;
 				backface-visibility: hidden;
 			}
 
-			.fracgui-folder-icon circle, .fracgui-folder-icon line {
+			.gooey-folder-icon circle, .gooey-folder-icon line {
 				transform-origin: center;
 
 				transition-duration: 0.25s;
@@ -79,7 +79,7 @@ function createFolderSvg(folder) {
 			}
 
 			/*  Circle A  */
-			.closed .fracgui-folder-icon circle.a {
+			.closed .gooey-folder-icon circle.a {
 				transform: scale(1);
 
 				stroke: transparent;
@@ -87,7 +87,7 @@ function createFolderSvg(folder) {
 
 				transition: all .5s ${bounce}, stroke 2s ${bounce}, fill .2s ${bounce} 0s;
 			}
-			.fracgui-folder-icon circle.a {
+			.gooey-folder-icon circle.a {
 				transform: scale(0.66);
 
 				stroke: ${fill};
@@ -97,13 +97,13 @@ function createFolderSvg(folder) {
 			}
 
 			/*  Circle Alt  */
-			.closed .fracgui-folder-icon circle.alt {
+			.closed .gooey-folder-icon circle.alt {
 				transform: translate(-3px, 0) scale(1.8);
 
 				transition-duration: 0.5s;
 				transition-timing-function: ${ease};
 			}
-			 .fracgui-folder-icon circle.alt {
+			 .gooey-folder-icon circle.alt {
 				transform: translate(0, 0) scale(0);
 
 				stroke: none;
@@ -123,7 +123,7 @@ function createFolderSvg(folder) {
 			stroke-width="${strokeWidth}"
 			stroke-linecap="round"
 			stroke-linejoin="round"
-			class="fracgui-folder-icon"
+			class="gooey-folder-icon"
 			overflow="visible"
 		>
 			<circle class="a" cx="${x}" cy="${y}" r="${r}" stroke="${theme}" fill="${fill}" />
@@ -143,7 +143,7 @@ function createFolderConnector(folder, icon) {
     const stroke = 1;
     //? SVG
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('class', 'fracgui-connector-svg');
+    svg.setAttribute('class', 'gooey-connector-svg');
     svg.setAttribute('width', `${width}`);
     svg.setAttribute('stroke-width', `${stroke}`);
     svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -154,7 +154,7 @@ function createFolderConnector(folder, icon) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('vector-effect', 'non-scaling-stroke');
     path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', 'var(--fracgui-theme-a)');
+    path.setAttribute('stroke', 'var(--gooey-theme-a)');
     path.setAttribute('stroke-width', `${stroke}`);
     path.setAttribute('stroke-linecap', 'round');
     path.setAttribute('stroke-linejoin', 'round');
@@ -167,7 +167,7 @@ function createFolderConnector(folder, icon) {
     linearGradient.setAttribute('y1', '0%');
     linearGradient.setAttribute('x2', '0%');
     linearGradient.setAttribute('y2', '100%');
-    function stop(offset, opacity, color = 'var(--fracgui-theme-a)') {
+    function stop(offset, opacity, color = 'var(--gooey-theme-a)') {
         const stop = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
         stop.setAttribute('offset', `${offset}%`);
         stop.setAttribute('style', `stop-color: ${color}; stop-opacity: ${opacity}`);

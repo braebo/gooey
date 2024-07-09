@@ -4,7 +4,7 @@ import { resolveTheme } from '../../styles/themer/resolveTheme'
 
 export default resolveTheme({
 	title: 'default',
-	prefix: 'fracgui',
+	prefix: 'gooey',
 	vars: {
 		color: {
 			base: {
@@ -27,9 +27,9 @@ export default resolveTheme({
 		},
 		core: {
 			light: {
-				// 'controller-dim_background': 'rgba(var(--fracgui-bg-a-rgb), 0.75)',
+				// 'controller-dim_background': 'rgba(var(--gooey-bg-a-rgb), 0.75)',
 				'controller-dim_background':
-					'color-mix(in sRGB, var(--fracgui-bg-a) 75%, transparent)',
+					'color-mix(in sRGB, var(--gooey-bg-a) 75%, transparent)',
 			},
 		},
 	},

@@ -58,7 +58,7 @@ let InputSelect = class InputSelect extends Input {
         this.#options = this.opts.options;
         this.state = state(this.initialValue);
         const container = create('div', {
-            classes: ['fracgui-input-select-container'],
+            classes: ['gooey-input-select-container'],
             parent: this.elements.content,
         });
         this.select = new Select({

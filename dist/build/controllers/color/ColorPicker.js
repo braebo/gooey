@@ -43,13 +43,13 @@ let ColorPicker = class ColorPicker {
         // Make sure the rect is accurate on mount.
         const style = input.expanded ? {} : { height: '0px' };
         const container = create('div', {
-            classes: ['fracgui-input-color-picker-container'],
+            classes: ['gooey-input-color-picker-container'],
             parent: options?.container ?? input.elements.controllers.container,
             style,
         });
         this.element = container;
         const canvas = create('canvas', {
-            classes: ['fracgui-input-color-picker-canvas'],
+            classes: ['gooey-input-color-picker-canvas'],
             parent: container,
             height: this._height,
         });
@@ -58,7 +58,7 @@ let ColorPicker = class ColorPicker {
         this._resizeObserver = new ResizeObserver(() => debouncedUpdateHandle());
         this._resizeObserver.observe(canvas);
         const handle = create('div', {
-            classes: ['fracgui-input-color-picker-handle'],
+            classes: ['gooey-input-color-picker-handle'],
             parent: container,
             style: {
                 background: input.state.value.hexString,
@@ -66,7 +66,7 @@ let ColorPicker = class ColorPicker {
         });
         const hueSlider = create('input', {
             type: 'range',
-            classes: ['fracgui-input-range', 'fracgui-input-color-picker-hue'],
+            classes: ['gooey-input-range', 'gooey-input-color-picker-hue'],
             parent: container,
             min: 0,
             max: 359,
@@ -82,13 +82,13 @@ let ColorPicker = class ColorPicker {
                 y: hueSlider.querySelector('#thumb'),
             },
             style: {
-                background: 'var(--fracgui-bg-a)',
-                color: 'var(--fracgui-fg-a)',
+                background: 'var(--gooey-bg-a)',
+                color: 'var(--gooey-fg-a)',
             },
         });
         const alphaSlider = create('input', {
             type: 'range',
-            classes: ['fracgui-input-range', 'fracgui-input-color-picker-alpha'],
+            classes: ['gooey-input-range', 'gooey-input-color-picker-alpha'],
             parent: container,
             min: 0,
             max: 1,
@@ -105,8 +105,8 @@ let ColorPicker = class ColorPicker {
                 y: alphaSlider.querySelector('#thumb'),
             },
             style: {
-                background: 'var(--fracgui-bg-a)',
-                color: 'var(--fracgui-fg-a)',
+                background: 'var(--gooey-bg-a)',
+                color: 'var(--gooey-fg-a)',
             },
         });
         this.elements = {
@@ -141,7 +141,7 @@ let ColorPicker = class ColorPicker {
     enable = () => {
         if (this.disabled)
             this.disabled = false;
-        this.elements.container.classList.remove('fracgui-disabled');
+        this.elements.container.classList.remove('gooey-disabled');
         this.elements.alphaSlider.disabled = false;
         this.elements.hueSlider.disabled = false;
         this.elements.canvas.style.pointerEvents = 'auto';
@@ -150,7 +150,7 @@ let ColorPicker = class ColorPicker {
     disable = () => {
         if (!this.disabled)
             this.disabled = true;
-        this.elements.container.classList.add('fracgui-disabled');
+        this.elements.container.classList.add('gooey-disabled');
         this.elements.alphaSlider.disabled = true;
         this.elements.hueSlider.disabled = true;
         this.elements.canvas.style.pointerEvents = 'none';

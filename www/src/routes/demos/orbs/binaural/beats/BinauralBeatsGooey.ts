@@ -1,7 +1,7 @@
 import { BinauralBeats, WAVE_PRESETS } from './BinauralBeats'
-import { Gui } from 'gooey'
+import { Gooey } from 'gooey'
 
-export class BinauralBeatsGui extends Gui {
+export class BinauralBeatsGooey extends Gooey {
 	constructor(public beats: BinauralBeats) {
 		super({ title: 'Binaural Beats', position: 'top-center' })
 

@@ -33,7 +33,7 @@ class InputNumber extends Input {
         this.initialValue = this.resolveInitialValue(opts);
         this.state = this.resolveState(opts);
         const container = create('div', {
-            classes: ['fracgui-input-number-container'],
+            classes: ['gooey-input-number-container'],
             parent: this.elements.content,
         });
         this.numberController = new NumberController(this, opts, container);

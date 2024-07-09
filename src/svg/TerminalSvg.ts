@@ -6,13 +6,13 @@ import { create } from '../shared/create'
 
 @styled
 export class TerminalSvg {
-	class = 'fracgui-terminal-icon'
+	class = 'gooey-terminal-icon'
 	element: HTMLElement & { tooltip: Tooltip }
-	classes = [this.class, 'fracgui-cancel']
+	classes = [this.class, 'gooey-cancel']
 
 	constructor(folder: Folder) {
 		const parent = folder.isRoot ? folder.elements.header : folder.elements.title
-		if (folder.isRoot) this.classes.push('fracgui-terminal-icon-root')
+		if (folder.isRoot) this.classes.push('gooey-terminal-icon-root')
 		this.element = create('div', {
 			parent,
 			classes: this.classes,
@@ -36,7 +36,7 @@ export class TerminalSvg {
 	}
 
 	static style = /*css*/ `
-        .fracgui-terminal-icon {
+        .gooey-terminal-icon {
             position: absolute;
             right: -1.5rem;
             top: 0;
@@ -45,7 +45,7 @@ export class TerminalSvg {
             width: 16px;
             height: 16px;
 
-            color: var(--fracgui-fg-d);
+            color: var(--gooey-fg-d);
             transform: translateY(15%);
             opacity: 0;
 
@@ -55,18 +55,18 @@ export class TerminalSvg {
             z-index: 1;
         }
 
-        .fracgui-terminal-icon-root {
+        .gooey-terminal-icon-root {
             right: unset;
             left: 0.5rem;
             top: 0.25rem;
         }
 
 
-        .fracgui-terminal-icon:hover {
+        .gooey-terminal-icon:hover {
             opacity: 0.75;
         }
 
-        .fracgui-terminal-icon svg {
+        .gooey-terminal-icon svg {
             width: 100%;
             height: 100%;
         }

@@ -1,11 +1,11 @@
 import type { ThemeDefinition } from '../../styles/themer/types'
-import type { GUI_VARS } from '../GUI_VARS'
+import type { GUI_VARS } from '../GOOEY_VARS'
 
 import { resolveTheme } from '../../styles/themer/resolveTheme'
 
 export default resolveTheme({
 	title: 'scout',
-	prefix: 'fracgui',
+	prefix: 'gooey',
 	vars: {
 		color: {
 			base: {
@@ -33,9 +33,9 @@ export default resolveTheme({
 		},
 		core: {
 			dark: {
-				// 'input-container_background': 'color-mix(in sRGB, var(--fracgui-bg-a) 50%, transparent)',
+				// 'input-container_background': 'color-mix(in sRGB, var(--gooey-bg-a) 50%, transparent)',
 				'folder-header_background':
-					'color-mix(in sRGB, var(--fracgui-bg-a) 100%, transparent)',
+					'color-mix(in sRGB, var(--gooey-bg-a) 100%, transparent)',
 			},
 			light: {
 				'controller-dim_background': '#96a09c',

@@ -11,7 +11,7 @@ import type { Commit } from './UndoManager'
 import theme_default from './styles/themes/default'
 import theme_scout from './styles/themes/scout'
 import theme_flat from './styles/themes/flat'
-import style from './styles/gui.scss'
+import style from './styles/gooey.scss'
 
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager'
 import { deepMergeOpts } from './shared/deepMergeOpts'
@@ -20,7 +20,7 @@ import { resolveOpts } from './shared/resolveOpts'
 import { PresetManager } from './PresetManager'
 import { Themer } from './styles/themer/Themer'
 import settingsIcon from './svg/settings-icon'
-import { GUI_VARS } from './styles/GUI_VARS'
+import { GUI_VARS } from './styles/GOOEY_VARS'
 import { UndoManager } from './UndoManager'
 import { select } from './shared/select'
 import { nanoid } from './shared/nanoid'
@@ -33,17 +33,17 @@ import { o } from './shared/l'
 
 //· Types ························································································¬
 
-type GuiTheme = 'default' | 'flat' | 'scour' | (string & {})
+type GooeyTheme = 'default' | 'flat' | 'scour' | (string & {})
 
-export interface GuiElements {
+export interface GooeyElements {
 	root: HTMLElement
 }
 
-export interface GuiOptions {
-	__type: 'GuiOptions'
+export interface GooeyOptions {
+	__type: 'GooeyOptions'
 
 	/**
-	 * The title of the Gui.
+	 * The title of the Gooey.
 	 * @default 'gooey'
 	 */
 	title: string
@@ -54,36 +54,36 @@ export interface GuiOptions {
 	 * If `false`, no state will be persisted.
 	 * @default false
 	 */
-	storage: boolean | Partial<GuiStorageOptions>
+	storage: boolean | Partial<GooeyStorageOptions>
 
 	/**
-	 * The container to append the gui to.
+	 * The container to append the gooey to.
 	 * @default 'body'
 	 */
 	// container: HTMLElement
 	container: string | HTMLElement | 'document' | 'body'
 
 	/**
-	 * Whether the gui is draggable.
+	 * Whether the gooey is draggable.
 	 * @default true
 	 */
 	draggable: boolean
 
 	/**
-	 * Whether the gui is resizable.
+	 * Whether the gooey is resizable.
 	 * @default true
 	 */
 	resizable: boolean
 
 	/**
-	 * The title of the theme to use for the gui.  To add your own themes,
+	 * The title of the theme to use for the gooey.  To add your own themes,
 	 * use {@link themerOptions.themes}.
 	 * @default 'default'
 	 */
-	theme: GuiTheme
+	theme: GooeyTheme
 
 	/**
-	 * The themes available to the gui.
+	 * The themes available to the gooey.
 	 * @defaultValue [ {@link theme_default|default}, {@link theme_flat|flat}, {@link theme_scout|scout} ]
 	 */
 	themes: Theme[]
@@ -95,7 +95,7 @@ export interface GuiOptions {
 	themeMode: 'light' | 'dark' | 'system'
 
 	/**
-	 * The gui's initial position on the screen.  If `undefined`, the gui will
+	 * The gooey's initial position on the screen.  If `undefined`, the gooey will
 	 * be placed in the top-right corner of the screen.
 	 *
 	 * This value can either be a {@link Placement} string, or an object with
@@ -113,25 +113,25 @@ export interface GuiOptions {
 	margin: number | { x: number; y: number }
 
 	/**
-	 * The initial expanded state of the gui.
+	 * The initial expanded state of the gooey.
 	 * @default false
 	 */
 	closed: boolean
 
 	/**
-	 * Presets to make available in the gui.
+	 * Presets to make available in the gooey.
 	 * @default []
 	 */
-	presets?: GuiPreset[]
+	presets?: GooeyPreset[]
 
 	/**
-	 * The default preset to load when the gui is created, or the initial gui state if undefined.
+	 * The default preset to load when the gooey is created, or the initial gooey state if undefined.
 	 * @default undefined
 	 */
-	defaultPreset?: GuiPreset
+	defaultPreset?: GooeyPreset
 
 	/**
-	 * A unique id for the gui's root element.
+	 * A unique id for the gooey's root element.
 	 * @default {@link nanoid}
 	 */
 	id?: string
@@ -154,12 +154,12 @@ export interface GuiOptions {
 	_themer?: Themer
 }
 
-export interface GuiStorageOptions {
-	__type: 'GuiStorageOptions'
+export interface GooeyStorageOptions {
+	__type: 'GooeyStorageOptions'
 
 	/**
 	 * Prefix to use for localStorage keys.
-	 * @default `"fractils::gui"`
+	 * @default `"fractils::gooey"`
 	 */
 	key: string
 
@@ -176,26 +176,26 @@ export interface GuiStorageOptions {
 	theme?: boolean
 
 	/**
-	 * Whether to persist the gui's position.
+	 * Whether to persist the gooey's position.
 	 * @default false
 	 */
 	position?: boolean
 
 	/**
-	 * Whether to persist the gui's size.
+	 * Whether to persist the gooey's size.
 	 * @default false
 	 */
 	size?: boolean
 
 	/**
-	 * Whether to persist the gui's presets.
+	 * Whether to persist the gooey's presets.
 	 * @default true
 	 */
 	presets?: boolean
 }
 
-export interface GuiPreset {
-	__type: 'GuiPreset'
+export interface GooeyPreset {
+	__type: 'GooeyPreset'
 	__version: number
 	id: string
 	title: string
@@ -205,9 +205,9 @@ export interface GuiPreset {
 
 //· Constants ····················································································¬
 
-export const GUI_STORAGE_DEFAULTS: GuiStorageOptions = {
-	__type: 'GuiStorageOptions',
-	key: 'fracgui',
+export const GUI_STORAGE_DEFAULTS: GooeyStorageOptions = {
+	__type: 'GooeyStorageOptions',
+	key: 'gooey',
 	closed: true,
 	theme: true,
 	presets: true,
@@ -230,17 +230,17 @@ export const GUI_WINDOWMANAGER_DEFAULTS = {
 	draggable: {
 		bounds: undefined,
 		classes: {
-			default: 'fracgui-draggable',
-			dragging: 'fracgui-dragging',
-			cancel: 'fracgui-cancel',
-			dragged: 'fracgui-dragged',
+			default: 'gooey-draggable',
+			dragging: 'gooey-dragging',
+			cancel: 'gooey-cancel',
+			dragged: 'gooey-dragged',
 		},
 	},
 } as const satisfies WindowManagerOptions
 
 export const GUI_DEFAULTS = {
-	__type: 'GuiOptions',
-	title: 'gui',
+	__type: 'GooeyOptions',
+	title: 'gooey',
 	storage: false,
 	closed: false,
 	position: 'top-right',
@@ -252,37 +252,37 @@ export const GUI_DEFAULTS = {
 	resizable: true,
 	draggable: true,
 	loadDefaultFont: true,
-} as const satisfies GuiOptions
+} as const satisfies GooeyOptions
 //⌟
 
 /**
- * The root Gui instance.  This is the entry point for creating
- * a gui.  You can create multiple root guis, but each gui
+ * The root Gooey instance.  This is the entry point for creating
+ * a gooey.  You can create multiple root gooeys, but each gooey
  * can only have one root.
  */
 @styled
-export class Gui {
-	__type = 'Gui' as const
+export class Gooey {
+	__type = 'Gooey' as const
 
 	id = nanoid()
 	folder: Folder
 
-	declare elements: GuiElements
+	declare elements: GooeyElements
 
 	static style = style
 
 	/**
-	 * The initial options passed to the gui.
+	 * The initial options passed to the gooey.
 	 */
-	opts: GuiOptions & { storage: GuiStorageOptions | false }
+	opts: GooeyOptions & { storage: GooeyStorageOptions | false }
 
 	/**
-	 * Whether the gui root folder is currently collapsed.
+	 * Whether the gooey root folder is currently collapsed.
 	 */
 	closed: PrimitiveState<boolean>
 
 	/**
-	 * The {@link PresetManager} instance for the gui.
+	 * The {@link PresetManager} instance for the gooey.
 	 */
 	presetManager!: PresetManager
 
@@ -294,10 +294,10 @@ export class Gui {
 	wrapper!: HTMLElement
 	container!: HTMLElement
 	settingsFolder: Folder
-	static settingsFolderTitle = 'fracgui-settings-folder'
+	static settingsFolderTitle = 'gooey-settings-folder'
 
 	/**
-	 * The {@link UndoManager} instance for the gui, handling undo/redo functionality.
+	 * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
 	 * @internal
 	 */
 	_undoManager = new UndoManager()
@@ -307,14 +307,14 @@ export class Gui {
 	windowManager?: WindowManager
 
 	/**
-	 * `false` if this {@link Gui}'s {@link WindowManager} belongs to an existing, external
-	 * instance _(i.e. a separate {@link Gui} instance or custom {@link WindowManager})_.  The
-	 * {@link WindowManager} will be disposed when this {@link Gui} is disposed.
+	 * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
+	 * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
+	 * {@link WindowManager} will be disposed when this {@link Gooey} is disposed.
 	 * @internal
 	 */
 	private _isWindowManagerOwner = false
 	/**
-	 * The time of the gui's creation.
+	 * The time of the gooey's creation.
 	 * @internal
 	 */
 	private readonly _birthday = Date.now()
@@ -323,7 +323,7 @@ export class Gui {
 	 * @internal
 	 */
 	private _honeymoon: false | 1000 = 1000
-	private _theme!: GuiOptions['theme']
+	private _theme!: GooeyOptions['theme']
 	private _log: Logger
 
 	// Forwarding the Folder API...
@@ -337,7 +337,7 @@ export class Gui {
 		return this.folder.addFolder(title, {
 			...options,
 			// @ts-expect-error @internal
-			gui: this,
+			gooey: this,
 		})
 	}
 	add: Folder['add']
@@ -350,12 +350,12 @@ export class Gui {
 	addSwitch: Folder['addSwitch']
 	addColor: Folder['addColor']
 
-	constructor(options?: Partial<GuiOptions>) {
+	constructor(options?: Partial<GooeyOptions>) {
 		//· Setup ················································································¬
 
 		const opts = deepMergeOpts([GUI_DEFAULTS, options ?? {}], {
 			concatArrays: false,
-		}) as GuiOptions
+		}) as GooeyOptions
 
 		opts.container ??= document.body
 
@@ -380,9 +380,9 @@ export class Gui {
 			reposition = true
 		}
 
-		this.opts = opts as GuiOptions & { storage: GuiStorageOptions | false }
+		this.opts = opts as GooeyOptions & { storage: GooeyStorageOptions | false }
 
-		this._log = new Logger(`Gui ${this.opts.title}`, { fg: 'palevioletred' })
+		this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' })
 		this._log.fn('constructor').info({ options, opts })
 
 		if (this.opts.loadDefaultFont !== false) {
@@ -410,7 +410,7 @@ export class Gui {
 		this.container = select(this.opts.container)[0]
 
 		this.wrapper = create('div', {
-			classes: ['fracgui-wrapper'],
+			classes: ['gooey-wrapper'],
 			style: {
 				display: 'contents',
 			},
@@ -422,7 +422,7 @@ export class Gui {
 			__type: 'FolderOptions',
 			container: this.wrapper,
 			// @ts-expect-error @internal
-			gui: this,
+			gooey: this,
 		})
 
 		// Not stoked about this.
@@ -469,12 +469,12 @@ export class Gui {
 			this.folder.elements.toolbar.container,
 		)
 
-		this.settingsFolder = this.addFolder(Gui.settingsFolderTitle, {
+		this.settingsFolder = this.addFolder(Gooey.settingsFolderTitle, {
 			closed: false,
 			// @ts-expect-error @internal
 			_headerless: true,
 		})
-		this.settingsFolder.element.classList.add('fracgui-folder-alt')
+		this.settingsFolder.element.classList.add('gooey-folder-alt')
 
 		this.themer = this.opts._themer ?? this._createThemer(this.settingsFolder)
 		this.theme = this.opts.theme
@@ -541,7 +541,7 @@ export class Gui {
 	}
 
 	private _createWindowManager(
-		options: Partial<GuiOptions>,
+		options: Partial<GooeyOptions>,
 		storageOpts: typeof this.opts.storage,
 	) {
 		if (this.windowManager) return this.windowManager // ??
@@ -610,7 +610,7 @@ export class Gui {
 		return windowManager
 	}
 
-	set theme(theme: GuiTheme) {
+	set theme(theme: GooeyTheme) {
 		this._theme = theme
 		this.folder.element.setAttribute('theme', theme)
 		this.folder.element.setAttribute('mode', this.themer.mode.value)
@@ -620,7 +620,7 @@ export class Gui {
 	}
 
 	/**
-	 * Saves the current gui state as a preset.
+	 * Saves the current gooey state as a preset.
 	 */
 	save(
 		/**
@@ -634,8 +634,8 @@ export class Gui {
 		 */
 		id = nanoid(10),
 	) {
-		const preset: GuiPreset = {
-			__type: 'GuiPreset',
+		const preset: GooeyPreset = {
+			__type: 'GooeyPreset',
 			__version: 0,
 			id,
 			title,
@@ -646,9 +646,9 @@ export class Gui {
 	}
 
 	/**
-	 * Loads a given preset into the gui, updating all inputs.
+	 * Loads a given preset into the gooey, updating all inputs.
 	 */
-	load(preset: GuiPreset) {
+	load(preset: GooeyPreset) {
 		this._log.fn('load').info({ preset })
 
 		// todo - this isn't working, it's being unset immediately somewhere...
@@ -660,7 +660,7 @@ export class Gui {
 	}
 
 	_undoLock = false
-	lockCommit: { from: GuiPreset | undefined } = { from: undefined }
+	lockCommit: { from: GooeyPreset | undefined } = { from: undefined }
 
 	/**
 	 * Commits a change to the input's value to the undo manager.
@@ -678,7 +678,7 @@ export class Gui {
 	 * Prevents the input from registering undo history, storing the initial
 	 * for the eventual commit in {@link unlockCommits}.
 	 */
-	private lockCommits = (from: GuiPreset) => {
+	private lockCommits = (from: GooeyPreset) => {
 		// this._undoLock = true
 		this._undoManager.lockedExternally = true
 		this.lockCommit.from = from
@@ -769,7 +769,7 @@ export class Gui {
 	private _createSettingsButton(parent: HTMLElement) {
 		const button = create<'button', any, HTMLButtonElement>('button', {
 			parent,
-			classes: ['fracgui-toolbar-item', 'fracgui-settings-button'],
+			classes: ['gooey-toolbar-item', 'gooey-settings-button'],
 			innerHTML: settingsIcon,
 			tooltip: {
 				text: () => {

@@ -1,7 +1,7 @@
 export declare const ORBS_PRESETS: [{
-    readonly __type: "GuiPreset";
+    readonly __type: "GooeyPreset";
     readonly __version: 0;
-    readonly id: "fracgui-default-preset";
+    readonly id: "gooey-default-preset";
     readonly title: "default";
     readonly data: {
         readonly __type: "FolderPreset";
@@ -189,7 +189,7 @@ export declare const ORBS_PRESETS: [{
         readonly inputs: [];
     };
 }, {
-    readonly __type: "GuiPreset";
+    readonly __type: "GooeyPreset";
     readonly __version: 0;
     readonly id: "nbaoNULZ3bblukz15sxzH";
     readonly title: "spicy cheese floops";
@@ -379,7 +379,7 @@ export declare const ORBS_PRESETS: [{
         readonly inputs: [];
     };
 }, {
-    readonly __type: "GuiPreset";
+    readonly __type: "GooeyPreset";
     readonly __version: 0;
     readonly id: "V1oU2TcKW1Ps4rFY5ZpZE";
     readonly title: "raver";
@@ -569,7 +569,7 @@ export declare const ORBS_PRESETS: [{
         readonly inputs: [];
     };
 }, {
-    readonly __type: "GuiPreset";
+    readonly __type: "GooeyPreset";
     readonly __version: 0;
     readonly id: "Htcxi_Wk0wyRtiQh5SDo3";
     readonly title: "space banana";

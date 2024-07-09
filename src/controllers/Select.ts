@@ -172,13 +172,13 @@ export class Select<T> {
 		this.options = this.initialOptions = this._opts.options
 
 		const container = create('div', {
-			classes: ['fracgui-controller-select-container'],
+			classes: ['gooey-controller-select-container'],
 			parent: options.container,
 		})
 		this.element = container
 
 		const selected = create('div', {
-			classes: ['fracgui-controller-select-selected'],
+			classes: ['gooey-controller-select-selected'],
 			parent: container,
 			textContent: String(this.getLabel(this.selected)),
 		})
@@ -191,7 +191,7 @@ export class Select<T> {
 			this.toggle()
 		})
 
-		const dropdown = create('div', { classes: ['fracgui-controller-select-dropdown'] })
+		const dropdown = create('div', { classes: ['gooey-controller-select-dropdown'] })
 
 		this.elements = {
 			container,
@@ -248,7 +248,7 @@ export class Select<T> {
 		const opt = toLabeledOption(option)
 
 		const el = create('div', {
-			classes: ['fracgui-controller-select-option'],
+			classes: ['gooey-controller-select-option'],
 			parent: this.elements.dropdown,
 			innerText: opt.label,
 		})
@@ -411,7 +411,7 @@ export class Select<T> {
 	 */
 	open = () => {
 		this.expanded = true
-		this._opts.input.folder.gui!.wrapper.appendChild(this.elements.dropdown)
+		this._opts.input.folder.gooey!.wrapper.appendChild(this.elements.dropdown)
 		this.elements.dropdown.classList.add('expanded')
 		this.elements.selected.classList.add('active')
 		this.updatePosition()
@@ -457,7 +457,7 @@ export class Select<T> {
 		this.elements.dropdown.style.setProperty('top', 'unset')
 
 		const { dropdown, selected } = this.elements
-		const guiScrollTop = this._opts.input.folder.root.elements.content.scrollTop
+		const gooeyScrollTop = this._opts.input.folder.root.elements.content.scrollTop
 		const { top, left } = selected.getBoundingClientRect()
 
 		this.elements.dropdown.style.setProperty(
@@ -466,7 +466,7 @@ export class Select<T> {
 		)
 		this.elements.dropdown.style.setProperty(
 			'top',
-			`${top + selected.offsetHeight - guiScrollTop}px`,
+			`${top + selected.offsetHeight - gooeyScrollTop}px`,
 		)
 		this.elements.dropdown.style.setProperty(
 			'left',

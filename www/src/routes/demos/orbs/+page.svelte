@@ -4,15 +4,15 @@
 	import { params } from '$lib/components/orbs/params'
 	import Orbs from '$lib/components/orbs/Orbs.svelte'
 	import Code from '$lib/components/Code.svelte'
-	import { Gui } from 'gooey'
+	import { Gooey } from 'gooey'
 
-	import { demoGui, code, showCode } from './demoGui'
+	import { demoGooey, code, showCode } from './demoGooey'
 
 	import { quintOut } from 'svelte/easing'
 	import { fly } from 'svelte/transition'
 	import { onMount } from 'svelte'
 
-	let gui: Gui
+	let gooey: Gooey
 	let ready = false
 	let orbs = true
 
@@ -22,11 +22,11 @@
 			p.width = Math.round(window.innerWidth / 7)
 			return p
 		})
-		gui = demoGui(params.value)
+		gooey = demoGooey(params.value)
 		ready = true
 
 		return () => {
-			gui?.dispose()
+			gooey?.dispose()
 			globalThis.window?.location.reload()
 		}
 	})

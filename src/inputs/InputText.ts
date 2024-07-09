@@ -61,7 +61,7 @@ export class InputText extends Input<string, TextInputOptions, TextControllerEle
 		}
 
 		const container = create('div', {
-			classes: ['fracgui-input-text-container'],
+			classes: ['gooey-input-text-container'],
 			parent: this.elements.content,
 		})
 

@@ -1,7 +1,7 @@
 import { destructureVars } from '../shared/css-custom-properties.js';
 import theme_default from './themes/default.js';
 
-const VAR_PREFIX = 'fracgui';
+const VAR_PREFIX = 'gooey';
 const GUI_VARS_UTILITY = {
     base: {
         'font-family': "'fredoka', sans-serif",
@@ -135,4 +135,4 @@ const GUI_VARS = {
 };
 
 export { GUI_VARS, VAR_PREFIX };
-//# sourceMappingURL=GUI_VARS.js.map
+//# sourceMappingURL=GOOEY_VARS.js.map

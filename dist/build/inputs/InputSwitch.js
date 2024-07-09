@@ -45,28 +45,28 @@ class InputSwitch extends Input {
         }
         //- Container
         const container = create('div', {
-            classes: ['fracgui-input-switch-container'],
+            classes: ['gooey-input-switch-container'],
             parent: this.elements.content,
         });
         //- Switch Button
         const input = create('button', {
-            classes: ['fracgui-controller', 'fracgui-controller-switch'],
+            classes: ['gooey-controller', 'gooey-controller-switch'],
             parent: container,
             tooltip: {
                 text: () => {
                     return ((this.state.value ? opts.labels?.false.verb : opts.labels?.true.verb) || '');
                 },
-                anchor: '.fracgui-controller-switch-thumb',
+                anchor: '.gooey-controller-switch-thumb',
                 delay: 750,
             },
         });
         const thumb = create('div', {
-            classes: ['fracgui-controller-switch-thumb'],
+            classes: ['gooey-controller-switch-thumb'],
             parent: input,
         });
         //- State Text
         const stateText = create('div', {
-            classes: ['fracgui-controller-switch-state-text'],
+            classes: ['gooey-controller-switch-state-text'],
             parent: container,
             innerText: this.state.value ? opts.labels?.true.state : opts.labels?.false.state,
             style: {

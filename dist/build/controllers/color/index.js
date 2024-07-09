@@ -5,7 +5,7 @@
 // export const colorController: ControllerFactory<HTMLInputElement> = (input, opts, parent) => {
 // 	const controller = create('input', {
 // 		type: 'color',
-// 		classes: ['fracgui-input-color-input'],
+// 		classes: ['gooey-input-color-input'],
 // 		value: input.state.value.hex,
 // 		parent,
 // 	})
@@ -18,7 +18,7 @@
 // 	parent,
 // ) => {
 // 	const container = create('div', {
-// 		classes: ['fracgui-input-color-sliders-container'],
+// 		classes: ['gooey-input-color-sliders-container'],
 // 		parent,
 // 	})
 // 	const sliders = {} as ColorSliderElements
@@ -32,8 +32,8 @@
 // 		const c = create('div', {
 // 			type: 'range',
 // 			classes: [
-// 				'fracgui-input-color-sliders-input-container',
-// 				`fracgui-input-color-sliders-input-container-${key}`,
+// 				'gooey-input-color-sliders-input-container',
+// 				`gooey-input-color-sliders-input-container-${key}`,
 // 			],
 // 			parent: container,
 // 			value: input[key],
@@ -41,16 +41,16 @@
 // 		sliders[key] = {
 // 			container: c,
 // 			title: create('div', {
-// 				classes: ['fracgui-input-color-slider-title', `fracgui-input-color-slider-title-${key}`],
+// 				classes: ['gooey-input-color-slider-title', `gooey-input-color-slider-title-${key}`],
 // 				parent: container,
 // 				innerText: title,
 // 			}),
 // 			input: create('input', {
 // 				type: 'range',
 // 				classes: [
-// 					'fracgui-input-number-range',
-// 					'fracgui-input-color-range',
-// 					`fracgui-input-color-range-${key}`,
+// 					'gooey-input-number-range',
+// 					'gooey-input-color-range',
+// 					`gooey-input-color-range-${key}`,
 // 				],
 // 				parent: container,
 // 				value: String(input.state.value.rgba.r),

@@ -3,79 +3,79 @@ import { isColor } from '../shared/color/color';
 import { entries } from '../shared/object';
 import { isType } from '../shared/isType';
 import { Logger } from '../shared/logger';
-import { Gui } from '../Gui';
+import { Gooey } from '../Gooey';
 export class ThemeEditor {
-    targetGui;
-    gui;
+    targetGooey;
+    gooey;
     _log;
     get folder() {
-        return this.gui.folder;
+        return this.gooey.folder;
     }
-    constructor(targetGui) {
-        this.targetGui = targetGui;
-        this._log = new Logger(`ThemeEditor ${targetGui.folder.title}`, {
+    constructor(targetGooey) {
+        this.targetGooey = targetGooey;
+        this._log = new Logger(`ThemeEditor ${targetGooey.folder.title}`, {
             fg: 'DarkCyan',
             deferred: false,
         });
-        const opts = targetGui.opts;
-        if (isType(opts.storage, 'GuiStorageOptions')) {
+        const opts = targetGooey.opts;
+        if (isType(opts.storage, 'GooeyStorageOptions')) {
             opts.storage.key += '::theme-editor';
         }
         // console.log(opts)
-        // const storageOpts = isType(opts?.storage, 'GuiStorageOptions') ? opts.storage : undefined
+        // const storageOpts = isType(opts?.storage, 'GooeyStorageOptions') ? opts.storage : undefined
         // const key = storageOpts ? storageOpts.key + '::theme-editor' : ''
-        this.gui = new Gui({
+        this.gooey = new Gooey({
             title: 'Theme Editor',
-            container: targetGui.container,
-            _themer: targetGui.themer,
-            _windowManager: targetGui.windowManager, // Recycling!
+            container: targetGooey.container,
+            _themer: targetGooey.themer,
+            _windowManager: targetGooey.windowManager, // Recycling!
         });
-        // const dragOpts = isType(this.targetGui.windowManager?.opts.draggable, 'object')
-        // 	? this.targetGui.windowManager.opts.draggable
+        // const dragOpts = isType(this.targetGooey.windowManager?.opts.draggable, 'object')
+        // 	? this.targetGooey.windowManager.opts.draggable
         // 	: DRAGGABLE_DEFAULTS
-        // const resizeOpts = isType(this.targetGui.windowManager?.opts.resizable, 'object')
-        // 	? this.targetGui.windowManager.opts.resizable
+        // const resizeOpts = isType(this.targetGooey.windowManager?.opts.resizable, 'object')
+        // 	? this.targetGooey.windowManager.opts.resizable
         // 	: RESIZABLE_DEFAULTS
-        // this.targetGui.windowManager?.add(this.gui.wrapper, {
-        // 	id: this.gui.id,
-        // 	...this.targetGui.windowManager.opts,
+        // this.targetGooey.windowManager?.add(this.gooey.wrapper, {
+        // 	id: this.gooey.id,
+        // 	...this.targetGooey.windowManager.opts,
         // 	draggable: {
         // 		...dragOpts,
-        // 		handle: this.gui.elements.header,
+        // 		handle: this.gooey.elements.header,
         // 	},
         // 	resizable: {
         // 		...resizeOpts,
         // 	},
         // })
-        // console.log(targetGui.container)
-        // console.log(this.gui.container)
-        if (!this.targetGui.themer) {
+        // console.log(targetGooey.container)
+        // console.log(this.gooey.container)
+        if (!this.targetGooey.themer) {
             throw new Error('Themer not found.');
         }
-        this.targetGui.themer.addTarget(this.gui.wrapper);
-        this.folder.evm.add(this.targetGui.themer.theme.subscribe(t => {
-            this.gui.folder.title = `${opts?.title} · ${t.title}`;
+        this.targetGooey.themer.addTarget(this.gooey.wrapper);
+        this.folder.evm.add(this.targetGooey.themer.theme.subscribe(t => {
+            this.gooey.folder.title = `${opts?.title} · ${t.title}`;
         }));
-        this.targetGui.themer.applyTheme();
+        this.targetGooey.themer.applyTheme();
         setTimeout(() => {
             this.generate();
-            // console.log(this.targetGui.folder.id, this.gui.folder.id)
-            // console.log(this.targetGui.windowManager?.windows.map(w => w.id))
+            // console.log(this.targetGooey.folder.id, this.gooey.folder.id)
+            // console.log(this.targetGooey.windowManager?.windows.map(w => w.id))
             // console.log(
-            // 	this.targetGui.windowManager?.windows.find(w => w.id === this.targetGui.folder.id),
+            // 	this.targetGooey.windowManager?.windows.find(w => w.id === this.targetGooey.folder.id),
             // )
-            // console.log(this.gui.windowManager?.windows.find(w => w.id === this.gui.folder.id))
+            // console.log(this.gooey.windowManager?.windows.find(w => w.id === this.gooey.folder.id))
         }, 0);
     }
     dispose() {
-        this.gui.dispose();
+        this.gooey.dispose();
     }
     get vars() {
-        return this.targetGui.themer.theme.value.vars;
+        return this.targetGooey.themer.theme.value.vars;
     }
     generate = () => {
         const MAX_DEPTH = 0;
-        let currentFolder = this.gui.folder;
+        let currentFolder = this.gooey.folder;
         const add = (folder, title, value, onChange) => {
             this._log.fn('add').debug({ title, value, onChange, this: this });
             if (value.match(/^\d+(\.\d+)?$/g)) {
@@ -109,16 +109,16 @@ export class ThemeEditor {
                     this._log.fn('onChange').debug({
                         k,
                         v,
-                        value: `--${this.targetGui.themer.theme.value.prefix}-${k}`,
+                        value: `--${this.targetGooey.themer.theme.value.prefix}-${k}`,
                         this: this,
                     });
-                    this.targetGui.wrapper.style.setProperty(`--${this.targetGui.themer.theme.value.prefix}-${k}`, v);
+                    this.targetGooey.wrapper.style.setProperty(`--${this.targetGooey.themer.theme.value.prefix}-${k}`, v);
                 };
                 if (typeof v === 'string') {
                     const vars = [...v.matchAll(CSS_VAR_INNER)].map(m => m[1]);
                     if (vars.length) {
                         add(parent, k.split('_').at(-1) || k, v.replace(CSS_VAR_INNER, (str, match) => {
-                            return (this.targetGui.wrapper.style.getPropertyValue(match).trim() ||
+                            return (this.targetGooey.wrapper.style.getPropertyValue(match).trim() ||
                                 str);
                         }), onChange);
                     }
@@ -140,7 +140,7 @@ export class ThemeEditor {
         let depth = 1;
         const allVars = this.vars;
         for (const [title, def] of entries(allVars)) {
-            currentFolder = this.gui.folder.addFolder(title, { closed: depth > MAX_DEPTH });
+            currentFolder = this.gooey.folder.addFolder(title, { closed: depth > MAX_DEPTH });
             if (title === 'core' && 'core' in allVars) {
                 for (const [mode, vars] of entries(allVars['core'])) {
                     currentFolder.addFolder(mode, { closed: depth > MAX_DEPTH });
@@ -153,7 +153,7 @@ export class ThemeEditor {
                 }
             }
         }
-        for (const folder of this.gui.folder.allChildren) {
+        for (const folder of this.gooey.folder.allChildren) {
             // Delete all the empty folders.
             if (!folder.inputs.size && !folder.children.length) {
                 folder.dispose();

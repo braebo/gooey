@@ -1,9 +1,9 @@
 import type { Params } from '$lib/components/orbs/params'
-import type { GuiPreset } from 'gooey'
+import type { GooeyPreset } from 'gooey'
 
 import { ORBS_PRESETS } from '$lib/components/orbs/ORBS_PRESETS'
 import { DEV } from 'esm-env'
-import { Gui } from 'gooey'
+import { Gooey } from 'gooey'
 
 import { stringify } from '$lib/utils/stringify'
 import { debrief } from '$lib/utils/debrief'
@@ -12,12 +12,12 @@ import { state } from 'gooey'
 export const showCode = state(false)
 export const code = state('')
 
-export function demoGui(params: Params) {
-	const gui = new Gui({
+export function demoGooey(params: Params) {
+	const gooey = new Gooey({
 		title: 'Orbs',
 		position: 'center',
 		storage: {
-			key: 'fracgui',
+			key: 'gooey',
 			position: true,
 			closed: true,
 			size: true
@@ -25,11 +25,11 @@ export function demoGui(params: Params) {
 		presets: ORBS_PRESETS
 	})
 
-	gui.folder.on('toggle', (v) => {
+	gooey.folder.on('toggle', (v) => {
 		console.log(v)
 	})
 
-	const f1 = gui.addFolder('base')
+	const f1 = gooey.addFolder('base')
 
 	f1.add('count', {
 		binding: {
@@ -71,7 +71,7 @@ export function demoGui(params: Params) {
 		step: 1
 	})
 
-	const motionFolder = gui.addFolder('motion')
+	const motionFolder = gooey.addFolder('motion')
 
 	motionFolder.addNumber({
 		title: 'speed',
@@ -125,7 +125,7 @@ export function demoGui(params: Params) {
 		}
 	})
 
-	const appearanceFolder = gui.addFolder('appearance')
+	const appearanceFolder = gooey.addFolder('appearance')
 
 	appearanceFolder.addNumber({
 		title: 'size',
@@ -213,11 +213,11 @@ export function demoGui(params: Params) {
 		step: 0.01
 	})
 
-	function showActivePreset(v: GuiPreset) {
+	function showActivePreset(v: GooeyPreset) {
 		code.set(
 			stringify(
 				{
-					presets: gui.presetManager.presets.value.length,
+					presets: gooey.presetManager.presets.value.length,
 					activePreset: {
 						...v,
 						data: debrief(v.data, { siblings: 7, depth: 4 })
@@ -228,26 +228,26 @@ export function demoGui(params: Params) {
 		)
 	}
 
-	gui.folder.evm.add(
+	gooey.folder.evm.add(
 		showCode.subscribe((v) => {
-			if (v) showActivePreset(gui.presetManager.activePreset.value)
+			if (v) showActivePreset(gooey.presetManager.activePreset.value)
 		})
 	)
 
-	gui.folder.evm.add(
-		gui.presetManager.activePreset.subscribe((v) => {
+	gooey.folder.evm.add(
+		gooey.presetManager.activePreset.subscribe((v) => {
 			if (showCode.value) showActivePreset(v)
 		})
 	)
 
 	if (DEV) {
-		const devFolder = gui.addFolder('dev', {
+		const devFolder = gooey.addFolder('dev', {
 			closed: true,
 			saveable: false
 		})
 
 		// setTimeout(() => {
-		// 	gui.settingsFolder.open()
+		// 	gooey.settingsFolder.open()
 		// })
 		devFolder.addButtonGrid({
 			title: 'dev',
@@ -258,7 +258,7 @@ export function demoGui(params: Params) {
 					{
 						text: 'log(this)',
 						onClick: () => {
-							console.log(gui)
+							console.log(gooey)
 						}
 					},
 					{
@@ -287,7 +287,7 @@ export function demoGui(params: Params) {
 		})
 	}
 
-	// console.log(gui._log.log('asd'))
+	// console.log(gooey._log.log('asd'))
 
-	return gui
+	return gooey
 }

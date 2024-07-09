@@ -2,17 +2,17 @@
 
 import type { ColorFormat } from '$lib/color/types/colorFormat'
 import type { StandardPropertiesHyphen } from 'csstype'
-import type { ValidInput } from '$lib/gui/inputs/Input'
-import type { Folder } from '$lib/gui/Folder'
+import type { ValidInput } from '$lib/gooey/inputs/Input'
+import type { Folder } from '$lib/gooey/Folder'
 import type { Color } from '$lib/color/color'
 
-import { deepMergeOpts } from '$lib/gui/shared/deepMergeOpts'
+import { deepMergeOpts } from '$lib/gooey/shared/deepMergeOpts'
 import { isColorFormat } from '$lib/color/color'
-import { Gui } from '$lib/gui/Gui'
+import { Gooey } from '$lib/gooey/Gooey'
 import { DEV } from 'esm-env'
 
 export interface DivTweakerOptions {
-	/** The parent element to mount the {@link Gui} to. */
+	/** The parent element to mount the {@link Gooey} to. */
 	container: HTMLElement
 	/** Fail silently and gracefully. */
 	swallowErrors: boolean
@@ -39,7 +39,7 @@ const DIV_TWEAKER_DEFAULTS: DivTweakerOptions = {
 } as const
 
 export class DivTweaker {
-	gui!: Gui
+	gooey!: Gooey
 	opts!: DivTweakerOptions
 	params = {} as const
 	#computedStyle!: CSSStyleDeclaration
@@ -55,7 +55,7 @@ export class DivTweaker {
 
 		this.opts = deepMergeOpts([DIV_TWEAKER_DEFAULTS, options])
 
-		this.gui = new Gui({
+		this.gooey = new Gooey({
 			title: 'Page Tweaker',
 			container: options?.container ?? document.body,
 			storage: undefined,
@@ -64,7 +64,7 @@ export class DivTweaker {
 			themer: true,
 		})
 
-		this.gui.addButton({
+		this.gooey.addButton({
 			title: '',
 			text: 'highlight target div',
 			onClick: this.highlightNode,
@@ -89,7 +89,7 @@ export class DivTweaker {
 		}
 
 		for (const category of categories) {
-			this.folders.set(category, this.gui.addFolder({ title: category }))
+			this.folders.set(category, this.gooey.addFolder({ title: category }))
 		}
 
 		for (const key of this.opts.styles) {
@@ -101,7 +101,7 @@ export class DivTweaker {
 		}
 	}
 
-	addStyleBinding(key: keyof StandardPropertiesHyphen, folder: Folder = this.gui) {
+	addStyleBinding(key: keyof StandardPropertiesHyphen, folder: Folder = this.gooey) {
 		const value = this.#computedStyle.getPropertyValue(key as string)
 		const prefix = key.split('-')[0]
 

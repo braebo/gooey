@@ -75,7 +75,7 @@ export class InputButton extends Input<
 		}
 
 		const container = create('div', {
-			classes: ['fracgui-input-button-container'],
+			classes: ['gooey-input-button-container'],
 			parent: this.elements.content,
 		})
 

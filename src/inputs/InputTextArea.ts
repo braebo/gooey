@@ -51,7 +51,7 @@ export class InputTextArea extends Input<string, TextAreaInputOptions, TextAreaC
 		this.state = this.resolveState(opts)
 
 		const container = create('div', {
-			classes: ['fracgui-input-textarea-container'],
+			classes: ['gooey-input-textarea-container'],
 			parent: this.elements.content,
 		})
 

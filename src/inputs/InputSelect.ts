@@ -118,7 +118,7 @@ export class InputSelect<T = unknown> extends Input<
 		this.state = state(this.initialValue)
 
 		const container = create('div', {
-			classes: ['fracgui-input-select-container'],
+			classes: ['gooey-input-select-container'],
 			parent: this.elements.content,
 		})
 

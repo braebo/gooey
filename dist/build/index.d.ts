@@ -1,8 +1,8 @@
 /**
- * @module A modern gui library for typescript and javascript.
+ * @module A modern gooey library for typescript and javascript.
  */
-export type { GuiOptions, GuiStorageOptions, GuiPreset, GuiElements } from './Gui';
-export { Gui, GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS } from './Gui';
+export type { GooeyOptions, GooeyStorageOptions, GooeyPreset, GooeyElements } from './Gooey';
+export { Gooey, GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS } from './Gooey';
 export { Folder } from './Folder';
 export type { State } from './shared/state';
 export { state } from './shared/state';

@@ -25,14 +25,17 @@
 	],
 	"scripts": {
 		"build": "bun run build.ts",
-		"build:all": "pnpm build && pnpm build:site",
 		"build:site": "cd www && pnpm i && pnpm build",
 		"build:watch": "bun run --watch build.ts -w",
+		"build:all": "pnpm build && pnpm build:site",
 		"check": "tsc --noEmit",
 		"check:watch": "tsc --noEmit --watch",
+		"check:site": "cd www && pnpm check",
+		"check:all": "pnpm check && pnpm check:site",
 		"dev": "cd www && pnpm dev",
 		"format": "prettier --write src",
-		"lint": "publint && prettier --check src"
+		"lint": "publint && prettier --check src",
+		"sort": "pnpm dlx sort-package-json && cd www && pnpm dlx sort-package-json"
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.27.7",

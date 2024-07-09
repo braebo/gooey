@@ -1,4 +1,4 @@
-import { VAR_PREFIX, GUI_VARS } from '../GUI_VARS';
+import { VAR_PREFIX, GUI_VARS } from '../GOOEY_VARS';
 import { readFileSync, writeFileSync } from 'fs';
 import { hexToRgb } from '../../shared/hexToRgb';
 import { entries } from '../../shared/object';
@@ -8,19 +8,19 @@ const here = new URL('.', import.meta.url).pathname;
 console.clear();
 const test = flattenAllVars(GUI_VARS, VAR_PREFIX);
 const css = `
-.fracgui-root ${j(test['base'])}
+.gooey-root ${j(test['base'])}
 
-.fracgui-root[mode='dark'] ${j(test['dark'])}
+.gooey-root[mode='dark'] ${j(test['dark'])}
 
-.fracgui-root[mode='light'] ${j(test['light'])}
+.gooey-root[mode='light'] ${j(test['light'])}
 `;
-writeFileSync(join(here, 'gui-vars.scss'), css);
-const guiScss = readFileSync(join(here, 'gui.scss'), 'utf-8')
+writeFileSync(join(here, 'gooey-vars.scss'), css);
+const gooeyScss = readFileSync(join(here, 'gooey.scss'), 'utf-8')
     .split('\n')
     .filter(line => !line.trim().startsWith('//'))
     .join('\n');
 const counts = [test['base'], test['dark'], test['light']].map(vars => Object.entries(vars).reduce((acc, [k]) => {
-    const count = (guiScss.match(new RegExp(k, 'g')) || []).length;
+    const count = (gooeyScss.match(new RegExp(k, 'g')) || []).length;
     acc[k] = count;
     return acc;
 }, {}));
@@ -29,7 +29,7 @@ const all = Object.assign(...counts);
 // @ts-expect-error
 const sorted = Object.fromEntries(Object.entries(all).sort((a, b) => b[1] - a[1]));
 // console.log(sorted)
-writeFileSync(join(here, 'gui-vars-counts.json'), JSON.stringify(sorted, null, 2));
+writeFileSync(join(here, 'gooey-vars-counts.json'), JSON.stringify(sorted, null, 2));
 /**
  * Destructures theme vars into a flat object of CSS variables.
  */

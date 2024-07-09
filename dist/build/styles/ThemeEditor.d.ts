@@ -1,12 +1,12 @@
 import type { VariableDefinition } from '../styles/themer/types';
 import type { Folder } from '../Folder';
-import { Gui } from '../Gui';
+import { Gooey } from '../Gooey';
 export declare class ThemeEditor {
-    targetGui: Gui;
-    gui: Gui;
+    targetGooey: Gooey;
+    gooey: Gooey;
     private _log;
     get folder(): Folder;
-    constructor(targetGui: Gui);
+    constructor(targetGooey: Gooey);
     dispose(): void;
     get vars(): {
         color: import("../styles/themer/types").ColorTheme;

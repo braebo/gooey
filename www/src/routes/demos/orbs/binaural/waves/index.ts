@@ -1,2 +1,2 @@
 export { Waves } from './Waves'
-export { WavesGui } from './WavesGui'
+export { WavesGooey } from './WavesGooey'

@@ -8,7 +8,7 @@ import { create } from '../shared/create'
 export const rangeController: ControllerFactory<HTMLInputElement> = (input, opts, parent) => {
 	const range = create('input', {
 		type: 'range',
-		classes: ['fracgui-controller', 'fracgui-input-number-range'],
+		classes: ['gooey-controller', 'gooey-input-number-range'],
 		value: String(input.state.value),
 		parent,
 	})
@@ -31,15 +31,15 @@ export const numberButtonsController: ControllerFactory<
 	InputNumber
 > = (input, opts, parent) => {
 	const container = create('div', {
-		classes: ['fracgui-input-number-buttons-container'],
+		classes: ['gooey-input-number-buttons-container'],
 		parent,
 	})
 
 	const increment = create('div', {
 		classes: [
-			'fracgui-controller',
-			'fracgui-input-number-button',
-			'fracgui-input-number-buttons-increment',
+			'gooey-controller',
+			'gooey-input-number-button',
+			'gooey-input-number-buttons-increment',
 		],
 		parent: container,
 	})
@@ -48,9 +48,9 @@ export const numberButtonsController: ControllerFactory<
 
 	const decrement = create('div', {
 		classes: [
-			'fracgui-controller',
-			'fracgui-input-number-button',
-			'fracgui-input-number-buttons-decrement',
+			'gooey-controller',
+			'gooey-input-number-button',
+			'gooey-input-number-buttons-decrement',
 		],
 		parent: container,
 	})

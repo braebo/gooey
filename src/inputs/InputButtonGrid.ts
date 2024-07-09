@@ -103,7 +103,7 @@ export class InputButtonGrid extends Input<
 		this._log.fn('constructor').debug({ opts, this: this })
 
 		const container = create('div', {
-			classes: ['fracgui-input', 'fracgui-input-buttongrid-container'],
+			classes: ['gooey-input', 'gooey-input-buttongrid-container'],
 			parent: this.elements.content,
 		})
 
@@ -141,7 +141,7 @@ export class InputButtonGrid extends Input<
 
 		for (let i = 0; i < rows; i++) {
 			const row = create('div', {
-				classes: ['fracgui-controller-buttongrid-row'],
+				classes: ['gooey-controller-buttongrid-row'],
 				parent: this.elements.controllers.container,
 				style: { gap: '0.5em' },
 			})
@@ -183,9 +183,9 @@ export class InputButtonGrid extends Input<
 		opts.element = create('button', {
 			id,
 			classes: [
-				'fracgui-controller',
-				'fracgui-controller-button',
-				'fracgui-controller-buttongrid-button',
+				'gooey-controller',
+				'gooey-controller-button',
+				'gooey-controller-buttongrid-button',
 			],
 			innerHTML: text(),
 			dataset: {

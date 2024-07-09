@@ -1,10 +1,10 @@
-import type { GuiPreset } from '../Gui'
+import type { GooeyPreset } from '../Gooey'
 
 export const ORBS_PRESETS = [
 	{
-		__type: 'GuiPreset',
+		__type: 'GooeyPreset',
 		__version: 0,
-		id: 'fracgui-default-preset',
+		id: 'gooey-default-preset',
 		title: 'default',
 		data: {
 			__type: 'FolderPreset',
@@ -219,7 +219,7 @@ export const ORBS_PRESETS = [
 		},
 	},
 	{
-		__type: 'GuiPreset',
+		__type: 'GooeyPreset',
 		__version: 0,
 		id: 'nbaoNULZ3bblukz15sxzH',
 		title: 'spicy cheese floops',
@@ -436,7 +436,7 @@ export const ORBS_PRESETS = [
 		},
 	},
 	{
-		__type: 'GuiPreset',
+		__type: 'GooeyPreset',
 		__version: 0,
 		id: 'V1oU2TcKW1Ps4rFY5ZpZE',
 		title: 'raver',
@@ -653,7 +653,7 @@ export const ORBS_PRESETS = [
 		},
 	},
 	{
-		__type: 'GuiPreset',
+		__type: 'GooeyPreset',
 		__version: 0,
 		id: 'Htcxi_Wk0wyRtiQh5SDo3',
 		title: 'space banana',
@@ -868,5 +868,5 @@ export const ORBS_PRESETS = [
 			],
 			inputs: [],
 		},
-	} as const satisfies GuiPreset,
-] as const satisfies GuiPreset[]
+	} as const satisfies GooeyPreset,
+] as const satisfies GooeyPreset[]
