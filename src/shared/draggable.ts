@@ -1,11 +1,9 @@
 import type { ElementOrSelector, ElementsOrSelectors } from './select'
 import type { Placement, PlacementOptions } from './place'
 
-// import { collisionClampX, collisionClampY } from './collisions'
 import { isDefined, isHTMLElement, isString } from './is'
 import { writable, type Writable } from './store'
 import { EventManager } from './EventManager'
-// import { getStyleMap } from './getStyle'
 import { persist } from './persist'
 import { select } from './select'
 import { Logger } from './logger'
@@ -380,26 +378,19 @@ export class Draggable {
 		this.cancelEls = select(this.opts.cancel, this.node)
 		this.obstacleEls = select(this.opts.obstacles)
 
-		// this.#recomputeBounds = this.#resolveRecomputeBounds(this.opts.bounds)
-		// this.#recomputeBounds()
-
 		this._evm.listen(this.node, 'pointerdown', this.dragStart)
 		this._evm.listen(window, 'pointerup', this.dragEnd)
 		this._evm.listen(window, 'pointermove', this.drag)
 		this._evm.listen(window, 'resize', this.resize)
 		this._evm.add(
 			this.positionStore.subscribe(({ x, y }) => {
+				console.trace()
 				this.node.style.setProperty('translate', `${x}px ${y}px 1px`)
 			}),
 		)
 
 		if (startPosition !== DRAGGABLE_DEFAULTS.position) {
-			// Init the virtual rect for updateBounds
-			// const { top, right, bottom, left } = this.node.getBoundingClientRect()
-			// this.rect = { top, right, bottom, left }
-
 			this._recomputeBounds()
-			// this.#updateBounds()
 			this._position = { x: this.x, y: this.y }
 			this.moveTo(startPosition)
 		}

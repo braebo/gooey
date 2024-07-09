@@ -48,13 +48,7 @@ export class CopyButton {
 			text: message,
 			placement: 'top',
 			offsetY: '6px',
-			delay: 300,
-			parent: container,
-			style: {
-				minWidth: '4.25rem',
-				background: 'var(--fracgui-bg-a)',
-				color: 'var(--fracgui-fg-a)',
-			},
+			delay: 600,
 		})
 	}
 

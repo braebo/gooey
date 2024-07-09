@@ -147,17 +147,10 @@ export class Tooltip {
 	opts: TooltipOptions
 
 	private _text: () => string
-
 	private _evm = new EventManager()
-
 	private _animPositions!: { from: string; to: string }
 	private _delayInTimer!: ReturnType<typeof setTimeout>
 	private _delayOutTimer!: ReturnType<typeof setTimeout>
-
-	/**
-	 * removeEventListener callbacks for listeners with particularly short lifecycles.
-	 */
-	// private _tempListeners = new Set<() => void>()
 
 	constructor(
 		/**
