@@ -470,7 +470,7 @@ export class Gui {
 		)
 
 		this.settingsFolder = this.addFolder(Gui.settingsFolderTitle, {
-			closed: true,
+			closed: false,
 			// @ts-expect-error @internal
 			_headerless: true,
 		})
@@ -484,6 +484,7 @@ export class Gui {
 
 		// Give the user a chance to add folders / inputs before positioning.
 		this._reveal(reposition)
+		// setTimeout(this.settingsFolder.close)
 
 		return this
 	}
