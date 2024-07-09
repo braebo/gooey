@@ -19,7 +19,7 @@
 	},
 	"types": "./dist/build/index.d.ts",
 	"files": [
-		"dist",
+		"dist/build",
 		"README.md",
 		"LICENSE"
 	],
@@ -28,12 +28,14 @@
 		"build:watch": "bun run --watch build.ts",
 		"check": "tsc --noEmit",
 		"check:watch": "tsc --noEmit --watch",
-		"dev": "vite-node --watch src/index",
-		"lint": "publint && prettier --check src",
-		"format": "prettier --write src"
+		"dev": "cd www && pnpm dev",
+		"format": "prettier --write src",
+		"lint": "publint && prettier --check src"
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.27.7",
+		"@rollup/plugin-node-resolve": "^15.2.3",
+		"@rollup/plugin-typescript": "^11.1.6",
 		"@svitejs/changesets-changelog-github-compact": "1.1.0",
 		"@swc/core": "^1.6.13",
 		"@types/node": "^20.14.10",
@@ -42,8 +44,12 @@
 		"esbuild": "^0.23.0",
 		"esbuild-sass-plugin": "^3.3.1",
 		"esm-env": "^1.0.0",
+		"ora": "^8.0.1",
 		"prettier": "^3.3.2",
 		"publint": "^0.2.8",
+		"rollup": "^4.18.1",
+		"rollup-plugin-sass": "^1.13.1",
+		"tslib": "2.6.3",
 		"vite-node": "1.6.0",
 		"vitest": "1.6.0"
 	},

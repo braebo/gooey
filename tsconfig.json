@@ -5,14 +5,12 @@
 		"target": "ESNext",
 		"module": "ESNext",
 
+		// "noEmit": true,
 		"moduleResolution": "Bundler",
 		"verbatimModuleSyntax": true,
 
 		"strict": true,
-		"allowJs": true,
-		"checkJs": true,
 		"skipLibCheck": true,
-		"noFallthroughCasesInSwitch": true,
 
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
@@ -25,7 +23,10 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 
+		// Rollup
+		"esModuleInterop": true,
+
 		"outDir": "dist/build"
 	},
-	"include": ["src"]
+	"include": ["src", "global.d.ts"]
 }
