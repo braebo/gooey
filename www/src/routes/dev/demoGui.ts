@@ -286,5 +286,7 @@ export function demoGui(params: Params) {
 		})
 	}
 
+	// console.log(gui._log.log('asd'))
+
 	return gui
 }

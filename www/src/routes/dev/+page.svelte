@@ -45,6 +45,8 @@
 <div class="page">
 	<h1 class="hero-title">gooey</h1>
 
+	<img src="assets/gooey-logo-slider-orbs.svg" alt="gooey" />
+
 	{#if $showCode}
 		<div class="debug" transition:fly={{ y: 5, duration: 250, easing: quintOut }}>
 			{#key $code}
@@ -59,12 +61,6 @@
 		</div>
 	{/if}
 
-	<!-- <button class:active={$showCode} on:click={() => ($showCode = !$showCode)}>
-		Show Active Preset
-	</button>
-	<button on:click={() => console.log(gui)}>Log Gui</button>
-	<button on:click={() => localStorage.clear()}>Clear localStorage</button> -->
-
 	{#if ready && orbs}
 		<div class="orbs">
 			<Orbs {params} />
@@ -75,9 +71,9 @@
 <style>
 	.page {
 		width: 100vw;
-		height: 100vh;
-		max-height: 100vh;
-		padding: 1rem;
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
 
 		background: color-mix(in lch, var(--bg-a), var(--bg-b));
 
@@ -113,22 +109,4 @@
 
 		z-index: 0;
 	}
-
-	/* button {
-		background: var(--bg-a);
-		color: var(--fg-c);
-		outline: 1px solid var(--bg-c);
-		border: none;
-		&:hover {
-			color: var(--fg-a);
-		}
-		&:active {
-			color: var(--theme-a);
-		}
-	}
-
-	button.active {
-		background: var(--bg-a);
-		color: var(--theme-a);
-	} */
 </style>

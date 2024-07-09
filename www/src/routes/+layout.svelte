@@ -20,6 +20,4 @@
 
 <Header />
 
-<div class="br-md"></div>
-
 <slot />
