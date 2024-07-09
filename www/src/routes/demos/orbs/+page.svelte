@@ -71,30 +71,59 @@
 		flex-grow: 1;
 
 		background: color-mix(in lch, var(--bg-a), var(--bg-b));
+		opacity: 0;
+		
+		animation: slide-in .75s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s forwards;
 
-		overflow: hidden;
+		/* overflow: hidden; */
+
+		&:before {
+			content: '';
+			position: absolute;
+			width: 120%;
+			translate: -10% -43%;
+			rotate: -1.6deg;
+			height: 3rem;
+			background: red;
+			background: var(--bg-a);
+		}
 	}
 
-	.hero-title {
-		width: fit-content;
-		font-variation-settings: 'wght' 333;
-		font-family: 'fredoka', sans-serif;
-		font-size: var(--font-xxl);
-		line-height: 2rem;
+	@keyframes slide-in {
+		from {
+			clip-path: inset(0 100% 0 0);
+			opacity: 0;
+		}
+		to {
+			clip-path: inset(-100%);
+			opacity: 2;
+		}
 	}
 
 	.orbs {
 		position: relative;
 
-		width: 50vmin;
+		display: flex;
+		flex-grow: 1;
+
+		/* margin: 20vh auto 0 auto; */
+		width: 100%;
+		width: min(50rem, 50vmin);
 		height: 100%;
-		margin: 20vh auto 0 auto;
+		margin: auto auto 0 auto;
+		/* margin-top: auto; */
 
 		z-index: 20;
 		pointer-events: none;
 
 		opacity: 0;
 		animation: fade-in 2s ease-in 0.25s forwards;
+	}
+
+	@keyframes fade-in {
+		to {
+			opacity: 1;
+		}
 	}
 
 	.debug {

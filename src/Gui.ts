@@ -12,12 +12,10 @@ import theme_default from './styles/themes/default'
 import theme_scout from './styles/themes/scout'
 import theme_flat from './styles/themes/flat'
 import style from './styles/gui.scss'
-// import style from './gui.css'
 
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager'
 import { deepMergeOpts } from './shared/deepMergeOpts'
 import { styled } from './shared/decorators/styled'
-// import { ThemeEditor } from './styles/ThemeEditor'
 import { resolveOpts } from './shared/resolveOpts'
 import { PresetManager } from './PresetManager'
 import { Themer } from './styles/themer/Themer'
@@ -472,8 +470,7 @@ export class Gui {
 		)
 
 		this.settingsFolder = this.addFolder(Gui.settingsFolderTitle, {
-			// closed: true,
-			// hidden: false,
+			closed: true,
 			// @ts-expect-error @internal
 			_headerless: true,
 		})
@@ -483,24 +480,15 @@ export class Gui {
 		this.theme = this.opts.theme
 		this.presetManager = this._createPresetManager(this.settingsFolder)
 
-		// todo - convert this crap to an 'alt' class
-		// this.applyAltStyle(this.settingsFolder)
-
 		this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage)
 
 		// Give the user a chance to add folders / inputs before positioning.
-		// setTimeout(() => this._reveal(reposition))
 		this._reveal(reposition)
 
 		return this
 	}
 
 	private async _reveal(reposition: boolean) {
-		// Wait until the gui is fully constructed before positioning it
-		// to make sure we can calculate the correct size and position.
-		// await Promise.resolve()
-		// await new Promise(resolve => setTimeout(resolve, 1000))
-
 		// In case dispose() was called before this resolved...
 		if (!this.container) return
 

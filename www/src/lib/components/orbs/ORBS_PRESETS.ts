@@ -24,7 +24,7 @@ export const ORBS_PRESETS = [
 						{
 							__type: 'NumberInputOptions',
 							title: 'count',
-							value: 50,
+							value: 150,
 							disabled: false,
 							presetId: 'base_count__NumberInputOptions',
 							hidden: false,
@@ -64,7 +64,7 @@ export const ORBS_PRESETS = [
 						{
 							__type: 'NumberInputOptions',
 							title: 'speed',
-							value: 0.02,
+							value: 0.0045,
 							disabled: false,
 							presetId: 'motion_speed__NumberInputOptions',
 							hidden: false,
@@ -185,7 +185,7 @@ export const ORBS_PRESETS = [
 						{
 							__type: 'NumberInputOptions',
 							title: 'brightness',
-							value: 0.4,
+							value: 0.15,
 							disabled: false,
 							presetId: 'appearance_brightness__NumberInputOptions',
 							hidden: false,

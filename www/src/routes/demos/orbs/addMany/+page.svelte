@@ -115,6 +115,12 @@
 		animation: fade-in 2s ease-in 0.25s forwards;
 	}
 
+	@keyframes fade-in {
+		to {
+			opacity: 1;
+		}
+	}
+
 	.debug {
 		position: absolute;
 		top: 5rem;
