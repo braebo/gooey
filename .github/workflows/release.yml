@@ -51,5 +51,5 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to jsr
-        # if: steps.changesets.outputs.published == 'true'
+        if: steps.changesets.outputs.published == 'true'
         run: npx -y jsr publish --allow-dirty --allow-slow-types
