@@ -1,10 +1,10 @@
 import renameNodeModules from 'rollup-plugin-rename-node-modules'
 import typescript from '@rollup/plugin-typescript'
 import resolve from '@rollup/plugin-node-resolve'
-import sass from 'rollup-plugin-sass'
 import { rollup } from 'rollup'
 
-import { sassPlugin } from 'esbuild-sass-plugin'
+import { writeFile } from 'node:fs/promises'
+import { compileAsync } from 'sass'
 import esbuild from 'esbuild'
 import pc from 'picocolors'
 import { $ } from 'bun'
@@ -18,18 +18,37 @@ const spinner = ora({
 	stream: process.stdout,
 }).start()
 
+spinner.start(pc.magenta('sass') + ' build')
+
+const css = await esbuild.build({
+	stdin: {
+		contents: (await compileAsync('src/styles/gooey.scss')).css,
+		loader: 'css',
+	},
+	bundle: true,
+	minify: true,
+	write: false,
+})
+
+await writeFile(
+	'src/styles/gooey.css.ts',
+	`export default String.raw\`${css.outputFiles[0].text}\``,
+	'utf-8',
+)
+
+spinner.succeed()
+
 if (!Bun.argv.includes('-w')) {
-	// 1
+	// 2
 	spinner.start(pc.dim('rm -rf dist'))
 
 	await $`rm -rf dist`
 	spinner.succeed()
 
-	// 2
+	// 3
 	spinner.start(pc.yellow('esbuild') + ' gooey.min')
 
 	await esbuild.build({
-		plugins: [sassPlugin({ type: 'css-text' })],
 		entryPoints: ['src/index.ts'],
 		outfile: 'dist/gooey.min.js',
 		bundle: true,
@@ -39,19 +58,19 @@ if (!Bun.argv.includes('-w')) {
 	})
 	spinner.succeed()
 
-	// 3
+	// 4
 	spinner.start(pc.blue('tsc') + pc.dim(' --declaration'))
 
 	await $`tsc --declaration`
 	spinner.succeed()
 }
 
-// 4
+// 5
 spinner.start(pc.red('rollup') + ' /build\n')
 
 const bundle = await rollup({
 	input: 'src/index.ts',
-	plugins: [resolve(), renameNodeModules(), typescript(), sass()],
+	plugins: [resolve(), renameNodeModules(), typescript()],
 })
 
 spinner.text = pc.red('rollup') + ' /build'
