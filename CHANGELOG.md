@@ -1,5 +1,11 @@
 # gooey
 
+## 0.1.2
+
+### Patch Changes
+
+-   chore: remove assets alias ([`b42dab5a0c52ceaf9dc2bbbfac7f0b47f6e0b7e0`](https://github.com/braebo/gooey/commit/b42dab5a0c52ceaf9dc2bbbfac7f0b47f6e0b7e0))
+
 ## 0.1.1
 
 ### Patch Changes
