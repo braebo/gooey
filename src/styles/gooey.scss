@@ -415,7 +415,11 @@
 	overflow-y: scroll;
 	overflow-x: hidden;
 
+	backface-visibility: hidden;
 	scrollbar-gutter: stable;
+
+	@include scrollable;
+	
 	@-moz-document url-prefix() {
 		& {
 			transition: none !important;
@@ -425,9 +429,7 @@
 		}
 	}
 
-	@include scrollable;
-
-	backface-visibility: hidden;
+	
 }
 
 .gooey-root.animating > .gooey-content-wrapper > .gooey-content {
@@ -469,6 +471,10 @@
 	border-radius: var(--gooey-controller_border-radius);
 	outline: var(--gooey-controller_outline);
 
+	// transition: 0.15s;
+	transition-duration: var(--gooey-transition-duration);
+	transition-property: color, background, opacity;
+
 	&:hover,
 	&:focus-visible,
 	&:active {
@@ -478,20 +484,11 @@
 			background: var(--gooey-controller_background);
 		}
 	}
-
-	// transition: 0.15s;
-	transition-duration: var(--gooey-transition-duration);
-	transition-property: color, background, opacity;
 }
 
 .gooey-controller-button {
 	contain: strict;
 	cursor: pointer;
-
-	svg {
-		width: 100%;
-		height: 100%;
-	}
 
 	height: 1.5rem;
 	margin: 0;
@@ -509,10 +506,6 @@
 		-0.5px 0.5px 0.5px hsla(250, 10%, 50%, calc(var(--gooey-shadow-opacity))) inset
 	;
 
-	@at-root .gooey-root[mode='dark'] & {
-		outline: none;
-	}
-
 	@include fontMono;
 
 	// scale: 1;
@@ -521,6 +514,15 @@
 
 	transition-duration: var(--gooey-transition-duration);
 	transition-property: background, color, transform, box-shadow;
+
+	@at-root .gooey-root[mode='dark'] & {
+		outline: none;
+	}
+
+	svg {
+		width: 100%;
+		height: 100%;
+	}
 
 	&:hover,
 	&:active {
@@ -662,6 +664,8 @@
 
 	transition-duration: 0.15s;
 	transition-property: background, color, filter;
+	
+	cursor: pointer;
 
 	&:hover,
 	&:focus-visible {
@@ -673,7 +677,6 @@
 		);
 	}
 
-	cursor: pointer;
 
 	&:first-of-type {
 		border-top-left-radius: var(--gooey-radius-sm);
@@ -896,6 +899,8 @@ input.gooey-search-input {
 	cursor: pointer;
 	transition: color 0.15s;
 
+	pointer-events: all;
+
 	&:hover {
 		color: var(--gooey-toolbar-icon_color);
 	}
@@ -972,8 +977,6 @@ input.gooey-search-input {
 	&:active {
 		background: none;
 	}
-
-	pointer-events: all;
 }
 
 //⌟
@@ -1002,6 +1005,9 @@ input.gooey-search-input {
 		transition-property: all, background, color;
 		transition-delay: 0s, 1s, 0.75s;
 		transition-duration: 0.25s, 0.5s;
+
+		font-size: 0.8rem;
+		font-family: var(--gooey-font-family);
 
 		&:not(.active, .outro) {
 			&:hover {
@@ -1033,8 +1039,6 @@ input.gooey-search-input {
 			transition-duration: 0.25s;
 		}
 
-		font-size: 0.8rem;
-		font-family: var(--gooey-font-family);
 	}
 
 	.copy-button-svg-container {
@@ -1649,6 +1653,10 @@ input.gooey-search-input {
 					color: var(--gooey-fg-d);
 					filter: brightness(0.75) contrast(0.8);
 					backdrop-filter: none;
+
+					opacity: 0;
+					z-index: 10;
+
 					svg {
 						.back {
 							fill: var(--gooey-fg-d);
@@ -1667,8 +1675,6 @@ input.gooey-search-input {
 						}
 					}
 
-					opacity: 0;
-					z-index: 10;
 				}
 
 				&:hover {
@@ -1885,11 +1891,12 @@ input.gooey-search-input {
 						grid-area: 1/1;
 
 						color: var(--gooey-fg-d);
+						font-size: var(--gooey-font-size);
+
 						@at-root .gooey-root[mode='light'] & {
 							color: var(--gooey-bg-e);
 						}
 
-						font-size: var(--gooey-font-size);
 
 						span {
 							transition: 0.4s;
@@ -2043,13 +2050,6 @@ input.gooey-search-input {
 				transition-duration: 0.25s;
 				transition-timing-function: cubic-bezier(0.01, 1.06, 0.8, 1.01);
 
-				&:hover,
-				&:focus-visible {
-					&:not(:disabled) {
-						color: var(--gooey-controller_color);
-					}
-				}
-
 				box-shadow:
 					-1px 1px 7px 0px hsla(250, 10%, var(--gooey-shadow-lightness), 0.33) inset,
 					-1px 1px 1px 0px hsla(250, 10%, var(--gooey-shadow-lightness), 0.5) inset;
@@ -2067,56 +2067,7 @@ input.gooey-search-input {
 						// var(--gooey-controller-dim_background) 100%
 				);
 
-				@at-root .gooey-root[mode='light'] & {
-					box-shadow:
-						-1px 1px 7px 0px #0002 inset,
-						-1px 1px 1px 0px #0002 inset;
-
-					background-image: radial-gradient(
-						circle at 25% 50% in lab,
-						var(--gooey-theme-a) 3%,
-						color-mix(in sRGB, var(--gooey-theme-a) 40%, transparent) 3%,
-						color-mix(in sRGB, var(--gooey-theme-a) 30%, transparent) 10%,
-						color-mix(in sRGB, var(--gooey-theme-a) 20%, transparent) 20%,
-						color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 30%,
-						color-mix(in sRGB, var(--gooey-theme-a) 5%, transparent) 50%,
-						var(--gooey-input-number-range_background) 100%
-							// var(--gooey-controller-dim_background) 100%
-					);
-				}
-
 				opacity: 0.7;
-				&:hover {
-					opacity: 1;
-				}
-
-				&:after {
-					content: '';
-					position: absolute;
-					top: 0;
-					left: 0;
-
-					width: 100%;
-					height: 100%;
-
-					background: var(--gooey-input-number-range_background);
-					box-shadow:
-						-1px 1px 7px 0px #000c inset,
-						-1px 1px 1px 0px #000c inset;
-					@at-root .gooey-root[mode='light'] & {
-						box-shadow:
-							-1px 1px 7px 0px #0002 inset,
-							-1px 1px 1px 0px #0002 inset;
-					}
-
-					opacity: 1;
-
-					transition: 0.33s;
-				}
-
-				&.active:after {
-					opacity: 0;
-				}
 
 				.gooey-controller-switch-thumb,
 				.gooey-controller-switch-left,
@@ -2164,6 +2115,64 @@ input.gooey-search-input {
 								1px -1px 1px #0002 inset;
 						}
 					}
+				}
+
+				&:hover,
+				&:focus-visible {
+					&:not(:disabled) {
+						color: var(--gooey-controller_color);
+					}
+				}
+				
+				&:hover {
+					opacity: 1;
+				}
+
+				&:after {
+					content: '';
+					position: absolute;
+					top: 0;
+					left: 0;
+
+					width: 100%;
+					height: 100%;
+
+					background: var(--gooey-input-number-range_background);
+					box-shadow:
+						-1px 1px 7px 0px #000c inset,
+						-1px 1px 1px 0px #000c inset;
+					
+					opacity: 1;
+					transition: 0.33s;
+
+					@at-root .gooey-root[mode='light'] & {
+						box-shadow:
+							-1px 1px 7px 0px #0002 inset,
+							-1px 1px 1px 0px #0002 inset;
+					}
+
+				}
+
+				&.active:after {
+					opacity: 0;
+				}
+
+				@at-root .gooey-root[mode='light'] & {
+					box-shadow:
+						-1px 1px 7px 0px #0002 inset,
+						-1px 1px 1px 0px #0002 inset;
+
+					background-image: radial-gradient(
+						circle at 25% 50% in lab,
+						var(--gooey-theme-a) 3%,
+						color-mix(in sRGB, var(--gooey-theme-a) 40%, transparent) 3%,
+						color-mix(in sRGB, var(--gooey-theme-a) 30%, transparent) 10%,
+						color-mix(in sRGB, var(--gooey-theme-a) 20%, transparent) 20%,
+						color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 30%,
+						color-mix(in sRGB, var(--gooey-theme-a) 5%, transparent) 50%,
+						var(--gooey-input-number-range_background) 100%
+							// var(--gooey-controller-dim_background) 100%
+					);
 				}
 			}
 		}
@@ -2266,6 +2275,8 @@ input.gooey-search-input {
 				border-style: solid;
 				border-color: transparent;
 
+				filter: unset;
+
 				//? chevron icon
 				&::before {
 					content: '\276F';
@@ -2281,8 +2292,6 @@ input.gooey-search-input {
 					transition-duration: var(--gooey-transition-duration);
 					transition-property: color, transform, border-color;
 				}
-
-				filter: unset;
 
 				&.active,
 				&:hover,
