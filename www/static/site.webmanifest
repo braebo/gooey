@@ -17,5 +17,5 @@
 	"theme_color": "#00d0ff",
 	"background_color": "#3d3d3d",
 	"display": "standalone",
-	"descripton": "A modern gui library for typescript and javascript."
+	"descripton": "A modern gui library for the web."
 }
