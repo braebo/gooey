@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      typescript:
-        specifier: 5.5.3
-        version: 5.5.3
     devDependencies:
       '@changesets/cli':
         specifier: 2.27.7
@@ -72,6 +68,9 @@ importers:
       tslib:
         specifier: 2.6.3
         version: 2.6.3
+      typescript:
+        specifier: ^5.5.3
+        version: 5.5.3
       vite-node:
         specifier: 2.0.1
         version: 2.0.1(@types/node@20.14.10)(lightningcss@1.25.1)(sass@1.77.7)
