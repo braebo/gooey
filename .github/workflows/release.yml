@@ -31,6 +31,9 @@ jobs:
         with:
           version: 8.15.7
 
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install
         run: pnpm install
 
