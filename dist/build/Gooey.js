@@ -2,7 +2,7 @@ import { __decorate, __metadata } from './external/.pnpm/@rollup_plugin-typescri
 import theme_default from './styles/themes/default.js';
 import theme_scout from './styles/themes/scout.js';
 import theme_flat from './styles/themes/flat.js';
-import style from './styles/gooey.scss.js';
+import style from './styles/gooey.css.js';
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager.js';
 import { deepMergeOpts } from './shared/deepMergeOpts.js';
 import { styled } from './shared/decorators/styled.js';
