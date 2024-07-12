@@ -241,6 +241,8 @@ export class Search {
 		circle.setAttribute('r', '7')
 		svg.appendChild(circle)
 
+		svg.style.setProperty('width', '1.5rem')
+
 		svg.classList.add('search-icon')
 		svg.style.pointerEvents = 'none'
 

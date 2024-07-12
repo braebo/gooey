@@ -4,7 +4,7 @@ import type { Input, InputOptions, InputPreset, InputType, ValidInput } from './
 import type { ColorFormat } from './shared/color/types/colorFormat'
 import type { Option } from './controllers/Select'
 import type { Tooltip } from './shared/Tooltip'
-import type { GooeyPreset } from './Gooey'
+import type { GooeyOptions, GooeyPreset } from './Gooey'
 
 import { InputButtonGrid, type ButtonGridInputOptions } from './inputs/InputButtonGrid'
 import { InputSwitch, type SwitchInputOptions } from './inputs/InputSwitch'
@@ -22,12 +22,13 @@ import { EventManager } from './shared/EventManager'
 import { TerminalSvg } from './svg/TerminalSvg'
 import { Search } from './toolbar/Search'
 import { create } from './shared/create'
+import { select } from './shared/select'
 import { Logger } from './shared/logger'
 import { nanoid } from './shared/nanoid'
 import { state } from './shared/state'
 import { toFn } from './shared/toFn'
-import { DEV } from 'esm-env'
 import { Gooey } from './Gooey'
+import { DEV } from 'esm-env'
 
 //· Types ························································································¬
 
@@ -323,11 +324,17 @@ export class Folder {
 	private _title: string
 	private _hidden = () => false
 	private _log: Logger
-	/** Used to disable clicking the header to open/close the folder. */
+	/**
+	 * Used to disable clicking the header to open/close the folder.
+	 */
 	private _disabledTimer?: ReturnType<typeof setTimeout>
-	/** The time in ms to wait after mousedown before disabling toggle for a potential drag. */
+	/**
+	 * The time in ms to wait after mousedown before disabling toggle for a potential drag.
+	 */
 	private _clickTime = 200
-	/** Whether clicking the header to open/close the folder is disabled. */
+	/**
+	 * Whether clicking the header to open/close the folder is disabled.
+	 */
 	private _clicksDisabled = false
 	private _depth = -1
 	//⌟
@@ -346,15 +353,6 @@ export class Folder {
 			} as const,
 			options,
 		) as FolderOptions & InternalFolderOptions
-
-		// this.closed = state(opts.closed ?? false)
-		// if (opts.title === 'base') {
-		// 	console.log(opts.closed)
-		// 	console.log(this.closed.value)
-		// 	setTimeout(() => {
-		// 		console.log(this.closed.value)
-		// 	}, 1000)
-		// }
 
 		this._log = new Logger(`Folder ${opts.title}`, { fg: 'DarkSalmon' })
 		this._log.fn('constructor').debug({ opts, this: this })
@@ -377,7 +375,7 @@ export class Folder {
 		this.gooey = opts.gooey
 		this._title = opts.title ?? ''
 
-		this.element = this._createElement(opts.container)
+		this.element = this._createElement(opts)
 		this.elements = this._createElements(this.element)
 
 		this.presetId = this.resolvePresetId(opts)
@@ -1316,14 +1314,17 @@ export class Folder {
 
 	//· Elements ·················································································¬
 
-	private _createElement(el?: HTMLElement) {
-		this._log.fn('#createElement').debug({ el, this: this })
+	private _createElement(opts: FolderOptions | GooeyOptions) {
+		this._log.fn('#createElement').debug({ el: opts.container, this: this })
 		if (this.isRoot) {
 			return create('div', {
 				id: `gooey-root_${this.id}`,
 				classes: ['gooey-root', 'gooey-folder', 'closed'],
 				dataset: { theme: this.gooey!.theme ?? 'default' },
-				parent: el,
+				parent: select(opts.container)[0],
+				style: {
+					width: 'fit-content',
+				},
 			})
 		}
 
