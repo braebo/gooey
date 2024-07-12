@@ -525,6 +525,15 @@ export class Gooey {
 			fill: 'none',
 			duration: 400,
 		})
+
+		// Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
+		if (isSafari()) {
+			setTimeout(() => {
+				this.folder.element.style.display = 'table'
+				this.folder.element.offsetHeight
+				this.folder.element.style.display = 'flex'
+			}, 500)
+		}
 	}
 
 	private _createPresetManager(settingsFolder: Folder) {
