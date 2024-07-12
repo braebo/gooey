@@ -72,8 +72,8 @@
 
 		background: color-mix(in lch, var(--bg-a), var(--bg-b));
 		opacity: 0;
-		
-		animation: slide-in .75s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s forwards;
+
+		animation: slide-in 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s forwards;
 
 		/* overflow: hidden; */
 

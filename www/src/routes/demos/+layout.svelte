@@ -3,7 +3,6 @@
 	import { setContext } from 'svelte'
 
 	setContext('links', [
-		['/demos/gooey', 'Gooey'],
 		['/demos/orbs', 'Orbs']
 	])
 </script>

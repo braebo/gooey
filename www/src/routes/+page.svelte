@@ -1,5 +1,5 @@
-<script>
-	import Hello from '$lib/components/Hello.svelte'
+<script lang="ts">
+	import GooeyAnim from '$lib/components/graphics/GooeyAnim.svelte'
 </script>
 
-<Hello />
+<GooeyAnim />
