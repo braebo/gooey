@@ -387,6 +387,9 @@ export class Color {
 	get hex(): HexString {
 		return this.hex8String
 	}
+	set hex(value: HexString | HexAlphaString | (string & {})) {
+		this.hexString = value
+	}
 	/** Hex string with no alpha channel, i.e. `'#5500ee'` */
 	get hexString(): HexString {
 		const rgb = this.rgb
