@@ -341,6 +341,7 @@ export class Gooey {
 			gooey: this,
 		})
 	}
+	bind: Folder['bind']
 	add: Folder['add']
 	addMany: Folder['addMany']
 	addButtonGrid: Folder['addButtonGrid']
@@ -429,6 +430,7 @@ export class Gooey {
 		// Not stoked about this.
 		this.on = this.folder.on.bind(this.folder)
 		// this.addFolder = this.folder.addFolder.bind(this.folder)
+		this.bind = this.folder.bind.bind(this.folder)
 		this.add = this.folder.add.bind(this.folder)
 		this.addMany = this.folder.addMany.bind(this.folder)
 		this.addButtonGrid = this.folder.addButtonGrid.bind(this.folder)
@@ -485,7 +487,6 @@ export class Gooey {
 
 		// Give the user a chance to add folders / inputs before positioning.
 		this._reveal(reposition)
-		// setTimeout(this.settingsFolder.close)
 
 		return this
 	}
@@ -689,7 +690,6 @@ export class Gooey {
 	 * for the eventual commit in {@link unlockCommits}.
 	 */
 	private lockCommits = (from: GooeyPreset) => {
-		// this._undoLock = true
 		this._undoManager.lockedExternally = true
 		this.lockCommit.from = from
 		this._log.fn(o('lock')).info('commit', { from, lockCommit: this.lockCommit })
@@ -732,14 +732,6 @@ export class Gooey {
 			finalThemer = new Themer(this.folder.element, themerOptions)
 		}
 
-		this.folder.evm.add(
-			finalThemer.mode.subscribe(() => {
-				if (this.settingsFolder) {
-					// this.applyAltStyle(this.settingsFolder)
-				}
-			}),
-		)
-
 		const uiFolder = folder.addFolder('ui', { closed: true })
 
 		// Fully desaturate the ui folder's header connector to svg.
@@ -770,7 +762,6 @@ export class Gooey {
 					})),
 				],
 			})
-			// }
 		}
 
 		return finalThemer
