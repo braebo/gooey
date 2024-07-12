@@ -786,7 +786,10 @@ export class Draggable {
 			: undefined
 
 			// Error handling.
-			if (!node) throw new Error('Invalid bounds option provided: ' + optsBounds)
+			if (!node) {
+				console.error(`Invalid bounds option provided: ${optsBounds}. Aborting.`)
+				return
+			}
 
 			this.boundsEl = node as HTMLElement
 
@@ -811,7 +814,7 @@ export class Draggable {
 		}
 		const updateBounds = resolveUpdater()
 		return () => {
-			updateBounds()
+			updateBounds?.()
 			this._updateRect()
 		}
 	}
