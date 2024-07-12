@@ -28,6 +28,7 @@ import { Logger } from './shared/logger'
 import { create } from './shared/create'
 import { state } from './shared/state'
 import { place } from './shared/place'
+import { isSafari } from './shared/ua'
 import { Folder } from './Folder'
 import { o } from './shared/l'
 
@@ -177,13 +178,13 @@ export interface GooeyStorageOptions {
 
 	/**
 	 * Whether to persist the gooey's position.
-	 * @default false
+	 * @default true
 	 */
 	position?: boolean
 
 	/**
 	 * Whether to persist the gooey's size.
-	 * @default false
+	 * @default true
 	 */
 	size?: boolean
 
@@ -211,8 +212,8 @@ export const GUI_STORAGE_DEFAULTS: GooeyStorageOptions = {
 	closed: true,
 	theme: true,
 	presets: true,
-	position: false,
-	size: false,
+	position: true,
+	size: true,
 } as const
 
 export const GUI_WINDOWMANAGER_DEFAULTS = {
