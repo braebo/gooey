@@ -3,7 +3,6 @@ import type { CSSColorName } from './css-colors'
 import { CSS_COLORS, randomCSSColorName } from './css-colors'
 import { r, y, gr, dim, hex } from './l'
 import { stringify } from './stringify'
-// import { BROWSER } from 'esm-env'
 import { defer } from './defer'
 import { tldr } from './tldr'
 
@@ -59,7 +58,7 @@ export interface LoggerOptions {
 	title?: string
 }
 
-// todo - Is there a reliable way to type an ImportMetaEnv entry globally for consumers?
+// todo - How can we ensure the logger is stripped completely from production builds?
 const ENABLED = true
 // // DEV &&
 // // @ts-ignore - For Vite environments.
@@ -77,8 +76,6 @@ export class Logger {
 
 	title = ''
 	options: LoggerOptions
-	// color: ChalkInstance
-	// color: string
 	color: (str: string) => string
 
 	#logger: (...args: any[]) => void
@@ -98,10 +95,7 @@ export class Logger {
 		const fg = colorname in CSS_COLORS ? CSS_COLORS[colorname as CSSColorName] : colorname
 
 		this.color = hex(fg)
-		// this.color = fg
 		this.#logger = Logger.createLogger(this.title, this.options)
-
-		// console.log('Logger', this.title, this.#logger)
 
 		return this
 	}

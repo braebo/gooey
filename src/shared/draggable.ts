@@ -264,12 +264,6 @@ export class Draggable {
 		y: 0,
 	}
 
-	// /**
-	//  * An internal representation of the {@link node|node's} bounding rectangle.
-	//  * Used for collision detection and animations.
-	//  */
-	// rect: VirtualRect = { top: 0, right: 0, bottom: 0, left: 0 }
-
 	boundsEl?: HTMLElement
 	handleEls: HTMLElement[]
 	cancelEls: HTMLElement[]
@@ -322,9 +316,10 @@ export class Draggable {
 	 */
 	private _rect: DOMRect
 
+	/**
+	 * The {@link EventManager} for this draggable instance.
+	 */
 	private _evm = new EventManager()
-	// todo - isn't this redundant with the evm?
-	private _listeners = new Set<() => void>()
 
 	/**
 	 * A callback to release the pointer capture using the
@@ -558,8 +553,8 @@ export class Draggable {
 		}
 
 		// Dispatch custom events
-		this._fireSvelteDragStartEvent()
-		this._fireUpdateEvent()
+		this._emitDragStart()
+		this._emitUpdate()
 	}
 
 	/**
@@ -589,18 +584,11 @@ export class Draggable {
 		// if (this.bounds) this.#clampToBounds(target)
 		this.moveTo(target)
 
-		this._fireSvelteDragEvent()
+		this._emitDrag()
 	}
 
 	dragEnd = () => {
 		if (!this._active) return
-
-		// todo - delete!
-		if (DEV) {
-			for (const el of this.obstacleEls) {
-				el.style.outline = el.dataset['outline'] ?? 'none'
-			}
-		}
 
 		this.node.classList.remove(this.opts.classes.dragging)
 
@@ -611,7 +599,6 @@ export class Draggable {
 		this.clickOffset = { x: 0, y: 0 }
 		this.clientToNodeOffset = { x: 0, y: 0 }
 		this._position = { x: this.x, y: this.y }
-		// if (this._storage) this._storage.value = this._position
 
 		this._active = false
 
@@ -621,7 +608,7 @@ export class Draggable {
 
 		setTimeout(() => this.node.classList.remove(this.opts.classes.dragged), 0)
 
-		this._fireSvelteDragEndEvent()
+		this._emitDragEnd()
 
 		this.updateLocalStorage()
 	}
@@ -632,29 +619,6 @@ export class Draggable {
 
 		this.moveTo(this.position) // works but doesn't preserve original position
 	}
-
-	// #updateBounds = () => {
-	// 	// refresh style left & top
-	// 	const styleLeft = parseFloat(this.node.style.left) || 0
-	// 	this.#leftBound = -styleLeft
-	// 	this.#rightBound =
-	// 		this.bounds.right - this.bounds.left - (this.rect.right - this.rect.left) - styleLeft
-
-	// 	const styleTop = parseFloat(this.node.style.top) || 0
-	// 	this.#topBound = -styleTop
-	// 	this.#bottomBound =
-	// 		this.bounds.bottom - this.bounds.top - styleTop - (this.rect.bottom - this.rect.top)
-	// 	// refresh bounds element padding ...
-	// 	if (this.boundsEl) {
-	// 		const styleMap = getStyleMap(this.boundsEl)
-	// 		// const { paddingLeft, paddingRight, paddingTop, paddingBottom } =
-	// 		// 	getStyleMap(this.boundsEl)
-	// 		this.#leftBound -= parseFloat(styleMap.get('padding-left'))
-	// 		this.#rightBound -= parseFloat(styleMap.get('padding-right'))
-	// 		this.#topBound -= parseFloat(styleMap.get('padding-top'))
-	// 		this.#bottomBound -= parseFloat(styleMap.get('padding-bottom'))
-	// 	}
-	// }
 
 	/**
 	 * Moves the {@link node|draggable element} to the specified position, adjusted
@@ -695,12 +659,6 @@ export class Draggable {
 			if (this.bounds) target.y = clamp(target.y, this.bounds.top, this.bounds.bottom)
 			const deltaY = target.y - this.y
 			if (deltaY !== 0) {
-				// const y = this.#collisionClampY(deltaY)
-				// const y = collisionClampY(deltaY, this.rect, this.obstacleEls)
-				// // Apply delta to y / virtual rect.
-				// this.rect.top += y
-				// this.rect.bottom += y
-				// this.y += y
 				this.y += deltaY
 			}
 		}
@@ -729,9 +687,7 @@ export class Draggable {
 			}
 		}
 
-		// this.updateLocalStorage()
-
-		this._fireUpdateEvent()
+		this._emitUpdate()
 	}
 
 	update(v = this.position) {
@@ -838,12 +794,12 @@ export class Draggable {
 			const boundsResizeObserver = new ResizeObserver(() => {
 				// this.clickOffset = { x: this.rect.left, y: this.rect.top }
 				this.resize()
-				this._fireUpdateEvent()
+				this._emitUpdate()
 			})
 			boundsResizeObserver.observe(node)
-			this._listeners.add(() => boundsResizeObserver.disconnect())
+			this._evm.add(() => boundsResizeObserver.disconnect())
 
-			this._fireUpdateEvent()
+			this._emitUpdate()
 
 			return () => {
 				const rect = node.getBoundingClientRect()
@@ -873,19 +829,19 @@ export class Draggable {
 		fn?.(data)
 	}
 
-	private _fireSvelteDragStartEvent = () => {
+	private _emitDragStart = () => {
 		this._callEvent('dragstart', this.opts.onDragStart)
 	}
 
-	private _fireSvelteDragEndEvent = () => {
+	private _emitDragEnd = () => {
 		this._callEvent('dragend', this.opts.onDragEnd)
 	}
 
-	private _fireSvelteDragEvent = () => {
+	private _emitDrag = () => {
 		this._callEvent('drag', this.opts.onDrag)
 	}
 
-	private _fireUpdateEvent = () => {
+	private _emitUpdate = () => {
 		this.node.dispatchEvent(new CustomEvent('update', { detail: this }))
 	}
 
@@ -916,6 +872,7 @@ export interface DragEvents {
  *
  * <div use:draggable> Drag Me </div>
  * ```
+ * @todo - Finish this -- I've never actually used or spent time on it..
  */
 export function draggable(node: HTMLElement, options?: Partial<DraggableOptions>) {
 	const d = new Draggable(node, options ?? {})
