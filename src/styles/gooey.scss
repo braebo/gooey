@@ -182,7 +182,6 @@
 .gooey-folder {
 	contain: content;
 	height: fit-content;
-	// background: var(--gooey-folder_background);
 
 	&.hidden {
 		display: none;
@@ -207,7 +206,6 @@
 	outline-offset: -1px;
 	color: var(--gooey-folder-header-dim_color);
 	background: var(--gooey-folder-header_background);
-	//! outline: var(--gooey-folder-header_outline, 1px solid rgba(var(--gooey-bg-b-rgb), 0.5));
 	outline: var(
 		--gooey-folder-header_outline,
 		1px solid color-mix(in sRGB, var(--gooey-bg-b) 50%, transparent)
@@ -223,11 +221,7 @@
 		width: fit-content;
 
 		font-size: calc(var(--gooey-font-size) * 0.9);
-		// font-weight: var(--gooey-folder-header_font-weight);
 		letter-spacing: var(--gooey-folder-header_letter-spacing);
-		// font-variation-settings:
-		// 	'wght' var(--gooey-folder-header_font-weight),
-		// 	'wdth' 100;
 
 		transition: color var(--gooey-transition-duration);
 	}
@@ -242,15 +236,10 @@
 
 		.gooey-folder-icon {
 			transition: opacity var(--gooey-transition-duration);
-			// opacity: 0.75;
 			contain: strict;
 			backface-visibility: hidden;
 		}
 	}
-
-	// &:hover .gooey-folder-icon-container .gooey-folder-icon {
-	// 	opacity: 1;
-	// }
 }
 
 .gooey-connector-svg {
@@ -276,16 +265,8 @@
 		flex-direction: column;
 
 		width: 100%;
-		// &:not(:has(&)) {
-		// 	background: var(--gooey-folder_background);
-		// }
-		// background: var(--gooey-folder-content_background, var(--gooey-folder_background));
-		// background: var(--gooey-folder_background);
-		// background: var(--gooey-folder-content_background);
 		border-left: var(--gooey-folder-content_padding-left) solid
 			var(--gooey-folder-header_background);
-
-		// transition: 0.1s;
 	}
 }
 
@@ -298,7 +279,6 @@
 	--gooey-input-container_color: var(--gooey-fg-b);
 	--gooey-folder-header_background: color-mix(in sRGB, var(--gooey-bg-a) 75%, transparent);
 	--gooey-controller-dim_background: color-mix(in sRGB, var(--gooey-bg-a) 50%, transparent);
-	// --gooey-controller_background: color-mix(in sRGB, var(--gooey-bg-c) 50%, transparent);
 	--gooey-controller_background: color-mix(
 		in sRGB,
 		var(--gooey-bg-a) 80%,
@@ -337,7 +317,6 @@
 
 	font-family: var(--gooey-font-family);
 	font-weight: var(--gooey-folder-content_font-weight);
-	// font-size: var(--gooey-font-size);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
@@ -363,7 +342,6 @@
 	border-radius: var(--gooey-radius-md);
 	border-bottom-left-radius: var(--gooey-radius-xs);
 	border-bottom-right-radius: var(--gooey-radius-xs);
-	// box-shadow: var(--gooey-root_box-shadow);
 
 	cursor: pointer;
 	cursor: grab;
@@ -374,9 +352,7 @@
 		width: fit-content;
 		height: var(--gooey-root-header_height);
 
-		// font-size: var(--gooey-root-header_font-size);
 		font-size: var(--gooey-font-size);
-		// font-weight: var(--gooey-root-header_font-weight);
 		font-variation-settings:
 			'wght' var(--gooey-root-header_font-weight),
 			'wdth' 100;
@@ -404,11 +380,10 @@
 	border-top-right-radius: var(--gooey-radius-sm);
 	background: var(--gooey-root-content_background);
 	backdrop-filter: var(--gooey-backdrop-filter);
+	transform: translateZ(100);
+	-webkit-backdrop-filter: var(--gooey-backdrop-filter);
 	outline-offset: -1px;
 
-	//! box-shadow: 0 0 1.5px 0.5px rgba(var(--gooey-bg-d-rgb), 0.5) inset;
-	// box-shadow: 0 0 1.5px 0.5px color-mix(in sRGB, var(--gooey-dark-d) 50%, transparent) inset;
-	// box-shadow: 0 0 1.5px 0.5px hsla(250, 10%, var(--gooey-shadow-lightness), var(--gooey-shadow-opacity)) inset;
 	box-shadow: 0 0 4.5px 0.5px
 		hsla(0, 10%, var(--gooey-shadow-lightness), var(--gooey-shadow-opacity)) inset;
 
@@ -428,8 +403,6 @@
 			scrollbar-gutter: auto;
 		}
 	}
-
-	
 }
 
 .gooey-root.animating > .gooey-content-wrapper > .gooey-content {
@@ -439,11 +412,6 @@
 		}
 	}
 }
-
-// .gooey-root > .gooey-content-wrapper > .gooey-folder {
-// 	padding-right: 0.25rem;
-// 	background: #15161d;
-// }
 //⌟
 
 //· Controllers ······························································¬
@@ -471,7 +439,6 @@
 	border-radius: var(--gooey-controller_border-radius);
 	outline: var(--gooey-controller_outline);
 
-	// transition: 0.15s;
 	transition-duration: var(--gooey-transition-duration);
 	transition-property: color, background, opacity;
 
@@ -508,7 +475,6 @@
 
 	@include fontMono;
 
-	// scale: 1;
 	transform: scale(1);
 	backface-visibility: hidden;
 
@@ -533,7 +499,6 @@
 	}
 
 	&:active {
-		// scale: 0.975;
 		transform: scale(0.975);
 		color: var(--gooey-theme-a);
 
@@ -570,14 +535,12 @@
 
 .gooey-controller-select-selected {
 	border-radius: var(--gooey-radius-xs);
-	// outline: 1px solid rgba(var(--gooey-bg-d-rgb), 0);
 	outline: 1px solid color-mix(in sRGB, var(--gooey-bg-d) 0%, transparent);
 
 	text-align: center;
 	letter-spacing: var(--gooey-folder-content_letter-spacing);
 
 	overflow: hidden;
-	// transition-duration: 0.15s;
 	transition-duration: var(--gooey-transition-duration);
 	transition-property: background, color, filter;
 	cursor: pointer;
@@ -620,6 +583,7 @@
 	);
 	color: var(--gooey-controller-dim_color);
 	backdrop-filter: var(--gooey-backdrop-filter);
+	-webkit-backdrop-filter: var(--gooey-backdrop-filter);
 	outline: 1px solid var(--gooey-bg-b);
 	border-radius: var(--gooey-radius);
 	box-shadow:
@@ -770,7 +734,6 @@ $icon-height: 0.9rem;
 	width: $icon-width;
 	height: $icon-height;
 
-	// transition: color 1s, opacity 1s;
 	transition-duration: 0.5s;
 	transition-property: color, opacity;
 
@@ -884,10 +847,8 @@ input.gooey-search-input {
 	justify-content: flex-start;
 	gap: 0.25rem;
 
-	// all: unset;
 	border: none;
 	width: 1rem;
-	// height: $icon-height;
 
 	margin: 0;
 	padding: 0;
@@ -991,16 +952,13 @@ input.gooey-search-input {
 		contain: content;
 		cursor: pointer;
 
-		// width: var(--copy-button-width, 2rem);
 		height: 2rem;
 		padding: 10%;
 
 		color: var(--gooey-fg-a);
-		//! background: rgba(var(--gooey-bg-a-rgb), 0);
 		background: color-mix(in sRGB, var(--gooey-bg-a) 0%, transparent);
 		outline: 1px solid transparent;
 		border-radius: 0.2rem;
-		// backdrop-filter: blur(0px);
 
 		transition-property: all, background, color;
 		transition-delay: 0s, 1s, 0.75s;
@@ -1012,8 +970,6 @@ input.gooey-search-input {
 		&:not(.active, .outro) {
 			&:hover {
 				color: var(--gooey-fg-b);
-				// backdrop-filter: blur(2px);
-				//! background: rgba(var(--gooey-bg-a-rgb), 0.75);
 				background: color-mix(in sRGB, var(--gooey-bg-a) 75%, transparent);
 
 				transition-duration: 0.15s, 0.25s;
@@ -1031,7 +987,6 @@ input.gooey-search-input {
 		&.outro {
 			color: var(--gooey-fg-a);
 			outline-color: transparent !important;
-			//! background: rgba(var(--gooey-bg-a-rgb), 0);
 			background: color-mix(in sRGB, var(--gooey-bg-a) 0%, transparent);
 			opacity: 1 !important;
 
@@ -1646,6 +1601,7 @@ input.gooey-search-input {
 					top: -5px;
 					right: -7px;
 
+					width: 1.15rem;
 					height: 1.15rem;
 					padding: 3px;
 					background: none !important;
@@ -1705,10 +1661,12 @@ input.gooey-search-input {
 					(-$size) 0px;
 				border-radius: var(--gooey-radius-sm);
 				overflow: hidden;
-
+				
 				cursor: pointer;
-
+				
 				clip-path: xywh(0 12% 100% 72% round var(--gooey-radius-sm));
+				// Safari bug fix
+				backface-visibility: hidden;
 			}
 
 			.gooey-input-color-current-color-display {

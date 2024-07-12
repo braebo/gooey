@@ -404,8 +404,6 @@ export class Select<T> {
 		}
 	}
 
-	// private _groupId = nanoid()
-
 	/**
 	 * Shows the dropdown.
 	 */
