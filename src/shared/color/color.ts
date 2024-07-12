@@ -390,6 +390,14 @@ export class Color {
 	set hex(value: HexString | HexAlphaString | (string & {})) {
 		this.hexString = value
 	}
+
+	get color(): this {
+		return this
+	}
+	set color(value: this) {
+		this.hsva = value.hsva
+	}
+
 	/** Hex string with no alpha channel, i.e. `'#5500ee'` */
 	get hexString(): HexString {
 		const rgb = this.rgb
