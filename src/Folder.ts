@@ -426,7 +426,7 @@ export class Folder {
 	/**
 	 * The folder's title.  Changing this will update the UI.
 	 */
-	get title() {
+	get title(): string {
 		return this._title
 	}
 	set title(v: string) {
@@ -468,7 +468,7 @@ export class Folder {
 	/**
 	 * Whether the folder is visible.
 	 */
-	get hidden() {
+	get hidden(): boolean {
 		return this._hidden()
 	}
 	set hidden(v: boolean | (() => boolean)) {
@@ -537,7 +537,7 @@ export class Folder {
 		return folder
 	}
 
-	private _handleClick(event: PointerEvent) {
+	private _handleClick(event: PointerEvent): void {
 		if (event.button !== 0) return
 
 		this._log.fn('#handleClick').debug({ event, this: this })
@@ -568,7 +568,7 @@ export class Folder {
 
 		if (this._clicksDisabled) return
 	}
-	private _disableClicks = () => {
+	private _disableClicks = (): void => {
 		if (!this._clicksDisabled) {
 			this._clicksDisabled = true
 			this._log.fn('disable').debug('Clicks DISABLED')
@@ -576,7 +576,7 @@ export class Folder {
 		this._clicksDisabled = true
 		clearTimeout(this._disabledTimer)
 	}
-	private _resetClicks() {
+	private _resetClicks(): void {
 		this._log.fn('cancel').debug('Clicks ENABLED')
 		removeEventListener('pointerup', this.toggle)
 		this._clicksDisabled = false
@@ -584,18 +584,18 @@ export class Folder {
 
 	//·· Open/Close ······································································¬
 
-	toggle = () => {
+	toggle = (): this => {
 		this._log.fn('toggle').debug()
 		clearTimeout(this._disabledTimer)
 		if (this._clicksDisabled) {
 			this._resetClicks()
-			return
+			return this
 		}
 
 		// If the folder is being dragged, don't toggle.
 		if (this.element.classList.contains('gooey-dragged')) {
 			this.element.classList.remove('gooey-dragged')
-			return
+			return this
 		}
 
 		const state = !this.closed.value
@@ -603,9 +603,11 @@ export class Folder {
 		this.closed.set(state)
 
 		this.evm.emit('toggle', state)
+
+		return this
 	}
 
-	open(updateState = false) {
+	open(updateState = false): this {
 		this._log.fn('open').debug()
 		this.element.classList.remove('closed')
 		if (updateState) this.closed.set(false)
@@ -613,9 +615,10 @@ export class Folder {
 
 		this.#toggleAnimClass()
 		animateConnector(this, 'open')
+		return this
 	}
 
-	close(updateState = false) {
+	close(updateState = false): this {
 		this._log.fn('close').debug()
 
 		this.element.classList.add('closed')
@@ -624,25 +627,29 @@ export class Folder {
 
 		this.#toggleAnimClass()
 		animateConnector(this, 'close')
+		return this
 	}
 
-	toggleHidden() {
+	toggleHidden(): this {
 		this._log.fn('toggleHidden').debug()
 		this.element.classList.toggle('hidden')
+		return this
 	}
 
-	hide() {
+	hide(): this {
 		this._log.fn('hide').error()
 		this.element.classList.add('hidden')
+		return this
 	}
 
-	show() {
+	show(): this {
 		this._log.fn('show').debug()
 		this.element.classList.remove('hidden')
+		return this
 	}
 
 	#toggleTimeout!: ReturnType<typeof setTimeout>
-	#toggleAnimClass = () => {
+	#toggleAnimClass = (): void => {
 		this.element.classList.add('animating')
 
 		clearTimeout(this.#toggleTimeout)
@@ -654,7 +661,7 @@ export class Folder {
 
 	//·· Save/Load ···············································································¬
 
-	resolvePresetId = (opts?: FolderOptions) => {
+	resolvePresetId = (opts?: FolderOptions): string => {
 		this._log.fn('resolvePresetId').debug({ opts, this: this })
 		const getPaths = (folder: Folder): string[] => {
 			if (folder.isRootFolder.bind(folder) || !(folder.parentFolder === this))
@@ -706,7 +713,7 @@ export class Folder {
 	 * those presets will also be passed to the corresponding child folders'
 	 * {@link Folder.load|`load`} method.
 	 */
-	load(preset: FolderPreset) {
+	load(preset: FolderPreset): this {
 		this._log.fn('load').debug({ preset, this: this })
 
 		this.closed.set(preset.closed)
@@ -721,6 +728,8 @@ export class Folder {
 			const data = preset.inputs.find(c => c.presetId === input.id)
 			if (data) input.load(data)
 		}
+
+		return this
 	}
 	//⌟
 	//⌟
@@ -730,26 +739,26 @@ export class Folder {
 	/**
 	 * Updates the ui for all inputs belonging to this folder to reflect their current values.
 	 */
-	refresh() {
+	refresh(): this {
 		this._log.fn('refresh').debug(this)
 
 		for (const input of this.inputs.values()) {
 			input.refresh()
 		}
+		return this
 	}
 
 	/**
 	 * Updates the ui for all inputs in this folder and all child folders recursively.
 	 */
-	refreshAll() {
+	refreshAll(): this {
 		for (const input of this.allInputs.values()) {
 			input.refresh()
 		}
 
 		this.evm.emit('refresh')
+		return this
 	}
-
-	addMany(obj: Record<string, any>, options?: { folder?: Folder }) {
 		const folder = options?.folder ?? this
 
 		for (const [key, value] of Object.entries(obj)) {
