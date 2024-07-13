@@ -117,11 +117,10 @@ export type DraggableOptions = {
 	position?: { x?: number; y?: number } | Placement
 
 	/**
-	 * If {@link position} is a {@link Placement} string, these
-	 * {@link PlacementOptions} will be used to calculate the position.
-	 * @default { margin: 0 }
+	 * The margin in pixels to apply to the initial position.
+	 * @default 0
 	 */
-	placementOptions: PlacementOptions
+	margin: number
 
 	/**
 	 * An element or selector (or any combination of the two) for element(s) inside
@@ -212,7 +211,7 @@ export const DRAGGABLE_DEFAULTS: DraggableOptions = {
 	ignoreMultitouch: false,
 	disabled: false,
 	position: { x: 0, y: 0 },
-	placementOptions: { margin: 0 },
+	margin: 0,
 	cancel: undefined,
 	handle: undefined,
 	obstacles: undefined,
@@ -341,7 +340,7 @@ export class Draggable {
 		this._log = new Logger('draggable ' + Array.from(this.node.classList).join('.'), {
 			fg: 'SkyBlue',
 		})
-		this._log.fn('constructor').debug({ opts: this.opts, this: this })
+		this._log.fn('constructor').info({ opts: this.opts, this: this })
 
 		this._rect = this.node.getBoundingClientRect()
 		this._recomputeBounds = this._resolveBounds(this.opts.bounds)
@@ -581,7 +580,6 @@ export class Draggable {
 		const x = e.clientX - this.clickOffset.x
 		const y = e.clientY - this.clickOffset.y
 		const target = { x, y }
-		// if (this.bounds) this.#clampToBounds(target)
 		this.moveTo(target)
 
 		this._emitDrag()
@@ -628,7 +626,6 @@ export class Draggable {
 		this._log.fn('moveTo').debug('Moving to:', target, { bounds: this.bounds })
 
 		if (this.bounds) {
-			const TESTING = target.x
 			target.x = clamp(
 				target.x,
 				this.bounds.left,
@@ -639,12 +636,6 @@ export class Draggable {
 				this.bounds.top,
 				this.bounds.bottom - (this.rect.bottom - this.rect.top),
 			)
-			if (target.x !== TESTING) {
-				// this._log.fn('moveTo').debug(`Clamped x from ${TESTING} to ${target.x}`, {
-				// 	rect: this.rect,
-				// 	bounds: this.bounds,
-				// })
-			}
 		}
 
 		if (this.canMoveX) {
@@ -738,7 +729,7 @@ export class Draggable {
 		if (typeof pos === 'string') {
 			return place(this.node, pos, {
 				bounds: this.boundsEl?.getBoundingClientRect(),
-				...this.opts.placementOptions,
+				margin: this.opts.margin,
 			})
 		}
 
@@ -795,7 +786,6 @@ export class Draggable {
 
 			// Add a resize observer to the bounds element to automatically update the bounds.
 			const boundsResizeObserver = new ResizeObserver(() => {
-				// this.clickOffset = { x: this.rect.left, y: this.rect.top }
 				this.resize()
 				this._emitUpdate()
 			})
