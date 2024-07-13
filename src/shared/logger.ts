@@ -130,6 +130,11 @@ export class Logger {
 		this.buffer = []
 	}
 
+	trace(...args: any[]) {
+		console.trace(...args)
+		return this
+	}
+
 	debug(...args: any[]) {
 		// @ts-ignore
 		if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === 'debug') this.dump('🐞', ...args)
