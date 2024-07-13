@@ -307,6 +307,7 @@ export class Gooey {
 	// themeEditor?: ThemeEditor
 	windowManager?: WindowManager
 
+	private static _initialized = false
 	/**
 	 * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
 	 * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
