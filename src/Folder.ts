@@ -126,6 +126,14 @@ export interface FolderOptions {
 	saveable?: boolean
 
 	/**
+	 * The order in which this input should appear in its folder relative to the other inputs.
+	 * - To force an input to be first *(at the top of its folder)*, set `order` to `0` or below.
+	 * - To force an input to be last *(at the bottom of its folder)*, set `order` to any number greater than number of inputs + 1.
+	 * @default folder.inputs.size + folder.children.size + 1
+	 */
+	order?: number
+
+	/**
 	 * When `true`, a search input will be added to the folder's toolbar, allowing users to search
 	 * for inputs within the folder by title.  By default, only the root folder is searchable.
 	 * @defaultValue `false`
@@ -1258,7 +1266,7 @@ export class Folder {
 		titleOrTarget: string | T,
 		keyOrOptions?: KK | Partial<TOptions>,
 		options?: Partial<TOptions>,
-	) {
+	): Partial<TOptions> {
 		let opts: Partial<TOptions>
 		let shouldHaveValue = false
 		if (typeof titleOrTarget === 'string') {
@@ -1327,10 +1335,11 @@ export class Folder {
 		}
 	}
 	//⌟
+	//⌟
 
 	//· Elements ·················································································¬
 
-	private _createElement(opts: FolderOptions | GooeyOptions) {
+	private _createElement(opts: FolderOptions | GooeyOptions): HTMLDivElement {
 		this._log.fn('#createElement').debug({ el: opts.container, this: this })
 		if (this.isRoot) {
 			return create('div', {
@@ -1347,6 +1356,9 @@ export class Folder {
 		return create('div', {
 			parent: this.parentFolder.elements.content,
 			classes: ['gooey-folder', 'closed'],
+			style: {
+				order: this.parentFolder.children.length + this.parentFolder.inputs.size + 1,
+			},
 		})
 	}
 
