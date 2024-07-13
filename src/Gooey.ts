@@ -339,6 +339,7 @@ export class Gooey {
 		})
 	}
 	bind: Folder['bind']
+	bindMany: Folder['bindMany']
 	add: Folder['add']
 	addMany: Folder['addMany']
 	addButtonGrid: Folder['addButtonGrid']
@@ -436,6 +437,7 @@ export class Gooey {
 		this.on = this.folder.on.bind(this.folder)
 		// this.addFolder = this.folder.addFolder.bind(this.folder)
 		this.bind = this.folder.bind.bind(this.folder)
+		this.bindMany = this.folder.bindMany.bind(this.folder)
 		this.add = this.folder.add.bind(this.folder)
 		this.addMany = this.folder.addMany.bind(this.folder)
 		this.addButtonGrid = this.folder.addButtonGrid.bind(this.folder)
@@ -478,7 +480,7 @@ export class Gooey {
 		)
 
 		this.settingsFolder = this.addFolder(Gooey.settingsFolderTitle, {
-			closed: false,
+			closed: true,
 			// @ts-expect-error @internal
 			_headerless: true,
 		})
@@ -518,7 +520,7 @@ export class Gooey {
 
 			// Use the rect to correct the window manager's positioning when storage is off.
 			if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
-				const win = this.windowManager?.windows.get(this.folder.element.id)
+				const win = this.window
 				if (win?.draggableInstance) {
 					win.draggableInstance.position = placementPosition
 				}
