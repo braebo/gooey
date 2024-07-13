@@ -143,7 +143,9 @@ class PresetManager {
          */
         const download = (preset) => {
             // const preset = this.activePreset.value
-            const title = Array.isArray(preset) ? this.gooey.folder.title + ' presets' : preset.title;
+            const title = Array.isArray(preset)
+                ? this.gooey.folder.title + ' presets'
+                : preset.title;
             const blob = new Blob([JSON.stringify(preset, null, 2)], {
                 type: 'application/json',
             });
@@ -389,7 +391,8 @@ class PresetManager {
      */
     put(
     /**
-     * The preset to update or add.  If not provided, a new preset is created from the current state.
+     * The preset to update or add.  If not provided, a new preset is created from the current
+     * state.
      */
     preset) {
         this._log.fn('saveNewPreset');

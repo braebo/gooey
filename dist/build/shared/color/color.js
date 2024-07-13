@@ -312,6 +312,15 @@ class Color {
     get hex() {
         return this.hex8String;
     }
+    set hex(value) {
+        this.hexString = value;
+    }
+    get color() {
+        return this;
+    }
+    set color(value) {
+        this.hsva = value.hsva;
+    }
     /** Hex string with no alpha channel, i.e. `'#5500ee'` */
     get hexString() {
         const rgb = this.rgb;

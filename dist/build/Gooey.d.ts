@@ -1,3 +1,4 @@
+import type { WindowInstance } from './shared/WindowManager';
 import type { Theme } from './styles/themer/types';
 import type { FolderOptions, FolderPreset } from './Folder';
 import type { PrimitiveState } from './shared/state';
@@ -23,7 +24,7 @@ export interface GooeyOptions {
      * Defines which properties to persist in localStorage, and under which
      * key, if any.  If `true`, the {@link GUI_STORAGE_DEFAULTS} will be used.
      * If `false`, no state will be persisted.
-     * @default false
+     * @default true
      */
     storage: boolean | Partial<GooeyStorageOptions>;
     /**
@@ -133,12 +134,12 @@ export interface GooeyStorageOptions {
     theme?: boolean;
     /**
      * Whether to persist the gooey's position.
-     * @default false
+     * @default true
      */
     position?: boolean;
     /**
      * Whether to persist the gooey's size.
-     * @default false
+     * @default true
      */
     size?: boolean;
     /**
@@ -180,7 +181,7 @@ export declare const GUI_WINDOWMANAGER_DEFAULTS: {
 export declare const GUI_DEFAULTS: {
     readonly __type: "GooeyOptions";
     readonly title: "gooey";
-    readonly storage: false;
+    readonly storage: true;
     readonly closed: false;
     readonly position: "top-right";
     readonly margin: 16;
@@ -202,7 +203,6 @@ export declare class Gooey {
     id: string;
     folder: Folder;
     elements: GooeyElements;
-    static style: string;
     /**
      * The initial options passed to the gooey.
      */
@@ -232,6 +232,7 @@ export declare class Gooey {
     _undoManager: UndoManager;
     themer: Themer;
     windowManager?: WindowManager;
+    private static _initialized;
     /**
      * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
      * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
@@ -253,6 +254,8 @@ export declare class Gooey {
     private _log;
     on: Folder['on'];
     addFolder(title: string, options?: Partial<FolderOptions>): Folder;
+    bind: Folder['bind'];
+    bindMany: Folder['bindMany'];
     add: Folder['add'];
     addMany: Folder['addMany'];
     addButtonGrid: Folder['addButtonGrid'];
@@ -266,6 +269,7 @@ export declare class Gooey {
     private _reveal;
     private _createPresetManager;
     private _createWindowManager;
+    get window(): WindowInstance | undefined;
     set theme(theme: GooeyTheme);
     get theme(): GooeyTheme;
     /**

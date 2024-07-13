@@ -71,6 +71,7 @@ export declare class Logger {
      * @param args
      */
     dump: (...args: any[]) => void;
+    trace(...args: any[]): this;
     debug(...args: any[]): this;
     i: string;
     info(...args: any[]): this;

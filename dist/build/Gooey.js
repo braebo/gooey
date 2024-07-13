@@ -1,11 +1,9 @@
-import { __decorate, __metadata } from './external/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.18.1_tslib@2.6.3_typescript@5.5.3/external/tslib/tslib.es6.js';
 import theme_default from './styles/themes/default.js';
 import theme_scout from './styles/themes/scout.js';
 import theme_flat from './styles/themes/flat.js';
 import style from './styles/gooey.css.js';
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager.js';
 import { deepMergeOpts } from './shared/deepMergeOpts.js';
-import { styled } from './shared/decorators/styled.js';
 import { resolveOpts } from './shared/resolveOpts.js';
 import { PresetManager } from './PresetManager.js';
 import { Themer } from './styles/themer/Themer.js';
@@ -18,10 +16,10 @@ import { Logger } from './shared/logger.js';
 import { create } from './shared/create.js';
 import { state } from './shared/state.js';
 import { place } from './shared/place.js';
+import { isSafari } from './shared/ua.js';
 import { Folder } from './Folder.js';
 import { o } from './shared/l.js';
 
-var Gooey_1;
 //⌟
 //· Constants ····················································································¬
 const GUI_STORAGE_DEFAULTS = {
@@ -30,8 +28,8 @@ const GUI_STORAGE_DEFAULTS = {
     closed: true,
     theme: true,
     presets: true,
-    position: false,
-    size: false,
+    position: true,
+    size: true,
 };
 const GUI_WINDOWMANAGER_DEFAULTS = {
     __type: 'WindowManagerOptions',
@@ -58,7 +56,7 @@ const GUI_WINDOWMANAGER_DEFAULTS = {
 const GUI_DEFAULTS = {
     __type: 'GooeyOptions',
     title: 'gooey',
-    storage: false,
+    storage: true,
     closed: false,
     position: 'top-right',
     margin: 16,
@@ -76,12 +74,10 @@ const GUI_DEFAULTS = {
  * a gooey.  You can create multiple root gooeys, but each gooey
  * can only have one root.
  */
-let Gooey = class Gooey {
-    static { Gooey_1 = this; }
+class Gooey {
     __type = 'Gooey';
     id = nanoid();
     folder;
-    static style = style;
     /**
      * The initial options passed to the gooey.
      */
@@ -110,6 +106,7 @@ let Gooey = class Gooey {
     themer;
     // themeEditor?: ThemeEditor
     windowManager;
+    static _initialized = false;
     /**
      * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
      * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
@@ -142,6 +139,8 @@ let Gooey = class Gooey {
             gooey: this,
         });
     }
+    bind;
+    bindMany;
     add;
     addMany;
     addButtonGrid;
@@ -153,6 +152,12 @@ let Gooey = class Gooey {
     addColor;
     constructor(options) {
         //· Setup ················································································¬
+        if (!Gooey._initialized && globalThis.document) {
+            Gooey._initialized = true;
+            const sheet = new CSSStyleSheet();
+            sheet.replaceSync(style);
+            globalThis.document.adoptedStyleSheets.push(sheet);
+        }
         const opts = deepMergeOpts([GUI_DEFAULTS, options ?? {}], {
             concatArrays: false,
         });
@@ -211,6 +216,8 @@ let Gooey = class Gooey {
         // Not stoked about this.
         this.on = this.folder.on.bind(this.folder);
         // this.addFolder = this.folder.addFolder.bind(this.folder)
+        this.bind = this.folder.bind.bind(this.folder);
+        this.bindMany = this.folder.bindMany.bind(this.folder);
         this.add = this.folder.add.bind(this.folder);
         this.addMany = this.folder.addMany.bind(this.folder);
         this.addButtonGrid = this.folder.addButtonGrid.bind(this.folder);
@@ -245,8 +252,8 @@ let Gooey = class Gooey {
             key: this.opts.storage ? `${this.opts.storage.key}::closed` : undefined,
         });
         this.folder.elements.toolbar.settingsButton = this._createSettingsButton(this.folder.elements.toolbar.container);
-        this.settingsFolder = this.addFolder(Gooey_1.settingsFolderTitle, {
-            closed: false,
+        this.settingsFolder = this.addFolder(Gooey.settingsFolderTitle, {
+            closed: true,
             // @ts-expect-error @internal
             _headerless: true,
         });
@@ -257,7 +264,6 @@ let Gooey = class Gooey {
         this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage);
         // Give the user a chance to add folders / inputs before positioning.
         this._reveal(reposition);
-        // setTimeout(this.settingsFolder.close)
         return this;
     }
     async _reveal(reposition) {
@@ -278,7 +284,7 @@ let Gooey = class Gooey {
             });
             // Use the rect to correct the window manager's positioning when storage is off.
             if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
-                const win = this.windowManager?.windows.get(this.folder.element.id);
+                const win = this.window;
                 if (win?.draggableInstance) {
                     win.draggableInstance.position = placementPosition;
                 }
@@ -290,6 +296,14 @@ let Gooey = class Gooey {
             fill: 'none',
             duration: 400,
         });
+        // Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
+        if (isSafari()) {
+            setTimeout(() => {
+                this.folder.element.style.display = 'table';
+                this.folder.element.offsetHeight;
+                this.folder.element.style.display = 'flex';
+            }, 500);
+        }
     }
     _createPresetManager(settingsFolder) {
         const { presets, defaultPreset, storage } = this.opts;
@@ -357,6 +371,9 @@ let Gooey = class Gooey {
         });
         return windowManager;
     }
+    get window() {
+        return this.windowManager?.windows.get(this.folder.element.id);
+    }
     set theme(theme) {
         this._theme = theme;
         this.folder.element.setAttribute('theme', theme);
@@ -416,7 +433,6 @@ let Gooey = class Gooey {
      * for the eventual commit in {@link unlockCommits}.
      */
     lockCommits = (from) => {
-        // this._undoLock = true
         this._undoManager.lockedExternally = true;
         this.lockCommit.from = from;
         this._log.fn(o('lock')).info('commit', { from, lockCommit: this.lockCommit });
@@ -428,7 +444,6 @@ let Gooey = class Gooey {
         commit ??= {};
         commit.target ??= this;
         commit.from ??= this.lockCommit.from;
-        // this._undoLock = false
         this._undoManager.lockedExternally = false;
         this.commit(commit);
         this._log.fn(o('unlock')).info('commit', { commit, lockCommit: this.lockCommit });
@@ -454,9 +469,6 @@ let Gooey = class Gooey {
             themerOptions.wrapper = this.wrapper;
             finalThemer = new Themer(this.folder.element, themerOptions);
         }
-        this.folder.evm.add(finalThemer.mode.subscribe(() => {
-            if (this.settingsFolder) ;
-        }));
         const uiFolder = folder.addFolder('ui', { closed: true });
         // Fully desaturate the ui folder's header connector to svg.
         uiFolder.on('mount', () => {
@@ -484,7 +496,6 @@ let Gooey = class Gooey {
                     })),
                 ],
             });
-            // }
         }
         return finalThemer;
     }
@@ -520,11 +531,7 @@ let Gooey = class Gooey {
         this.settingsFolder?.dispose();
         this.folder?.dispose();
     };
-};
-Gooey = Gooey_1 = __decorate([
-    styled,
-    __metadata("design:paramtypes", [Object])
-], Gooey);
+}
 
 export { GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS, Gooey };
 //# sourceMappingURL=Gooey.js.map

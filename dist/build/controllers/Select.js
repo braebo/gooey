@@ -271,7 +271,6 @@ let Select = class Select {
             this.open();
         }
     };
-    // private _groupId = nanoid()
     /**
      * Shows the dropdown.
      */

@@ -110,6 +110,9 @@ export declare class Color {
      * Hex string with an alpha channel, i.e. `'#5500eeff'`. Identical to {@link hex8String}.
      */
     get hex(): HexString;
+    set hex(value: HexString | HexAlphaString | (string & {}));
+    get color(): this;
+    set color(value: this);
     /** Hex string with no alpha channel, i.e. `'#5500ee'` */
     get hexString(): HexString;
     set hexString(value: HexString | HexAlphaString | (string & {}));

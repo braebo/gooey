@@ -13,12 +13,13 @@ import { EventManager } from './shared/EventManager.js';
 import './svg/TerminalSvg.js';
 import { Search } from './toolbar/Search.js';
 import { create } from './shared/create.js';
+import { select } from './shared/select.js';
 import { Logger } from './shared/logger.js';
 import { nanoid } from './shared/nanoid.js';
 import { state } from './shared/state.js';
 import { toFn } from './shared/toFn.js';
-import { DEV } from './external/.pnpm/esm-env@1.0.0/external/esm-env/prod-ssr.js';
 import { Gooey } from './Gooey.js';
+import { DEV } from './external/.pnpm/esm-env@1.0.0/external/esm-env/prod-ssr.js';
 
 // The custom-regions extension is recommended for this file.
 //⌟
@@ -93,7 +94,6 @@ class Folder {
     root;
     parentFolder;
     settingsFolder;
-    // closed: State<boolean>
     closed = state(false);
     element;
     elements = {};
@@ -105,11 +105,17 @@ class Folder {
     _title;
     _hidden = () => false;
     _log;
-    /** Used to disable clicking the header to open/close the folder. */
+    /**
+     * Used to disable clicking the header to open/close the folder.
+     */
     _disabledTimer;
-    /** The time in ms to wait after mousedown before disabling toggle for a potential drag. */
+    /**
+     * The time in ms to wait after mousedown before disabling toggle for a potential drag.
+     */
     _clickTime = 200;
-    /** Whether clicking the header to open/close the folder is disabled. */
+    /**
+     * Whether clicking the header to open/close the folder is disabled.
+     */
     _clicksDisabled = false;
     _depth = -1;
     //⌟
@@ -121,14 +127,6 @@ class Folder {
             gooey: this.gooey,
             isRoot: true,
         }, options);
-        // this.closed = state(opts.closed ?? false)
-        // if (opts.title === 'base') {
-        // 	console.log(opts.closed)
-        // 	console.log(this.closed.value)
-        // 	setTimeout(() => {
-        // 		console.log(this.closed.value)
-        // 	}, 1000)
-        // }
         this._log = new Logger(`Folder ${opts.title}`, { fg: 'DarkSalmon' });
         this._log.fn('constructor').debug({ opts, this: this });
         this.isRoot = opts.isRoot;
@@ -147,7 +145,7 @@ class Folder {
         }
         this.gooey = opts.gooey;
         this._title = opts.title ?? '';
-        this.element = this._createElement(opts.container);
+        this.element = this._createElement(opts);
         this.elements = this._createElements(this.element);
         this.presetId = this.resolvePresetId(opts);
         this.saveable = !!opts.saveable;
@@ -158,9 +156,9 @@ class Folder {
             // We need to bypass animations so I can get the rect.
             this.element.classList.add('instant');
             this.initialHeight = this.element.scrollHeight;
-            if (this.initialHeight === 0) {
-                console.error(`${this.title} has a height of 0.`, this.element);
-            }
+            // if (this.initialHeight === 0) {
+            // 	console.error(`${this.title} has a height of 0.`, this.element)
+            // }
             this.initialHeaderHeight = this.elements.header.scrollHeight;
             if (this.initialHeaderHeight === 0) {
                 console.error(`${this.title} header has a height of 0.`, this.elements.header);
@@ -325,16 +323,17 @@ class Folder {
         clearTimeout(this._disabledTimer);
         if (this._clicksDisabled) {
             this._resetClicks();
-            return;
+            return this;
         }
         // If the folder is being dragged, don't toggle.
         if (this.element.classList.contains('gooey-dragged')) {
             this.element.classList.remove('gooey-dragged');
-            return;
+            return this;
         }
         const state = !this.closed.value;
         this.closed.set(state);
         this.evm.emit('toggle', state);
+        return this;
     };
     open(updateState = false) {
         this._log.fn('open').debug();
@@ -344,6 +343,7 @@ class Folder {
         this._clicksDisabled = false;
         this.#toggleAnimClass();
         animateConnector(this, 'open');
+        return this;
     }
     close(updateState = false) {
         this._log.fn('close').debug();
@@ -353,18 +353,22 @@ class Folder {
         this._clicksDisabled = false;
         this.#toggleAnimClass();
         animateConnector(this, 'close');
+        return this;
     }
     toggleHidden() {
         this._log.fn('toggleHidden').debug();
         this.element.classList.toggle('hidden');
+        return this;
     }
     hide() {
         this._log.fn('hide').error();
         this.element.classList.add('hidden');
+        return this;
     }
     show() {
         this._log.fn('show').debug();
         this.element.classList.remove('hidden');
+        return this;
     }
     #toggleTimeout;
     #toggleAnimClass = () => {
@@ -435,6 +439,7 @@ class Folder {
             if (data)
                 input.load(data);
         }
+        return this;
     }
     //⌟
     //⌟
@@ -447,6 +452,7 @@ class Folder {
         for (const input of this.inputs.values()) {
             input.refresh();
         }
+        return this;
     }
     /**
      * Updates the ui for all inputs in this folder and all child folders recursively.
@@ -456,7 +462,16 @@ class Folder {
             input.refresh();
         }
         this.evm.emit('refresh');
+        return this;
     }
+    add(titleOrOptions, maybeOptions) {
+        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
+        const input = this._createInput(opts);
+        this.inputs.set(input.id, input);
+        this._refreshIcon();
+        return input;
+    }
+    //⌟
     addMany(obj, options) {
         const folder = options?.folder ?? this;
         for (const [key, value] of Object.entries(obj)) {
@@ -497,14 +512,9 @@ class Folder {
                 this.add(opts);
             }
         }
+        return this;
     }
-    add(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
-        const input = this._createInput(opts);
-        this.inputs.set(input.id, input);
-        this._refreshIcon();
-        return input;
-    }
+    //· Bind ···································································¬
     /**
      * Binds an input to a target object and key.  The input will automatically update the target
      * object's key when the input value changes.
@@ -523,6 +533,7 @@ class Folder {
      *
      * const textInput = folder.bind(params, 'bar', { maxLength: 50 })
      * //    ^? `InputText`
+     * ```
      */
     bind(target, key, options) {
         const value = target[key];
@@ -533,6 +544,60 @@ class Folder {
         this.inputs.set(input.id, input);
         this._refreshIcon();
         return input;
+    }
+    /**
+     * Used to store a ref to the top level folder of a nested generator like `bindMany`.
+     * @internal
+     */
+    _transientRoot = null;
+    bindMany(titleOrTarget, targetOrOptions, maybeOptions) {
+        let target;
+        let options = {};
+        let rootFolder = this;
+        if (typeof titleOrTarget === 'string') {
+            if (!targetOrOptions || typeof targetOrOptions !== 'object') {
+                throw new Error('No target object provided.');
+            }
+            target = targetOrOptions;
+            options = maybeOptions || {};
+            // @ts-expect-error
+            rootFolder = this.addFolder(titleOrTarget, options.folderOptions);
+        }
+        else {
+            target = titleOrTarget;
+            options = targetOrOptions || {};
+        }
+        if (!this._transientRoot) {
+            this._transientRoot = rootFolder;
+        }
+        console.warn({ target, options });
+        if ('folderOptions' in options)
+            console.log('folderOptions in value:', options);
+        for (const [key, value] of Object.entries(target)) {
+            const inputOptions = options[key] || {};
+            let folderOptions = {};
+            if (typeof value === 'object') {
+                if (isColor(value)) {
+                    this.bindColor(value, 'color', { title: key, ...inputOptions });
+                }
+                else {
+                    if ('folderOptions' in inputOptions) {
+                        folderOptions = inputOptions.folderOptions;
+                    }
+                    else if ('folderOptions' in value) {
+                        folderOptions = value.folderOptions;
+                    }
+                    const subFolder = this.addFolder(key, folderOptions);
+                    subFolder.bindMany(value, inputOptions);
+                }
+            }
+            else {
+                this.bind(target, key, inputOptions);
+            }
+        }
+        const finalRoot = this._transientRoot;
+        this._transientRoot = null;
+        return finalRoot;
     }
     addNumber(titleOrOptions, maybeOptions) {
         const opts = this._resolveOptions(titleOrOptions, maybeOptions);
@@ -576,8 +641,12 @@ class Folder {
         this._refreshIcon();
         return input;
     }
-    addButton(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
+    addButton(titleOrOptions, optionsOrOnclick, maybeOptions) {
+        let options = typeof optionsOrOnclick === 'function' ? maybeOptions : optionsOrOnclick;
+        const opts = this._resolveOptions(titleOrOptions, options);
+        if (typeof optionsOrOnclick === 'function') {
+            opts.onClick ??= optionsOrOnclick;
+        }
         const input = new InputButton(opts, this);
         this.inputs.set(input.id, input);
         this._refreshIcon();
@@ -632,6 +701,8 @@ class Folder {
         this._refreshIcon();
         return input;
     }
+    //⌟
+    //·· Helpers ···································································¬
     /**
      * Does validation / error handling.
      * If no title was provided, this method will also assign the binding key to the title.
@@ -769,20 +840,27 @@ class Folder {
         }
     }
     //⌟
+    //⌟
     //· Elements ·················································································¬
-    _createElement(el) {
-        this._log.fn('#createElement').debug({ el, this: this });
+    _createElement(opts) {
+        this._log.fn('#createElement').debug({ el: opts.container, this: this });
         if (this.isRoot) {
             return create('div', {
                 id: `gooey-root_${this.id}`,
                 classes: ['gooey-root', 'gooey-folder', 'closed'],
                 dataset: { theme: this.gooey.theme ?? 'default' },
-                parent: el,
+                parent: select(opts.container)[0],
+                style: {
+                    width: 'fit-content',
+                },
             });
         }
         return create('div', {
             parent: this.parentFolder.elements.content,
             classes: ['gooey-folder', 'closed'],
+            style: {
+                order: this.parentFolder.children.length + this.parentFolder.inputs.size + 1,
+            },
         });
     }
     _createElements(element) {
@@ -826,16 +904,13 @@ class Folder {
         if (this.isRootFolder())
             return;
         this._log.fn('createGraphics').debug({ this: this });
-        // await Promise.resolve()
         await new Promise(resolve => setTimeout(resolve, 0));
         if (!this.isRootFolder()) {
             this.graphics = { icon: createFolderSvg(this) };
             this.elements.header.prepend(this.graphics.icon);
             if (!headerless) {
                 this.initialHeaderHeight ??= this._resolveHeaderHeight();
-                // this.initialHeaderHeight = this._resolveHeaderHeight()
                 this.graphics.connector = createFolderConnector(this, this.graphics.icon);
-                // this.element.prepend(this.graphics.connector.container)
             }
         }
     }
@@ -901,6 +976,56 @@ class Folder {
         this.disposed = true;
     }
 }
+// //· Type Tests ···································································¬
+// const testTargetInferer = <T>(_target: T): InferTarget<T> => {
+// 	return {} as InferTarget<T>
+// }
+// const testTarget = {
+// 	// number
+// 	foo: 5,
+// 	// text
+// 	bar: 'baz',
+// 	// switch
+// 	baz: false,
+// 	// select
+// 	qux: [1, 2, 3],
+// 	// nested
+// 	quux: { a: 'a', b: 'b' },
+// 	// color
+// 	quuz: new Color('red'),
+// 	// nested
+// 	parent: {
+// 		child: 'foo',
+// 	},
+// }
+// interface ExpectedTargetInference {
+// 	foo: InputNumber
+// 	bar: InputText
+// 	baz: InputSwitch
+// 	qux: InputSelect<number>
+// 	quux: {
+// 		a: InputText
+// 		b: InputText
+// 	}
+// 	quuz: InputColor
+// 	parent: {
+// 		child: InputText
+// 	}
+// }
+// function test() {
+// 	const inference: ExpectedTargetInference = testTargetInferer(testTarget)
+// 	inference // works!
+// 	const gui = {} as Gooey
+// 	const bindManyTest = gui.bindMany(testTarget, {
+// 		bar: { title: 'Bar' },
+// 		parent: {
+// 			child: 'foo',
+// 		},
+// 	})
+// 	bindManyTest
+// }
+// test
+// //⌟
 
 export { Folder };
 //# sourceMappingURL=Folder.js.map

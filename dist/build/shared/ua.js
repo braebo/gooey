@@ -63,6 +63,12 @@ function isIPad(request) {
 function isAndroid(request) {
     return isPlatform(/android/i, request);
 }
+/**
+ * `true` if the current browser is running on Safari.
+ */
+function isSafari(request) {
+    return isPlatform(/^((?!chrome|android).)*safari/i, request);
+}
 
-export { getUserAgent, isAndroid, isApple, isIOS, isIPad, isIPadOS, isMac, isMobile, isPlatform };
+export { getUserAgent, isAndroid, isApple, isIOS, isIPad, isIPadOS, isMac, isMobile, isPlatform, isSafari };
 //# sourceMappingURL=ua.js.map

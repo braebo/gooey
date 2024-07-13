@@ -28,7 +28,7 @@ const GUI_VARS_STRUCTURED = {
     base: {
         root: {
             width: '30rem',
-            'min-width': '25rem',
+            'min-width': '20rem',
             'max-width': '35rem',
             'max-height': '90vh',
             opacity: '0.5',
@@ -82,7 +82,7 @@ const GUI_VARS_STRUCTURED = {
         },
         input: {
             height: '2rem',
-            'section-1': { width: 'clamp(6rem, 30%, 12rem)' },
+            'section-1': { width: 'clamp(6rem, 30%, 120px)' },
             'section-2': { width: '4rem' },
             'section-3': { width: '100%' },
             'font-size': `'clamp(0.75rem, 3vw, 0.9rem)'`,

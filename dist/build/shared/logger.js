@@ -9,8 +9,6 @@ class Logger {
     static _BYPASS_DEFER = true;
     title = '';
     options;
-    // color: ChalkInstance
-    // color: string
     color;
     #logger;
     constructor(titleOrOptions, options) {
@@ -25,9 +23,7 @@ class Logger {
         const colorname = options?.fg?.toLowerCase() ?? randomCSSColorName();
         const fg = colorname in CSS_COLORS ? CSS_COLORS[colorname] : colorname;
         this.color = hex(fg);
-        // this.color = fg
         this.#logger = Logger.createLogger(this.title, this.options);
-        // console.log('Logger', this.title, this.#logger)
         return this;
     }
     get deferred() {
@@ -57,6 +53,10 @@ class Logger {
         }
         this.buffer = [];
     };
+    trace(...args) {
+        console.trace(...args);
+        return this;
+    }
     debug(...args) {
         // @ts-ignore
         if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === 'debug')

@@ -17,19 +17,23 @@
 	let ready = false
 
 	onMount(() => {
-		params.update(p => {
+		params.update((p) => {
 			p.height = Math.round(window.innerHeight / 10)
 			p.width = Math.round(window.innerWidth / 7)
 			return p
 		})
 		gooey = new Gooey({
 			title: 'addMany',
-			position: 'center',
+			position: 'center'
 		})
 
 		ready = true
 
-		gooey.addMany(params.value)
+		const test = gooey.addMany(params.value)
+
+		// Map keys are inferred correctly... sweet!  But the input types aren't T_T
+		const b = test.inputs.get('height') // should be InputNumber
+		const c = test.inputs.get('drift') // should be InputSwitch
 
 		gooey.on('change', () => {
 			showCode.set(true)
@@ -43,7 +47,7 @@
 	})
 
 	function onResize() {
-		params.update(p => {
+		params.update((p) => {
 			p.height = Math.round(window.innerHeight / 10)
 			p.width = Math.round(window.innerWidth / 7)
 			return p

@@ -106,11 +106,10 @@ export type DraggableOptions = {
         y?: number;
     } | Placement;
     /**
-     * If {@link position} is a {@link Placement} string, these
-     * {@link PlacementOptions} will be used to calculate the position.
-     * @default { margin: 0 }
+     * The margin in pixels to apply to the initial position.
+     * @default 0
      */
-    placementOptions: PlacementOptions;
+    margin: number;
     /**
      * An element or selector (or any combination of the two) for element(s) inside
      * the parent node upon which dragging should be disabled when clicked.
@@ -265,8 +264,10 @@ export declare class Draggable {
      * This node's DOMRect, cached for use via {@link rect}.
      */
     private _rect;
+    /**
+     * The {@link EventManager} for this draggable instance.
+     */
     private _evm;
-    private _listeners;
     /**
      * A callback to release the pointer capture using the
      * {@link PointerEvent.pointerId | pointerId} and reset the cursor.
@@ -352,10 +353,10 @@ export declare class Draggable {
     private _resolveBounds;
     private _cancelElementContains;
     private _callEvent;
-    private _fireSvelteDragStartEvent;
-    private _fireSvelteDragEndEvent;
-    private _fireSvelteDragEvent;
-    private _fireUpdateEvent;
+    private _emitDragStart;
+    private _emitDragEnd;
+    private _emitDrag;
+    private _emitUpdate;
     dispose(): void;
 }
 /**
@@ -382,6 +383,7 @@ export interface DragEvents {
  *
  * <div use:draggable> Drag Me </div>
  * ```
+ * @todo - Finish this -- I've never actually used or spent time on it..
  */
 export declare function draggable(node: HTMLElement, options?: Partial<DraggableOptions>): {
     destroy: () => void;
