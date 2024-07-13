@@ -26,7 +26,7 @@
 	"scripts": {
 		"build": "bun run build.ts",
 		"build:site": "cd www && pnpm i && pnpm build",
-		"build:watch": "pnpm nodemon --watch src --ext js,ts --exec \"pnpm build -w\" --ignore gooey.css.ts",
+		"build:watch": "pnpm nodemon --watch src --ext js,ts --exec \"pnpm build\" --ignore gooey.css.ts",
 		"build:all": "pnpm build && pnpm build:site",
 		"check": "tsc --noEmit",
 		"check:watch": "tsc --noEmit --watch",
