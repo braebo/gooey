@@ -21,6 +21,8 @@
 	--light-d: #777d8f;
 	--light-e: #5f6377;
 
+	--bw: black;
+	
 	--bg-a: #0b0b11;
 	--bg-b: #15161d;
 	--bg-c: #1f202d;
@@ -35,6 +37,8 @@
 	
 	&[mode='light'],
 	&[theme='light'] {
+		--bw: white;
+
 		--fg-a: #0b0b11;
 		--fg-b: #15161d;
 		--fg-c: #1f202d;
