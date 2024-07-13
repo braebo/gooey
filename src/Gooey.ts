@@ -260,7 +260,6 @@ export const GUI_DEFAULTS = {
  * a gooey.  You can create multiple root gooeys, but each gooey
  * can only have one root.
  */
-@styled
 export class Gooey {
 	__type = 'Gooey' as const
 
@@ -268,8 +267,6 @@ export class Gooey {
 	folder: Folder
 
 	declare elements: GooeyElements
-
-	static style = style
 
 	/**
 	 * The initial options passed to the gooey.
@@ -355,6 +352,13 @@ export class Gooey {
 	constructor(options?: Partial<GooeyOptions>) {
 		//· Setup ················································································¬
 
+		if (!Gooey._initialized && globalThis.document) {
+			Gooey._initialized = true
+			const sheet = new CSSStyleSheet()
+			sheet.replaceSync(style)
+			globalThis.document.adoptedStyleSheets.push(sheet)
+		}
+
 		const opts = deepMergeOpts([GUI_DEFAULTS, options ?? {}], {
 			concatArrays: false,
 		}) as GooeyOptions
@@ -363,6 +367,7 @@ export class Gooey {
 
 		let reposition = false
 		/** Resolve storage separately since {@link GUI_DEFAULTS.storage} is `false`.  */
+
 		if (typeof opts.storage === 'object') {
 			opts.storage = Object.assign({}, GUI_STORAGE_DEFAULTS, opts.storage)
 		}
@@ -642,7 +647,6 @@ export class Gooey {
 		 * The title of the preset.
 		 */
 		title: string,
-
 		/**
 		 * A unique id for the preset.
 		 * @defaultValue {@link nanoid|nanoid(10)}
@@ -707,7 +711,6 @@ export class Gooey {
 		commit.target ??= this as any
 		commit.from ??= this.lockCommit.from
 
-		// this._undoLock = false
 		this._undoManager.lockedExternally = false
 		this.commit(commit)
 
