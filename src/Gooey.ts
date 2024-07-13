@@ -1,4 +1,4 @@
-import type { WindowManagerOptions } from './shared/WindowManager'
+import type { WindowInstance, WindowManagerOptions } from './shared/WindowManager'
 import type { Theme, ThemeMode } from './styles/themer/types'
 import type { ThemerOptions } from './styles/themer/Themer'
 import type { FolderOptions, FolderPreset } from './Folder'
@@ -15,7 +15,6 @@ import style from './styles/gooey.css'
 
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager'
 import { deepMergeOpts } from './shared/deepMergeOpts'
-import { styled } from './shared/decorators/styled'
 import { resolveOpts } from './shared/resolveOpts'
 import { PresetManager } from './PresetManager'
 import { Themer } from './styles/themer/Themer'
@@ -53,7 +52,7 @@ export interface GooeyOptions {
 	 * Defines which properties to persist in localStorage, and under which
 	 * key, if any.  If `true`, the {@link GUI_STORAGE_DEFAULTS} will be used.
 	 * If `false`, no state will be persisted.
-	 * @default false
+	 * @default true
 	 */
 	storage: boolean | Partial<GooeyStorageOptions>
 
@@ -242,7 +241,7 @@ export const GUI_WINDOWMANAGER_DEFAULTS = {
 export const GUI_DEFAULTS = {
 	__type: 'GooeyOptions',
 	title: 'gooey',
-	storage: false,
+	storage: true,
 	closed: false,
 	position: 'top-right',
 	margin: 16,
