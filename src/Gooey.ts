@@ -621,6 +621,10 @@ export class Gooey {
 		return windowManager
 	}
 
+	get window(): WindowInstance | undefined {
+		return this.windowManager?.windows.get(this.folder.element.id)
+	}
+
 	set theme(theme: GooeyTheme) {
 		this._theme = theme
 		this.folder.element.setAttribute('theme', theme)
