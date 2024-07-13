@@ -122,6 +122,7 @@ export class WindowManager {
 	 * options for each window.
 	 */
 	windows = new Map<WindowInstance['id'], WindowInstance>()
+	
 
 	/**
 	 * The initial {@link WindowManagerOptions} provided.
@@ -181,8 +182,6 @@ export class WindowManager {
 			throw new Error('Unable to resolve instance from selected node: ' + target_node.id)
 		}
 
-		// this.#animate(node)
-
 		if (this.windows.size > 1) {
 			const initialZ = target_node.style.getPropertyValue('z-index')
 			target_node.style.setProperty('z-index', String(this.opts.zFloor + this.windows.size))
@@ -223,38 +222,17 @@ export class WindowManager {
 		opts.preserveZ = options?.preserveZ ?? defaults.preserveZ
 		opts.draggable = resolveOpts(options?.draggable, defaults.draggable)
 		opts.resizable = resolveOpts(options?.resizable, defaults.resizable)
-		opts.obstacles = options?.obstacles ?? defaults.obstacles
 		opts.bounds =
 			options?.bounds ??
 			(isObject(options?.draggable) ? options.draggable.bounds : defaults.bounds)
 
-		if (typeof options?.obstacles === 'undefined') {
-			if (opts.obstacles) {
-				if (isObject(opts.draggable)) {
-					opts.draggable.obstacles = opts.obstacles
-				}
-				if (isObject(opts.resizable)) {
-					opts.resizable.obstacles = opts.obstacles
-				}
-			}
-		} else {
-			if (isObject(opts.draggable)) {
-				if (typeof opts.draggable.obstacles === 'undefined') {
-					opts.draggable.obstacles = options.obstacles
-				}
-			}
+		if (opts.bounds) {
+			if (opts.draggable) opts.draggable.bounds = opts.bounds
+			if (opts.resizable) opts.resizable.bounds = opts.bounds
 		}
 
-		if (opts.bounds) {
-			if (opts.draggable) {
-				if (isObject(options?.draggable) && options?.draggable.bounds) {
-					opts.draggable.bounds = options.draggable.bounds
-				}
-				opts.draggable.bounds = opts.bounds
-			}
-			if (opts.resizable) {
-				opts.resizable.bounds = opts.bounds
-			}
+		if (opts.draggable) {
+			opts.draggable.margin ||= 16
 		}
 
 		// Resolve localStorage options.

@@ -221,8 +221,6 @@ export class Resizable {
 		const { offsetWidth: width, offsetHeight: height } = node
 
 		this.size = state({ width, height }, { key: this.opts.localStorageKey })
-		console.log('this.opts.localStorageKey', this.opts.localStorageKey)
-		console.log('this.size.value', this.size.value)
 
 		//? Load size from local storage.
 		if (this.opts.localStorageKey) {
