@@ -971,13 +971,20 @@ export class Folder {
 	/**
 	 * Explicitly adds an {@link InputButton} to the folder.
 	 */
-	addButton(title: string, options: ButtonInputOptions): InputButton
-	addButton(options: ButtonInputOptions, never?: never): InputButton
+	addButton(title: string, onclick: () => void, options?: ButtonInputOptions): InputButton
+	addButton(title: string, options: ButtonInputOptions, never?: never): InputButton
+	addButton(options: ButtonInputOptions): InputButton
 	addButton(
 		titleOrOptions: string | ButtonInputOptions,
+		optionsOrOnclick?: ButtonInputOptions | (() => void),
 		maybeOptions?: ButtonInputOptions,
 	): InputButton {
-		const opts = this._resolveOptions(titleOrOptions, maybeOptions)
+		let options = typeof optionsOrOnclick === 'function' ? maybeOptions : optionsOrOnclick
+
+		const opts = this._resolveOptions(titleOrOptions, options)
+		if (typeof optionsOrOnclick === 'function') {
+			opts.onClick ??= optionsOrOnclick
+		}
 		const input = new InputButton(opts, this)
 		this.inputs.set(input.id, input)
 		this._refreshIcon()
