@@ -5,7 +5,6 @@ import type {
 	ThemeDefinition,
 	ExtendedVars,
 	ThemeTitle,
-	BaseColors,
 	ModeColors,
 	ThemeMode,
 	Theme,
@@ -273,12 +272,6 @@ export class Themer {
 	 */
 	get modeColors(): ModeColors {
 		return this.theme.value.vars.color[this.activeMode]
-	}
-	get baseColors(): BaseColors {
-		return this.theme.value.vars.color.base
-	}
-	get allColors(): ModeColors & BaseColors {
-		return { ...this.baseColors, ...this.modeColors }
 	}
 
 	/**
