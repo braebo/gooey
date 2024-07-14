@@ -13,7 +13,7 @@
 		max-height: 100vh;
 	}
 	:global(:root[theme='light'] body) {
-		background-image: linear-gradient(75deg, var(--bw), var(--bg-b));
+		background-image: linear-gradient(75deg, var(--bw), var(--bg-c));
 	}
 	:global(:root[theme='dark'] body) {
 		background-image: linear-gradient(24deg, var(--bw) -51%, color-mix(in lch, var(--bg-b) 15%, var(--bg-c)));
@@ -41,7 +41,10 @@
 		transform: rotate(-5deg);
 		z-index: -1;
 		background: var(--bg-b);
-		background-image: linear-gradient(to right, var(--bw), color-mix(in lch, var(--bg-a), var(--bg-b)));
+		background-image: linear-gradient(to right, var(--bw), color-mix(in lch, var(--bg-a), var(--bg-c)));
 		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
+	}
+	:global(:root[theme='light'] .slant) {
+		background-image: linear-gradient(to right, var(--bw), color-mix(in lch, var(--bg-a), var(--bg-e)));
 	}
 </style>
