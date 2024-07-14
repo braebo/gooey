@@ -52,7 +52,7 @@ export function place(
 		 * The margin in pixels to apply to the placement.  Can be a number
 		 * to apply the same margin to both x and y, or an object with x
 		 * and y properties to apply different margins to each axis.
-		 * @default 16
+		 * @default 0
 		 */
 		margin?: number | Partial<{ x: number; y: number }>
 	},
@@ -86,7 +86,7 @@ export function place(
 	const m: { x: number; y: number } =
 		typeof margin === 'number'
 			? { x: margin, y: margin }
-			: Object.assign({ x: 16, y: 16 }, margin)
+			: Object.assign({ x: 0, y: 0 }, margin)
 
 	console.warn({ m })
 	// prettier-ignore
