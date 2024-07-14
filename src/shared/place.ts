@@ -15,8 +15,6 @@ type VirtualRect = Record<string, any> & {
 	height: number
 }
 
-export type Vec2 = { x: number; y: number }
-
 export type PlacementOptions = Parameters<typeof place>[2]
 
 /**
@@ -56,13 +54,13 @@ export function place(
 		 * and y properties to apply different margins to each axis.
 		 * @default 16
 		 */
-		margin?: number | Vec2
+		margin?: number | Partial<{ x: number; y: number }>
 	},
-): Vec2 {
+): { x: number; y: number } {
 	const { bounds, margin } = Object.assign(
 		{
 			bounds: undefined as VirtualRect | undefined,
-			margin: 10 as number | Vec2,
+			margin: 10 as number | Partial<{ x: number; y: number }>,
 		},
 		options,
 	)
@@ -85,12 +83,12 @@ export function place(
 
 	if (!b) throw new Error('Invalid bounds: ' + bounds)
 
-	const m = typeof margin === 'number' ? { x: margin, y: margin } : margin
+	const m: { x: number; y: number } =
+		typeof margin === 'number'
+			? { x: margin, y: margin }
+			: Object.assign({ x: 16, y: 16 }, margin)
 
-	if (!('x' in m) || !('y' in m)) {
-		throw new Error('Invalid margin: ' + JSON.stringify(m))
-	}
-
+	console.warn({ m })
 	// prettier-ignore
 	switch (placement) {
 		case ('center'):
