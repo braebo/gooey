@@ -1057,8 +1057,6 @@ export class Folder {
 			this._transientRoot = rootFolder
 		}
 
-		console.warn({ target, options })
-
 		if ('folderOptions' in options) console.log('folderOptions in value:', options)
 
 		for (const [key, value] of Object.entries(target)) {
