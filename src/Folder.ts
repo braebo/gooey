@@ -1579,14 +1579,13 @@ export class Folder {
 	private _createElement(opts: FolderOptions | GooeyOptions): HTMLDivElement {
 		this._log.fn('#createElement').debug({ el: opts.container, this: this })
 		if (this.isRoot) {
+			const width = (opts as GooeyOptions).width
 			return create('div', {
 				id: `gooey-root_${this.id}`,
 				classes: ['gooey-root', 'gooey-folder', 'closed'],
 				dataset: { theme: this.gooey!.theme ?? 'default' },
 				parent: select(opts.container)[0],
-				style: {
-					width: 'fit-content',
-				},
+				style: width ? { width } : undefined,
 			})
 		}
 

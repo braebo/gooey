@@ -218,11 +218,12 @@ export class Resizable {
 
 		this.generateStyles()
 
-		const { offsetWidth: width, offsetHeight: height } = node
+		this.size = state(
+			{ width: this.node.offsetWidth, height: this.node.offsetHeight },
+			{ key: this.opts.localStorageKey },
+		)
 
-		this.size = state({ width, height }, { key: this.opts.localStorageKey })
-
-		//? Load size from local storage.
+		//? Apply size from local storage.
 		if (this.opts.localStorageKey) {
 			const { width, height } = this.size.value
 
@@ -242,6 +243,11 @@ export class Resizable {
 			}
 
 			node.dispatchEvent(new CustomEvent('resize'))
+		} else {
+			this.size.set({
+				width: this.node.offsetWidth,
+				height: this.node.offsetHeight,
+			})
 		}
 
 		this.createGrabbers()
@@ -251,10 +257,11 @@ export class Resizable {
 			return
 		}
 
-		this.size.set({
-			width: this.node.offsetWidth,
-			height: this.node.offsetHeight,
-		})
+		// todo - this seems unecessary
+		// this.size.set({
+		// 	width: this.node.offsetWidth,
+		// 	height: this.node.offsetHeight,
+		// })
 	}
 
 	get boundsRect() {
