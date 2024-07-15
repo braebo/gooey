@@ -6,7 +6,7 @@ var theme_default = resolveTheme({
     vars: {
         color: {
             base: {
-                'theme-a': '#00bcd4',
+                'theme-a': '#49a7ff',
                 // 'theme-b': '#f8d2c9',
                 // 'theme-c': '#ba788a',
                 'dark-a': '#0B0B11',

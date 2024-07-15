@@ -10,10 +10,6 @@ type VirtualRect = Record<string, any> & {
     width: number;
     height: number;
 };
-export type Vec2 = {
-    x: number;
-    y: number;
-};
 export type PlacementOptions = Parameters<typeof place>[2];
 /**
  * Determines the x and y position of an element relative to
@@ -46,8 +42,14 @@ export declare function place(node: DOMRect | VirtualRect | (Record<string, any>
      * The margin in pixels to apply to the placement.  Can be a number
      * to apply the same margin to both x and y, or an object with x
      * and y properties to apply different margins to each axis.
-     * @default 16
+     * @default 0
      */
-    margin?: number | Vec2;
-}): Vec2;
+    margin?: number | Partial<{
+        x: number;
+        y: number;
+    }>;
+}): {
+    x: number;
+    y: number;
+};
 export {};

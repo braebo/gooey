@@ -180,12 +180,6 @@ class Themer {
     get modeColors() {
         return this.theme.value.vars.color[this.activeMode];
     }
-    get baseColors() {
-        return this.theme.value.vars.color.base;
-    }
-    get allColors() {
-        return { ...this.baseColors, ...this.modeColors };
-    }
     /**
      * The current mode, taking into account the system preferences.
      */

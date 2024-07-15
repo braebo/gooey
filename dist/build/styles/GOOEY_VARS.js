@@ -27,7 +27,7 @@ const GUI_VARS_UTILITY = {
 const GUI_VARS_STRUCTURED = {
     base: {
         root: {
-            width: '30rem',
+            width: '24rem',
             'min-width': '20rem',
             'max-width': '35rem',
             'max-height': '90vh',

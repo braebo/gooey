@@ -1,6 +1,6 @@
 import type { State } from '../../shared/state';
 import type { ElementOrSelector } from '../../shared/select';
-import type { ThemeDefinition, ExtendedVars, ThemeTitle, BaseColors, ModeColors, ThemeMode, Theme } from './types';
+import type { ThemeDefinition, ExtendedVars, ThemeTitle, ModeColors, ThemeMode, Theme } from './types';
 /**
  * A JSON representation of the {@link Themer} class. Used in the
  * {@link Themer.toJSON | toJSON()} and {@link Themer.fromJSON | fromJSON()},
@@ -140,8 +140,6 @@ export declare class Themer {
      * The active theme's variables based on the current mode.
      */
     get modeColors(): ModeColors;
-    get baseColors(): BaseColors;
-    get allColors(): ModeColors & BaseColors;
     /**
      * The current mode, taking into account the system preferences.
      */

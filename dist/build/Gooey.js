@@ -371,6 +371,13 @@ class Gooey {
         });
         return windowManager;
     }
+    get inputs() {
+        return this.folder.inputs;
+    }
+    get allInputs() {
+        // todo - Don't love this..
+        return new Map([...this.folder.allInputs.entries()].filter(([k]) => !k.startsWith('ui') && !k.startsWith('presets')));
+    }
     get window() {
         return this.windowManager?.windows.get(this.folder.element.id);
     }

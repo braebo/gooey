@@ -77,9 +77,17 @@ export interface GooeyOptions {
      * @default 16
      */
     margin: number | {
-        x: number;
-        y: number;
+        x?: number;
+        y?: number;
     };
+    /**
+     * The initial width of the gooey in pixels.
+     *
+     * @remakrs This can also be set by overriding the `--gooey-root_width` CSS custom property on
+     * the {@link Gooey.element} element `.gooey-root`, which is responsible for the root width.
+     * @default undefined
+     */
+    width?: number;
     /**
      * The initial expanded state of the gooey.
      * @default false
@@ -269,6 +277,8 @@ export declare class Gooey {
     private _reveal;
     private _createPresetManager;
     private _createWindowManager;
+    get inputs(): Map<string, import("./inputs/Input").ValidInput>;
+    get allInputs(): Map<string, import("./inputs/Input").ValidInput>;
     get window(): WindowInstance | undefined;
     set theme(theme: GooeyTheme);
     get theme(): GooeyTheme;

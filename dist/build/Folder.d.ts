@@ -440,6 +440,7 @@ export declare class Folder {
      */
     private _validateOptions;
     private _createInput;
+    private _resolveId;
     private _resolveOptions;
     private _resolveBinding;
     private _resolveType;

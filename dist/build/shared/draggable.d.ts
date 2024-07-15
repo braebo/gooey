@@ -345,7 +345,10 @@ export declare class Draggable {
      * - `{x,y}` -> itself *(merged with {@link DRAGGABLE_DEFAULTS.position}*
      * if it's a partial.)
      */
-    resolvePosition(pos: DraggableOptions['position']): import("./place").Vec2;
+    resolvePosition(pos: DraggableOptions['position']): {
+        x: number;
+        y: number;
+    };
     /**
      * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
      * function that updates the {@link bounds} property when called.

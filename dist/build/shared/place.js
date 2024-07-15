@@ -36,10 +36,9 @@ function place(node, placement = 'top-right', options) {
             : bounds ?? { x: 0, y: 0, width: 100, height: 100 };
     if (!b)
         throw new Error('Invalid bounds: ' + bounds);
-    const m = typeof margin === 'number' ? { x: margin, y: margin } : margin;
-    if (!('x' in m) || !('y' in m)) {
-        throw new Error('Invalid margin: ' + JSON.stringify(m));
-    }
+    const m = typeof margin === 'number'
+        ? { x: margin, y: margin }
+        : Object.assign({ x: 0, y: 0 }, margin);
     // prettier-ignore
     switch (placement) {
         case ('center'):

@@ -467,7 +467,8 @@ class Folder {
     add(titleOrOptions, maybeOptions) {
         const opts = this._resolveOptions(titleOrOptions, maybeOptions);
         const input = this._createInput(opts);
-        this.inputs.set(input.id, input);
+        const id = this._resolveId(input);
+        this.inputs.set(id, input);
         this._refreshIcon();
         return input;
     }
@@ -541,7 +542,8 @@ class Folder {
         opts.title ??= key;
         opts.binding = { target, key, initial: value };
         const input = this._createInput(opts);
-        this.inputs.set(input.id, input);
+        const id = this._resolveId(input);
+        this.inputs.set(id, input);
         this._refreshIcon();
         return input;
     }
@@ -570,7 +572,6 @@ class Folder {
         if (!this._transientRoot) {
             this._transientRoot = rootFolder;
         }
-        console.warn({ target, options });
         if ('folderOptions' in options)
             console.log('folderOptions in value:', options);
         for (const [key, value] of Object.entries(target)) {
@@ -767,6 +768,16 @@ class Folder {
         }
         throw new Error('Invalid input type: ' + type + ' for options: ' + options);
     }
+    _resolveId(input) {
+        this._log.fn('resolveId').debug({ input, this: this });
+        let title = input.title;
+        let i = 0;
+        while (this.inputs.has(title)) {
+            i++;
+            title = i ? `${input.title}_${i}` : title;
+        }
+        return title;
+    }
     _resolveOptions(titleOrOptions, maybeOptions) {
         const twoArgs = typeof titleOrOptions === 'string' && typeof maybeOptions === 'object';
         const title = twoArgs ? titleOrOptions : maybeOptions?.title ?? '';
@@ -845,14 +856,13 @@ class Folder {
     _createElement(opts) {
         this._log.fn('#createElement').debug({ el: opts.container, this: this });
         if (this.isRoot) {
+            const width = opts.width;
             return create('div', {
                 id: `gooey-root_${this.id}`,
                 classes: ['gooey-root', 'gooey-folder', 'closed'],
                 dataset: { theme: this.gooey.theme ?? 'default' },
                 parent: select(opts.container)[0],
-                style: {
-                    width: 'fit-content',
-                },
+                style: width ? { width } : undefined,
             });
         }
         return create('div', {
