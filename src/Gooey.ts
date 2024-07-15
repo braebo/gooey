@@ -110,7 +110,7 @@ export interface GooeyOptions {
 	 * and y properties to apply different margins to each axis.
 	 * @default 16
 	 */
-	margin: number | { x: number; y: number }
+	margin: number | { x?: number; y?: number }
 
 	/**
 	 * The initial expanded state of the gooey.
@@ -626,6 +626,18 @@ export class Gooey {
 		})
 
 		return windowManager
+	}
+
+	get inputs() {
+		return this.folder.inputs
+	}
+	get allInputs() {
+		// todo - Don't love this..
+		return new Map(
+			[...this.folder.allInputs.entries()].filter(
+				([k]) => !k.startsWith('ui') && !k.startsWith('presets'),
+			),
+		)
 	}
 
 	get window(): WindowInstance | undefined {
