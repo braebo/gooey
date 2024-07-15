@@ -820,6 +820,8 @@ export class Gooey {
 				'open',
 				!this.settingsFolder.closed.value,
 			)
+
+			if (this.folder.closed) this.folder.open()
 		})
 
 		return button
