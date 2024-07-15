@@ -24,9 +24,9 @@
 
 <style lang="scss">
 	nav {
+		position: relative;
 		display: flex;
 		justify-content: center;
-		padding-bottom: 1rem;
 		
 		width: 100%;
 

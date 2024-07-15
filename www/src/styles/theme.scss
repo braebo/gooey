@@ -31,20 +31,20 @@
 	--fg-d: #777d8f;
 	--fg-e: #5f6377;
 
-	&[mode='light'],
-	&[theme='light'] {
-		--bw: white;
+}
 
-		--fg-a: #0b0b11;
-		--fg-b: #15161d;
-		--fg-c: #1f202d;
-		--fg-d: #353746;
-		--fg-e: #474a5b;
+:root[theme='light'] {
+	--bw: white;
 
-		--bg-a: #ffffff;
-		--bg-b: #dfe1e9;
-		--bg-c: #babeca;
-		--bg-d: #777d8f;
-		--bg-e: #5f6377;
-	}
+	--fg-a: #0b0b11;
+	--fg-b: #15161d;
+	--fg-c: #1f202d;
+	--fg-d: #353746;
+	--fg-e: #474a5b;
+
+	--bg-a: #ffffff;
+	--bg-b: #dfe1e9;
+	--bg-c: #babeca;
+	--bg-d: #777d8f;
+	--bg-e: #5f6377;
 }

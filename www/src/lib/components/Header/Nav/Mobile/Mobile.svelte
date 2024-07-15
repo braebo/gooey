@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { clickOutside, mobile, ThemeToggle } from 'fractils'
+	import ThemeSwitch from '$lib/components/ThemeSwitch.svelte'
+	import { clickOutside, mobile } from 'fractils'
 	import { fly, fade } from 'svelte/transition'
 	import PageFill from './PageFill.svelte'
 	import Burger from './Burger.svelte'
@@ -18,7 +19,7 @@
 
 {#if showMenu}
 	<div id="theme" class="corner">
-		<ThemeToggle />
+		<ThemeSwitch />
 	</div>
 
 	<nav class:showMenu class:mobile={$mobile}>
