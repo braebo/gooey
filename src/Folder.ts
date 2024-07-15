@@ -846,7 +846,8 @@ export class Folder {
 	add(titleOrOptions: string | InputOptions, maybeOptions?: InputOptions): ValidInput {
 		const opts = this._resolveOptions(titleOrOptions, maybeOptions)
 		const input = this._createInput(opts)
-		this.inputs.set(input.id, input)
+		const id = this._resolveId(input)
+		this.inputs.set(id, input)
 		this._refreshIcon()
 		return input
 	}
@@ -933,7 +934,8 @@ export class Folder {
 		opts.binding = { target, key, initial: value }
 
 		const input = this._createInput(opts)
-		this.inputs.set(input.id, input)
+		const id = this._resolveId(input)
+		this.inputs.set(id, input)
 		this._refreshIcon()
 
 		return input as unknown as TInput
@@ -1468,6 +1470,17 @@ export class Folder {
 		}
 
 		throw new Error('Invalid input type: ' + type + ' for options: ' + options)
+	}
+
+	private _resolveId<T extends ValidInput>(input: T): string {
+		this._log.fn('resolveId').debug({ input, this: this })
+		let title = input.title
+		let i = 0
+		while (this.inputs.has(title)) {
+			i++
+			title = i ? `${input.title}_${i}` : title
+		}
+		return title
 	}
 
 	private _resolveOptions<T extends InputOptions>(

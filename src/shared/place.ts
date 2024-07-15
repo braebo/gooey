@@ -88,7 +88,6 @@ export function place(
 			? { x: margin, y: margin }
 			: Object.assign({ x: 0, y: 0 }, margin)
 
-	console.warn({ m })
 	// prettier-ignore
 	switch (placement) {
 		case ('center'):
