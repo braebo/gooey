@@ -219,16 +219,23 @@ export class InputSelect<T = unknown> extends Input<
 		let selectOptions = toFn(providedOptions)() as T[] | LabeledOption<T>[]
 
 		if (!isLabeledOptionsArray(selectOptions)) {
-			if (!this.opts.labelKey) {
-				throw new Error(
-					'Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label.',
-				)
-			}
+			if (!selectOptions.every(o => typeof o === 'string')) {
+				if (!this.opts.labelKey) {
+					throw new Error(
+						'Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label.',
+					)
+				}
 
-			return selectOptions.map(o => ({
-				label: o[this.opts.labelKey!] as string,
-				value: o,
-			}))
+				return selectOptions.map(o => ({
+					label: o[this.opts.labelKey!] as string,
+					value: o,
+				}))
+			} else {
+				return selectOptions.map(o => ({
+					label: o,
+					value: o as unknown as T,
+				}))
+			}
 		}
 
 		return selectOptions
@@ -238,7 +245,15 @@ export class InputSelect<T = unknown> extends Input<
 		const value = opts.binding ? opts.binding.target[opts.binding.key] : opts.value!
 		const v = fromState(value)
 		if (!isLabeledOption(v)) {
+			if (typeof v === 'string') {
+				return {
+					label: v,
+					value: v as unknown as T,
+				}
+			}
+
 			if (!opts.labelKey) {
+				console.error('Error:', { v, value, opts })
 				throw new Error(
 					'Cannot resolve initial value.  Please provide a `labelKey` or use labeled options.',
 				)

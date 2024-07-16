@@ -144,13 +144,21 @@ let InputSelect = class InputSelect extends Input {
         }
         let selectOptions = toFn(providedOptions)();
         if (!isLabeledOptionsArray(selectOptions)) {
-            if (!this.opts.labelKey) {
-                throw new Error('Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label.');
+            if (!selectOptions.every(o => typeof o === 'string')) {
+                if (!this.opts.labelKey) {
+                    throw new Error('Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label.');
+                }
+                return selectOptions.map(o => ({
+                    label: o[this.opts.labelKey],
+                    value: o,
+                }));
             }
-            return selectOptions.map(o => ({
-                label: o[this.opts.labelKey],
-                value: o,
-            }));
+            else {
+                return selectOptions.map(o => ({
+                    label: o,
+                    value: o,
+                }));
+            }
         }
         return selectOptions;
     }
@@ -158,7 +166,14 @@ let InputSelect = class InputSelect extends Input {
         const value = opts.binding ? opts.binding.target[opts.binding.key] : opts.value;
         const v = fromState(value);
         if (!isLabeledOption(v)) {
+            if (typeof v === 'string') {
+                return {
+                    label: v,
+                    value: v,
+                };
+            }
             if (!opts.labelKey) {
+                console.error('Error:', { v, value, opts });
                 throw new Error('Cannot resolve initial value.  Please provide a `labelKey` or use labeled options.');
             }
             return {
