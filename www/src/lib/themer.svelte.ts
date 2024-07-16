@@ -9,12 +9,12 @@ class Theme {
 	}
 
 	systemPreference = $state<'light' | 'dark' | null>(
-		globalThis?.window.matchMedia('prefers-color-scheme: dark').matches ? 'dark' : 'light' || null
+		globalThis?.window.matchMedia('prefers-color-scheme: dark').matches ? 'dark' : 'light' || null,
 	)
 
 	constructor(
 		public readonly defaultTheme: Preference = 'dark',
-		public readonly storageKey: string = 'global-theme'
+		public readonly storageKey: string = 'global-theme',
 	) {
 		this.#preference = (globalThis.localStorage?.getItem(this.storageKey) as Preference) || defaultTheme
 

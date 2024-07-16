@@ -6,7 +6,7 @@
 
 	const viewBox = {
 		width: 500,
-		height: 190
+		height: 190,
 	}
 	const textWidth = viewBox.width - 40 // the text's padding is (roughly) 40
 
@@ -33,7 +33,7 @@
 	}
 	function randomKeySplines(n: number) {
 		return Array.from({ length: n }, () =>
-			Math.random() > 0.5 ? '0.42,0,0.58,1' : `${0.5 + r(0.15)},0,${0.5 + r(0.15)},1`
+			Math.random() > 0.5 ? '0.42,0,0.58,1' : `${0.5 + r(0.15)},0,${0.5 + r(0.15)},1`,
 		).join(';')
 	}
 	function randomPositions(n = 3) {
@@ -46,7 +46,7 @@
 			dur: `${duration}s`,
 			calcMode: 'spline',
 			repeatCount: 'indefinite',
-			fill: 'freeze'
+			fill: 'freeze',
 		}
 	}
 
@@ -59,13 +59,13 @@
 			viscosity: 0.005,
 			density: 10,
 			gooeyness: 20,
-			type: 'turbulence'
+			type: 'turbulence',
 		},
 		orbs: {
 			size: 1,
 			speed: 1,
-			distance: 1
-		}
+			distance: 1,
+		},
 	} satisfies Record<string, any>)
 
 	const hueShift = $derived(Math.floor(p.slider * 360))
@@ -94,7 +94,7 @@
 		const gui = new Gooey({
 			position: 'top-center',
 			margin: { y: 100 },
-			presets
+			presets,
 		})
 
 		const orbConfig = (title: string) =>
@@ -108,8 +108,8 @@
 					folderOptions: { closed: true },
 					distance: { max: 50, step: 0.1 },
 					duration: { max: 5000, step: 1 },
-					delay: { max: 5000, step: 1 }
-				}
+					delay: { max: 5000, step: 1 },
+				},
 			}) as const
 
 		gui.bindMany(p, {
@@ -120,15 +120,15 @@
 				type: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
 				gooeyness: { min: 0.1, max: 100, step: 0.1 },
 				viscosity: { min: 0.001, max: 0.5, step: 0.0001 },
-				density: { min: 1, max: 20, step: 1 }
+				density: { min: 1, max: 20, step: 1 },
 			},
 			orbs: {
 				size: { min: 0.5, max: 3, step: 0.01 },
 				orb1: orbConfig('orb 1'),
 				orb2: orbConfig('orb 2'),
 				orb3: orbConfig('orb 3'),
-				orb4: orbConfig('orb 4')
-			}
+				orb4: orbConfig('orb 4'),
+			},
 		})
 
 		// Store a ref to the slider input to sync it with the svg slider.
@@ -138,7 +138,7 @@
 		unsubs.push(
 			gui.themer.mode.subscribe((m) => {
 				themer.theme = m
-			})
+			}),
 		)
 
 		// Update the gui when the page theme changes.
@@ -151,7 +151,7 @@
 		unsubs.push(
 			gui.themer.theme.subscribe(() => {
 				updateTheme()
-			})
+			}),
 		)
 
 		function updateTheme() {

@@ -122,7 +122,6 @@ export class WindowManager {
 	 * options for each window.
 	 */
 	windows = new Map<WindowInstance['id'], WindowInstance>()
-	
 
 	/**
 	 * The initial {@link WindowManagerOptions} provided.
