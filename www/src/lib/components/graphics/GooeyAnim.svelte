@@ -185,7 +185,6 @@
 	let lfo = $derived(((0.75 + Math.sin(time * p.speed * 0.0001) * 0.5) * 0.8 + 0.1) * p.goo.lfo)
 
 	requestAnimationFrame(tick)
-	// fps limited
 	function tick() {
 		if (disposed) return
 		const now = performance.now()
@@ -225,8 +224,8 @@
 
 		<g id="slider">
 			<rect bind:this={sliderEl} id="track" width="242" height="14.3" x="139" y="129.3" fill="currentColor" class="track" rx="8.2" />
-			<g id="thumb-glow" filter="url(#gooey_anim_thumb_glow)">
 				<rect
+					filter="url(#gooey_anim_thumb_glow)"
 					id="thumb"
 					bind:this={thumbEl}
 					{onpointerdown}
@@ -243,53 +242,35 @@
 					fill="hsl({310 + hueShift % 360}, 100%, 67%)"
 					rx="5.4"
 				/>
-			</g>
+
 		</g>
 
 		<defs>
 			<linearGradient id="gooey_anim_gradient_1" class="gooey_anim_gradient_1" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<!-- <stop stop-color={p.orbs.orb1.colorA.hex} /> -->
-				<!-- <stop offset="1" stop-color={p.orbs.orb1.colorB.hex} /> -->
 				<stop stop-color="hsl({shift1 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift1 + 20 + hueShift % 360}, 42%, 50%)" />
 			</linearGradient>
 			<linearGradient id="gooey_anim_gradient_2" class="gooey_anim_gradient_2" gradientUnits="objectBoundingBox" x1 ="1" x2="1"y1="0"y2="1">
-				<!-- <stop stop-color={p.orbs.orb2.colorA.hex} /> -->
-				<!-- <stop offset="1" stop-color={p.orbs.orb2.colorB.hex} /> -->
 				<stop stop-color="hsl({shift2 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift2 + 20 + hueShift % 360}, 42%, 50%)" />
 			</linearGradient>
 			<linearGradient id="gooey_anim_gradient_4" class="gooey_anim_gradient_4" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<!-- <stop stop-color={p.orbs.orb4.colorA.hex} /> -->
-				<!-- <stop offset="1" stop-color={p.orbs.orb4.colorB.hex} /> -->
 				<stop stop-color="hsl({shift4 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift4 + 20 + hueShift % 360}, 42%, 50%)" />
 			</linearGradient>
 			<linearGradient id="gooey_anim_gradient_3" class="gooey_anim_gradient_3" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<!-- <stop stop-color={p.orbs.orb3.colorA.hex} /> -->
-				<!-- <stop offset="1" stop-color={p.orbs.orb3.colorB.hex} /> -->
 				<stop stop-color="hsl({shift3 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift3 + 20 + hueShift % 360}, 42%, 50%)" />
 			</linearGradient>
 
 			<!--//- Glow Filter -->
 
-			<filter id="gooey_anim_thumb_glow" class="gooey_anim_thumb_glow" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse" x="-50%" y="-50%" width="200%" height="200%">
-				<feFlood flood-opacity="0" result="BackgroundImageFix" />
-				<feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
-				<feOffset />
-				<feGaussianBlur stdDeviation={p.glow} />
-				<feComposite in2="hardAlpha" operator="out" />
-				
-				<!-- works -->
-				<feColorMatrix values="0 0 0 0 0.0352941 0 0 0 0 0.541176 0 0 0 0 0.894118 0 0 0 1 0" />
-				
-				<feFlood flood-color="hsl(210, 100%, 50%)" result="hslColor" />
-				<!-- doesn't work -->
-				<feComposite in="hslColor" in2="hardAlpha" operator="in" result="colorEffect" />
-				
-				<feBlend in2="BackgroundImageFix" result="gooey_anim_glow_shadow" />
-				<feBlend in="SourceGraphic" in2="gooey_anim_glow_shadow" result="shape" />
+			<filter id="gooey_anim_thumb_glow" x="-500%" y="-500%" width="1000%" height="1000%">
+				<feGaussianBlur stdDeviation={p.glow} result="coloredBlur" />
+				<feMerge>
+					<feMergeNode in="coloredBlur" />
+					<feMergeNode in="SourceGraphic" />
+				</feMerge>
 			</filter>
 
 			<!--//- Turbulence Filter -->
@@ -379,10 +360,10 @@
 	}
 
 	svg {
-		color: var(--fg-a);
-	}
-
-	:global(:root[theme='light'] svg) {
 		color: var(--fg-d);
 	}
+
+	// :global(:root[theme='light'] svg) {
+	// 	color: var(--fg-d);
+	// }
 </style>
