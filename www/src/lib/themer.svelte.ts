@@ -1,9 +1,9 @@
 import { parse } from 'cookie'
 
-type Mode = 'dark' | 'light' | 'system'
+type Preference = 'dark' | 'light' | 'system'
 
 class Theme {
-	#preference = $state<Mode>('dark')
+	#preference = $state<Preference>('dark')
 	get() {
 		return this.#preference
 	}
@@ -13,10 +13,10 @@ class Theme {
 	)
 
 	constructor(
-		public readonly defaultTheme: Mode = 'dark',
+		public readonly defaultTheme: Preference = 'dark',
 		public readonly storageKey: string = 'global-theme'
 	) {
-		this.#preference = (globalThis.localStorage?.getItem(this.storageKey) as Mode) || defaultTheme
+		this.#preference = (globalThis.localStorage?.getItem(this.storageKey) as Preference) || defaultTheme
 
 		globalThis.window?.matchMedia('prefers-color-scheme: dark').addEventListener('change', (event) => {
 			this.systemPreference = event.matches ? 'dark' : 'light'
@@ -25,18 +25,23 @@ class Theme {
 		const cookieTheme = parse(globalThis.document?.cookie)[this.storageKey]
 
 		if (['light', 'dark', 'system'].includes(cookieTheme)) {
-			this.theme = cookieTheme as Mode
+			this.#preference = cookieTheme as Preference
 		}
+
+		this.theme = this.#preference
 	}
 
 	get theme(): 'light' | 'dark' {
 		return this._resolveTheme(this.#preference)
 	}
-	set theme(newMode: Mode) {
-		if (this._resolveTheme(newMode) === this.theme) return
+	set theme(newPreference: Preference) {
+		if (globalThis.document?.documentElement.getAttribute('theme') === newPreference) {
+			console.error('theme already set to', this.theme)
+			return
+		}
 
-		globalThis.localStorage?.setItem(this.storageKey, newMode)
-		this.#preference = newMode
+		globalThis.localStorage?.setItem(this.storageKey, newPreference)
+		this.#preference = newPreference
 
 		const theme = this.theme
 
@@ -47,7 +52,7 @@ class Theme {
 		}
 	}
 
-	private _resolveTheme(mode: Mode, defaultTheme = this.defaultTheme): 'light' | 'dark' {
+	private _resolveTheme(mode: Preference, defaultTheme = this.defaultTheme): 'light' | 'dark' {
 		return mode === 'system' ? this._resolveTheme(defaultTheme, 'dark') : mode
 	}
 }
