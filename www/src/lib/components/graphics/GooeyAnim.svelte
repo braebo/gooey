@@ -8,47 +8,12 @@
 		width: 500,
 		height: 190,
 	}
-	const textWidth = viewBox.width - 40 // the text's padding is (roughly) 40
 
 	let svgEl = $state<SVGSVGElement>()
-	let turbulenceEl: SVGFETurbulenceElement
-	// let textEl = $state<SVGPathElement>()
-	// let textWidth = $derived(textEl?.getBBox().width ?? 100)
-	$inspect(textWidth)
-
 	let sliderEl = $state<SVGRectElement>()
 	let thumbEl = $state<SVGRectElement>()
+
 	let sliderInput: InputNumber
-
-	let orb1El: SVGEllipseElement
-	let orb2El: SVGEllipseElement
-	let orb3El: SVGEllipseElement
-	let orb4El: SVGEllipseElement
-
-	const r = (n = 50) => Math.random() * n - n / 2
-
-	function randomValues(n: number) {
-		const positions = Array.from({ length: n }, () => `0,${r().toFixed(2)};`).join('')
-		return `0,0;${positions}0,0;`
-	}
-	function randomKeySplines(n: number) {
-		return Array.from({ length: n }, () =>
-			Math.random() > 0.5 ? '0.42,0,0.58,1' : `${0.5 + r(0.15)},0,${0.5 + r(0.15)},1`,
-		).join(';')
-	}
-	function randomPositions(n = 3) {
-		return {
-			values: randomValues(n),
-			keySplines: randomKeySplines(n + 1),
-			attributeName: 'transform',
-			type: 'translate',
-			begin: '0s',
-			dur: `${duration}s`,
-			calcMode: 'spline',
-			repeatCount: 'indefinite',
-			fill: 'freeze',
-		}
-	}
 
 	let p = $state({
 		speed: 0.1,
@@ -61,18 +26,13 @@
 			gooeyness: 20,
 			type: 'turbulence',
 		},
-		orbs: {
-			size: 1,
-			speed: 1,
-			distance: 1,
-		},
+		orbs: 1,
 	} satisfies Record<string, any>)
 
 	const hueShift = $derived(Math.floor(p.slider * 360))
 	const shift1 = 300
 	const shift2 = 275
 	const shift3 = 307
-	// const shift4 = 302
 	const shift4 = 321
 
 	const mapRange = (v: number, inMin: number, inMax: number, outMin: number, outMax: number): number => {
@@ -91,30 +51,15 @@
 
 	const unsubs = [] as (() => any)[]
 	onMount(() => {
+		// Create the gui.
 		const gui = new Gooey({
 			position: 'top-center',
 			margin: { y: 100 },
 			presets,
 		})
 
-		const orbConfig = (title: string) =>
-			({
-				title,
-				folderOptions: { closed: true },
-				cx: { max: 500, step: 1 },
-				cy: { max: 190, step: 1 },
-				radius: { max: 50, step: 0.1 },
-				animation: {
-					folderOptions: { closed: true },
-					distance: { max: 50, step: 0.1 },
-					duration: { max: 5000, step: 1 },
-					delay: { max: 5000, step: 1 },
-				},
-			}) as const
-
+		// Bind to the params and configure their options.
 		gui.bindMany(p, {
-			speed: { max: 1, step: 0.01 },
-			slider: { max: 1, step: 0.01 },
 			glow: { max: 30, step: 0.1 },
 			goo: {
 				type: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
@@ -122,13 +67,7 @@
 				viscosity: { min: 0.001, max: 0.5, step: 0.0001 },
 				density: { min: 1, max: 20, step: 1 },
 			},
-			orbs: {
-				size: { min: 0.5, max: 3, step: 0.01 },
-				orb1: orbConfig('orb 1'),
-				orb2: orbConfig('orb 2'),
-				orb3: orbConfig('orb 3'),
-				orb4: orbConfig('orb 4'),
-			},
+			orbs: { min: 0.5, max: 3, step: 0.01 },
 		})
 
 		// Store a ref to the slider input to sync it with the svg slider.
@@ -159,10 +98,6 @@
 				document.documentElement.style.setProperty(`--${k}`, v)
 			}
 		}
-
-		// for (const orb of [orb1El, orb2El, orb3El, orb4El]) {
-		// animate(orb)
-		// }
 	})
 
 	onDestroy(() => {
@@ -202,12 +137,37 @@
 		sliderInput.refresh()
 	}
 
+	function randomPositions(n = 3) {
+		const r = (n = 50) => Math.random() * n - n / 2
+
+		function randomValues(n: number) {
+			const positions = Array.from({ length: n }, () => `0,${r().toFixed(2)};`).join('')
+			return `0,0;${positions}0,0;`
+		}
+
+		function randomKeySplines(n: number) {
+			return Array.from({ length: n }, () =>
+				Math.random() > 0.5 ? '0.42,0,0.58,1' : `${0.5 + r(0.15)},0,${0.5 + r(0.15)},1`,
+			).join(';')
+		}
+
+		return {
+			values: randomValues(n),
+			keySplines: randomKeySplines(n + 1),
+			attributeName: 'transform',
+			type: 'translate',
+			begin: '0s',
+			dur: `${duration}s`,
+			calcMode: 'spline',
+			repeatCount: 'indefinite',
+			fill: 'freeze',
+		}
+	}
+
 	let time = $state(1)
+	let disposed = false
 	const fps = 60
 	const interval = 1000 / fps
-	let disposed = false
-
-	// let lfo = $derived(((0.75 + Math.sin(time * p.speed * 0.0001) * 0.5) * 0.8 + 0.1) * p.goo.lfo)
 
 	requestAnimationFrame(tick)
 	function tick() {
@@ -236,8 +196,8 @@
 		style="overflow: visible"
 		bind:this={svgEl}
 	>
-		<ellipse id="orb2" bind:this={orb2El} cx="247" cy="97" rx={14 * p.orbs.size} ry={14 * p.orbs.size} fill="url(#gooey_anim_gradient_2)">
-			<animateTransform {...randomPositions()}></animateTransform>
+		<ellipse id="orb2" cx="247" cy="97" rx={14 * p.orbs} ry={14 * p.orbs} fill="url(#gooey_anim_gradient_2)">
+			<animateTransform {...randomPositions()} />
 		</ellipse>
 
 		<g id="slider" filter="url(#gooey_anim_goo_filter)">
@@ -249,39 +209,42 @@
 			/>
 
 			<rect bind:this={sliderEl} id="track" width="242" height="14.3" x="139" y="129.3" fill="currentColor" class="track" rx="8.2" />
-				<rect
-					filter="url(#gooey_anim_thumb_glow)"
-					id="thumb"
-					bind:this={thumbEl}
-					{onpointerdown}
-					{onblur}
-					role="slider"
-					tabindex="0"
-					aria-valuemin="0"
-					aria-valuemax="1"
-					aria-valuenow={p.slider}
-					width="15"
-					height="36"
-					x={progress}
-					y="118.45"
-					fill="hsl({310 + hueShift % 360}, 100%, 67%)"
-					rx="5.4"
-				/>
-
+			
+			<rect
+				filter="url(#gooey_anim_thumb_glow)"
+				id="thumb"
+				bind:this={thumbEl}
+				{onpointerdown}
+				{onblur}
+				role="slider"
+				tabindex="0"
+				aria-valuemin="0"
+				aria-valuemax="1"
+				aria-valuenow={p.slider}
+				width="15"
+				height="36"
+				x={progress}
+				y="118.45"
+				fill="hsl({310 + hueShift % 360}, 100%, 67%)"
+				rx="5.4"
+			/>
 		</g>
-		
-		<ellipse id="orb1" bind:this={orb1El} cx="110" cy="120" rx={10 * p.orbs.size} ry={10 * p.orbs.size} fill="url(#gooey_anim_gradient_1)">
-			<animateTransform {...randomPositions(5)}></animateTransform>
-		</ellipse>
-		<ellipse id="orb4" bind:this={orb4El} cx="490" cy="75" rx={10 * p.orbs.size} ry={10 * p.orbs.size} fill="url(#gooey_anim_gradient_4)">
-			<animateTransform {...randomPositions(5)}></animateTransform>
-		</ellipse>
-		<ellipse id="orb3" bind:this={orb3El} cx="326" cy="55" rx={8.5 * p.orbs.size} ry={8.5 * p.orbs.size} fill="url(#gooey_anim_gradient_3)">
-			<animateTransform {...randomPositions(5)}></animateTransform>
+
+		<ellipse id="orb1" cx="110" cy="120" rx={10 * p.orbs} ry={10 * p.orbs} fill="url(#gooey_anim_gradient_1)">
+			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
+		<ellipse id="orb4" cx="490" cy="75" rx={10 * p.orbs} ry={10 * p.orbs} fill="url(#gooey_anim_gradient_4)">
+			<animateTransform {...randomPositions(5)} />
+		</ellipse>
+
+		<ellipse id="orb3" cx="326" cy="55" rx={8.5 * p.orbs} ry={8.5 * p.orbs} fill="url(#gooey_anim_gradient_3)">
+			<animateTransform {...randomPositions(5)} />
+		</ellipse>
 
 		<defs>
+			<!--//- Orb Gradients -->
+
 			<linearGradient id="gooey_anim_gradient_1" class="gooey_anim_gradient_1" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
 				<stop stop-color="hsl({shift1 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift1 + 20 + hueShift % 360}, 42%, 50%)" />
@@ -312,19 +275,17 @@
 			<!--//- Turbulence Filter -->
 
 			<filter id="gooey_anim_goo_filter" width="3" height="3" x="-1" y="-1">
-				<!-- <feTurbulence type="{p.goo.type}" id="fltOne" width="{viewBox.width}" height="{viewBox.width}" x="0" y="0" numOctaves={p.goo.density} seed="1" baseFrequency={Math.pow(p.goo.viscosity, 1)} stitchTiles="stitch"></feTurbulence> -->
-				<feTurbulence type="{p.goo.type}" id="fltOne" width="{viewBox.width}" height="{viewBox.width}" x="0" y="0" numOctaves={p.goo.density} seed="1" baseFrequency={p.goo.viscosity} stitchTiles="stitch"></feTurbulence>
+				<feTurbulence type="{p.goo.type}" width="{viewBox.width}" height="{viewBox.width}" x="0" y="0" numOctaves={p.goo.density} seed="1" baseFrequency={p.goo.viscosity} stitchTiles="stitch" />
 
-				<feTile width="{viewBox.width * 3}" height="{viewBox.width}"></feTile>
+				<feTile width="{viewBox.width * 3}" height="{viewBox.width}" />
 
 				<feOffset result="TURBULENCE" dx="0" width="{viewBox.width * 2}">
 					{#if p.goo.motion}
-						<animate attributeName="dx" from="-{viewBox.width}" to="0" begin="0s" dur="{duration}s" repeatCount="indefinite"></animate>
+						<animate attributeName="dx" from="-{viewBox.width}" to="0" begin="0s" dur="{duration}s" repeatCount="indefinite" />
 					{/if}
 				</feOffset>
 
-				<feDisplacementMap in="SourceGraphic" in2="TURBULENCE" scale={p.goo.gooeyness} result="dist" id="fltTwo">
-				<!-- <feDisplacementMap in="TURBULENCE" in2="TURBULENCE" scale={p.goo.gooeyness} result="dist" id="fltTwo"></feDisplacementMap> -->
+				<feDisplacementMap in="SourceGraphic" in2="TURBULENCE" scale={p.goo.gooeyness}>
 			</filter>
 		</defs>
 	</svg>
@@ -338,7 +299,6 @@
 
 		#thumb {
 			cursor: grab;
-			// transition: all 0.3s ease-in-out;
 			outline: none;
 			border: none;
 		}
@@ -347,8 +307,4 @@
 	svg {
 		color: var(--fg-d);
 	}
-
-	// :global(:root[theme='light'] svg) {
-	// 	color: var(--fg-d);
-	// }
 </style>

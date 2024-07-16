@@ -13,8 +13,8 @@ const presets: GooeyPreset[] = [
 			closed: false,
 			hidden: false,
 			children: [],
-			inputs: []
-		}
+			inputs: [],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -41,13 +41,13 @@ const presets: GooeyPreset[] = [
 							title: 'type',
 							value: {
 								label: 'fractalNoise',
-								value: 'fractalNoise'
+								value: 'fractalNoise',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SwitchInputOptions',
@@ -57,7 +57,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -67,7 +67,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -77,7 +77,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -87,50 +87,10 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: false,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 0.86,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 0.508,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -141,7 +101,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -151,7 +111,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -161,10 +121,20 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 0.86,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -191,13 +161,13 @@ const presets: GooeyPreset[] = [
 							title: 'type',
 							value: {
 								label: 'turbulence',
-								value: 'turbulence'
+								value: 'turbulence',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SwitchInputOptions',
@@ -207,7 +177,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -217,7 +187,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -227,7 +197,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -237,50 +207,10 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: false,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 0.86,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 0.508,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -291,7 +221,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -301,7 +231,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -311,10 +241,20 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 0.86,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -341,13 +281,13 @@ const presets: GooeyPreset[] = [
 							title: 'type',
 							value: {
 								label: 'fractalNoise',
-								value: 'fractalNoise'
+								value: 'fractalNoise',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SwitchInputOptions',
@@ -357,7 +297,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -367,7 +307,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -377,7 +317,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -387,50 +327,10 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: false,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 1.08,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 0.508,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -441,7 +341,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -451,7 +351,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -461,10 +361,20 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 1.08,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -491,13 +401,13 @@ const presets: GooeyPreset[] = [
 							title: 'type',
 							value: {
 								label: 'turbulence',
-								value: 'turbulence'
+								value: 'turbulence',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SwitchInputOptions',
@@ -507,7 +417,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -517,7 +427,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -527,7 +437,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -537,50 +447,10 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: false,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -591,7 +461,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -601,7 +471,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -611,10 +481,20 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 1,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -641,13 +521,13 @@ const presets: GooeyPreset[] = [
 							title: 'type',
 							value: {
 								label: 'fractalNoise',
-								value: 'fractalNoise'
+								value: 'fractalNoise',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SwitchInputOptions',
@@ -657,7 +537,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -667,7 +547,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -677,7 +557,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -687,50 +567,10 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: false,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 0.86,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 0.508,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -741,7 +581,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -751,7 +591,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -761,10 +601,20 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 0.86,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -791,13 +641,13 @@ const presets: GooeyPreset[] = [
 							title: 'type',
 							value: {
 								label: 'fractalNoise',
-								value: 'fractalNoise'
+								value: 'fractalNoise',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SwitchInputOptions',
@@ -807,7 +657,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -817,7 +667,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -827,7 +677,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -837,50 +687,10 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: false,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 0.86,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 0.508,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -891,7 +701,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -901,7 +711,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -911,10 +721,20 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 0.86,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -941,13 +761,13 @@ const presets: GooeyPreset[] = [
 							title: 'type',
 							value: {
 								label: 'fractalNoise',
-								value: 'fractalNoise'
+								value: 'fractalNoise',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SwitchInputOptions',
@@ -957,7 +777,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -967,7 +787,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -977,7 +797,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -987,50 +807,10 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: true,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 0.86,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 0.508,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 1,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -1041,7 +821,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -1051,7 +831,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -1061,10 +841,20 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 0.86,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -1091,13 +881,13 @@ const presets: GooeyPreset[] = [
 							title: 'type',
 							value: {
 								label: 'turbulence',
-								value: 'turbulence'
+								value: 'turbulence',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SwitchInputOptions',
@@ -1107,7 +897,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -1117,7 +907,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -1127,7 +917,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -1137,50 +927,10 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: false,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 0.86,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 0.608,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 0.303,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -1191,7 +941,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -1201,7 +951,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -1211,10 +961,20 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 0.86,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
 	},
 	{
 		__type: 'GooeyPreset',
@@ -1244,7 +1004,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_motion__SwitchInputOptions',
 							hidden: false,
 							order: 1,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -1254,7 +1014,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_viscosity__NumberInputOptions',
 							hidden: false,
 							order: 2,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -1264,7 +1024,7 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_density__NumberInputOptions',
 							hidden: false,
 							order: 3,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'NumberInputOptions',
@@ -1274,63 +1034,23 @@ const presets: GooeyPreset[] = [
 							presetId: 'goo_gooeyness__NumberInputOptions',
 							hidden: false,
 							order: 4,
-							resettable: true
+							resettable: true,
 						},
 						{
 							__type: 'SelectInputOptions',
 							title: 'type',
 							value: {
 								label: 'turbulence',
-								value: 'turbulence'
+								value: 'turbulence',
 							},
 							disabled: false,
 							presetId: 'goo_type__SelectInputOptions',
 							hidden: false,
 							order: 5,
-							resettable: true
-						}
-					]
+							resettable: true,
+						},
+					],
 				},
-				{
-					__type: 'FolderPreset',
-					id: 'orbs',
-					title: 'orbs',
-					closed: false,
-					hidden: false,
-					children: [],
-					inputs: [
-						{
-							__type: 'NumberInputOptions',
-							title: 'size',
-							value: 0.86,
-							disabled: false,
-							presetId: 'orbs_size__NumberInputOptions',
-							hidden: false,
-							order: 1,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'speed',
-							value: 0.608,
-							disabled: false,
-							presetId: 'orbs_speed__NumberInputOptions',
-							hidden: false,
-							order: 2,
-							resettable: true
-						},
-						{
-							__type: 'NumberInputOptions',
-							title: 'distance',
-							value: 0.303,
-							disabled: false,
-							presetId: 'orbs_distance__NumberInputOptions',
-							hidden: false,
-							order: 3,
-							resettable: true
-						}
-					]
-				}
 			],
 			inputs: [
 				{
@@ -1341,7 +1061,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_speed__NumberInputOptions',
 					hidden: false,
 					order: 1,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -1351,7 +1071,7 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_slider__NumberInputOptions',
 					hidden: false,
 					order: 2,
-					resettable: true
+					resettable: true,
 				},
 				{
 					__type: 'NumberInputOptions',
@@ -1361,11 +1081,21 @@ const presets: GooeyPreset[] = [
 					presetId: 'gooey_glow__NumberInputOptions',
 					hidden: false,
 					order: 3,
-					resettable: true
-				}
-			]
-		}
-	}
+					resettable: true,
+				},
+				{
+					__type: 'NumberInputOptions',
+					title: 'orbs',
+					value: 0.86,
+					disabled: false,
+					presetId: 'gooey_orbs__NumberInputOptions',
+					hidden: false,
+					order: 1,
+					resettable: true,
+				},
+			],
+		},
+	},
 ]
 
 export default presets
