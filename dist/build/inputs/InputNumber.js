@@ -23,10 +23,19 @@ class InputNumber extends Input {
         // Smart defaults.
         let v = opts.binding?.initial ?? opts.value ?? 1;
         opts.value ??= v;
-        opts.min ??= v <= 0 ? v * 2 : 0;
-        opts.max ??= v <= 0 ? v * -2 : v * 2;
-        const step = v / 100;
-        opts.step ??= step <= 0.1 ? 0.001 : 0.1;
+        let min = 0;
+        let max = 1;
+        let step = 0.01;
+        // If the value is between [0..1], then it's nicer to keep the defaults.
+        // Otherwise, we can adjust them dynamically to be more useful.
+        if (v < 0 || v > 1) {
+            min ??= v <= 0 ? v * 2 : 0;
+            max ??= v <= 0 ? v * -2 : v * 2;
+            step = v / 100 <= 0.1 ? 0.001 : 0.1;
+        }
+        opts.min ??= min;
+        opts.max ??= max;
+        opts.step ??= step;
         super(opts, folder);
         this._log = new Logger(`InputNumber ${opts.title}`, { fg: 'cyan' });
         this._log.fn('constructor').debug({ opts, this: this });
