@@ -111,17 +111,25 @@
 			}
 		})
 
-		// Loopguard.
-		let locked = 0
+		// Store a ref to the slider input to sync it with the svg slider.
+		sliderInput = gui.allInputs.get('slider') as InputNumber
 
 		unsubs.push(
 			gui.themer.mode.subscribe((m) => {
-				if (locked) {
-					locked = 0
-				} else {
-					themer.theme = m
-				}
-				// document.documentElement.setAttribute('theme', m)
+				themer.theme = m
+			})
+		)
+
+		// Update the gui when the page theme changes.
+		$effect(() => {
+			gui.themer.mode.set(themer.theme)
+			updateTheme()
+		})
+
+		// Update the page theme when the gui theme changes.
+		unsubs.push(
+			gui.themer.theme.subscribe(() => {
+				updateTheme()
 			})
 		)
 
@@ -130,22 +138,6 @@
 				document.documentElement.style.setProperty(`--${k}`, v)
 			}
 		}
-
-		$effect(() => {
-			locked = 1
-			gui.themer.mode.set(themer.theme)
-			updateTheme()
-		})
-
-		// Sync with the page theme.
-		unsubs.push(
-			gui.themer.theme.subscribe(() => {
-				updateTheme()
-			})
-		)
-
-		// Sync the sliders.
-		sliderInput = gui.allInputs.get('slider') as InputNumber
 	})
 
 	onDestroy(() => {

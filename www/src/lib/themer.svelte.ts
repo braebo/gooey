@@ -4,6 +4,9 @@ type Mode = 'dark' | 'light' | 'system'
 
 class Theme {
 	#preference = $state<Mode>('dark')
+	get() {
+		return this.#preference
+	}
 
 	systemPreference = $state<'light' | 'dark' | null>(
 		globalThis?.window.matchMedia('prefers-color-scheme: dark').matches ? 'dark' : 'light' || null
@@ -30,6 +33,8 @@ class Theme {
 		return this._resolveTheme(this.#preference)
 	}
 	set theme(newMode: Mode) {
+		if (this._resolveTheme(newMode) === this.theme) return
+
 		globalThis.localStorage?.setItem(this.storageKey, newMode)
 		this.#preference = newMode
 
