@@ -162,10 +162,12 @@
 	function onpointerdown(e: PointerEvent) {
 		grabbing = true
 		mouseOffset = e.clientX - thumbEl!.getBoundingClientRect().left
+		sliderInput?.elements.controllers.range.classList.add('active')
 	}
 
 	function onblur() {
 		grabbing = false
+		sliderInput?.elements.controllers.range.classList.remove('active')
 	}
 
 	function onpointermove(e: PointerEvent) {

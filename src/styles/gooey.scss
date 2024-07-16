@@ -279,11 +279,7 @@
 	--gooey-input-container_color: var(--gooey-fg-b);
 	--gooey-folder-header_background: color-mix(in sRGB, var(--gooey-bg-a) 75%, transparent);
 	--gooey-controller-dim_background: color-mix(in sRGB, var(--gooey-bg-a) 50%, transparent);
-	--gooey-controller_background: color-mix(
-		in sRGB,
-		var(--gooey-bg-a) 80%,
-		var(--gooey-bg-b)
-	);
+	--gooey-controller_background: color-mix(in sRGB, var(--gooey-bg-a) 80%, var(--gooey-bg-b));
 
 	@at-root .gooey-root[mode='light'] & {
 		--gooey-folder-header_background: color-mix(
@@ -394,7 +390,7 @@
 	scrollbar-gutter: stable;
 
 	@include scrollable;
-	
+
 	@-moz-document url-prefix() {
 		& {
 			transition: none !important;
@@ -628,7 +624,7 @@
 
 	transition-duration: 0.15s;
 	transition-property: background, color, filter;
-	
+
 	cursor: pointer;
 
 	&:hover,
@@ -640,7 +636,6 @@
 			var(--gooey-folder_background)
 		);
 	}
-
 
 	&:first-of-type {
 		border-top-left-radius: var(--gooey-radius-sm);
@@ -993,7 +988,6 @@ input.gooey-search-input {
 			transition-delay: 0s;
 			transition-duration: 0.25s;
 		}
-
 	}
 
 	.copy-button-svg-container {
@@ -1448,12 +1442,18 @@ input.gooey-search-input {
 			&:hover {
 				opacity: 1;
 			}
-			&:active {
+			
+			&:active,
+			&.active {
 				background: color-mix(
 					in lch,
 					var(--gooey-theme-a),
 					var(--gooey-input-number-range_background)
 				);
+
+				&::-webkit-slider-thumb {
+					background-color: var(--gooey-theme-a);
+				}
 			}
 
 			@mixin rangeThumb {
@@ -1630,7 +1630,6 @@ input.gooey-search-input {
 							}
 						}
 					}
-
 				}
 
 				&:hover {
@@ -1661,9 +1660,9 @@ input.gooey-search-input {
 					(-$size) 0px;
 				border-radius: var(--gooey-radius-sm);
 				overflow: hidden;
-				
+
 				cursor: pointer;
-				
+
 				clip-path: xywh(0 12% 100% 72% round var(--gooey-radius-sm));
 				// Safari bug fix
 				backface-visibility: hidden;
@@ -1854,7 +1853,6 @@ input.gooey-search-input {
 						@at-root .gooey-root[mode='light'] & {
 							color: var(--gooey-bg-e);
 						}
-
 
 						span {
 							transition: 0.4s;
@@ -2081,7 +2079,7 @@ input.gooey-search-input {
 						color: var(--gooey-controller_color);
 					}
 				}
-				
+
 				&:hover {
 					opacity: 1;
 				}
@@ -2099,7 +2097,7 @@ input.gooey-search-input {
 					box-shadow:
 						-1px 1px 7px 0px #000c inset,
 						-1px 1px 1px 0px #000c inset;
-					
+
 					opacity: 1;
 					transition: 0.33s;
 
@@ -2108,7 +2106,6 @@ input.gooey-search-input {
 							-1px 1px 7px 0px #0002 inset,
 							-1px 1px 1px 0px #0002 inset;
 					}
-
 				}
 
 				&.active:after {
@@ -2205,9 +2202,9 @@ input.gooey-search-input {
 			transition: 0.15s;
 			opacity: 1;
 
-			&:active {
-				background-color: var(--gooey-theme-a);
-			}
+			// &:active, &.active {
+			// 	background-color: var(--gooey-theme-a);
+			// }
 		}
 	}
 

@@ -187,14 +187,14 @@ function createFolderConnector(folder, icon) {
     svg.appendChild(path);
     container.appendChild(svg);
     //- This is cursed..
-    // Container offset correction.
-    const iconCenter = icon.scrollHeight - stroke - icon.scrollTop;
-    const svgTop = svg.scrollTop;
-    svg.style.top = iconCenter - svgTop + 'px';
-    // Icon offset correction.
-    const connectorTop = svg.getBoundingClientRect().top;
-    const iconTop = icon.getBoundingClientRect().top;
-    svg.style.top = connectorTop - iconTop - stroke / 2 + 'px';
+    const svgRect = svg.getBoundingClientRect();
+    const iconRect = icon.getBoundingClientRect();
+    const connectorTop = svgRect.top;
+    const iconTop = iconRect.top;
+    const iconOffset = connectorTop - iconTop - stroke + 'px';
+    svg.style.top = iconOffset;
+    const iconCenter = icon.scrollHeight / 2 + stroke + 2;
+    svg.style.top = iconCenter + 'px';
     return { container, svg, path };
 }
 function animateConnector(folder, action) {

@@ -524,6 +524,8 @@ class Gooey {
         button.addEventListener('click', () => {
             this.settingsFolder.toggle();
             this.folder.elements.toolbar.settingsButton?.classList.toggle('open', !this.settingsFolder.closed.value);
+            if (this.folder.closed)
+                this.folder.open();
         });
         return button;
     }
