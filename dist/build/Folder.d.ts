@@ -265,6 +265,10 @@ export declare class Folder {
      */
     private _clicksDisabled;
     private _depth;
+    /**
+     * Maps preset ids to their inputs.
+     */
+    private static _presetIdMap;
     constructor(options: FolderOptions);
     /**
      * The folder's title.  Changing this will update the UI.

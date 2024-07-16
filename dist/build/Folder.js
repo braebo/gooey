@@ -118,6 +118,10 @@ class Folder {
      */
     _clicksDisabled = false;
     _depth = -1;
+    /**
+     * Maps preset ids to their inputs.
+     */
+    static _presetIdMap = new Map();
     //⌟
     constructor(options) {
         if (!('container' in options)) {
@@ -389,6 +393,7 @@ class Folder {
         };
         const paths = getPaths(this);
         let presetId = opts?.presetId || paths.join('__');
+        presetId = Folder._presetIdMap.get(presetId) ?? presetId;
         if (!presetId) {
             let i = 0;
             for (const child of this.allChildren) {
@@ -544,6 +549,7 @@ class Folder {
         const input = this._createInput(opts);
         const id = this._resolveId(input);
         this.inputs.set(id, input);
+        Folder._presetIdMap.set(input.id, id);
         this._refreshIcon();
         return input;
     }

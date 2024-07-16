@@ -404,6 +404,10 @@ export class Folder {
 	 */
 	private _clicksDisabled = false
 	private _depth = -1
+	/**
+	 * Maps preset ids to their inputs.
+	 */
+	private static _presetIdMap = new Map<string, string>()
 	//⌟
 	constructor(options: FolderOptions) {
 		if (!('container' in options)) {
@@ -739,6 +743,7 @@ export class Folder {
 		const paths = getPaths(this)
 
 		let presetId = opts?.presetId || paths.join('__')
+		presetId = Folder._presetIdMap.get(presetId) ?? presetId
 
 		if (!presetId) {
 			let i = 0
@@ -936,6 +941,7 @@ export class Folder {
 		const input = this._createInput(opts)
 		const id = this._resolveId(input)
 		this.inputs.set(id, input)
+		Folder._presetIdMap.set(input.id, id)
 		this._refreshIcon()
 
 		return input as unknown as TInput

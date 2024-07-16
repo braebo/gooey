@@ -13,7 +13,7 @@ type GooeyTheme = 'default' | 'flat' | 'scour' | (string & {});
 export interface GooeyElements {
     root: HTMLElement;
 }
-export interface GooeyOptions {
+export interface GooeyOptions<const TPresets extends GooeyPreset[] = GooeyPreset[]> {
     __type: 'GooeyOptions';
     /**
      * The title of the Gooey.
@@ -97,7 +97,7 @@ export interface GooeyOptions {
      * Presets to make available in the gooey.
      * @default []
      */
-    presets?: GooeyPreset[];
+    presets?: TPresets;
     /**
      * The default preset to load when the gooey is created, or the initial gooey state if undefined.
      * @default undefined
