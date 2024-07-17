@@ -211,22 +211,22 @@
 			<rect bind:this={sliderEl} id="track" width="242" height="14.3" x="139" y="129.3" fill="currentColor" class="track" rx="8.2" />
 			
 			<rect
-				filter="url(#gooey_anim_thumb_glow)"
-				id="thumb"
 				bind:this={thumbEl}
-				{onpointerdown}
+				id="thumb"
+				filter="url(#gooey_anim_thumb_glow)"
+				fill="hsl({310 + hueShift % 360}, 100%, 67%)"
+				width="15"
+				height="36"
+				x={progress}
+				y="118.45"
+				rx="5.4"
 				{onblur}
+				{onpointerdown}
 				role="slider"
 				tabindex="0"
 				aria-valuemin="0"
 				aria-valuemax="1"
 				aria-valuenow={p.slider}
-				width="15"
-				height="36"
-				x={progress}
-				y="118.45"
-				fill="hsl({310 + hueShift % 360}, 100%, 67%)"
-				rx="5.4"
 			/>
 		</g>
 
@@ -249,14 +249,17 @@
 				<stop stop-color="hsl({shift1 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift1 + 20 + hueShift % 360}, 42%, 50%)" />
 			</linearGradient>
+			
 			<linearGradient id="gooey_anim_gradient_2" class="gooey_anim_gradient_2" gradientUnits="objectBoundingBox" x1 ="1" x2="1"y1="0"y2="1">
 				<stop stop-color="hsl({shift2 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift2 + 20 + hueShift % 360}, 42%, 50%)" />
 			</linearGradient>
+			
 			<linearGradient id="gooey_anim_gradient_4" class="gooey_anim_gradient_4" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
 				<stop stop-color="hsl({shift4 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift4 + 20 + hueShift % 360}, 42%, 50%)" />
 			</linearGradient>
+			
 			<linearGradient id="gooey_anim_gradient_3" class="gooey_anim_gradient_3" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
 				<stop stop-color="hsl({shift3 + hueShift % 360}, 100%, 67%)" />
 				<stop offset="1" stop-color="hsl({shift3 + 20 + hueShift % 360}, 42%, 50%)" />
@@ -266,6 +269,7 @@
 
 			<filter id="gooey_anim_thumb_glow" x="-500%" y="-500%" width="1000%" height="1000%">
 				<feGaussianBlur stdDeviation={p.glow} result="coloredBlur" />
+				
 				<feMerge>
 					<feMergeNode in="coloredBlur" />
 					<feMergeNode in="SourceGraphic" />
