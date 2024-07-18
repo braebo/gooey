@@ -36,6 +36,11 @@ await writeFile(
 	'utf-8',
 )
 
+if (Bun.argv.includes('--css-only')) {
+	spinner.succeed(`css-only complete`)
+	process.exit(0)
+}
+
 spinner.succeed()
 
 if (!Bun.argv.includes('-w')) {
@@ -59,7 +64,7 @@ if (!Bun.argv.includes('-w')) {
 	spinner.succeed()
 
 	// 4
-	spinner.start(pc.blue('tsc') + pc.dim(' --declaration'))
+	spinner.start(pc.blue('tsc') + pc.dim(' --declaration\n'))
 
 	await $`tsc --declaration`
 	spinner.succeed()
