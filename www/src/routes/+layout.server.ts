@@ -1,5 +1,6 @@
-import type { ServerLoad } from '@sveltejs/kit'
+import routes from '../../.svelte-kit/types/route_meta_data.json'
 
-export const load: ServerLoad = ({ locals }) => {
-	return { theme: locals.theme }
+export function load({ locals, depends }) {
+	depends('routes')
+	return { theme: locals.theme, routes: Object.keys(routes) as Array<keyof typeof routes> }
 }

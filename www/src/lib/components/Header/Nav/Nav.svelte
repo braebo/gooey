@@ -1,23 +1,17 @@
 <script lang="ts">
-	import { setContext } from 'svelte'
-	import { mobile } from 'fractils'
+	import { Tree } from '$lib/utils/tree'
+	import { page } from '$app/stores'
+	// import { mobile } from 'fractils'
 
-	import Mobile from './Mobile/Mobile.svelte'
+	// import Mobile from './Mobile/Mobile.svelte'
 	import Desktop from './Desktop.svelte'
 
-	setContext('links', [
-		['/docs', 'docs'],
-		['/demos', 'demos']
-	])
+	const tree = new Tree($page.data.routes)
+	const links = tree.root.children!
 </script>
 
-<template lang="pug">
-
-	+if('$mobile')
-
-		Mobile
-
-		+else
-			Desktop
-
-</template>
+<!-- {#if $mobile} -->
+<!-- <Mobile {links} /> -->
+<!-- {:else} -->
+<Desktop {links} />
+<!-- {/if} -->

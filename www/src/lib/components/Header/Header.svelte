@@ -13,8 +13,6 @@
 		</a>
 	</div>
 
-	<Nav />
-
 	{#if !$mobile}
 		<div id="theme" class="corner" class:mobile={$mobile}>
 			<ThemeSwitch />
@@ -22,15 +20,19 @@
 	{/if}
 </header>
 
+<Nav />
+
 <style lang="scss">
 	$padding: 1rem;
 	header {
 		position: relative;
-		z-index: 50;
 		height: 3rem;
-
+		
 		display: flex;
 		justify-content: space-between;
+		
+		pointer-events: none;
+		z-index: 50;
 	}
 
 	.corner {
@@ -39,15 +41,18 @@
 		position: relative;
 		align-items: center;
 		justify-content: center;
+
+		pointer-events: auto;
 	}
 
 	#home {
 		position: absolute;
-		top: .33rem;
+		top: 0.33rem;
 		bottom: 0;
 		margin: auto;
 		left: $padding;
-		&.active {
+
+		&.active a {
 			color: var(--theme-a);
 		}
 	}
