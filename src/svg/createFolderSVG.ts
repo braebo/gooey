@@ -1,5 +1,7 @@
 import type { Folder } from '../Folder'
 
+import { nanoid } from '../shared/nanoid'
+
 // import { create } from '../shared/create'
 
 export function createFolderSvg(folder: Folder) {
@@ -156,6 +158,8 @@ export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
 	const height = folder.element.scrollHeight
 	const stroke = 1
 
+	const hash = nanoid()
+
 	//? SVG
 	const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
 	svg.setAttribute('class', 'gooey-connector-svg')
@@ -181,7 +185,7 @@ export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
 	//? Path Gradient
 	const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
 	const linearGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient')
-	linearGradient.setAttribute('id', 'gradient')
+	linearGradient.setAttribute('id', `gradient-${hash}`)
 	linearGradient.setAttribute('x1', '0%')
 	linearGradient.setAttribute('y1', '0%')
 	linearGradient.setAttribute('x2', '0%')
@@ -202,7 +206,7 @@ export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
 	stop(40, 0.2)
 	stop(100, 0.2)
 
-	path.setAttribute('stroke', 'url(#gradient)')
+	path.setAttribute('stroke', `url(#gradient-${hash})`)
 
 	//? Appending
 	defs.appendChild(linearGradient)
@@ -232,32 +236,46 @@ export function animateConnector(
 	if (!folder.graphics?.connector) return Promise.resolve()
 
 	const path = folder.graphics.connector.path
-	const length = `${path.getTotalLength()}`
-	path.style.strokeDasharray = `${length}`
+	const length = path.getTotalLength()
 
-	const { duration, from, to, delay, easing } =
+	const config =
 		action === 'open'
 			? ({
-					duration: 600,
+					duration: 800,
 					delay: 0,
-					from: length,
 					easing: 'cubic-bezier(.29,.1,.03,.94)',
-					to: '0',
+					offset: {
+						from: length,
+						to: 0,
+					},
+					array: {
+						from: length,
+						to: length * 1.2,
+					},
 				} as const)
 			: ({
-					duration: 150,
+					duration: 250,
 					delay: 0,
-					from: '0',
 					easing: 'cubic-bezier(.15,.84,.19,.98)',
-					to: length,
+					offset: {
+						from: 0,
+						to: length,
+					},
+					array: {
+						from: length * 1.2,
+						to: length,
+					},
 				} as const)
 
-	const keyframes = [{ strokeDashoffset: from }, { strokeDashoffset: to }]
+	const keyframes = [
+		{ strokeDashoffset: config.offset.from, strokeDasharray: config.array.from },
+		{ strokeDashoffset: config.offset.to, strokeDasharray: config.array.to },
+	]
 
 	const timing = {
-		duration,
-		delay,
-		easing,
+		duration: config.duration,
+		delay: config.delay,
+		easing: config.easing,
 		fill: 'forwards',
 	} as const satisfies KeyframeAnimationOptions
 
