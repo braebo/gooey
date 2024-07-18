@@ -1,30 +1,13 @@
 <script lang="ts">
-	import GooeyAnim from '$lib/components/graphics/GooeyAnim.svelte'
+	// import GooeyAnim from '$lib/components/graphics/GooeyAnim.svelte'
 </script>
 
 <div class="anim">
 	<div class="slant" />
-	<GooeyAnim />
+	<!-- <GooeyAnim /> -->
 </div>
 
 <style lang="scss">
-	:global(body) {
-		overflow: hidden;
-		max-height: 100vh;
-	}
-	:global(:root[theme='light'] body) {
-		background-image: linear-gradient(75deg, var(--bw), var(--bg-c));
-	}
-
-	:global(:root[theme='dark'] body) {
-		// background-image: linear-gradient(24deg, var(--bw) -51%, color-mix(in lch, var(--bg-b) 15%, var(--bg-c)));
-		background-image: linear-gradient(
-			24deg,
-			color-mix(in lab, var(--bw), var(--bg-a)) 0%,
-			color-mix(in lch, var(--bg-b) 20%, var(--bg-c) 45%)
-		);
-	}
-
 	.anim {
 		display: flex;
 		// align-items: center;
