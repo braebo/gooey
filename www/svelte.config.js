@@ -13,13 +13,13 @@ const config = {
 			toggleButtonPos: 'bottom-left',
 			toggleKeyCombo: 'control-alt',
 			showToggleButton: 'active',
-			holdMode: true
-		}
+			holdMode: true,
+		},
 	},
 	onwarn: (warning, handler) => {
 		if (warning.code === 'element_invalid_self_closing_tag') return
 		handler(warning)
-	}
+	},
 }
 
 export default config

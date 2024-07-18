@@ -36,7 +36,6 @@ class Theme {
 	}
 	set theme(newPreference: Preference) {
 		if (globalThis.document?.documentElement.getAttribute('theme') === newPreference) {
-			console.error('theme already set to', this.theme)
 			return
 		}
 
