@@ -114,33 +114,6 @@ export type InferTargetOptions<T> = {
 			: Partial<InferOptions<T[K]>>
 }
 
-function testInference() {
-	const testTarget = {
-		foo: {
-			bar: 'baz',
-		},
-	}
-	const testGui = {} as Gooey
-	const testBindMany = testGui.bindMany(/*err[0]*/ testTarget, {
-		foo: {
-			bar: {
-				title: 'Bar',
-			},
-		},
-	})
-	testBindMany
-}
-testInference
-
-/**
- * [0]:
- * No overload matches this call.
-  Overload 1 of 2, '(folderTitle: string, targetObject: { foo: { bar: { title: string; }; }; }, targetOptions?: InferTargetOptions<{ foo: { bar: { title: string; }; }; }> | undefined): Folder & { ...; }', gave the following error.
-    Argument of type '{ foo: { bar: string; }; }' is not assignable to parameter of type 'string'.
-  Overload 2 of 2, '(target: { foo: { bar: string; }; }, targetOptions?: InferTargetOptions<{ foo: { bar: string; }; }> | undefined): Folder & { foo: { bar: InputText; }; }', gave the following error.
-    Object literal may only specify known properties, and 'bar' does not exist in type 'Partial<SelectInputOptions<{ bar: string; }>>'.ts(2769)
- */
-
 export interface FolderOptions {
 	__type?: 'FolderOptions'
 
@@ -263,7 +236,6 @@ export interface FolderPreset {
 	__type: 'FolderPreset'
 	id: string
 	title: string
-	closed: boolean
 	hidden: boolean
 	children: FolderPreset[]
 	inputs: InputPreset<any>[]
@@ -376,6 +348,7 @@ export class Folder {
 	 * All inputs added to this folder.
 	 */
 	inputs = new Map<string, ValidInput>()
+	inputIdMap = new Map<string, string>()
 
 	/**
 	 * The root folder.  All folders have a reference to the same root folder.
@@ -383,7 +356,7 @@ export class Folder {
 	root: Folder
 	parentFolder: Folder
 	settingsFolder!: Folder
-	closed = state(false)
+	closed: State<boolean>
 
 	element: HTMLDivElement
 	elements = {} as FolderElements
@@ -463,7 +436,12 @@ export class Folder {
 		this.element = this._createElement(opts)
 		this.elements = this._createElements(this.element)
 
-		this.presetId = this.resolvePresetId(opts)
+		this.presetId = this._resolvePresetId()
+
+		// @ts-expect-error @internal
+		let closed = this.gooey!._closedMap.get()[this.presetId]
+		this.closed = state(closed ?? opts.closed ?? false)
+
 		this.saveable = !!opts.saveable
 
 		if (this.isRoot || opts.searchable) {
@@ -475,9 +453,6 @@ export class Folder {
 			this.element.classList.add('instant')
 
 			this.initialHeight = this.element.scrollHeight
-			// if (this.initialHeight === 0) {
-			// 	console.error(`${this.title} has a height of 0.`, this.element)
-			// }
 			this.initialHeaderHeight = this.elements.header.scrollHeight
 			if (this.initialHeaderHeight === 0) {
 				console.error(`${this.title} header has a height of 0.`, this.elements.header)
@@ -497,6 +472,11 @@ export class Folder {
 				this.closed.subscribe(v => {
 					v ? this.close() : this.open()
 					this.evm.emit('toggle', v)
+					// @ts-expect-error @internal
+					this.gooey._closedMap.update(m => {
+						m[this.presetId] = v
+						return m
+					})
 				}),
 			)
 
@@ -695,7 +675,9 @@ export class Folder {
 	open(updateState = false): this {
 		this._log.fn('open').debug()
 		this.element.classList.remove('closed')
+		this.evm.emit('toggle', false)
 		if (updateState) this.closed.set(false)
+
 		this._clicksDisabled = false
 
 		this.#toggleAnimClass()
@@ -708,6 +690,7 @@ export class Folder {
 
 		this.element.classList.add('closed')
 		if (updateState) this.closed.set(true)
+		this.evm.emit('toggle', true)
 		this._clicksDisabled = false
 
 		this.#toggleAnimClass()
