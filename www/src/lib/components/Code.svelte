@@ -27,7 +27,7 @@
 	<script>
 		import Code from 'fractils'
 
-		export let data
+		data
 		const { text, highlightedText } = data
 	</script>
 
@@ -49,81 +49,112 @@
 	```
 -->
 
-<!-- //todo - Document the events -->
-
 <script lang="ts">
-	import type { highlight } from '../utils/highlight'
-
 	import type { BundledLanguage } from 'shiki'
-	import { BROWSER, DEV } from 'esm-env'
 
-	import { createEventDispatcher } from 'svelte'
+	import { highlight } from '../utils/highlight'
 	import CopyButton from './CopyButton.svelte'
+	import { DEV } from 'esm-env'
 	import './code.scss'
 
-	const dispatch = createEventDispatcher()
+	type Boilerplate = {
+		/**
+		 * Effectively just disables the client-side highlighting,
+		 * assuming the text has already been highlighted on the server.
+		 * @defaultValue false
+		 */
+		ssr?: boolean
+		/**
+		 * An optional title to display above the code block.
+		 * @defaultValue 'code'
+		 */
+		title?: string
+		/**
+		 * The language to use.  Must be a {@link BundledLanguage}.
+		 * @defaultValue 'json'
+		 */
+		lang?: BundledLanguage
+		/**
+		 * The theme to use.
+		 * @defaultValue 'github'
+		 */
+		theme?: string
+		/**
+		 * If true, a button will be displayed to copy the code to the clipboard.
+		 * @defaultValue true
+		 */
+		copyButton?: boolean
+		/**
+		 * If true, the code block will be collapsed by default.
+		 * @defaultValue false
+		 */
+		collapsed?: boolean
+		/**
+		 * If true, noise like `"` and `;` will be stripped (nice for JSON).
+		 * @defaultValue false
+		 */
+		pretty?: boolean
+		close?: () => void
+		minimize?: () => void
+		maximize?: () => void
+	} & (
+		| {
+				/**
+				 * The string to highlight.
+				 */
+				text: string
+				/**
+				 * Optional pre-highlighted text.  If this is provided _and_ the {@link ssr}
+				 * prop is `true`, the highlighter will not be loaded / run on the client.
+				 */
+				highlightedText?: string
+		  }
+		| {
+				/**
+				 * The string to highlight.
+				 */
+				text?: string
+				/**
+				 * Optional pre-highlighted text.  If this is provided _and_ the {@link ssr}
+				 * prop is `true`, the highlighter will not be loaded / run on the client.
+				 */
+				highlightedText: string
+		  }
+	)
 
-	/**
-	 * The string to highlight.
-	 */
-	export let text = ''
+	let {
+		ssr = false,
+		text: _text = '',
+		highlightedText: _highlightedText = '',
+		title = 'code',
+		lang = 'json5' as BundledLanguage,
+		theme = 'serendipity',
+		copyButton = true,
+		collapsed: _collapsed = false,
+		pretty = false,
+		close = () => {},
+		minimize = () => {},
+		maximize = () => {},
+	}: Boilerplate = $props()
 
-	/**
-	 * Effectively just disables the client-side highlighting,
-	 * assuming the text has already been highlighted on the server.
-	 * @defaultValue false
-	 */
-	export let ssr = false
+	let text = $state(_text ?? '')
+	let highlightedText = $state(_highlightedText ?? ssr ? text : sanitize(text ?? ''))
+	let collapsed = $state(_collapsed)
 
-	/**
-	 * Optional pre-highlighted text.  If this is provided _and_ the {@link ssr}
-	 * prop is `true`, the highlighter will not be loaded / run on the client.
-	 */
-	export let highlightedText = ''
-	const highlightedTextProvided = !!highlightedText
-	highlightedText ??= ssr ? text : sanitize(text ?? '')
+	$effect(() => {
+		highlight(text ?? '', { lang: lang, theme: theme }).then((t) => {
+			highlightedText = pretty ? t.replaceAll(/"/g, '') : t
+		})
+	})
 
-	if (DEV && !text && !highlightedTextProvided) {
+	if (DEV && !text && !highlightedText) {
 		console.error('<Code /> component requires either the `text` or `highlightedText` prop.')
 
 		if (!text && highlightedText) {
 			console.warn(
-				'`highlightedText` was provided, but unhighlighted `text` prop is required for copy/paste and screen-reader support.'
+				'`highlightedText` was provided, but unhighlighted `text` prop is required for copy/paste and screen-reader support.',
 			)
 		}
-	}
-
-	/**
-	 * An optional title to display above the code block.
-	 * @defaultValue 'code'
-	 */
-	export let title = 'code'
-
-	/**
-	 * The language to use.  Must be a {@link BundledLanguage}.
-	 * @defaultValue 'json'
-	 */
-	export let lang = 'json5' as BundledLanguage
-
-	/**
-	 * The theme to use.
-	 * @defaultValue 'github'
-	 */
-	export let theme = 'serendipity'
-
-	/**
-	 * If true, a button will be displayed to copy the code to the clipboard.
-	 * @defaultValue true
-	 */
-	export let copyButton = true
-
-	/**
-	 * If true, the code block will be collapsed by default.
-	 */
-	export let collapsed = false
-
-	$: if (!ssr && text && BROWSER) {
-		update()
 	}
 
 	/**
@@ -132,11 +163,6 @@
 	 */
 	function sanitize(text: string) {
 		return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
-	}
-
-	async function update() {
-		const { highlight } = await import('../utils/highlight')
-		highlightedText = await highlight(text ?? '', { lang, theme })
 	}
 </script>
 
@@ -148,23 +174,23 @@
 		<div class="dots">
 			<button
 				class="dot red"
-				on:click={() => {
+				onclick={() => {
 					collapsed = true
-					dispatch('close')
+					close()
 				}}
 			/>
 			<button
 				class="dot yellow"
-				on:click={() => {
+				onclick={() => {
 					collapsed = true
-					dispatch('minimize')
+					minimize()
 				}}
 			/>
 			<button
 				class="dot green"
-				on:click={() => {
+				onclick={() => {
 					collapsed = false
-					dispatch('maximize')
+					maximize()
 				}}
 			/>
 		</div>
@@ -190,3 +216,14 @@
 		{/if}
 	</div>
 </div>
+
+<style lang="scss">
+	.sr-only {
+		position: absolute;
+		clip: rect(1px, 1px, 1px, 1px);
+		clip-path: inset(50%);
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+</style>

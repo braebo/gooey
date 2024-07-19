@@ -1,29 +1,54 @@
 // todo - Remove all !important
 
+$header-height: 1.5rem;
+
+$ease-close: cubic-bezier(0.56, 0.48, 0.16, 1);
+$ease-open: cubic-bezier(0.08, 1.12, 0.3, 0.97);
+
+$max-height: 80vh;
+
 :root[theme='light'] {
 	.code-window {
-		background: var(--dark-d);
+		background: color-mix(in lch, var(--dark-d), transparent 10%);
 	}
 }
 
 .code-window {
+	box-sizing: border-box;
+
 	position: relative;
 
 	width: var(--width, 100%);
+	min-width: 10rem;
+	max-width: clamp(20rem, 50vw, 90vw);
+	height: 100%;
+	max-height: $max-height;
 
-	margin: auto;
-
-	background: var(--bg, var(--dark-a, #15161d));
+	background: var(--bg, var(--dark-c, #15161d));
+	backdrop-filter: blur(0.5rem);
+	-webkit-backdrop-filter: blur(0.5rem);
 	border-radius: 0.25rem;
-	outline: 1px solid var(--bg-a, #282a36);
 	box-shadow: var(--shadow-sm);
 
 	font-size: 0.8rem;
 	text-align: var(--text-align, left);
 
 	overflow: hidden;
+	cursor: default;
+
+	clip-path: inset(0);
+	// transition: clip-path 0.75s cubic-bezier(.05,1,.55,.99);
+	transition: clip-path 0.25s;
+	transition-timing-function: $ease-open;
+	&:has(.collapsed) {
+		transition-timing-function: $ease-close;
+		// max-height: 0px;
+		clip-path: inset(0 0 calc(100% - $header-height) 0);
+	}
 
 	.codeblock {
+		box-sizing: border-box;
+
 		position: relative;
 		display: flex;
 		flex-direction: column;
@@ -31,19 +56,10 @@
 		flex-grow: 1;
 
 		width: 100%;
-		max-width: var(--max-width, 98vw);
-		max-height: max(var(--max-height, 450px), min(50vh, 450px));
-		&.collapsed {
-			max-height: 0px;
-		}
+
+		margin: 0;
 
 		overflow-y: auto;
-
-		transition: max-height 0.75s;
-		transition-timing-function: cubic-bezier(0.56, 0.48, 0.16, 1);
-		&.collapsed {
-			transition-timing-function: cubic-bezier(0.08, 1.12, 0.3, 0.97);
-		}
 	}
 
 	.nav {
@@ -52,10 +68,13 @@
 
 		display: flex;
 		justify-content: center;
+		align-items: center;
 
-		padding: 0.33rem 0.5rem;
+		height: $header-height;
 
 		background: var(--bg-b, #282a36);
+
+		font-family: var(--font-a);
 
 		.dots {
 			position: absolute;
@@ -117,6 +136,8 @@
 	}
 
 	&:hover {
+		cursor: grab;
+
 		.dots {
 			filter: saturate(1);
 		}
@@ -124,6 +145,10 @@
 		.title {
 			color: var(--fg-c, #c3c4c7);
 		}
+	}
+
+	&:active {
+		cursor: grabbing;
 	}
 }
 
@@ -151,8 +176,11 @@
 }
 
 pre.shiki-wrapper {
-	height: var(--height, fit-content);
-	padding: var(--padding-sm, 0.5rem);
+	height: var(--height, 100%);
+	max-height: $max-height;
+	padding: 0 var(--padding-sm, 0.5rem);
+	padding-top: 0rem;
+	margin: 0;
 
 	box-shadow: var(--shadow-inset);
 	overflow: auto;
@@ -179,6 +207,10 @@ pre.shiki code span.line {
 
 pre.shiki {
 	overflow-x: visible;
+	cursor: auto;
+	::selection {
+		background: var(--fg-b);
+	}
 }
 
 $scrollbar-width: 7px;
@@ -193,7 +225,7 @@ pre.shiki-wrapper::-webkit-scrollbar {
 	background: transparent; /* make scrollbar transparent */
 }
 pre.shiki-wrapper::-webkit-scrollbar-thumb {
-	border: 1px solid var(--bg-a);
+	// border: 1px solid var(--bg-a);
 	background: var(--bg-b);
 	border-radius: 0.125rem;
 
@@ -221,6 +253,6 @@ div.code-window > div.codeblock > pre > pre > code,
 div.code-window > div.codeblock > * {
 	font-family: var(--font-mono) !important;
 	font-size: 0.9rem;
-	line-height: 1.25rem !important;
+	line-height: 1.1rem !important;
 	font-variation-settings: 'wght' 500 !important;
 }
