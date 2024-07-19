@@ -4,7 +4,6 @@ import type { ThemerOptions } from './styles/themer/Themer'
 import type { FolderOptions, FolderPreset } from './Folder'
 import type { ResizableOptions } from './shared/resizable'
 import type { DraggableOptions } from './shared/draggable'
-import type { PrimitiveState } from './shared/state'
 import type { Placement } from './shared/place'
 import type { Commit } from './UndoManager'
 
@@ -14,6 +13,7 @@ import theme_flat from './styles/themes/flat'
 import style from './styles/gooey.css'
 
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager'
+import { persist, type PersistedValue } from './shared/persist'
 import { deepMergeOpts } from './shared/deepMergeOpts'
 import { resolveOpts } from './shared/resolveOpts'
 import { PresetManager } from './PresetManager'
@@ -25,7 +25,6 @@ import { select } from './shared/select'
 import { nanoid } from './shared/nanoid'
 import { Logger } from './shared/logger'
 import { create } from './shared/create'
-import { state } from './shared/state'
 import { place } from './shared/place'
 import { isSafari } from './shared/ua'
 import { Folder } from './Folder'
@@ -161,6 +160,12 @@ export interface GooeyOptions {
 	 * @internal
 	 */
 	_themer?: Themer
+
+	/**
+	 * Any {@link FolderOptions} for the builtin global settings folder.
+	 * @default { closed: true }
+	 */
+	settingsFolder?: Partial<FolderOptions>
 }
 
 export interface GooeyStorageOptions {
@@ -261,8 +266,18 @@ export const GUI_DEFAULTS = {
 	resizable: true,
 	draggable: true,
 	loadDefaultFont: true,
+	settingsFolder: { closed: true },
 } as const satisfies GooeyOptions
+
+/**
+ * Methods inherited from {@link Folder} to forward to the gooey.
+ * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
+ */
+// prettier-ignore
+const FORWARDED_METHODS = ['on','add','addMany','addButtonGrid','addSelect','addButton','addText','addNumber','addSwitch','addColor','bind','bindMany','bindButtonGrid','bindSelect','bindButton','bindText','bindNumber','bindSwitch','bindColor'] as const satisfies Array<keyof Folder>
 //⌟
+
+export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {}
 
 /**
  * The root Gooey instance.  This is the entry point for creating
@@ -283,11 +298,6 @@ export class Gooey {
 	opts: GooeyOptions & { storage: GooeyStorageOptions | false }
 
 	/**
-	 * Whether the gooey root folder is currently collapsed.
-	 */
-	closed: PrimitiveState<boolean>
-
-	/**
 	 * The {@link PresetManager} instance for the gooey.
 	 */
 	presetManager!: PresetManager
@@ -300,7 +310,6 @@ export class Gooey {
 	wrapper!: HTMLElement
 	container!: HTMLElement
 	settingsFolder: Folder
-	static settingsFolderTitle = 'gooey-settings-folder'
 
 	/**
 	 * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
@@ -312,7 +321,6 @@ export class Gooey {
 	// themeEditor?: ThemeEditor
 	windowManager?: WindowManager
 
-	private static _initialized = false
 	/**
 	 * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
 	 * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
@@ -332,32 +340,24 @@ export class Gooey {
 	private _honeymoon: false | 1000 = 1000
 	private _theme!: GooeyOptions['theme']
 	private _log: Logger
+	private _closedMap: PersistedValue<Record<string, boolean>>
+
+	private static _initialized = false
 
 	// Forwarding the Folder API...
-	on: Folder['on']
-	addFolder(title: string, options?: Partial<FolderOptions>) {
-		if (this._honeymoon && this._birthday - Date.now() < 1000) {
-			this._honeymoon = false
-			this._reveal(true)
-		}
+	// on: Folder['on']
 
-		return this.folder.addFolder(title, {
-			...options,
-			// @ts-expect-error @internal
-			gooey: this,
-		})
-	}
-	bind: Folder['bind']
-	bindMany: Folder['bindMany']
-	add: Folder['add']
-	addMany: Folder['addMany']
-	addButtonGrid: Folder['addButtonGrid']
-	addSelect: Folder['addSelect']
-	addButton: Folder['addButton']
-	addText: Folder['addText']
-	addNumber: Folder['addNumber']
-	addSwitch: Folder['addSwitch']
-	addColor: Folder['addColor']
+	// bind: Folder['bind']
+	// bindMany: Folder['bindMany']
+	// add: Folder['add']
+	// addMany: Folder['addMany']
+	// addButtonGrid: Folder['addButtonGrid']
+	// addSelect: Folder['addSelect']
+	// addButton: Folder['addButton']
+	// addText: Folder['addText']
+	// addNumber: Folder['addNumber']
+	// addSwitch: Folder['addSwitch']
+	// addColor: Folder['addColor']
 
 	constructor(options?: Partial<GooeyOptions>) {
 		//· Setup ················································································¬
@@ -374,14 +374,11 @@ export class Gooey {
 		}) as GooeyOptions
 
 		opts.container ??= document.body
-
-		let reposition = false
-		/** Resolve storage separately since {@link GUI_DEFAULTS.storage} is `false`.  */
-
 		if (typeof opts.storage === 'object') {
 			opts.storage = Object.assign({}, GUI_STORAGE_DEFAULTS, opts.storage)
 		}
 
+		let reposition = false
 		const storageOpts = resolveOpts(opts.storage, GUI_STORAGE_DEFAULTS)
 		if (storageOpts) {
 			opts.storage = {
@@ -403,7 +400,7 @@ export class Gooey {
 		this._log.fn('constructor').info({ options, opts })
 
 		if (this.opts.loadDefaultFont !== false) {
-			const ff = new FontFace(
+			const fredoka = new FontFace(
 				'fredoka',
 				`url(${encodeURI?.(
 					'https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2',
@@ -418,7 +415,27 @@ export class Gooey {
 				},
 			)
 
-			ff.load().then(font => {
+			fredoka.load().then(font => {
+				// @ts-expect-error - ¯\_(ツ)_/¯
+				document.fonts.add(font)
+			})
+
+			const inconsolata = new FontFace(
+				'inconsolata',
+				`url(${encodeURI?.(
+					'https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2',
+				)})`,
+				{
+					style: 'normal',
+					display: 'swap',
+					weight: '300 700',
+					stretch: '75% 125%',
+					unicodeRange:
+						'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
+				},
+			)
+
+			inconsolata.load().then(font => {
 				// @ts-expect-error - ¯\_(ツ)_/¯
 				document.fonts.add(font)
 			})
@@ -434,6 +451,9 @@ export class Gooey {
 			parent: this.container,
 		})
 
+		this._closedMap = persist('gooey::closed-map', {})
+		this._closedMap
+
 		this.folder = new Folder({
 			...this.opts,
 			__type: 'FolderOptions',
@@ -443,19 +463,31 @@ export class Gooey {
 		})
 
 		// Not stoked about this.
-		this.on = this.folder.on.bind(this.folder)
-		// this.addFolder = this.folder.addFolder.bind(this.folder)
-		this.bind = this.folder.bind.bind(this.folder)
-		this.bindMany = this.folder.bindMany.bind(this.folder)
-		this.add = this.folder.add.bind(this.folder)
-		this.addMany = this.folder.addMany.bind(this.folder)
-		this.addButtonGrid = this.folder.addButtonGrid.bind(this.folder)
-		this.addSelect = this.folder.addSelect.bind(this.folder)
-		this.addButton = this.folder.addButton.bind(this.folder)
-		this.addText = this.folder.addText.bind(this.folder)
-		this.addNumber = this.folder.addNumber.bind(this.folder)
-		this.addSwitch = this.folder.addSwitch.bind(this.folder)
-		this.addColor = this.folder.addColor.bind(this.folder)
+		// this.on = this.folder.on.bind(this.folder)
+		// // this.addFolder = this.folder.addFolder.bind(this.folder)
+		// this.bind = this.folder.bind.bind(this.folder)
+		// this.bindMany = this.folder.bindMany.bind(this.folder)
+		// this.add = this.folder.add.bind(this.folder)
+		// this.addMany = this.folder.addMany.bind(this.folder)
+		// this.addButtonGrid = this.folder.addButtonGrid.bind(this.folder)
+		// this.addSelect = this.folder.addSelect.bind(this.folder)
+		// this.addButton = this.folder.addButton.bind(this.folder)
+		// this.addText = this.folder.addText.bind(this.folder)
+		// this.addNumber = this.folder.addNumber.bind(this.folder)
+		// this.addSwitch = this.folder.addSwitch.bind(this.folder)
+		// this.addColor = this.folder.addColor.bind(this.folder)
+		// this.bindButtonGrid = this.folder.addButtonGrid.bind(this.folder)
+		// this.bindSelect = this.folder.addSelect.bind(this.folder)
+		// this.bindButton = this.folder.addButton.bind(this.folder)
+		// this.bindText = this.folder.addText.bind(this.folder)
+		// this.bindNumber = this.folder.addNumber.bind(this.folder)
+		// this.bindSwitch = this.folder.addSwitch.bind(this.folder)
+		// this.bindColor = this.folder.addColor.bind(this.folder)
+
+		for (const key of FORWARDED_METHODS) {
+			// @ts-expect-error - ¯\_(ツ)_/¯
+			this[key] = this.folder[key].bind(this.folder)
+		}
 
 		const handleUndoRedo = (e: KeyboardEvent) => {
 			if (globalThis.navigator?.userAgent?.match(/mac/i)) {
@@ -480,20 +512,21 @@ export class Gooey {
 		addEventListener('keydown', handleUndoRedo)
 		//⌟
 
-		this.closed = state(!!this.opts.closed, {
-			key: this.opts.storage ? `${this.opts.storage.key}::closed` : undefined,
-		})
-
-		this.folder.elements.toolbar.settingsButton = this._createSettingsButton(
+		// this.closed = state(closedMap[this.folder.title] ?? !!opts.closed, {
+		// 	key: this.opts.storage ? `${this.opts.storage.key}::closed` : undefined,
+		// })
+		const { button, updateIcon } = this._createSettingsButton(
 			this.folder.elements.toolbar.container,
 		)
+		this.folder.elements.toolbar.settingsButton = button
 
-		this.settingsFolder = this.addFolder(Gooey.settingsFolderTitle, {
-			closed: true,
+		this.settingsFolder = this.addFolder('gooey_settings_folder', {
 			// @ts-expect-error @internal
 			_headerless: true,
+			...opts.settingsFolder,
 		})
 		this.settingsFolder.element.classList.add('gooey-folder-alt')
+		updateIcon()
 
 		this.themer = this.opts._themer ?? this._createThemer(this.settingsFolder)
 		this.theme = this.opts.theme
@@ -507,7 +540,7 @@ export class Gooey {
 		return this
 	}
 
-	private async _reveal(reposition: boolean) {
+	private async _reveal(reposition: boolean): Promise<void> {
 		// In case dispose() was called before this resolved...
 		if (!this.container) return
 
@@ -553,7 +586,233 @@ export class Gooey {
 		}
 	}
 
-	private _createPresetManager(settingsFolder: Folder) {
+	get title(): string {
+		return this.folder.title
+	}
+	set title(v: string) {
+		this.folder.title = v
+	}
+
+	get closed(): Folder['closed'] {
+		return this.folder.closed
+	}
+
+	get inputs() {
+		return this.folder.inputs
+	}
+	get allInputs() {
+		// todo - Don't love this..
+		return new Map(
+			[...this.folder.allInputs.entries()].filter(
+				([k]) => !k.startsWith('ui') && !k.startsWith('presets'),
+			),
+		)
+	}
+
+	get window(): WindowInstance | undefined {
+		return this.windowManager?.windows.get(this.folder.element.id)
+	}
+
+	set theme(theme: GooeyTheme) {
+		this._theme = theme
+		this.folder.element.setAttribute('theme', theme)
+		this.folder.element.setAttribute('mode', this.themer.mode.value)
+	}
+	get theme() {
+		return this._theme!
+	}
+
+	public addFolder(title: string, options?: Partial<FolderOptions>) {
+		if (this._honeymoon && this._birthday - Date.now() < 1000) {
+			this._honeymoon = false
+			this._reveal(true)
+		}
+
+		return this.folder.addFolder(title, {
+			...options,
+			// @ts-expect-error @internal
+			gooey: this,
+		})
+	}
+
+	/**
+	 * Saves the current gooey state as a preset.
+	 */
+	save(
+		/**
+		 * The title of the preset.
+		 */
+		title: string,
+		/**
+		 * A unique id for the preset.
+		 * @defaultValue {@link nanoid|nanoid(10)}
+		 */
+		id = nanoid(10),
+	) {
+		this._log.fn('save').info({ title, id })
+		const preset: GooeyPreset = {
+			__type: 'GooeyPreset',
+			__version: 0,
+			id,
+			title,
+			data: this.folder.save(),
+		} as const
+
+		return preset
+	}
+
+	/**
+	 * Loads a given preset into the gooey, updating all inputs.
+	 */
+	load(preset: GooeyPreset | Record<string, any>) {
+		this._log.fn('load').info({ preset })
+
+		// todo - this isn't working, it's being unset immediately somewhere...
+		this.dirty = false
+
+		this._lockCommits(preset as GooeyPreset)
+		this.folder.load(preset.data)
+		Promise.resolve().then(() => this._unlockCommits())
+	}
+
+	private _undoLock = false
+	private _lockCommit: { from: GooeyPreset | undefined } = { from: undefined }
+
+	/**
+	 * Commits a change to the input's value to the undo manager.
+	 */
+	private _commit(commit: Partial<Commit>) {
+		if (this._undoLock) {
+			this._log.fn('commit').info('LOCKED: prevented commit while locked')
+			return
+		}
+		this._log.fn('commit').info('commited', commit)
+		this._undoManager?.commit(commit as Commit)
+	}
+
+	/**
+	 * Prevents the input from registering undo history, storing the initial
+	 * for the eventual commit in {@link _unlockCommits}.
+	 */
+	private _lockCommits = (from: GooeyPreset) => {
+		this._undoManager.lockedExternally = true
+		this._lockCommit.from = from
+		this._log.fn(o('lock')).info('commit', { from, lockCommit: this._lockCommit })
+	}
+
+	/**
+	 * Unlocks commits and saves the current commit stored in lock.
+	 */
+	private _unlockCommits = (commit?: Partial<Commit>) => {
+		commit ??= {}
+		commit.target ??= this as any
+		commit.from ??= this._lockCommit.from
+
+		this._undoManager.lockedExternally = false
+		this._commit(commit)
+
+		this._log.fn(o('unlock')).info('commit', { commit, lockCommit: this._lockCommit })
+	}
+
+	private _createThemer(folder: Folder) {
+		this._log.fn('createThemer').info({ folder })
+		let finalThemer = undefined as Themer | undefined
+		const themer = this.opts._themer
+		const themerOptions: Partial<ThemerOptions> = {
+			localStorageKey: this.opts.storage ? this.opts.storage.key + '::themer' : undefined,
+			mode: this.opts.themeMode,
+			autoInit: !this.themer,
+			persistent: !!(this.opts.storage && this.opts.storage.theme),
+			themes: this.opts.themes,
+			theme: this.opts.themes.find(t => t.title === this.opts.theme),
+			vars: GUI_VARS,
+		}
+		themerOptions.vars = deepMergeOpts([GUI_VARS, themerOptions.vars])
+
+		if (themer) {
+			finalThemer = themer
+		} else {
+			themerOptions.wrapper = this.wrapper
+			finalThemer = new Themer(this.folder.element, themerOptions)
+		}
+
+		const uiFolder = folder.addFolder('ui')
+
+		// Fully desaturate the ui folder's header connector to svg.
+		uiFolder.on('mount', () => {
+			uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
+			uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
+		})
+
+		if (folder) {
+			// uiFolder.bindSelect(finalThemer, 'theme', {
+			// 	labelKey: 'title',
+			// 	options: finalThemer.themes.value,
+			// })
+			const themeInput = uiFolder.addSelect('theme', finalThemer.themes.value, {
+				labelKey: 'title',
+				initialValue: finalThemer.theme.value,
+			})
+			themeInput.on('change', v => {
+				finalThemer.theme.set(v.value)
+			})
+
+			uiFolder.addButtonGrid(
+				'mode',
+				[
+					['light', 'dark', 'system'].map(m => ({
+						text: m,
+						onClick: () => finalThemer?.mode.set(m as ThemeMode),
+						active: () => finalThemer?.mode.value === m,
+					})),
+				],
+				{
+					activeOnClick: true,
+				},
+			)
+		}
+
+		return finalThemer
+	}
+
+	private _createSettingsButton(parent: HTMLElement): {
+		button: HTMLButtonElement
+		updateIcon: () => void
+	} {
+		const button = create<'button', any, HTMLButtonElement>('button', {
+			parent,
+			classes: ['gooey-toolbar-item', 'gooey-settings-button'],
+			innerHTML: settingsIcon,
+			tooltip: {
+				text: () => {
+					return this.settingsFolder?.closed.value ? 'Open Settings' : 'Close Settings'
+				},
+				placement: 'left',
+				delay: 750,
+				delayOut: 0,
+				hideOnClick: true,
+			},
+		})
+
+		const updateIcon = () => {
+			this.folder.elements.toolbar.settingsButton?.classList.toggle(
+				'open',
+				!this.settingsFolder.closed.value,
+			)
+		}
+
+		button.addEventListener('click', () => {
+			this.settingsFolder.toggle()
+
+			updateIcon()
+
+			if (this.folder.closed) this.folder.open()
+		})
+
+		return { button, updateIcon }
+	}
+
+	private _createPresetManager(settingsFolder: Folder): PresetManager {
 		const { presets, defaultPreset, storage } = this.opts
 		let localStorageKey: string | undefined
 		if (typeof storage === 'object' && storage.presets) {
@@ -570,7 +829,7 @@ export class Gooey {
 	private _createWindowManager(
 		options: Partial<GooeyOptions>,
 		storageOpts: typeof this.opts.storage,
-	) {
+	): WindowManager {
 		if (this.windowManager) return this.windowManager // ??
 
 		let dragOpts = undefined as Partial<DraggableOptions> | undefined
@@ -630,201 +889,11 @@ export class Gooey {
 		this._isWindowManagerOwner = true
 
 		windowManager.add(this.folder.element, {
+			// The rest of the options will be inherited from the WindowManager instance.
 			id: this.id,
-			// The rest of the options will inherit from the WindowManager instance.
 		})
 
 		return windowManager
-	}
-
-	get inputs() {
-		return this.folder.inputs
-	}
-	get allInputs() {
-		// todo - Don't love this..
-		return new Map(
-			[...this.folder.allInputs.entries()].filter(
-				([k]) => !k.startsWith('ui') && !k.startsWith('presets'),
-			),
-		)
-	}
-
-	get window(): WindowInstance | undefined {
-		return this.windowManager?.windows.get(this.folder.element.id)
-	}
-
-	set theme(theme: GooeyTheme) {
-		this._theme = theme
-		this.folder.element.setAttribute('theme', theme)
-		this.folder.element.setAttribute('mode', this.themer.mode.value)
-	}
-	get theme() {
-		return this._theme!
-	}
-
-	/**
-	 * Saves the current gooey state as a preset.
-	 */
-	save(
-		/**
-		 * The title of the preset.
-		 */
-		title: string,
-		/**
-		 * A unique id for the preset.
-		 * @defaultValue {@link nanoid|nanoid(10)}
-		 */
-		id = nanoid(10),
-	) {
-		const preset: GooeyPreset = {
-			__type: 'GooeyPreset',
-			__version: 0,
-			id,
-			title,
-			data: this.folder.save(),
-		} as const
-
-		return preset
-	}
-
-	/**
-	 * Loads a given preset into the gooey, updating all inputs.
-	 */
-	load(preset: GooeyPreset) {
-		this._log.fn('load').info({ preset })
-
-		// todo - this isn't working, it's being unset immediately somewhere...
-		this.dirty = false
-
-		this.lockCommits(preset)
-		this.folder.load(preset.data)
-		Promise.resolve().then(() => this.unlockCommits())
-	}
-
-	_undoLock = false
-	lockCommit: { from: GooeyPreset | undefined } = { from: undefined }
-
-	/**
-	 * Commits a change to the input's value to the undo manager.
-	 */
-	commit(commit: Partial<Commit>) {
-		if (this._undoLock) {
-			this._log.fn('commit').info('LOCKED: prevented commit while locked')
-			return
-		}
-		this._log.fn('commit').info('commited', commit)
-		this._undoManager?.commit(commit as Commit)
-	}
-
-	/**
-	 * Prevents the input from registering undo history, storing the initial
-	 * for the eventual commit in {@link unlockCommits}.
-	 */
-	private lockCommits = (from: GooeyPreset) => {
-		this._undoManager.lockedExternally = true
-		this.lockCommit.from = from
-		this._log.fn(o('lock')).info('commit', { from, lockCommit: this.lockCommit })
-	}
-
-	/**
-	 * Unlocks commits and saves the current commit stored in lock.
-	 */
-	private unlockCommits = (commit?: Partial<Commit>) => {
-		commit ??= {}
-		commit.target ??= this as any
-		commit.from ??= this.lockCommit.from
-
-		this._undoManager.lockedExternally = false
-		this.commit(commit)
-
-		this._log.fn(o('unlock')).info('commit', { commit, lockCommit: this.lockCommit })
-	}
-
-	private _createThemer(folder: Folder) {
-		this._log.fn('createThemer').info({ folder })
-		let finalThemer = undefined as Themer | undefined
-		const themer = this.opts._themer
-		const themerOptions: Partial<ThemerOptions> = {
-			localStorageKey: this.opts.storage ? this.opts.storage.key + '::themer' : undefined,
-			mode: this.opts.themeMode,
-			autoInit: !this.themer,
-			persistent: !!(this.opts.storage && this.opts.storage.theme),
-			themes: this.opts.themes,
-			theme: this.opts.themes.find(t => t.title === this.opts.theme),
-			vars: GUI_VARS,
-		}
-		themerOptions.vars = deepMergeOpts([GUI_VARS, themerOptions.vars])
-
-		if (themer) {
-			finalThemer = themer
-		} else {
-			themerOptions.wrapper = this.wrapper
-			finalThemer = new Themer(this.folder.element, themerOptions)
-		}
-
-		const uiFolder = folder.addFolder('ui', { closed: true })
-
-		// Fully desaturate the ui folder's header connector to svg.
-		uiFolder.on('mount', () => {
-			uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
-			uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
-		})
-
-		if (folder) {
-			uiFolder.addSelect<Theme>({
-				title: 'theme',
-				labelKey: 'title',
-				options: finalThemer.themes.value,
-				binding: {
-					target: finalThemer,
-					key: 'theme',
-				},
-			})
-
-			uiFolder.addButtonGrid({
-				title: 'mode',
-				activeOnClick: true,
-				value: [
-					['light', 'dark', 'system'].map(m => ({
-						text: m,
-						onClick: () => finalThemer?.mode.set(m as ThemeMode),
-						active: () => finalThemer?.mode.value === m,
-					})),
-				],
-			})
-		}
-
-		return finalThemer
-	}
-
-	private _createSettingsButton(parent: HTMLElement) {
-		const button = create<'button', any, HTMLButtonElement>('button', {
-			parent,
-			classes: ['gooey-toolbar-item', 'gooey-settings-button'],
-			innerHTML: settingsIcon,
-			tooltip: {
-				text: () => {
-					return this.settingsFolder?.closed.value ? 'Open Settings' : 'Close Settings'
-				},
-				placement: 'left',
-				delay: 750,
-				delayOut: 0,
-				hideOnClick: true,
-			},
-		})
-
-		button.addEventListener('click', () => {
-			this.settingsFolder.toggle()
-
-			this.folder.elements.toolbar.settingsButton?.classList.toggle(
-				'open',
-				!this.settingsFolder.closed.value,
-			)
-
-			if (this.folder.closed) this.folder.open()
-		})
-
-		return button
 	}
 
 	dispose = () => {
@@ -833,8 +902,8 @@ export class Gooey {
 		// this.themeEditor?.dispose()
 		if (this._isWindowManagerOwner) {
 			this.windowManager?.dispose()
-			this.container?.remove()
 		}
+		this.presetManager.folder.dispose()
 		this.settingsFolder?.dispose()
 		this.folder?.dispose()
 	}
