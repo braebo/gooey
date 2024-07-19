@@ -26,3 +26,5 @@ export type { InputText, TextInputOptions } from './inputs/InputText'
 // Shared
 
 export { Logger, logger } from './shared/logger'
+
+export { WindowManager } from './shared/WindowManager'
