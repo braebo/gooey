@@ -574,9 +574,7 @@ export class Tooltip {
 	}
 
 	dispose() {
-		if (this._watchTimeout) {
-			clearTimeout(this._watchTimeout)
-		}
+		clearTimeout(this._watchTimeout)
 
 		this._evm.dispose()
 		this.element?.remove()
@@ -605,6 +603,8 @@ export class Tooltip {
 
 			text-align: center;
 			font-size: var(--font-size-sm, 12px);
+			font-family: var(--gooey-font, var(--font-a, 'fredoka'));
+			letter-spacing: 1px;
 
 			z-index: 1000;
 			pointer-events: none;
