@@ -72,6 +72,8 @@ export class PresetManager {
 			key: this.opts.localStorageKey + '::active',
 		})
 
+		this._log.fn('constructor').debug('activePreset', this.activePreset.value)
+
 		this.presets = state(this.opts.presets ?? [], {
 			key: this.opts.localStorageKey,
 		})
@@ -104,7 +106,8 @@ export class PresetManager {
 		}
 		this._initialized = true
 
-		this.folder = await this.addGooey(this.parentFolder, this.opts.defaultPreset)
+		await Promise.resolve()
+		this.folder = await this.addGui(this.parentFolder, this.opts.defaultPreset)
 
 		return this
 	}
@@ -168,25 +171,21 @@ export class PresetManager {
 		return defaultPreset
 	}
 
-	async addGooey(parentFolder: Folder, defaultPreset?: GooeyPreset) {
+	async addGui(parentFolder: Folder, defaultPreset?: GooeyPreset) {
 		this._log.fn('add').debug({ this: this, parentFolder, defaultPreset })
 
 		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
 
 		const presetsFolder = parentFolder.addFolder('presets', {
-			closed: true,
-			// hidden: false,
-			// children: [],
+			saveable: false,
 			// @ts-expect-error - @internal
 			gooey: this.gooey,
 		})
 
-		// todo - use this class and remove all that styling 🍝
 		presetsFolder.element.classList.add('gooey-folder-alt')
 
 		// Fully desaturate the presets folder's header connector to svg.
 		presetsFolder.on('mount', () => {
-			// presetsFolder.graphics!.connector!.update()
 			presetsFolder.graphics!.connector!.svg.style.setProperty('filter', 'saturate(0.1)')
 			presetsFolder.graphics!.icon.style.setProperty('filter', 'saturate(0)')
 		})
@@ -261,8 +260,9 @@ export class PresetManager {
 			/*html*/ `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="gooey-icon gooey-icon-${name}">${contents}</svg>`
 
 		//? Preset Management Buttons
-		this._manageInput = presetsFolder.addButtonGrid({
-			value: [
+		this._manageInput = presetsFolder.addButtonGrid(
+			'',
+			[
 				[
 					{
 						text: 'update',
@@ -401,15 +401,15 @@ export class PresetManager {
 					},
 				],
 			],
-			order: 1,
-			resettable: false,
-			disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,
-		})
+			{
+				order: 1,
+				resettable: false,
+				disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,
+			},
+		)
 
 		//? Presets Select Input
-		this._presetsInput = presetsFolder.addSelect({
-			__type: 'SelectInputOptions',
-			options: this.presets.value,
+		this._presetsInput = presetsFolder.addSelect('', this.presets.value, {
 			labelKey: 'title',
 			order: -1,
 			value: this.activePreset.value,
