@@ -341,23 +341,7 @@ export class Gooey {
 	private _theme!: GooeyOptions['theme']
 	private _log: Logger
 	private _closedMap: PersistedValue<Record<string, boolean>>
-
 	private static _initialized = false
-
-	// Forwarding the Folder API...
-	// on: Folder['on']
-
-	// bind: Folder['bind']
-	// bindMany: Folder['bindMany']
-	// add: Folder['add']
-	// addMany: Folder['addMany']
-	// addButtonGrid: Folder['addButtonGrid']
-	// addSelect: Folder['addSelect']
-	// addButton: Folder['addButton']
-	// addText: Folder['addText']
-	// addNumber: Folder['addNumber']
-	// addSwitch: Folder['addSwitch']
-	// addColor: Folder['addColor']
 
 	constructor(options?: Partial<GooeyOptions>) {
 		//· Setup ················································································¬
@@ -462,28 +446,7 @@ export class Gooey {
 			gooey: this,
 		})
 
-		// Not stoked about this.
-		// this.on = this.folder.on.bind(this.folder)
-		// // this.addFolder = this.folder.addFolder.bind(this.folder)
-		// this.bind = this.folder.bind.bind(this.folder)
-		// this.bindMany = this.folder.bindMany.bind(this.folder)
-		// this.add = this.folder.add.bind(this.folder)
-		// this.addMany = this.folder.addMany.bind(this.folder)
-		// this.addButtonGrid = this.folder.addButtonGrid.bind(this.folder)
-		// this.addSelect = this.folder.addSelect.bind(this.folder)
-		// this.addButton = this.folder.addButton.bind(this.folder)
-		// this.addText = this.folder.addText.bind(this.folder)
-		// this.addNumber = this.folder.addNumber.bind(this.folder)
-		// this.addSwitch = this.folder.addSwitch.bind(this.folder)
-		// this.addColor = this.folder.addColor.bind(this.folder)
-		// this.bindButtonGrid = this.folder.addButtonGrid.bind(this.folder)
-		// this.bindSelect = this.folder.addSelect.bind(this.folder)
-		// this.bindButton = this.folder.addButton.bind(this.folder)
-		// this.bindText = this.folder.addText.bind(this.folder)
-		// this.bindNumber = this.folder.addNumber.bind(this.folder)
-		// this.bindSwitch = this.folder.addSwitch.bind(this.folder)
-		// this.bindColor = this.folder.addColor.bind(this.folder)
-
+		// Poor-mans inheritance...
 		for (const key of FORWARDED_METHODS) {
 			// @ts-expect-error - ¯\_(ツ)_/¯
 			this[key] = this.folder[key].bind(this.folder)
@@ -512,9 +475,6 @@ export class Gooey {
 		addEventListener('keydown', handleUndoRedo)
 		//⌟
 
-		// this.closed = state(closedMap[this.folder.title] ?? !!opts.closed, {
-		// 	key: this.opts.storage ? `${this.opts.storage.key}::closed` : undefined,
-		// })
 		const { button, updateIcon } = this._createSettingsButton(
 			this.folder.elements.toolbar.container,
 		)
