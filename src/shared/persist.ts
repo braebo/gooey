@@ -1,3 +1,10 @@
+export type PersistedValue<T> = {
+	get(): T
+	set(newValue: T): void
+	update(cb: (v: T) => T): void
+	value: T
+}
+
 /**
  * Persists a value in localStorage.
  * @returns An object with a `get` and `set` method that syncs with localStorage.
@@ -34,7 +41,7 @@ export function persist<T>(
 	 * @default false
 	 */
 	quiet = false,
-) {
+): PersistedValue<T> {
 	const bail = () => {
 		if (typeof localStorage === 'undefined') {
 			if (!quiet) console.warn(`localStorage is not available for key "${key}"`)
@@ -44,15 +51,22 @@ export function persist<T>(
 		}
 	}
 
+	let value = initialValue
+
 	return {
 		get(): T {
-			if (bail()) return initialValue!
+			if (bail()) return value!
 			const storedValue = localStorage.getItem(key)
-			return storedValue ? JSON.parse(storedValue) : initialValue
+			return storedValue ? JSON.parse(storedValue) : value
 		},
 		set(newValue: T) {
 			if (bail()) return
+			// if (value === newValue) return
+			value = newValue
 			localStorage.setItem(key, JSON.stringify(newValue))
+		},
+		update(cb: (v: T) => T) {
+			this.set(cb(this.get()))
 		},
 		get value() {
 			return this.get()
