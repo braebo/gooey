@@ -206,7 +206,7 @@ export class Resizable {
 			fg: 'GreenYellow',
 			deferred: false,
 		})
-		this.#log.fn('constructor').info({ opts: this.opts, this: this })
+		this.#log.fn('constructor').debug({ opts: this.opts, this: this })
 
 		this.node.classList.add('fractils-resizable')
 
