@@ -294,8 +294,13 @@
 
 //· Gooey Root ·································································¬
 
+.gooey-root * {
+	box-sizing: border-box;
+}
+
 .gooey-root {
 	contain: content;
+
 	position: absolute;
 	display: flex;
 	flex-direction: column;
@@ -364,6 +369,8 @@
 }
 
 .gooey-root > .gooey-content-wrapper > .gooey-content {
+	box-sizing: border-box;
+
 	display: flex;
 	flex-direction: column;
 
@@ -416,6 +423,7 @@
 .gooey-controller-text,
 .gooey-controller-switch,
 .gooey-controller-button {
+	box-sizing: border-box;
 	color: var(--gooey-controller-dim_color);
 	background: var(--gooey-controller-dim_background);
 
