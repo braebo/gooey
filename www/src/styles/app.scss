@@ -6,7 +6,25 @@
 
 $mobile: 900px;
 
+::view-transition-new(*) {
+	animation-duration: 0.15s;
+}
+::view-transition-old(*) {
+	animation-duration: 0.15s;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation: none;
+	mix-blend-mode: normal;
+	display: block;
+	scale: 1;
+	transform: scale(1);
+}
+
 :root {
+	view-transition-name: none;
+
 	--mobile: #{$mobile};
 
 	--font: 1rem;

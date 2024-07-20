@@ -1,7 +1,5 @@
 /// <reference types="mdsvex/globals" />
 
-// See https://kit.svelte.dev/docs/types#app
-// for information about these interfaces
 declare global {
 	namespace App {
 		interface Locals {
@@ -9,6 +7,7 @@ declare global {
 		}
 		interface PageData {
 			theme: 'light' | 'dark' | 'system'
+			routes: Array<keyof typeof import('../.svelte-kit/types/route_meta_data.json')>
 		}
 		// interface Platform {}
 	}

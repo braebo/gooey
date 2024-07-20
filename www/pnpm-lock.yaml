@@ -95,6 +95,9 @@ importers:
       svelte-preprocess:
         specifier: 6.0.2
         version: 6.0.2(postcss-load-config@6.0.1(postcss@8.4.39))(postcss@8.4.39)(pug@3.0.3)(sass@1.77.6)(svelte@5.0.0-next.182)(typescript@5.5.3)
+      sveltekit-view-transition:
+        specifier: ^0.5.3
+        version: 0.5.3(@sveltejs/kit@2.5.18(@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.182)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.6)))(svelte@5.0.0-next.182)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.6)))(svelte@5.0.0-next.182)
       tslib:
         specifier: 2.6.3
         version: 2.6.3
@@ -1487,6 +1490,12 @@ packages:
   svelte@5.0.0-next.182:
     resolution: {integrity: sha512-gut9qrZmxPo0eTL6YvVCPwPUFbfDSIABoqYGh4V0l0nuF+QyImcMgMwOcVr1VUpwRH+Zoem5EBNFBfNhPJY6fQ==}
     engines: {node: '>=18'}
+
+  sveltekit-view-transition@0.5.3:
+    resolution: {integrity: sha512-qm8NDhpgIyiM3TJfO26iMGZWcWW3/GqsX9KctNWJaZ5ySdnkzZ4p74fkYWelaM2LLEpLDJqzouQLyrgnbszfVA==}
+    peerDependencies:
+      '@sveltejs/kit': ^1.20.4 || ^2.0.0
+      svelte: ^4.0.0 || ^5.0.0
 
   svgo@3.3.2:
     resolution: {integrity: sha512-OoohrmuUlBs8B8o6MB2Aevn+pRIH9zDALSR+6hhqVfa6fRwG/Qw9VUMSMW9VNg2CFc/MTIfabtdOVl9ODIJjpw==}
@@ -2973,6 +2982,11 @@ snapshots:
       locate-character: 3.0.0
       magic-string: 0.30.10
       zimmerframe: 1.1.2
+
+  sveltekit-view-transition@0.5.3(@sveltejs/kit@2.5.18(@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.182)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.6)))(svelte@5.0.0-next.182)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.6)))(svelte@5.0.0-next.182):
+    dependencies:
+      '@sveltejs/kit': 2.5.18(@sveltejs/vite-plugin-svelte@3.1.1(svelte@5.0.0-next.182)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.6)))(svelte@5.0.0-next.182)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.6))
+      svelte: 5.0.0-next.182
 
   svgo@3.3.2:
     dependencies:
