@@ -120,7 +120,7 @@ export type DraggableOptions = {
 	 * The margin in pixels to apply to the initial position.
 	 * @default 0
 	 */
-	margin: number
+	margin: number | { x: number; y: number }
 
 	/**
 	 * An element or selector (or any combination of the two) for element(s) inside
@@ -242,7 +242,7 @@ export const DRAGGABLE_DEFAULTS: DraggableOptions = {
  */
 export class Draggable {
 	static initialized = false
-	opts: DraggableOptions
+	opts: DraggableOptions & { margin: { x: number; y: number } }
 
 	/**
 	 * Disables user interaction with the draggable element.
@@ -335,7 +335,13 @@ export class Draggable {
 		public node: HTMLElement,
 		options?: Partial<DraggableOptions>,
 	) {
-		this.opts = Object.assign({}, DRAGGABLE_DEFAULTS, options)
+		const { margin } = options ?? DRAGGABLE_DEFAULTS
+		const m: { x: number; y: number } =
+			typeof margin === 'number'
+				? { x: margin, y: margin }
+				: Object.assign({ x: 0, y: 0 }, margin)
+
+		this.opts = Object.assign({}, DRAGGABLE_DEFAULTS, options, { margin: m })
 
 		this._log = new Logger('draggable ' + Array.from(this.node.classList).join('.'), {
 			fg: 'SkyBlue',
@@ -623,6 +629,7 @@ export class Draggable {
 	 * for collisions with {@link obstacleEls obstacles} or {@link boundsRect bounds}.
 	 */
 	moveTo(target: { x: number; y: number }) {
+		if (this.disabled || this.disposed) return
 		this._log.fn('moveTo').debug('Moving to:', target, { bounds: this.bounds })
 
 		if (this.bounds) {
@@ -719,10 +726,10 @@ export class Draggable {
 	 * - `{x,y}` -> itself *(merged with {@link DRAGGABLE_DEFAULTS.position}*
 	 * if it's a partial.)
 	 */
-	resolvePosition(pos: DraggableOptions['position']) {
+	resolvePosition(pos: DraggableOptions['position']): { x: number; y: number } {
 		const defaultPos = DRAGGABLE_DEFAULTS.position as { x: number; y: number }
 
-		if (!pos) {
+		if (!pos || this.disposed) {
 			return defaultPos
 		}
 
@@ -734,7 +741,10 @@ export class Draggable {
 		}
 
 		if (typeof pos === 'object' && ('x' in pos || 'y' in pos)) {
-			return { ...defaultPos, ...pos }
+			return {
+				x: (pos.x ?? defaultPos.x) + this.opts.margin.x,
+				y: (pos.y ?? defaultPos.y) + this.opts.margin.y,
+			}
 		}
 
 		throw new Error('Invalid position: ' + JSON.stringify(pos), {
@@ -750,6 +760,7 @@ export class Draggable {
 	 * function that updates the {@link bounds} property when called.
 	 */
 	private _resolveBounds(optsBounds: DraggableOptions['bounds']): () => void {
+		if (this.disposed) return () => void 0
 		const resolveUpdater = () => {
 			if (!optsBounds) return () => void 0
 
@@ -838,7 +849,9 @@ export class Draggable {
 		this.node.dispatchEvent(new CustomEvent('update', { detail: this }))
 	}
 
+	disposed = false
 	dispose() {
+		this.disposed = true
 		this._evm.dispose()
 	}
 }
