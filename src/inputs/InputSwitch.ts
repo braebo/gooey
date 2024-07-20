@@ -193,6 +193,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 	}
 
 	dispose() {
+		this.elements.controllers.input.tooltip?.dispose()
 		super.dispose()
 	}
 }

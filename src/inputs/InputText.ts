@@ -33,10 +33,6 @@ export class InputText extends Input<string, TextInputOptions, TextControllerEle
 	readonly initialValue: string
 	readonly state: State<string>
 
-	// get element() {
-	// 	return this.elements.controllers.input
-	// }
-
 	#log: Logger
 
 	constructor(options: Partial<TextInputOptions>, folder: Folder) {
