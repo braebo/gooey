@@ -214,7 +214,7 @@ export class InputButtonGrid extends Input<
 			this.set(button)
 		})
 
-		this.buttons.set(id, btn)
+		this.buttons.set(text() ?? id, btn)
 
 		return btn
 	}
