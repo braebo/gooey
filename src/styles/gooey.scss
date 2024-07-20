@@ -626,7 +626,7 @@
 	padding: 0.1rem 0.75rem;
 	line-height: 1.5rem;
 
-	font-family: var(--gooey-font, var(--font-d));
+	font-family: var(--gooey-font-family, var(--font-d));
 	font-size: calc(var(--gooey-font-size) * 0.8);
 	letter-spacing: 0.5px;
 	color: var(--gooey-fg-d);
