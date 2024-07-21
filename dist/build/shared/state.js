@@ -99,8 +99,7 @@ function state(defaultValue, options) {
     };
 }
 function isState(v) {
-    // if (typeof v === 'undefined') return false
-    return v.isState === true;
+    return typeof v === 'object' && v.isState === true;
 }
 function fromState(state) {
     return (isState(state) ? state.value : state);

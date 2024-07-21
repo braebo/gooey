@@ -6,7 +6,7 @@ import { Input } from './Input';
 export type ButtonClickFunction = (this: InputButton) => void;
 export type ButtonInputOptions = InputOptions<ButtonClickFunction> & {
     readonly __type?: 'ButtonInputOptions';
-    text: string | (() => string);
+    text?: string | (() => string);
     /**
      * The function to call when the button is clicked.
      */

@@ -124,7 +124,7 @@ export declare class Select<T> {
      * @param option The option to add.
      * @returns The id of the added option.
      */
-    add(option: Option<T>): this;
+    add<O extends T>(option: Option<O>): this;
     /**
      * Removes an option from the select controller by id.
      */

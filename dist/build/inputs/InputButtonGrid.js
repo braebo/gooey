@@ -118,7 +118,7 @@ class InputButtonGrid extends Input {
         btn.on('click', ({ button }) => {
             this.set(button);
         });
-        this.buttons.set(id, btn);
+        this.buttons.set(text() ?? id, btn);
         return btn;
     }
     set(button) {

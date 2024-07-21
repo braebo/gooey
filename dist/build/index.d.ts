@@ -16,3 +16,4 @@ export type { InputNumber, NumberInputOptions } from './inputs/InputNumber';
 export type { InputColor, ColorInputOptions } from './inputs/InputColor';
 export type { InputText, TextInputOptions } from './inputs/InputText';
 export { Logger, logger } from './shared/logger';
+export { WindowManager } from './shared/WindowManager';

@@ -118,7 +118,7 @@ class Themer {
                     ? select(node)[0] ?? document.documentElement
                     : node;
         this._log = new Logger(`themer ${this.node.classList[0]}`, { fg: 'DarkCyan' });
-        this._log.fn(g('constructor')).info({ node, opts, this: this });
+        this._log.fn(g('constructor')).debug({ node, opts, this: this });
         this.theme = state(resolveTheme(opts.theme, opts.vars));
         this.themes = state(opts.themes.map(t => {
             return resolveTheme(t, opts.vars);

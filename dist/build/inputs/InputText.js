@@ -13,9 +13,6 @@ class InputText extends Input {
     __type = 'InputText';
     initialValue;
     state;
-    // get element() {
-    // 	return this.elements.controllers.input
-    // }
     #log;
     constructor(options, folder) {
         const opts = Object.assign({}, TEXT_INPUT_DEFAULTS, options);

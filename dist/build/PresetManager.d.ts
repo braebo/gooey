@@ -49,7 +49,7 @@ export declare class PresetManager {
     private _renamePreset;
     private _resolveUnusedTitle;
     private _resolveDefaultPreset;
-    addGooey(parentFolder: Folder, defaultPreset?: GooeyPreset): Promise<Folder>;
+    addGui(parentFolder: Folder, defaultPreset?: GooeyPreset): Promise<Folder>;
     /**
      * Updates a preset if it exists, adds it as a new preset if not, or creates a new one from the
      * current state and adds it if none is provided.

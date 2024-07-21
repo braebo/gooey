@@ -127,7 +127,11 @@ class Draggable {
     _log;
     constructor(node, options) {
         this.node = node;
-        this.opts = Object.assign({}, DRAGGABLE_DEFAULTS, options);
+        const { margin } = options ?? DRAGGABLE_DEFAULTS;
+        const m = typeof margin === 'number'
+            ? { x: margin, y: margin }
+            : Object.assign({ x: 0, y: 0 }, margin);
+        this.opts = Object.assign({}, DRAGGABLE_DEFAULTS, options, { margin: m });
         this._log = new Logger('draggable ' + Array.from(this.node.classList).join('.'), {
             fg: 'SkyBlue',
         });
@@ -347,6 +351,8 @@ class Draggable {
      * for collisions with {@link obstacleEls obstacles} or {@link boundsRect bounds}.
      */
     moveTo(target) {
+        if (this.disabled || this.disposed)
+            return;
         this._log.fn('moveTo').debug('Moving to:', target, { bounds: this.bounds });
         if (this.bounds) {
             target.x = clamp(target.x, this.bounds.left, this.bounds.right - (this.rect.right - this.rect.left));
@@ -421,7 +427,7 @@ class Draggable {
      */
     resolvePosition(pos) {
         const defaultPos = DRAGGABLE_DEFAULTS.position;
-        if (!pos) {
+        if (!pos || this.disposed) {
             return defaultPos;
         }
         if (typeof pos === 'string') {
@@ -431,7 +437,10 @@ class Draggable {
             });
         }
         if (typeof pos === 'object' && ('x' in pos || 'y' in pos)) {
-            return { ...defaultPos, ...pos };
+            return {
+                x: (pos.x ?? defaultPos.x) + this.opts.margin.x,
+                y: (pos.y ?? defaultPos.y) + this.opts.margin.y,
+            };
         }
         throw new Error('Invalid position: ' + JSON.stringify(pos), {
             cause: {
@@ -445,6 +454,8 @@ class Draggable {
      * function that updates the {@link bounds} property when called.
      */
     _resolveBounds(optsBounds) {
+        if (this.disposed)
+            return () => void 0;
         const resolveUpdater = () => {
             if (!optsBounds)
                 return () => void 0;
@@ -514,7 +525,9 @@ class Draggable {
     _emitUpdate = () => {
         this.node.dispatchEvent(new CustomEvent('update', { detail: this }));
     };
+    disposed = false;
     dispose() {
+        this.disposed = true;
         this._evm.dispose();
     }
 }

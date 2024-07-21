@@ -7,13 +7,11 @@ export declare const ORBS_PRESETS: [{
         readonly __type: "FolderPreset";
         readonly id: "Orbs";
         readonly title: "Orbs";
-        readonly closed: false;
         readonly hidden: false;
         readonly children: [{
             readonly __type: "FolderPreset";
             readonly id: "base";
             readonly title: "base";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [];
             readonly inputs: [{
@@ -48,7 +46,6 @@ export declare const ORBS_PRESETS: [{
             readonly __type: "FolderPreset";
             readonly id: "motion";
             readonly title: "motion";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [];
             readonly inputs: [{
@@ -101,13 +98,11 @@ export declare const ORBS_PRESETS: [{
             readonly __type: "FolderPreset";
             readonly id: "appearance";
             readonly title: "appearance";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [{
                 readonly __type: "FolderPreset";
                 readonly id: "glow";
                 readonly title: "glow";
-                readonly closed: false;
                 readonly hidden: false;
                 readonly children: [];
                 readonly inputs: [{
@@ -197,13 +192,11 @@ export declare const ORBS_PRESETS: [{
         readonly __type: "FolderPreset";
         readonly id: "Orbs";
         readonly title: "Orbs";
-        readonly closed: false;
         readonly hidden: false;
         readonly children: [{
             readonly __type: "FolderPreset";
             readonly id: "base";
             readonly title: "base";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [];
             readonly inputs: [{
@@ -238,7 +231,6 @@ export declare const ORBS_PRESETS: [{
             readonly __type: "FolderPreset";
             readonly id: "motion";
             readonly title: "motion";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [];
             readonly inputs: [{
@@ -291,13 +283,11 @@ export declare const ORBS_PRESETS: [{
             readonly __type: "FolderPreset";
             readonly id: "appearance";
             readonly title: "appearance";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [{
                 readonly __type: "FolderPreset";
                 readonly id: "glow";
                 readonly title: "glow";
-                readonly closed: false;
                 readonly hidden: false;
                 readonly children: [];
                 readonly inputs: [{
@@ -387,13 +377,11 @@ export declare const ORBS_PRESETS: [{
         readonly __type: "FolderPreset";
         readonly id: "Orbs";
         readonly title: "Orbs";
-        readonly closed: false;
         readonly hidden: false;
         readonly children: [{
             readonly __type: "FolderPreset";
             readonly id: "base";
             readonly title: "base";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [];
             readonly inputs: [{
@@ -428,7 +416,6 @@ export declare const ORBS_PRESETS: [{
             readonly __type: "FolderPreset";
             readonly id: "motion";
             readonly title: "motion";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [];
             readonly inputs: [{
@@ -481,13 +468,11 @@ export declare const ORBS_PRESETS: [{
             readonly __type: "FolderPreset";
             readonly id: "appearance";
             readonly title: "appearance";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [{
                 readonly __type: "FolderPreset";
                 readonly id: "glow";
                 readonly title: "glow";
-                readonly closed: false;
                 readonly hidden: false;
                 readonly children: [];
                 readonly inputs: [{
@@ -577,13 +562,11 @@ export declare const ORBS_PRESETS: [{
         readonly __type: "FolderPreset";
         readonly id: "Orbs";
         readonly title: "Orbs";
-        readonly closed: false;
         readonly hidden: false;
         readonly children: [{
             readonly __type: "FolderPreset";
             readonly id: "base";
             readonly title: "base";
-            readonly closed: true;
             readonly hidden: false;
             readonly children: [];
             readonly inputs: [{
@@ -618,7 +601,6 @@ export declare const ORBS_PRESETS: [{
             readonly __type: "FolderPreset";
             readonly id: "motion";
             readonly title: "motion";
-            readonly closed: true;
             readonly hidden: false;
             readonly children: [];
             readonly inputs: [{
@@ -671,13 +653,11 @@ export declare const ORBS_PRESETS: [{
             readonly __type: "FolderPreset";
             readonly id: "appearance";
             readonly title: "appearance";
-            readonly closed: false;
             readonly hidden: false;
             readonly children: [{
                 readonly __type: "FolderPreset";
                 readonly id: "glow";
                 readonly title: "glow";
-                readonly closed: true;
                 readonly hidden: false;
                 readonly children: [];
                 readonly inputs: [{

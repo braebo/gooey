@@ -109,7 +109,10 @@ export type DraggableOptions = {
      * The margin in pixels to apply to the initial position.
      * @default 0
      */
-    margin: number;
+    margin: number | {
+        x: number;
+        y: number;
+    };
     /**
      * An element or selector (or any combination of the two) for element(s) inside
      * the parent node upon which dragging should be disabled when clicked.
@@ -198,7 +201,12 @@ export declare const DRAGGABLE_DEFAULTS: DraggableOptions;
 export declare class Draggable {
     node: HTMLElement;
     static initialized: boolean;
-    opts: DraggableOptions;
+    opts: DraggableOptions & {
+        margin: {
+            x: number;
+            y: number;
+        };
+    };
     /**
      * Disables user interaction with the draggable element.
      */
@@ -360,6 +368,7 @@ export declare class Draggable {
     private _emitDragEnd;
     private _emitDrag;
     private _emitUpdate;
+    disposed: boolean;
     dispose(): void;
 }
 /**

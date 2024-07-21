@@ -121,6 +121,7 @@ class InputSwitch extends Input {
         return this;
     }
     dispose() {
+        this.elements.controllers.input.tooltip?.dispose();
         super.dispose();
     }
 }

@@ -1,4 +1,4 @@
-import { InputButtonGrid } from './inputs/InputButtonGrid.js';
+import { DEV } from './external/.pnpm/esm-env@1.0.0/external/esm-env/prod-ssr.js';
 import { InputSwitch } from './inputs/InputSwitch.js';
 import { InputButton } from './inputs/InputButton.js';
 import { InputSelect } from './inputs/InputSelect.js';
@@ -6,9 +6,11 @@ import { InputNumber } from './inputs/InputNumber.js';
 import { InputColor } from './inputs/InputColor.js';
 import { InputText } from './inputs/InputText.js';
 import { isLabeledOption } from './controllers/Select.js';
+import { InputButtonGrid } from './inputs/InputButtonGrid.js';
 import { animateConnector, createFolderSvg, createFolderConnector } from './svg/createFolderSVG.js';
 import { composedPathContains } from './shared/cancelClassFound.js';
 import { isColor, isColorFormat } from './shared/color/color.js';
+import { state, fromState } from './shared/state.js';
 import { EventManager } from './shared/EventManager.js';
 import './svg/TerminalSvg.js';
 import { Search } from './toolbar/Search.js';
@@ -16,10 +18,15 @@ import { create } from './shared/create.js';
 import { select } from './shared/select.js';
 import { Logger } from './shared/logger.js';
 import { nanoid } from './shared/nanoid.js';
-import { state } from './shared/state.js';
 import { toFn } from './shared/toFn.js';
-import { Gooey } from './Gooey.js';
-import { DEV } from './external/.pnpm/esm-env@1.0.0/external/esm-env/prod-ssr.js';
+import './styles/themes/default.js';
+import './styles/themes/scout.js';
+import './styles/themes/flat.js';
+import './svg/RenameSVG.js';
+import './shared/Tooltip.js';
+import './svg/SaveSVG.js';
+import './styles/themer/defaultTheme.js';
+import './styles/GOOEY_VARS.js';
 
 // The custom-regions extension is recommended for this file.
 //⌟
@@ -88,13 +95,14 @@ class Folder {
      * All inputs added to this folder.
      */
     inputs = new Map();
+    inputIdMap = new Map();
     /**
      * The root folder.  All folders have a reference to the same root folder.
      */
     root;
     parentFolder;
     settingsFolder;
-    closed = state(false);
+    closed;
     element;
     elements = {};
     graphics;
@@ -151,7 +159,10 @@ class Folder {
         this._title = opts.title ?? '';
         this.element = this._createElement(opts);
         this.elements = this._createElements(this.element);
-        this.presetId = this.resolvePresetId(opts);
+        this.presetId = this._resolvePresetId();
+        // @ts-expect-error @internal
+        let closed = this.gooey._closedMap.get()[this.presetId];
+        this.closed = state(closed ?? opts.closed ?? false);
         this.saveable = !!opts.saveable;
         if (this.isRoot || opts.searchable) {
             new Search(this);
@@ -160,9 +171,6 @@ class Folder {
             // We need to bypass animations so I can get the rect.
             this.element.classList.add('instant');
             this.initialHeight = this.element.scrollHeight;
-            // if (this.initialHeight === 0) {
-            // 	console.error(`${this.title} has a height of 0.`, this.element)
-            // }
             this.initialHeaderHeight = this.elements.header.scrollHeight;
             if (this.initialHeaderHeight === 0) {
                 console.error(`${this.title} header has a height of 0.`, this.elements.header);
@@ -178,6 +186,11 @@ class Folder {
             this.evm.add(this.closed.subscribe(v => {
                 v ? this.close() : this.open();
                 this.evm.emit('toggle', v);
+                // @ts-expect-error @internal
+                this.gooey._closedMap.update(m => {
+                    m[this.presetId] = v;
+                    return m;
+                });
             }));
             if (opts.closed) {
                 this.closed.set(opts.closed);
@@ -342,6 +355,7 @@ class Folder {
     open(updateState = false) {
         this._log.fn('open').debug();
         this.element.classList.remove('closed');
+        this.evm.emit('toggle', false);
         if (updateState)
             this.closed.set(false);
         this._clicksDisabled = false;
@@ -354,6 +368,7 @@ class Folder {
         this.element.classList.add('closed');
         if (updateState)
             this.closed.set(true);
+        this.evm.emit('toggle', true);
         this._clicksDisabled = false;
         this.#toggleAnimClass();
         animateConnector(this, 'close');
@@ -384,26 +399,25 @@ class Folder {
     };
     //⌟
     //·· Save/Load ···············································································¬
-    resolvePresetId = (opts) => {
-        this._log.fn('resolvePresetId').debug({ opts, this: this });
-        const getPaths = (folder) => {
-            if (folder.isRootFolder.bind(folder) || !(folder.parentFolder === this))
-                return [folder.title];
-            return [...getPaths(folder.parentFolder), folder.title];
-        };
-        const paths = getPaths(this);
-        let presetId = opts?.presetId || paths.join('__');
-        presetId = Folder._presetIdMap.get(presetId) ?? presetId;
-        if (!presetId) {
-            let i = 0;
-            for (const child of this.allChildren) {
-                if (child.presetId == presetId)
-                    i++;
+    _resolvePresetId = (identifiers = [], opts) => {
+        const parts = [];
+        let id = opts?.presetId;
+        if (!id) {
+            let folder = this;
+            while (!folder.isRoot) {
+                parts.unshift(folder.title);
+                folder = folder.parentFolder;
             }
-            if (i > 0)
-                presetId += i;
+            parts.unshift(this.root.title);
         }
-        return presetId;
+        id ??= [...parts, ...identifiers].join('__');
+        let i = 0;
+        while (this.inputs.has(id)) {
+            i++;
+            id = i ? `${id}_${i}` : id;
+        }
+        this._log.fn('resolvePresetId', this.title, ...identifiers).debug({ id, opts, this: this });
+        return id;
     };
     save() {
         this._log.fn('save').debug({ this: this });
@@ -414,10 +428,10 @@ class Folder {
             __type: 'FolderPreset',
             id: this.presetId,
             title: this.title,
-            closed: this.closed.value,
+            // closed: this.closed.value,
             hidden: toFn(this._hidden)(),
             children: this.children
-                .filter(c => c.title !== Gooey.settingsFolderTitle && c.saveable)
+                .filter(c => c.title !== this.gooey.settingsFolder.title && c.saveable)
                 .map(child => child.save()),
             inputs: Array.from(this.inputs.values())
                 .filter(i => i.opts.saveable)
@@ -432,7 +446,7 @@ class Folder {
      */
     load(preset) {
         this._log.fn('load').debug({ preset, this: this });
-        this.closed.set(preset.closed);
+        // this.closed.set(preset.closed)
         this.hidden = preset.hidden;
         for (const child of this.children) {
             const data = preset.children?.find(f => f.id === child.presetId);
@@ -469,11 +483,43 @@ class Folder {
         this.evm.emit('refresh');
         return this;
     }
-    add(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
+    /**
+     * Registers all new inputs by adding them to the {@link inputs|folder inputs} map, updating
+     * the internal preset-id map, and and refreshing the folder icon (debounced slightly).
+     */
+    _registerInput(input, presetId) {
+        // this.inputs.set(presetId, input)
+        let i = 0;
+        let titleId = input.title;
+        while (this.inputs.has(titleId)) {
+            titleId = `${input.title}_${i}`;
+            i++;
+        }
+        this.inputs.set(titleId, input);
+        Folder._presetIdMap.set(input.id, presetId);
+        this._refreshIcon();
+        return input;
+    }
+    /**
+     * Takes in a title, value, and options, and return an updated options object.
+     *
+     * Updates:
+     * - {@link InputOptions.title|`title`}
+     * - {@link InputOptions.value|`value`}
+     * - {@link InputOptions.presetId|`presetId`}
+     */
+    _resolveOpts(t, v, o) {
+        o ??= {};
+        o.title ??= t;
+        if (v)
+            o.value ??= v;
+        o.presetId ??= this._resolvePresetId([t]);
+        return o;
+    }
+    add(title, initialValue, options) {
+        const opts = this._resolveOpts(title, initialValue, options);
         const input = this._createInput(opts);
-        const id = this._resolveId(input);
-        this.inputs.set(id, input);
+        this.inputs.set(opts.presetId, input);
         this._refreshIcon();
         return input;
     }
@@ -483,7 +529,7 @@ class Folder {
         for (const [key, value] of Object.entries(obj)) {
             if (typeof value === 'object') {
                 if (isColor(value)) {
-                    this.addColor({ title: key, value });
+                    this.addColor(key, value);
                     continue;
                 }
                 const subFolder = folder.addFolder(key);
@@ -491,36 +537,17 @@ class Folder {
             }
             else {
                 const opts = {
-                    title: key,
-                    value,
                     binding: {
                         target: obj,
                         key,
                     },
                 };
-                if (typeof value === 'number') {
-                    if (value > 0) {
-                        opts.max = value * 2;
-                        opts.step = value / 10;
-                        opts.min = 0;
-                    }
-                    else if (value == 0) {
-                        opts.min = -1;
-                        opts.step = 0.01;
-                        opts.max = 1;
-                    }
-                    else {
-                        opts.min = value * 2;
-                        opts.step = value / 10;
-                        opts.max = 0;
-                    }
-                }
-                this.add(opts);
+                this.add(key, value, opts);
             }
         }
         return this;
     }
-    //· Bind ···································································¬
+    //·· Bind ···································································¬
     /**
      * Binds an input to a target object and key.  The input will automatically update the target
      * object's key when the input value changes.
@@ -530,27 +557,26 @@ class Folder {
      * of the value at the {@link target} object's {@link key}.
      * @example
      * ```ts
-     * const gooey = new Gooey()
-     * const params = { foo: 5, bar: 'baz' }
-     * const folder = gooey.addFolder('params')
+     * const gui = new Gooey()
      *
-     * const numberInput = folder.bind(params, 'foo', { min: 0, max: 10, step: 1 })
-     * //    ^? `InputNumber`
+     * // Some state.
+     * const params = { foo: 5, bar: 'baz', qux: true }
      *
-     * const textInput = folder.bind(params, 'bar', { maxLength: 50 })
-     * //    ^? `InputText`
+     * const numberInput = gui.bind(params, 'foo', { min: 0, max: 10, step: 1 })
+     * //    ^? InputNumber
+     *
+     * // By default, the `title` is inferred from the key.
+     * // To override it, use the `title` option:
+     * const switchInput = gui.bind(params, 'qux', { title: 'Kwucks' })
      * ```
      */
-    bind(target, key, options) {
-        const value = target[key];
-        const opts = options ?? {};
-        opts.title ??= key;
-        opts.binding = { target, key, initial: value };
+    bind(target, key, options = {}) {
+        const title = options.title ?? key;
+        const opts = this._resolveOpts(title, target[key], options);
+        opts.value ??= target[key];
+        opts.binding = { target, key, initial: opts.value };
         const input = this._createInput(opts);
-        const id = this._resolveId(input);
-        this.inputs.set(id, input);
-        Folder._presetIdMap.set(input.id, id);
-        this._refreshIcon();
+        this._registerInput(input, opts.presetId);
         return input;
     }
     /**
@@ -578,12 +604,12 @@ class Folder {
         if (!this._transientRoot) {
             this._transientRoot = rootFolder;
         }
-        if ('folderOptions' in options)
-            console.log('folderOptions in value:', options);
         for (const [key, value] of Object.entries(target)) {
+            const l = key === 'themes' ? console.warn : () => { };
             const inputOptions = options[key] || {};
             let folderOptions = {};
             if (typeof value === 'object') {
+                l('themes A');
                 if (isColor(value)) {
                     this.bindColor(value, 'color', { title: key, ...inputOptions });
                 }
@@ -598,7 +624,13 @@ class Folder {
                     subFolder.bindMany(value, inputOptions);
                 }
             }
+            else if ('options' in inputOptions) {
+                l('themes B');
+                // let selectOptions = inputOptions as SelectInputOptions<T>
+                this.bindSelect(target, key, inputOptions);
+            }
             else {
+                l('themes C');
                 this.bind(target, key, inputOptions);
             }
         }
@@ -606,107 +638,129 @@ class Folder {
         this._transientRoot = null;
         return finalRoot;
     }
-    addNumber(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
+    //⌟
+    //·· Adders ···································································¬
+    /**
+     * Adds a new {@link InputNumber} to the folder.
+     * @example
+     * ```ts
+     * const number = gui.addNumber('Foo', true)
+     * number.on('change', console.log)
+     * ```
+     */
+    addNumber(title, value, options = {}) {
+        const opts = this._resolveOpts(title, value, options);
         const input = new InputNumber(opts, this);
-        this.inputs.set(input.id, input);
-        this._refreshIcon();
-        return input;
+        return this._registerInput(input, opts.presetId);
     }
-    bindNumber(titleOrTarget, keyOrOptions, options) {
-        const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
-        const input = new InputNumber(opts, this);
-        this.inputs.set(input.title, input);
-        this._refreshIcon();
-        return input;
+    bindNumber(target, key, options) {
+        const opts = this._resolveBinding(target, key, options);
+        return this.addNumber(key, opts.value, opts);
     }
-    addText(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
+    addText(title, value, options) {
+        const opts = this._resolveOpts(title, value, options);
         const input = new InputText(opts, this);
-        this.inputs.set(input.id, input);
-        this._refreshIcon();
-        return input;
+        return this._registerInput(input, opts.presetId);
     }
-    bindText(titleOrTarget, keyOrOptions, options) {
-        const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
-        const input = new InputText(opts, this);
-        this.inputs.set(input.title, input);
-        this._refreshIcon();
-        return input;
+    bindText(target, key, options) {
+        const opts = this._resolveBinding(target, key, options);
+        return this.addText(key, opts.value, opts);
     }
-    addColor(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
+    addColor(title, value, options) {
+        const opts = this._resolveOpts(title, value, options);
         const input = new InputColor(opts, this);
-        this.inputs.set(input.id, input);
-        this._refreshIcon();
-        return input;
+        return this._registerInput(input, opts.presetId);
     }
-    bindColor(titleOrTarget, keyOrOptions, options) {
-        const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
-        const input = new InputColor(opts, this);
-        this.inputs.set(input.title, input);
-        this._refreshIcon();
-        return input;
+    bindColor(target, key, options) {
+        const opts = this._resolveBinding(target, key, options);
+        return this.addColor(key, opts.value, opts);
     }
-    addButton(titleOrOptions, optionsOrOnclick, maybeOptions) {
-        let options = typeof optionsOrOnclick === 'function' ? maybeOptions : optionsOrOnclick;
-        const opts = this._resolveOptions(titleOrOptions, options);
-        if (typeof optionsOrOnclick === 'function') {
-            opts.onClick ??= optionsOrOnclick;
+    addButton(title, onclick, options) {
+        const opts = this._resolveOpts(title, onclick, options);
+        const input = new InputButton(opts, this);
+        return this._registerInput(input, opts.presetId);
+    }
+    /**
+     * Passes the function at `target[key]` to {@link addButton} as the `onclick` handler.
+     */
+    bindButton(target, key, options) {
+        return this.addButton(key, target[key], options);
+    }
+    addButtonGrid(title, value, options) {
+        const opts = this._resolveOpts(title, value, options);
+        const input = new InputButtonGrid(opts, this);
+        return this._registerInput(input, opts.presetId);
+    }
+    bindButtonGrid(target, key, options) {
+        return this.addButtonGrid(key, target[key], options);
+    }
+    /**
+     * Adds a new {@link InputSelect} to the folder.
+     * @example
+     * ```ts
+     * // For primitives:
+     * gui.addSelect('theme', ['light', 'dark'], { initialValue: 'light' })
+     *
+     * // For objects:
+     * const options = {
+     *   foo: { id: 0 },
+     *   bar: { id: 1 },
+     * }
+     *
+     * todo - Implement this -- will need to detect that the list has objects and pass a union of
+     * todo - their keys to the initialValue type or something?
+     * gui.addSelect('foobar', options, { initialValue: 'foo' })
+     * ```
+     */
+    addSelect(title, array, 
+    // options?: SelectInputOptions<T> & { initialValue?: T },
+    options) {
+        const opts = this._resolveOpts(title, array, options);
+        opts.options = array;
+        opts.value =
+            options?.initialValue ?? fromState(array)?.at(0) ?? options?.binding?.initial;
+        if (!opts.value) {
+            console.warn('No value provided for select:', { title, array, options, opts });
+            throw new Error('No value provided for select.');
         }
-        const input = new InputButton(opts, this);
-        this.inputs.set(input.id, input);
-        this._refreshIcon();
-        return input;
+        return this._registerInput(new InputSelect(opts, this), opts.presetId);
     }
-    bindButton(titleOrTarget, keyOrOptions, options) {
-        const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
-        const input = new InputButton(opts, this);
-        this.inputs.set(input.title, input);
-        this._refreshIcon();
-        return input;
+    /**
+     * todo - Does this work / make sense?  It's just wrapping the list in a function.. which
+     * happens internally anyways... I'm not sure what binding to a select should do, other than
+     * ensure that the options array is regularly refreshed after interactions... but without a
+     * way to listen to changes on the target object's array (i.e. forcing or wrapping with a
+     * store), I'm not sure what the behavior should be.
+     */
+    bindSelect(target, key, options = {}) {
+        const opts = this._resolveBinding(target, key, options);
+        opts.value = target[key];
+        return this.addSelect(key, opts.options, opts);
     }
-    addButtonGrid(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
-        const input = new InputButtonGrid(opts, this);
-        this.inputs.set(input.id, input);
-        this._refreshIcon();
-        return input;
-    }
-    bindButtonGrid(titleOrTarget, keyOrOptions, options) {
-        const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
-        const input = new InputButtonGrid(opts, this);
-        this.inputs.set(input.title, input);
-        this._refreshIcon();
-        return input;
-    }
-    addSelect(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
-        const input = new InputSelect(opts, this);
-        this.inputs.set(input.id, input);
-        this._refreshIcon();
-        return input;
-    }
-    bindSelect(titleOrTarget, keyOrOptions, options) {
-        const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
-        const input = new InputSelect(opts, this);
-        this.inputs.set(input.title, input);
-        this._refreshIcon();
-        return input;
-    }
-    addSwitch(titleOrOptions, maybeOptions) {
-        const opts = this._resolveOptions(titleOrOptions, maybeOptions);
+    /**
+     * Adds a new {@link InputSwitch} to the folder.
+     * @example
+     * ```ts
+     * const switch = gui.addSwitch('Foo', true)
+     * switch.on('change', console.log)
+     * ```
+     */
+    addSwitch(title, value, options) {
+        const opts = this._resolveOpts(title, value, options);
         const input = new InputSwitch(opts, this);
-        this.inputs.set(input.id, input);
-        this._refreshIcon();
-        return input;
+        return this._registerInput(input, opts.presetId);
     }
-    bindSwitch(titleOrTarget, keyOrOptions, options) {
-        const opts = this._resolveBinding(titleOrTarget, keyOrOptions, options);
-        const input = new InputSwitch(opts, this);
-        this.inputs.set(input.title, input);
-        this._refreshIcon();
-        return input;
+    /**
+     * Binds an {@link InputSwitch} to the `boolean` at the target object's key.
+     * @example
+     * ```ts
+     * const params = { foo: true }
+     * const switch = gui.bindSwitch(params, 'foo')
+     * ```
+     */
+    bindSwitch(target, key, options) {
+        const opts = this._resolveBinding(target, key, options);
+        return this.addSwitch(key, opts.value, opts);
     }
     //⌟
     //·· Helpers ···································································¬
@@ -715,10 +769,8 @@ class Folder {
      * If no title was provided, this method will also assign the binding key to the title.
      * @returns The processed options.
      */
-    _validateOptions(options, validate) {
-        if (options.binding?.key && !options.title) {
-            options.title = options.binding.key;
-        }
+    _validateBinding(options, validate) {
+        options.title ??= options.binding?.key;
         // Some (hopefully) helpful error handling.
         if (validate) {
             const b = options.binding;
@@ -757,7 +809,7 @@ class Folder {
     _createInput(options) {
         this._log.fn('#createInput').debug(this);
         const type = this._resolveType(options);
-        options = this._validateOptions(options);
+        options = this._validateBinding(options, false);
         switch (type) {
             case 'InputText':
                 return new InputText(options, this);
@@ -774,38 +826,12 @@ class Folder {
         }
         throw new Error('Invalid input type: ' + type + ' for options: ' + options);
     }
-    _resolveId(input) {
-        this._log.fn('resolveId').debug({ input, this: this });
-        let title = input.title;
-        let i = 0;
-        while (this.inputs.has(title)) {
-            i++;
-            title = i ? `${input.title}_${i}` : title;
-        }
-        return title;
-    }
-    _resolveOptions(titleOrOptions, maybeOptions) {
-        const twoArgs = typeof titleOrOptions === 'string' && typeof maybeOptions === 'object';
-        const title = twoArgs ? titleOrOptions : maybeOptions?.title ?? '';
-        const options = twoArgs ? maybeOptions : titleOrOptions;
-        options.title ??= title;
-        return options;
-    }
-    _resolveBinding(titleOrTarget, keyOrOptions, options) {
-        let opts;
-        let shouldHaveValue = false;
-        if (typeof titleOrTarget === 'string') {
-            opts = keyOrOptions ?? {};
-            opts.title = titleOrTarget;
-        }
-        else {
-            shouldHaveValue = true;
-            const target = titleOrTarget;
-            const key = keyOrOptions;
-            opts = options ?? {};
-            opts.binding = { target, key, initial: target[key] };
-        }
-        return this._validateOptions(opts, shouldHaveValue);
+    _resolveBinding(target, key, options = {}) {
+        const title = options.title ?? key;
+        const opts = this._resolveOpts(title, target[key], options);
+        opts.binding = { target, key, initial: opts.value };
+        const res = this._validateBinding(opts, true);
+        return res;
     }
     _resolveType(options) {
         this._log.fn('resolveType').debug({ options, this: this });
@@ -961,10 +987,15 @@ class Folder {
         const depth = this._depth - 1;
         return i * 20 + depth * 80;
     }
+    #timeout;
     _refreshIcon() {
         this._log.fn('#refreshIcon').debug(this);
+        // Really don't love this...
         if (this.graphics) {
-            this.graphics.icon.replaceWith(createFolderSvg(this)); // Don't love this...
+            clearTimeout(this.#timeout);
+            this.#timeout = setTimeout(() => {
+                this.graphics?.icon.replaceWith(createFolderSvg(this)); // todo - not this
+            }, 1);
         }
     }
     //⌟
@@ -1033,9 +1064,9 @@ class Folder {
 // 	inference // works!
 // 	const gui = {} as Gooey
 // 	const bindManyTest = gui.bindMany(testTarget, {
-// 		bar: { title: 'Bar' },
+// 		foo: { min: 0, max: 10, step: 1 },
 // 		parent: {
-// 			child: 'foo',
+// 			child: { title: 'Child' },
 // 		},
 // 	})
 // 	bindManyTest

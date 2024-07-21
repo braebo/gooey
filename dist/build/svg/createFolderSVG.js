@@ -1,3 +1,5 @@
+import { nanoid } from '../shared/nanoid.js';
+
 // import { create } from '../shared/create'
 function createFolderSvg(folder) {
     const strokeWidth = 1;
@@ -141,6 +143,7 @@ function createFolderConnector(folder, icon) {
     const width = 20;
     const height = folder.element.scrollHeight;
     const stroke = 1;
+    const hash = nanoid();
     //? SVG
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('class', 'gooey-connector-svg');
@@ -162,7 +165,7 @@ function createFolderConnector(folder, icon) {
     //? Path Gradient
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
     const linearGradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-    linearGradient.setAttribute('id', 'gradient');
+    linearGradient.setAttribute('id', `gradient-${hash}`);
     linearGradient.setAttribute('x1', '0%');
     linearGradient.setAttribute('y1', '0%');
     linearGradient.setAttribute('x2', '0%');
@@ -180,7 +183,7 @@ function createFolderConnector(folder, icon) {
     stop(20, 0.3);
     stop(40, 0.2);
     stop(100, 0.2);
-    path.setAttribute('stroke', 'url(#gradient)');
+    path.setAttribute('stroke', `url(#gradient-${hash})`);
     //? Appending
     defs.appendChild(linearGradient);
     svg.insertBefore(defs, svg.firstChild);
@@ -201,28 +204,42 @@ function animateConnector(folder, action) {
     if (!folder.graphics?.connector)
         return Promise.resolve();
     const path = folder.graphics.connector.path;
-    const length = `${path.getTotalLength()}`;
-    path.style.strokeDasharray = `${length}`;
-    const { duration, from, to, delay, easing } = action === 'open'
+    const length = path.getTotalLength();
+    const config = action === 'open'
         ? {
-            duration: 600,
+            duration: 800,
             delay: 0,
-            from: length,
             easing: 'cubic-bezier(.29,.1,.03,.94)',
-            to: '0',
+            offset: {
+                from: length,
+                to: 0,
+            },
+            array: {
+                from: length,
+                to: length * 1.2,
+            },
         }
         : {
-            duration: 150,
+            duration: 250,
             delay: 0,
-            from: '0',
             easing: 'cubic-bezier(.15,.84,.19,.98)',
-            to: length,
+            offset: {
+                from: 0,
+                to: length,
+            },
+            array: {
+                from: length * 1.2,
+                to: length,
+            },
         };
-    const keyframes = [{ strokeDashoffset: from }, { strokeDashoffset: to }];
+    const keyframes = [
+        { strokeDashoffset: config.offset.from, strokeDasharray: config.array.from },
+        { strokeDashoffset: config.offset.to, strokeDasharray: config.array.to },
+    ];
     const timing = {
-        duration,
-        delay,
-        easing,
+        duration: config.duration,
+        delay: config.delay,
+        easing: config.easing,
         fill: 'forwards',
     };
     return folder.graphics.connector.path.animate(keyframes, timing).finished;

@@ -11,24 +11,11 @@ export type SelectInputOptions<T = ValidInputValue> = Omit<InputOptions<T | {
 }>, 'onChange' | 'value'> & {
     __type?: 'SelectInputOptions';
     onChange?: (value: LabeledOption<T>) => void;
-} & ({
-    labelKey?: never;
-    value?: {
-        label: string;
-        value: T;
-    };
-    options: {
-        label: string;
-        value: T;
-    }[] | (() => {
-        label: string;
-        value: T;
-    }[]);
-} | {
-    labelKey: keyof T;
+} & {
+    labelKey?: string;
     value?: T;
-    options: T[] | (() => T[]);
-});
+    options?: Array<T>;
+};
 export declare const SELECT_INPUT_DEFAULTS: SelectInputOptions;
 export interface SelectControllerElements<T> extends ElementMap {
     container: HTMLElement;
@@ -42,37 +29,34 @@ export interface SelectInputEvents<T> extends InputEvents<LabeledOption<T>> {
 }
 export interface InputSelect extends Disableable {
 }
-export declare class InputSelect<T = unknown> extends Input<LabeledOption<T>, SelectInputOptions<T>, SelectControllerElements<T>, SelectInputEvents<T>> {
+export declare class InputSelect<TValueType = any> extends Input<LabeledOption<TValueType>, SelectInputOptions<TValueType>, SelectControllerElements<TValueType>, SelectInputEvents<TValueType>> {
     #private;
     readonly __type: "InputSelect";
-    readonly initialValue: LabeledOption<T>;
-    state: State<LabeledOption<T>>;
+    readonly initialValue: LabeledOption<TValueType>;
+    state: State<LabeledOption<TValueType>>;
     set options(v: SelectInputOptions['options']);
-    get options(): LabeledOption<T>[];
+    get options(): LabeledOption<TValueType>[];
     /**
      * The select controller instance.
      */
-    select: Select<T>;
+    select: Select<TValueType>;
     /**
      * The currently selected option as a labeled option.
      */
-    labeledSelection: LabeledOption<T>;
+    labeledSelection: LabeledOption<TValueType>;
     private _log;
-    constructor(options: Partial<SelectInputOptions<T>>, folder: Folder);
-    resolveOptions(providedOptions: SelectInputOptions['options']): LabeledOption<T>[];
-    resolveInitialValue(opts: SelectInputOptions<T>): {
-        label: any;
-        value: any;
-    };
-    resolveInitialLabel(initialValue: this['initialValue'], opts: SelectInputOptions<T>): string;
+    constructor(options: Partial<SelectInputOptions<TValueType>>, folder: Folder);
+    resolveOptions(providedOptions: TValueType[]): LabeledOption<TValueType>[];
+    resolveInitialValue(opts: SelectInputOptions<TValueType>): LabeledOption<TValueType>;
+    resolveInitialLabel(initialValue: this['initialValue'], opts: SelectInputOptions<TValueType>): string;
     get targetObject(): Record<any, any> | undefined;
     get targetKey(): any;
-    get targetValue(): T;
-    set targetValue(v: T);
+    get targetValue(): TValueType;
+    set targetValue(v: TValueType);
     /**
      * Selects the given {@link LabeledOption} and updates the ui.
      */
-    set(value: LabeledOption<T>): this;
+    set(value: LabeledOption<TValueType>): this;
     enable(): this;
     disable(): this;
     refresh: () => this;

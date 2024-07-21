@@ -44,17 +44,23 @@ quiet = false) {
             return false;
         }
     };
+    let value = initialValue;
     return {
         get() {
             if (bail())
-                return initialValue;
+                return value;
             const storedValue = localStorage.getItem(key);
-            return storedValue ? JSON.parse(storedValue) : initialValue;
+            return storedValue ? JSON.parse(storedValue) : value;
         },
         set(newValue) {
             if (bail())
                 return;
+            // if (value === newValue) return
+            value = newValue;
             localStorage.setItem(key, JSON.stringify(newValue));
+        },
+        update(cb) {
+            this.set(cb(this.get()));
         },
         get value() {
             return this.get();

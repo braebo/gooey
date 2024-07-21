@@ -6,10 +6,10 @@ export interface PrimitiveState<T> extends Writable<T> {
     set(this: void, value: T): void;
     refresh(): void;
 }
-interface ArrayState<T> extends PrimitiveState<T[]> {
+export interface ArrayState<T> extends PrimitiveState<T[]> {
     push: (item: T) => void;
 }
-interface MapState<K, V> extends PrimitiveState<Map<K, V>> {
+export interface MapState<K, V> extends PrimitiveState<Map<K, V>> {
     /**
      * Set value and inform subscribers.
      *
@@ -19,13 +19,13 @@ interface MapState<K, V> extends PrimitiveState<Map<K, V>> {
     setKey: (key: K, value: V) => void;
     deleteKey: (key: K) => void;
 }
-interface SetState<T> extends PrimitiveState<Set<T>> {
+export interface SetState<T> extends PrimitiveState<Set<T>> {
     add: (item: T) => void;
     delete: (item: T) => void;
 }
-type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
-type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
-type UnionState<T> = {
+export type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
+export type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
+export type UnionState<T> = {
     set: (value: T) => void;
 } & Omit<PrimitiveState<T>, 'set'>;
 export type State<T> = IsUnion<T> extends true ? UnionState<T> : T extends Array<infer U> ? ArrayState<U> : T extends Map<infer K, infer V> ? MapState<K, V> : T extends Set<infer U> ? SetState<U> : PrimitiveState<T>;
@@ -82,4 +82,3 @@ export interface StateOptions<T> extends Partial<Writable<T>> {
 export declare function state<T>(defaultValue: T, options?: StateOptions<T>): State<T>;
 export declare function isState<T>(v: any): v is State<T>;
 export declare function fromState<T>(state: T | State<T>): T;
-export {};

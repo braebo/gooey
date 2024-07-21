@@ -1,3 +1,4 @@
+// todo - migrate these to the new format
 export const ORBS_PRESETS = [
     {
         __type: 'GooeyPreset',
@@ -8,14 +9,14 @@ export const ORBS_PRESETS = [
             __type: 'FolderPreset',
             id: 'Orbs',
             title: 'Orbs',
-            closed: false,
+            // closed: false,
             hidden: false,
             children: [
                 {
                     __type: 'FolderPreset',
                     id: 'base',
                     title: 'base',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [],
                     inputs: [
@@ -55,7 +56,7 @@ export const ORBS_PRESETS = [
                     __type: 'FolderPreset',
                     id: 'motion',
                     title: 'motion',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [],
                     inputs: [
@@ -115,14 +116,14 @@ export const ORBS_PRESETS = [
                     __type: 'FolderPreset',
                     id: 'appearance',
                     title: 'appearance',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [
                         {
                             __type: 'FolderPreset',
                             id: 'glow',
                             title: 'glow',
-                            closed: false,
+                            // closed: false,
                             hidden: false,
                             children: [],
                             inputs: [
@@ -225,14 +226,14 @@ export const ORBS_PRESETS = [
             __type: 'FolderPreset',
             id: 'Orbs',
             title: 'Orbs',
-            closed: false,
+            // closed: false,
             hidden: false,
             children: [
                 {
                     __type: 'FolderPreset',
                     id: 'base',
                     title: 'base',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [],
                     inputs: [
@@ -272,7 +273,7 @@ export const ORBS_PRESETS = [
                     __type: 'FolderPreset',
                     id: 'motion',
                     title: 'motion',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [],
                     inputs: [
@@ -332,14 +333,14 @@ export const ORBS_PRESETS = [
                     __type: 'FolderPreset',
                     id: 'appearance',
                     title: 'appearance',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [
                         {
                             __type: 'FolderPreset',
                             id: 'glow',
                             title: 'glow',
-                            closed: false,
+                            // closed: false,
                             hidden: false,
                             children: [],
                             inputs: [
@@ -442,14 +443,14 @@ export const ORBS_PRESETS = [
             __type: 'FolderPreset',
             id: 'Orbs',
             title: 'Orbs',
-            closed: false,
+            // closed: false,
             hidden: false,
             children: [
                 {
                     __type: 'FolderPreset',
                     id: 'base',
                     title: 'base',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [],
                     inputs: [
@@ -489,7 +490,7 @@ export const ORBS_PRESETS = [
                     __type: 'FolderPreset',
                     id: 'motion',
                     title: 'motion',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [],
                     inputs: [
@@ -549,14 +550,14 @@ export const ORBS_PRESETS = [
                     __type: 'FolderPreset',
                     id: 'appearance',
                     title: 'appearance',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [
                         {
                             __type: 'FolderPreset',
                             id: 'glow',
                             title: 'glow',
-                            closed: false,
+                            // closed: false,
                             hidden: false,
                             children: [],
                             inputs: [
@@ -659,14 +660,14 @@ export const ORBS_PRESETS = [
             __type: 'FolderPreset',
             id: 'Orbs',
             title: 'Orbs',
-            closed: false,
+            // closed: false,
             hidden: false,
             children: [
                 {
                     __type: 'FolderPreset',
                     id: 'base',
                     title: 'base',
-                    closed: true,
+                    // closed: true,
                     hidden: false,
                     children: [],
                     inputs: [
@@ -706,7 +707,7 @@ export const ORBS_PRESETS = [
                     __type: 'FolderPreset',
                     id: 'motion',
                     title: 'motion',
-                    closed: true,
+                    // closed: true,
                     hidden: false,
                     children: [],
                     inputs: [
@@ -766,14 +767,14 @@ export const ORBS_PRESETS = [
                     __type: 'FolderPreset',
                     id: 'appearance',
                     title: 'appearance',
-                    closed: false,
+                    // closed: false,
                     hidden: false,
                     children: [
                         {
                             __type: 'FolderPreset',
                             id: 'glow',
                             title: 'glow',
-                            closed: true,
+                            // closed: true,
                             hidden: false,
                             children: [],
                             inputs: [

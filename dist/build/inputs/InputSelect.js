@@ -8,6 +8,7 @@ import { create } from '../shared/create.js';
 import { toFn } from '../shared/toFn.js';
 import { Input } from './Input.js';
 
+// )
 const SELECT_INPUT_DEFAULTS = {
     __type: 'SelectInputOptions',
     options: [],
@@ -18,15 +19,16 @@ let InputSelect = class InputSelect extends Input {
     state;
     #options;
     set options(v) {
-        this._log.fn('set options').debug(v);
+        this._log.fn('set options').info(v);
+        v ??= [];
         this.#options = toFn(v);
         this.select.clear();
-        for (const option of this.#options()) {
+        for (const option of fromState(this.#options())) {
             this.select.add(option);
         }
     }
     get options() {
-        return this.resolveOptions(this.#options);
+        return this.resolveOptions(this.#options());
     }
     /**
      * The select controller instance.
@@ -48,21 +50,21 @@ let InputSelect = class InputSelect extends Input {
         super(opts, folder);
         this._evm.registerEvents(['preview', 'open', 'close', 'cancel']);
         this._log = new Logger(`InputSelect ${opts.title}`, { fg: 'slategrey' });
-        this._log.fn('constructor').debug({ opts, this: this });
+        this._log.fn('constructor').info({ opts, this: this });
         opts.value ??= opts.binding?.initial ?? fromState(this.targetValue);
         this.initialValue = this.resolveInitialValue(opts);
         this.labeledSelection = {
             value: fromLabeledOption(this.initialValue),
             label: this.resolveInitialLabel(this.initialValue, opts),
         };
-        this.#options = this.opts.options;
+        this.#options = toFn(this.opts.options ?? []);
         this.state = state(this.initialValue);
         const container = create('div', {
             classes: ['gooey-input-select-container'],
             parent: this.elements.content,
         });
         this.select = new Select({
-            // @ts-expect-error
+            // @ts-expect-error - ¯\_(ツ)_/¯
             input: this,
             container,
             options: this.options,
@@ -81,7 +83,7 @@ let InputSelect = class InputSelect extends Input {
                 if (isState(this.targetValue)) {
                     this._log
                         .fn('updating binding')
-                        .debug({ from: this.targetValue.value, to: v.value });
+                        .info({ from: this.targetValue.value, to: v.value });
                     this.targetValue.set(v.value);
                 }
                 else {
@@ -99,16 +101,15 @@ let InputSelect = class InputSelect extends Input {
         }));
         if (options.onChange) {
             this._evm.on('change', v => {
-                this._log.fn('calling options onChange').debug(v);
+                this._log.fn('calling options onChange').info(v);
                 options.onChange?.(toLabeledOption(v));
             });
         }
         // Bind our state to the select controller.
         this.select.on('change', v => {
-            this._log.fn('select.onChange').debug(v);
+            this._log.fn('select.onChange').info(v);
             if (this.#stopPropagation)
                 return;
-            // if (!this.bubble) return
             // Make sure the select controller doesn't react to its own changes.
             this.#stopPropagation = true;
             this.set(v);
@@ -136,29 +137,30 @@ let InputSelect = class InputSelect extends Input {
             this._emit('cancel');
         });
         this._dirty = () => this.value.label !== this.initialValue.label;
-        this._log.fn('constructor').debug({ this: this });
+        this._log.fn('constructor').info({ this: this });
     }
     resolveOptions(providedOptions) {
         function isLabeledOptionsArray(v) {
             return isLabeledOption(v[0]);
         }
-        let selectOptions = toFn(providedOptions)();
+        let selectOptions = toFn(fromState(providedOptions))();
         if (!isLabeledOptionsArray(selectOptions)) {
-            if (!selectOptions.every(o => typeof o === 'string')) {
-                if (!this.opts.labelKey) {
-                    throw new Error('Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label.');
-                }
-                return selectOptions.map(o => ({
-                    label: o[this.opts.labelKey],
-                    value: o,
-                }));
+            if (!Array.isArray(selectOptions)) {
+                throw new Error(`gooey: Invalid options array: "${selectOptions}"`);
             }
-            else {
+            if (selectOptions.every(o => typeof o === 'string')) {
                 return selectOptions.map(o => ({
                     label: o,
                     value: o,
                 }));
             }
+            if (!this.opts.labelKey) {
+                throw new Error('Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label.');
+            }
+            return selectOptions.map(o => ({
+                label: o[this.opts.labelKey],
+                value: o,
+            }));
         }
         return selectOptions;
     }
@@ -185,6 +187,7 @@ let InputSelect = class InputSelect extends Input {
     }
     resolveInitialLabel(initialValue, opts) {
         const v = isState(initialValue) ? initialValue.value : initialValue;
+        this._log.fn('resolveInitialLabel').info({ v, initialValue, opts });
         if (isLabeledOption(v)) {
             return v.label;
         }
@@ -205,7 +208,7 @@ let InputSelect = class InputSelect extends Input {
     set targetValue(v) {
         if (isLabeledOption(v))
             v = fromLabeledOption(v);
-        this._log.fn('set targetValue').debug(v);
+        this._log.fn('set targetValue').info(v);
         if (typeof v === 'undefined') {
             console.error('Cannot set target value to undefined');
             console.error('this', this);
@@ -226,7 +229,7 @@ let InputSelect = class InputSelect extends Input {
      * Selects the given {@link LabeledOption} and updates the ui.
      */
     set(value) {
-        this._log.fn('set').debug(value);
+        this._log.fn('set').info(value);
         this.#stopPropagation = true;
         this.select.select(value, false);
         this.state.set(value);
@@ -234,25 +237,24 @@ let InputSelect = class InputSelect extends Input {
         return this;
     }
     enable() {
-        this._log.fn('enable').debug();
+        this._log.fn('enable').info();
         this.select.enable();
         super.enable();
         return this;
     }
     disable() {
-        this._log.fn('disable').debug();
+        this._log.fn('disable').info();
         this.select.disable();
         super.disable();
         return this;
     }
     refresh = () => {
         const v = this.state.value;
-        this._log.fn('refresh').debug({ v, this: this });
+        this._log.fn('refresh').info({ v, this: this });
         if (!this.labeledSelection) {
             throw new Error('Failed to find labeled selection.');
         }
         const newOptions = this.options.filter(o => !this.select.options.some(oo => oo.label === o.label));
-        console.log(newOptions);
         for (const option of newOptions) {
             this.select.add(option);
         }

@@ -86,7 +86,7 @@ class Input {
         this.opts.resettable ??= true;
         this.id = this.opts.presetId ?? `${folder.presetId}_${this.opts.title}__${this.opts.__type}`;
         this.__log = new Logger(`SuperInput${this.opts.__type.replaceAll(/Options|Input/g, '')} ${this.opts.title}`, { fg: 'skyblue' });
-        this.__log.fn('super constructor').debug({ options, this: this });
+        this.__log.fn('super constructor').debug({ presetId: this.id, options, this: this });
         this._title = this.opts.title ?? '';
         this._disabled = toFn(this.opts.disabled ?? false);
         this._hidden = toFn(this.opts.hidden ?? false);
@@ -133,7 +133,7 @@ class Input {
             parent: this.elements.content,
         });
         this._evm.listen(this.elements.drawerToggle, 'click', () => {
-            console.warn('todo');
+            console.log(this);
         });
         if ('onChange' in options) {
             this._evm.on('change', options.onChange);

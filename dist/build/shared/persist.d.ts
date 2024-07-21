@@ -1,3 +1,9 @@
+export type PersistedValue<T> = {
+    get(): T;
+    set(newValue: T): void;
+    update(cb: (v: T) => T): void;
+    value: T;
+};
 /**
  * Persists a value in localStorage.
  * @returns An object with a `get` and `set` method that syncs with localStorage.
@@ -33,8 +39,4 @@ initialValue?: T | undefined,
  * Whether to print a warning if localStorage is not available.
  * @default false
  */
-quiet?: boolean): {
-    get(): T;
-    set(newValue: T): void;
-    value: T;
-};
+quiet?: boolean): PersistedValue<T>;

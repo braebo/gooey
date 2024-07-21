@@ -1,9 +1,7 @@
 import type { WindowInstance } from './shared/WindowManager';
 import type { Theme } from './styles/themer/types';
 import type { FolderOptions, FolderPreset } from './Folder';
-import type { PrimitiveState } from './shared/state';
 import type { Placement } from './shared/place';
-import type { Commit } from './UndoManager';
 import { WindowManager } from './shared/WindowManager';
 import { PresetManager } from './PresetManager';
 import { Themer } from './styles/themer/Themer';
@@ -122,6 +120,11 @@ export interface GooeyOptions {
      * @internal
      */
     _themer?: Themer;
+    /**
+     * Any {@link FolderOptions} for the builtin global settings folder.
+     * @default { closed: true }
+     */
+    settingsFolder?: Partial<FolderOptions>;
 }
 export interface GooeyStorageOptions {
     __type: 'GooeyStorageOptions';
@@ -200,7 +203,17 @@ export declare const GUI_DEFAULTS: {
     readonly resizable: true;
     readonly draggable: true;
     readonly loadDefaultFont: true;
+    readonly settingsFolder: {
+        readonly closed: true;
+    };
 };
+/**
+ * Methods inherited from {@link Folder} to forward to the gooey.
+ * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
+ */
+declare const FORWARDED_METHODS: ["on", "add", "addMany", "addButtonGrid", "addSelect", "addButton", "addText", "addNumber", "addSwitch", "addColor", "bind", "bindMany", "bindButtonGrid", "bindSelect", "bindButton", "bindText", "bindNumber", "bindSwitch", "bindColor"];
+export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {
+}
 /**
  * The root Gooey instance.  This is the entry point for creating
  * a gooey.  You can create multiple root gooeys, but each gooey
@@ -218,10 +231,6 @@ export declare class Gooey {
         storage: GooeyStorageOptions | false;
     };
     /**
-     * Whether the gooey root folder is currently collapsed.
-     */
-    closed: PrimitiveState<boolean>;
-    /**
      * The {@link PresetManager} instance for the gooey.
      */
     presetManager: PresetManager;
@@ -232,7 +241,6 @@ export declare class Gooey {
     wrapper: HTMLElement;
     container: HTMLElement;
     settingsFolder: Folder;
-    static settingsFolderTitle: string;
     /**
      * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
      * @internal
@@ -240,7 +248,6 @@ export declare class Gooey {
     _undoManager: UndoManager;
     themer: Themer;
     windowManager?: WindowManager;
-    private static _initialized;
     /**
      * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
      * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
@@ -260,28 +267,19 @@ export declare class Gooey {
     private _honeymoon;
     private _theme;
     private _log;
-    on: Folder['on'];
-    addFolder(title: string, options?: Partial<FolderOptions>): Folder;
-    bind: Folder['bind'];
-    bindMany: Folder['bindMany'];
-    add: Folder['add'];
-    addMany: Folder['addMany'];
-    addButtonGrid: Folder['addButtonGrid'];
-    addSelect: Folder['addSelect'];
-    addButton: Folder['addButton'];
-    addText: Folder['addText'];
-    addNumber: Folder['addNumber'];
-    addSwitch: Folder['addSwitch'];
-    addColor: Folder['addColor'];
+    private _closedMap;
+    private static _initialized;
     constructor(options?: Partial<GooeyOptions>);
     private _reveal;
-    private _createPresetManager;
-    private _createWindowManager;
+    get title(): string;
+    set title(v: string);
+    get closed(): Folder['closed'];
     get inputs(): Map<string, import("./inputs/Input").ValidInput>;
     get allInputs(): Map<string, import("./inputs/Input").ValidInput>;
     get window(): WindowInstance | undefined;
     set theme(theme: GooeyTheme);
     get theme(): GooeyTheme;
+    addFolder(title: string, options?: Partial<FolderOptions>): Folder;
     /**
      * Saves the current gooey state as a preset.
      */
@@ -298,26 +296,26 @@ export declare class Gooey {
     /**
      * Loads a given preset into the gooey, updating all inputs.
      */
-    load(preset: GooeyPreset): void;
-    _undoLock: boolean;
-    lockCommit: {
-        from: GooeyPreset | undefined;
-    };
+    load(preset: GooeyPreset | Record<string, any>): void;
+    private _undoLock;
+    private _lockCommit;
     /**
      * Commits a change to the input's value to the undo manager.
      */
-    commit(commit: Partial<Commit>): void;
+    private _commit;
     /**
      * Prevents the input from registering undo history, storing the initial
-     * for the eventual commit in {@link unlockCommits}.
+     * for the eventual commit in {@link _unlockCommits}.
      */
-    private lockCommits;
+    private _lockCommits;
     /**
      * Unlocks commits and saves the current commit stored in lock.
      */
-    private unlockCommits;
+    private _unlockCommits;
     private _createThemer;
     private _createSettingsButton;
+    private _createPresetManager;
+    private _createWindowManager;
     dispose: () => void;
 }
 export {};

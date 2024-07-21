@@ -80,7 +80,7 @@ class Resizable {
             fg: 'GreenYellow',
             deferred: false,
         });
-        this.#log.fn('constructor').info({ opts: this.opts, this: this });
+        this.#log.fn('constructor').debug({ opts: this.opts, this: this });
         this.node.classList.add('fractils-resizable');
         this.#cornerGrabberSize = this.opts.grabberSize * 3;
         this.bounds = select(this.opts.bounds)[0] ?? globalThis.document?.documentElement;

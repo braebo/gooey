@@ -34,6 +34,7 @@ class PresetManager {
         this.activePreset = state(this.opts.defaultPreset ?? {}, {
             key: this.opts.localStorageKey + '::active',
         });
+        this._log.fn('constructor').debug('activePreset', this.activePreset.value);
         this.presets = state(this.opts.presets ?? [], {
             key: this.opts.localStorageKey,
         });
@@ -59,7 +60,8 @@ class PresetManager {
             return;
         }
         this._initialized = true;
-        this.folder = await this.addGooey(this.parentFolder, this.opts.defaultPreset);
+        await Promise.resolve();
+        this.folder = await this.addGui(this.parentFolder, this.opts.defaultPreset);
         return this;
     }
     /**
@@ -109,22 +111,18 @@ class PresetManager {
         }
         return defaultPreset;
     }
-    async addGooey(parentFolder, defaultPreset) {
+    async addGui(parentFolder, defaultPreset) {
         this._log.fn('add').debug({ this: this, parentFolder, defaultPreset });
         if (!this._isInitialized())
             throw new Error('PresetManager not initialized.');
         const presetsFolder = parentFolder.addFolder('presets', {
-            closed: true,
-            // hidden: false,
-            // children: [],
+            saveable: false,
             // @ts-expect-error - @internal
             gooey: this.gooey,
         });
-        // todo - use this class and remove all that styling 🍝
         presetsFolder.element.classList.add('gooey-folder-alt');
         // Fully desaturate the presets folder's header connector to svg.
         presetsFolder.on('mount', () => {
-            // presetsFolder.graphics!.connector!.update()
             presetsFolder.graphics.connector.svg.style.setProperty('filter', 'saturate(0.1)');
             presetsFolder.graphics.icon.style.setProperty('filter', 'saturate(0)');
         });
@@ -195,139 +193,136 @@ class PresetManager {
         const createIcon = (name, contents) => 
         /*html*/ `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="gooey-icon gooey-icon-${name}">${contents}</svg>`;
         //? Preset Management Buttons
-        this._manageInput = presetsFolder.addButtonGrid({
-            value: [
-                [
-                    {
-                        text: 'update',
-                        id: 'update',
-                        onClick: () => {
-                            const { id, title } = this.activePreset.value;
-                            const current = this.gooey.save(title, id);
-                            this.put(current);
-                        },
-                        disabled: () => this.defaultPresetIsActive,
+        this._manageInput = presetsFolder.addButtonGrid('', [
+            [
+                {
+                    text: 'update',
+                    id: 'update',
+                    onClick: () => {
+                        const { id, title } = this.activePreset.value;
+                        const current = this.gooey.save(title, id);
+                        this.put(current);
                     },
-                    {
-                        text: 'delete',
-                        onClick: () => {
-                            let index = undefined;
-                            this.presets.update(presets => {
-                                index = presets.findIndex(p => p.id === this.activePreset.value.id);
-                                presets.splice(index, 1);
-                                return presets;
-                            });
-                            this.activePreset.set(this.presets.value[index ?? 0] ?? this.defaultPreset);
-                            this._refresh();
-                        },
-                        disabled: () => this.defaultPresetIsActive,
+                    disabled: () => this.defaultPresetIsActive,
+                },
+                {
+                    text: 'delete',
+                    onClick: () => {
+                        let index = undefined;
+                        this.presets.update(presets => {
+                            index = presets.findIndex(p => p.id === this.activePreset.value.id);
+                            presets.splice(index, 1);
+                            return presets;
+                        });
+                        this.activePreset.set(this.presets.value[index ?? 0] ?? this.defaultPreset);
+                        this._refresh();
                     },
-                    {
-                        text: createIcon('copy', 
-                        /*html*/ `<rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>`),
-                        id: 'copy',
-                        tooltip: {
-                            text: 'Copy',
-                            delay: 0,
-                            placement: 'bottom',
-                            hideOnClick: true,
-                        },
-                        style: { maxWidth: '1.5rem', padding: '0.3rem' },
-                        onClick: () => {
-                            navigator.clipboard?.writeText(JSON.stringify(this.activePreset.value, null, 2));
-                        },
-                        disabled: () => this.defaultPresetIsActive,
+                    disabled: () => this.defaultPresetIsActive,
+                },
+                {
+                    text: createIcon('copy', 
+                    /*html*/ `<rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>`),
+                    id: 'copy',
+                    tooltip: {
+                        text: 'Copy',
+                        delay: 0,
+                        placement: 'bottom',
+                        hideOnClick: true,
                     },
-                    {
-                        text: createIcon('paste', 
-                        /*html*/ `<rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>`),
-                        id: 'paste',
-                        tooltip: {
-                            text: 'Paste',
-                            delay: 0,
-                            placement: 'bottom',
-                            hideOnClick: true,
-                        },
-                        style: { maxWidth: '1.5rem', padding: '0.3rem' },
-                        onClick: async ({ button }) => {
-                            button.disabled = true;
-                            try {
-                                const text = await navigator.clipboard.readText();
-                                console.log(text);
-                                if (text) {
-                                    const preset = JSON.parse(text);
-                                    if (typeof preset === 'object' &&
-                                        preset.__type === 'GooeyPreset') {
-                                        this.put(preset);
-                                    }
+                    style: { maxWidth: '1.5rem', padding: '0.3rem' },
+                    onClick: () => {
+                        navigator.clipboard?.writeText(JSON.stringify(this.activePreset.value, null, 2));
+                    },
+                    disabled: () => this.defaultPresetIsActive,
+                },
+                {
+                    text: createIcon('paste', 
+                    /*html*/ `<rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>`),
+                    id: 'paste',
+                    tooltip: {
+                        text: 'Paste',
+                        delay: 0,
+                        placement: 'bottom',
+                        hideOnClick: true,
+                    },
+                    style: { maxWidth: '1.5rem', padding: '0.3rem' },
+                    onClick: async ({ button }) => {
+                        button.disabled = true;
+                        try {
+                            const text = await navigator.clipboard.readText();
+                            console.log(text);
+                            if (text) {
+                                const preset = JSON.parse(text);
+                                if (typeof preset === 'object' &&
+                                    preset.__type === 'GooeyPreset') {
+                                    this.put(preset);
                                 }
                             }
-                            catch (e) {
-                                // todo - need a toast / err msg / overlay for errors
-                                console.error(e);
-                            }
-                            button.disabled = false;
-                        },
-                        disabled: () => this.defaultPresetIsActive,
+                        }
+                        catch (e) {
+                            // todo - need a toast / err msg / overlay for errors
+                            console.error(e);
+                        }
+                        button.disabled = false;
                     },
-                    {
-                        text: createIcon('download', 
-                        /*html*/ `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>`),
-                        id: 'download',
-                        tooltip: {
-                            text: 'Download',
-                            delay: 0,
-                            placement: 'bottom',
-                            hideOnClick: true,
-                        },
-                        style: { maxWidth: '1.5rem', padding: '0.3rem' },
-                        onClick: () => {
-                            download(this.activePreset.value);
-                        },
-                        disabled: () => this.defaultPresetIsActive,
+                    disabled: () => this.defaultPresetIsActive,
+                },
+                {
+                    text: createIcon('download', 
+                    /*html*/ `<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" x2="12" y1="15" y2="3"></line></svg>`),
+                    id: 'download',
+                    tooltip: {
+                        text: 'Download',
+                        delay: 0,
+                        placement: 'bottom',
+                        hideOnClick: true,
                     },
-                    {
-                        text: createIcon('download-all', 
-                        /*html*/ `<path stroke-linecap="round" stroke-linejoin="round" d="M21 14v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 11v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 17v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path stroke-linecap="round" stroke-linejoin="round" d="m7 8 5 5 5-5" /><path  stroke-linecap="round" stroke-linejoin="round" d="M12 13V1" />`),
-                        id: 'download-all',
-                        tooltip: {
-                            text: 'Download All',
-                            delay: 0,
-                            placement: 'bottom',
-                            hideOnClick: true,
-                            // offsetY: '0.1rem',
-                        },
-                        style: { maxWidth: '1.5rem', padding: '0.3rem' },
-                        onClick: () => {
-                            download(this.presets.value);
-                        },
-                        disabled: () => this.presets.value.length <= 1,
+                    style: { maxWidth: '1.5rem', padding: '0.3rem' },
+                    onClick: () => {
+                        download(this.activePreset.value);
                     },
-                    {
-                        id: 'upload',
-                        text: createIcon('upload', 
-                        /*html*/ `<path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path stroke-linecap="round" stroke-linejoin="round" d="m17 8-5-5-5 5" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12" />`),
-                        tooltip: {
-                            text: 'Upload',
-                            delay: 0,
-                            placement: 'bottom',
-                            hideOnClick: true,
-                        },
-                        style: { maxWidth: '1.5rem', padding: '0.3rem' },
-                        onClick: () => {
-                            upload();
-                        },
+                    disabled: () => this.defaultPresetIsActive,
+                },
+                {
+                    text: createIcon('download-all', 
+                    /*html*/ `<path stroke-linecap="round" stroke-linejoin="round" d="M21 14v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 11v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 17v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path stroke-linecap="round" stroke-linejoin="round" d="m7 8 5 5 5-5" /><path  stroke-linecap="round" stroke-linejoin="round" d="M12 13V1" />`),
+                    id: 'download-all',
+                    tooltip: {
+                        text: 'Download All',
+                        delay: 0,
+                        placement: 'bottom',
+                        hideOnClick: true,
+                        // offsetY: '0.1rem',
                     },
-                ],
+                    style: { maxWidth: '1.5rem', padding: '0.3rem' },
+                    onClick: () => {
+                        download(this.presets.value);
+                    },
+                    disabled: () => this.presets.value.length <= 1,
+                },
+                {
+                    id: 'upload',
+                    text: createIcon('upload', 
+                    /*html*/ `<path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path stroke-linecap="round" stroke-linejoin="round" d="m17 8-5-5-5 5" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12" />`),
+                    tooltip: {
+                        text: 'Upload',
+                        delay: 0,
+                        placement: 'bottom',
+                        hideOnClick: true,
+                    },
+                    style: { maxWidth: '1.5rem', padding: '0.3rem' },
+                    onClick: () => {
+                        upload();
+                    },
+                },
             ],
+        ], {
             order: 1,
             resettable: false,
             disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,
         });
         //? Presets Select Input
-        this._presetsInput = presetsFolder.addSelect({
-            __type: 'SelectInputOptions',
-            options: this.presets.value,
+        this._presetsInput = presetsFolder.addSelect('', this.presets.value, {
             labelKey: 'title',
             order: -1,
             value: this.activePreset.value,
