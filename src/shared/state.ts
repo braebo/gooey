@@ -4,7 +4,6 @@ import { localStorageStore } from './localStorageStore'
 import { get, writable } from './store'
 
 export interface PrimitiveState<T> extends Writable<T> {
-	// get(): T
 	readonly isState: true
 	readonly value: T
 	onChange: (cb: (v: T) => void) => void
@@ -12,11 +11,11 @@ export interface PrimitiveState<T> extends Writable<T> {
 	refresh(): void
 }
 
-interface ArrayState<T> extends PrimitiveState<T[]> {
+export interface ArrayState<T> extends PrimitiveState<T[]> {
 	push: (item: T) => void
 }
 
-interface MapState<K, V> extends PrimitiveState<Map<K, V>> {
+export interface MapState<K, V> extends PrimitiveState<Map<K, V>> {
 	/**
 	 * Set value and inform subscribers.
 	 *
@@ -27,18 +26,20 @@ interface MapState<K, V> extends PrimitiveState<Map<K, V>> {
 	deleteKey: (key: K) => void
 }
 
-interface SetState<T> extends PrimitiveState<Set<T>> {
+export interface SetState<T> extends PrimitiveState<Set<T>> {
 	add: (item: T) => void
 	delete: (item: T) => void
 }
 
-type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (x: infer I) => void
+export type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (
+	x: infer I,
+) => void
 	? I
 	: never
 
-type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true
+export type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true
 
-type UnionState<T> = { set: (value: T) => void } & Omit<PrimitiveState<T>, 'set'>
+export type UnionState<T> = { set: (value: T) => void } & Omit<PrimitiveState<T>, 'set'>
 
 export type State<T> =
 	IsUnion<T> extends true
