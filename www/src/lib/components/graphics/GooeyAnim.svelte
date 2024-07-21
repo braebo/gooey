@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Gooey, type InputNumber } from 'gooey'
-	import { onDestroy, onMount } from 'svelte'
+	import { Gooey, type InputNumber } from '../../../../../src/index'
 	import { themer } from '$lib/themer.svelte'
+	import { onMount } from 'svelte'
 	import presets from './presets'
 
 	const viewBox = {
@@ -16,20 +16,20 @@
 	let sliderInput: InputNumber
 
 	let p = $state({
-		speed: 0.1,
+		speed: 0.66,
 		slider: 0.73,
-		glow: 21.2,
+		glow: 18,
+		orbs: 1.22,
 		goo: {
-			motion: true,
-			viscosity: 0.005,
-			density: 10,
-			gooeyness: 20,
-			type: 'turbulence',
+			animate: true,
+			texture: 'turbulence',
+			gooeyness: 11,
+			viscosity: 0.0123,
+			density: 1,
 		},
-		orbs: 1,
 	} satisfies Record<string, any>)
 
-	const hueShift = $derived(Math.floor(p.slider * 360))
+	let hueShift = $derived(Math.floor(p.slider * 360))
 	const shift1 = 300
 	const shift2 = 275
 	const shift3 = 307
@@ -51,6 +51,8 @@
 
 	const unsubs = [] as (() => any)[]
 	onMount(() => {
+		localStorage.clear() //! DELETEME
+		
 		// Create the gui.
 		const gui = new Gooey({
 			position: 'top-center',
@@ -60,12 +62,13 @@
 
 		// Bind to the params and configure their options.
 		gui.bindMany(p, {
+			slider: { presetId: 'slider' },
 			glow: { max: 30, step: 0.1 },
 			goo: {
-				type: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
+				texture: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
 				gooeyness: { min: 0.1, max: 100, step: 0.1 },
 				viscosity: { min: 0.001, max: 0.5, step: 0.0001 },
-				density: { min: 1, max: 20, step: 1 },
+				density: { min: 1, max: 20, step: 1 }, 
 			},
 			orbs: { min: 0.5, max: 3, step: 0.01 },
 		})
@@ -98,14 +101,14 @@
 				document.documentElement.style.setProperty(`--${k}`, v)
 			}
 		}
-	})
 
-	onDestroy(() => {
-		for (const unsubscribe of unsubs) {
-			unsubscribe()
+		return () => {
+			for (const unsubscribe of unsubs) {
+				unsubscribe()
+			}
+			gui?.dispose()
+			disposed = true
 		}
-		disposed = true
-		globalThis.window?.location.reload()
 	})
 
 	let grabbing = false
@@ -279,12 +282,12 @@
 			<!--//- Turbulence Filter -->
 
 			<filter id="gooey_anim_goo_filter" width="3" height="3" x="-1" y="-1">
-				<feTurbulence type="{p.goo.type}" width="{viewBox.width}" height="{viewBox.width}" x="0" y="0" numOctaves={p.goo.density} seed="1" baseFrequency={p.goo.viscosity} stitchTiles="stitch" />
+				<feTurbulence type="{p.goo.texture}" width="{viewBox.width}" height="{viewBox.width}" x="0" y="0" numOctaves={p.goo.density} seed="1" baseFrequency={p.goo.viscosity} stitchTiles="stitch" />
 
 				<feTile width="{viewBox.width * 3}" height="{viewBox.width}" />
 
 				<feOffset result="TURBULENCE" dx="0" width="{viewBox.width * 2}">
-					{#if p.goo.motion}
+					{#if p.goo.animate}
 						<animate attributeName="dx" from="-{viewBox.width}" to="0" begin="0s" dur="{duration}s" repeatCount="indefinite" />
 					{/if}
 				</feOffset>
@@ -310,5 +313,14 @@
 
 	svg {
 		color: var(--fg-d);
+		contain: content;
+		backface-visibility: hidden;
+		transform: translateZ(0);
+		
+		* {
+			backface-visibility: hidden;
+			transform: translateZ(0);
+			contain: content;
+		}
 	}
 </style>
