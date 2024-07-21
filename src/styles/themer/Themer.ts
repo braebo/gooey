@@ -191,7 +191,7 @@ export class Themer {
 
 		this._log = new Logger(`themer ${this.node.classList[0]}`, { fg: 'DarkCyan' })
 
-		this._log.fn(g('constructor')).info({ node, opts, this: this })
+		this._log.fn(g('constructor')).debug({ node, opts, this: this })
 
 		this.theme = state(resolveTheme(opts.theme, opts.vars))
 

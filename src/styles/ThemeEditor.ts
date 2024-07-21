@@ -113,9 +113,7 @@ export class ThemeEditor {
 					if (!isNaN(v)) {
 						const av = Math.abs(v)
 						folder
-							.addNumber({
-								title,
-								value: v,
+							.addNumber(title, v, {
 								min: Math.min(0, av),
 								max: Math.max(0, av < 1 ? 1 : av * 3),
 								step: av < 1 ? 0.01 : av < 10 ? 0.1 : 1,
@@ -126,7 +124,7 @@ export class ThemeEditor {
 				} catch (e) {}
 			}
 
-			folder.add({ title, value, onChange })
+			folder.add(title, value, { onChange })
 		}
 
 		const traverse = (
