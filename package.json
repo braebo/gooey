@@ -28,6 +28,7 @@
 		"build:site": "cd www && pnpm i && pnpm build",
 		"build:watch": "pnpm nodemon --watch src --ext js,ts --exec \"pnpm build\" --ignore gooey.css.ts",
 		"build:watch-fast": "pnpm nodemon --watch src --ext js,ts --exec \"pnpm build -w\" --ignore gooey.css.ts",
+		"build:css-only": "pnpm nodemon --watch src --ext scss --exec \"pnpm build --css-only\" --ignore gooey.css.ts",
 		"build:all": "pnpm build && pnpm build:site",
 		"check": "tsc --noEmit",
 		"check:watch": "tsc --noEmit --watch",
@@ -48,6 +49,7 @@
 		"@swc/core": "1.6.13",
 		"@types/bun": "^1.1.6",
 		"@types/node": "20.14.10",
+		"@vitest/browser": "^2.0.3",
 		"changeset": "0.2.6",
 		"csstype": "3.1.3",
 		"esbuild": "0.23.0",
@@ -63,6 +65,7 @@
 		"tslib": "2.6.3",
 		"typescript": "^5.5.3",
 		"vite-node": "2.0.1",
-		"vitest": "2.0.1"
+		"vitest": "2.0.3",
+		"webdriverio": "^8.39.1"
 	}
 }

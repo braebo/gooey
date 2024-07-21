@@ -1,5 +1,6 @@
 {
 	"svelte.plugin.svelte.compilerWarnings": {
 		"element_invalid_self_closing_tag": "ignore"
-	}
+	},
+	"editor.formatOnSave": true
 }
