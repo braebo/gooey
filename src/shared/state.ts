@@ -172,8 +172,7 @@ export function state<T>(defaultValue: T, options?: StateOptions<T>): State<T> {
 }
 
 export function isState<T>(v: any): v is State<T> {
-	// if (typeof v === 'undefined') return false
-	return v.isState === true
+	return typeof v === 'object' && v.isState === true
 }
 
 export function fromState<T>(state: T | State<T>) {
