@@ -60,25 +60,21 @@ Create a new `Gooey`.
 ```typescript
 import { Gooey } from 'gooey'
 
-const gooey = new Gooey()
+const gui = new Gooey()
 ```
 
+### Inputs
 
-You can use the `addNumber` method directly to create a number input:
 
+
+The `add` method takes a `title` string and an `options` object.  It will infer the type of the input from the `value` property
+and generate the appropriate input.
 ```typescript
-const input = gooey.addNumber('count')
+const input = gui.add('count', 1)
+//    ^? InputNumber
 
-input.on('change', console.log)
-```
-
-
-Or, use the generic `add` method, and it will infer the type of the input from the `value` property:
-
-```typescript
-const input = gooey.add('count', { value: 0 })
-
-input.on('change', v => console.log(v))
+// Pass in options.
+const input = gui.add('count', 1, { min: 0, max: 10, step: 1 })
 ```
 
 
@@ -93,6 +89,24 @@ gooey.addMany({
   text: 'hello'
 })
 ```
+
+You can use each individual adder methods directly to create a specific input:
+
+```typescript
+gui.addNumber('count', 1)
+gui.addText('name', 'John Doe')
+gui.addColor('fav color', '#00FFFF')
+gui.addSelect('type', ['a', 'b', 'c'])
+gui.addButton('log', () => console.log('clicked'))
+gui.addSwitch('enabled', true)
+gui.addButtonGrid('playback', TODO)
+
+numberInput.on('change', console.log)
+```
+
+### Folder
+
+
 
 ### TODO - More docs...
 
