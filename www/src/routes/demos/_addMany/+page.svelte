@@ -3,18 +3,16 @@
 <script lang="ts">
 	import { params } from '$lib/components/orbs/params'
 	import Orbs from '$lib/components/orbs/Orbs.svelte'
+	import { stringify } from '$lib/utils/stringify'
 	import Code from '$lib/components/Code.svelte'
-	import { Gooey } from 'gooey'
-
-	import { demoGooey, code, showCode } from './demoGooey'
-
+	import { code, showCode } from './stores'
 	import { quintOut } from 'svelte/easing'
 	import { fly } from 'svelte/transition'
 	import { onMount } from 'svelte'
+	import { Gooey } from 'gooey'
 
 	let gooey: Gooey
 	let ready = false
-	let orbs = true
 
 	onMount(() => {
 		params.update((p) => {
@@ -22,8 +20,23 @@
 			p.width = Math.round(window.innerWidth / 7)
 			return p
 		})
-		gooey = demoGooey(params.value)
+		gooey = new Gooey({
+			title: 'addMany',
+			position: 'center',
+		})
+
 		ready = true
+
+		const test = gooey.addMany(params.value)
+
+		// Map keys are inferred correctly... sweet!  But the input types aren't T_T
+		const b = test.inputs.get('height') // should be InputNumber
+		const c = test.inputs.get('drift') // should be InputSwitch
+
+		gooey.on('change', () => {
+			showCode.set(true)
+			code.set(stringify($params, 2))
+		})
 
 		return () => {
 			gooey?.dispose()
@@ -43,6 +56,8 @@
 <svelte:window on:resize={onResize} />
 
 <div class="page">
+	<h1 class="hero-title">gooey</h1>
+
 	{#if $showCode}
 		<div class="debug" transition:fly={{ y: 5, duration: 250, easing: quintOut }}>
 			{#key $code}
@@ -57,7 +72,12 @@
 		</div>
 	{/if}
 
-	{#if ready && orbs}
+	<div class="buttons">
+		<button on:click={() => console.log(gooey)}>Log Gooey</button>
+		<button on:click={() => localStorage.clear()}>Clear localStorage</button>
+	</div>
+
+	{#if ready}
 		<div class="orbs">
 			<Orbs {params} />
 		</div>
@@ -66,52 +86,30 @@
 
 <style>
 	.page {
-		display: flex;
-		flex-direction: column;
-		flex-grow: 1;
+		width: 100vw;
+		height: 100vh;
+		max-height: 100vh;
+		padding: 1rem;
 
-		/* background: color-mix(in lch, var(--bg-a), var(--bg-b)); */
-		opacity: 0;
+		background: color-mix(in lch, var(--bg-a), var(--bg-b));
 
-		animation: slide-in 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s forwards;
-
-		/* overflow: hidden; */
-
-		&:before {
-			content: '';
-			position: absolute;
-			width: 120%;
-			translate: -16% -43%;
-			rotate: -2.5deg;
-			height: 10%;
-			background: red;
-			background: var(--bg-a);
-		}
+		overflow: hidden;
 	}
 
-	@keyframes slide-in {
-		from {
-			clip-path: inset(0 100% 0 0);
-			opacity: 0;
-		}
-		to {
-			clip-path: inset(-100%);
-			opacity: 2;
-		}
+	.hero-title {
+		width: fit-content;
+		font-variation-settings: 'wght' 333;
+		font-family: 'fredoka', sans-serif;
+		font-size: var(--font-xxl);
+		line-height: 2rem;
 	}
 
 	.orbs {
 		position: relative;
 
-		display: flex;
-		flex-grow: 1;
-
-		/* margin: 20vh auto 0 auto; */
-		width: 100%;
-		width: min(50rem, 50vmin);
+		width: 50vmin;
 		height: 100%;
-		margin: auto auto 0 auto;
-		/* margin-top: auto; */
+		margin: 20vh auto 0 auto;
 
 		z-index: 20;
 		pointer-events: none;
@@ -132,5 +130,11 @@
 		left: 1rem;
 
 		z-index: 0;
+	}
+
+	.buttons {
+		position: absolute;
+		top: 1rem;
+		left: 10rem;
 	}
 </style>

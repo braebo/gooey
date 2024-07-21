@@ -20,9 +20,9 @@ export function demoGooey(params: Params) {
 			key: 'gooey',
 			position: true,
 			closed: true,
-			size: true
+			size: true,
 		},
-		presets: ORBS_PRESETS
+		presets: ORBS_PRESETS,
 	})
 
 	gooey.folder.on('toggle', (v) => {
@@ -31,14 +31,19 @@ export function demoGooey(params: Params) {
 
 	const f1 = gooey.addFolder('base')
 
-	f1.add('count', {
-		binding: {
-			target: params,
-			key: 'orbs'
-		},
+	// f1.bind('count', {
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'orbs'
+	// 	},
+	// 	min: 1,
+	// 	max: 150,
+	// 	step: 1
+	// })
+	f1.bind(params, 'orbs', {
 		min: 1,
 		max: 150,
-		step: 1
+		step: 1,
 	})
 
 	// f1.bind({
@@ -56,161 +61,226 @@ export function demoGooey(params: Params) {
 		//=>
 		min: 10,
 		max: window.innerWidth / 4,
-		step: 1
+		step: 1,
 	})
 	widthInput // InputNumber
 
-	f1.addNumber({
-		title: 'height',
-		binding: {
-			target: params,
-			key: 'height'
-		},
+	// f1.addNumber({
+	// 	title: 'height',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'height'
+	// 	},
+	// 	min: 10,
+	// 	max: window.innerHeight / 8,
+	// 	step: 1
+	// })
+	f1.bind(params, 'height', {
 		min: 10,
 		max: window.innerHeight / 8,
-		step: 1
+		step: 1,
 	})
 
 	const motionFolder = gooey.addFolder('motion')
 
-	motionFolder.addNumber({
-		title: 'speed',
-		binding: {
-			target: params,
-			key: 'speed'
-		},
+	// motionFolder.addNumber({
+	// 	title: 'speed',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'speed'
+	// 	},
+	// 	min: 0.0001,
+	// 	max: 1,
+	// 	step: 0.0001
+	// })
+	motionFolder.bind(params, 'speed', {
 		min: 0.0001,
 		max: 1,
-		step: 0.0001
+		step: 0.0001,
 	})
 
-	motionFolder.addNumber({
+	// motionFolder.addNumber({
+	// 	title: 'force x',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'a1'
+	// 	},
+	// 	min: 0,
+	// 	max: 3,
+	// 	step: 0.001
+	// })
+	motionFolder.bind(params, 'a1', {
 		title: 'force x',
-		binding: {
-			target: params,
-			key: 'a1'
-		},
 		min: 0,
 		max: 3,
-		step: 0.001
+		step: 0.001,
 	})
 
-	motionFolder.addNumber({
+	// motionFolder.addNumber({
+	// 	title: 'force y',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'a2'
+	// 	},
+	// 	min: 1,
+	// 	max: 3,
+	// 	step: 0.001
+	// })
+	motionFolder.bind(params, 'a2', {
 		title: 'force y',
-		binding: {
-			target: params,
-			key: 'a2'
-		},
 		min: 1,
 		max: 3,
-		step: 0.001
+		step: 0.001,
 	})
 
-	motionFolder.addNumber({
+	// motionFolder.addNumber({
+	// 	title: 'temporal drift',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'drift'
+	// 	},
+	// 	min: -1,
+	// 	max: 1,
+	// 	step: 0.001
+	// })
+	motionFolder.bind(params, 'drift', {
 		title: 'temporal drift',
-		binding: {
-			target: params,
-			key: 'drift'
-		},
 		min: -1,
 		max: 1,
-		step: 0.001
+		step: 0.001,
 	})
 
-	motionFolder.addSwitch({
-		title: 'modulate',
-		binding: {
-			target: params,
-			key: 'modulate'
-		}
-	})
+	// motionFolder.addSwitch({
+	// 	title: 'modulate',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'modulate'
+	// 	}
+	// })
+	motionFolder.bind(params, 'modulate')
 
 	const appearanceFolder = gooey.addFolder('appearance')
 
-	appearanceFolder.addNumber({
-		title: 'size',
-		binding: {
-			target: params,
-			key: 'size'
-		},
+	// appearanceFolder.addNumber({
+	// 	title: 'size',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'size'
+	// 	},
+	// 	min: 1,
+	// 	max: 30,
+	// 	step: 1
+	// })
+	appearanceFolder.bind(params, 'size', {
 		min: 1,
 		max: 30,
-		step: 1
+		step: 1,
 	})
 
-	appearanceFolder.addNumber({
-		title: 'floop',
-		binding: {
-			target: params,
-			key: 'floop'
-		},
+	// appearanceFolder.addNumber({
+	// 	title: 'floop',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'floop'
+	// 	},
+	// 	min: 0.001,
+	// 	max: 0.5,
+	// 	step: 0.001
+	// })
+	appearanceFolder.bind(params, 'floop', {
 		min: 0.001,
 		max: 0.5,
-		step: 0.001
+		step: 0.001,
 	})
 
-	appearanceFolder.addNumber({
-		title: 'brightness',
-		binding: {
-			target: params,
-			key: 'brightness'
-		},
+	// appearanceFolder.addNumber({
+	// 	title: 'brightness',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'brightness'
+	// 	},
+	// 	min: 0,
+	// 	max: 1,
+	// 	step: 0.01
+	// })
+	appearanceFolder.bind(params, 'brightness', {
 		min: 0,
 		max: 1,
-		step: 0.01
+		step: 0.01,
 	})
 
-	appearanceFolder.addColor({
-		title: 'color',
+	// appearanceFolder.addColor({
+	// 	title: 'color',
+	// 	mode: 'hex8',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'color'
+	// 	}
+	// })
+	appearanceFolder.bind(params, 'color', {
 		mode: 'hex8',
-		binding: {
-			target: params,
-			key: 'color'
-		}
 	})
 
-	appearanceFolder.addColor({
-		title: 'accent',
+	// appearanceFolder.addColor({
+	// 	title: 'accent',
+	// 	mode: 'hsla',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'accent'
+	// 	}
+	// })
+	appearanceFolder.bind(params, 'accent', {
 		mode: 'hsla',
-		binding: {
-			target: params,
-			key: 'accent'
-		}
 	})
 
 	const glowFolder = appearanceFolder.addFolder('glow')
 
-	glowFolder.addNumber({
-		title: 'glowR',
-		binding: {
-			target: params,
-			key: 'glowR'
-		},
+	// glowFolder.addNumber({
+	// 	title: 'glowR',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'glowR'
+	// 	},
+	// 	min: 0,
+	// 	max: 20,
+	// 	step: 0.01
+	// })
+	glowFolder.bind(params, 'glowR', {
 		min: 0,
 		max: 20,
-		step: 0.01
+		step: 0.01,
 	})
 
-	glowFolder.addNumber({
-		title: 'glowG',
-		binding: {
-			target: params,
-			key: 'glowG'
-		},
+	// glowFolder.addNumber({
+	// 	title: 'glowG',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'glowG'
+	// 	},
+	// 	min: 0,
+	// 	max: 20,
+	// 	step: 0.01
+	// })
+	glowFolder.bind(params, 'glowG', {
 		min: 0,
 		max: 20,
-		step: 0.01
+		step: 0.01,
 	})
 
-	glowFolder.addNumber({
-		title: 'glowB',
-		binding: {
-			target: params,
-			key: 'glowB'
-		},
+	// glowFolder.addNumber({
+	// 	title: 'glowB',
+	// 	binding: {
+	// 		target: params,
+	// 		key: 'glowB'
+	// 	},
+	// 	min: 0,
+	// 	max: 20,
+	// 	step: 0.01
+	// })
+	glowFolder.bind(params, 'glowB', {
 		min: 0,
 		max: 20,
-		step: 0.01
+		step: 0.01,
 	})
 
 	function showActivePreset(v: GooeyPreset) {
@@ -220,52 +290,50 @@ export function demoGooey(params: Params) {
 					presets: gooey.presetManager.presets.value.length,
 					activePreset: {
 						...v,
-						data: debrief(v.data, { siblings: 7, depth: 4 })
-					}
+						data: debrief(v.data, { siblings: 7, depth: 4 }),
+					},
 				},
-				2
-			).replaceAll('"', '')
+				2,
+			).replaceAll('"', ''),
 		)
 	}
 
 	gooey.folder.evm.add(
 		showCode.subscribe((v) => {
 			if (v) showActivePreset(gooey.presetManager.activePreset.value)
-		})
+		}),
 	)
 
 	gooey.folder.evm.add(
 		gooey.presetManager.activePreset.subscribe((v) => {
 			if (showCode.value) showActivePreset(v)
-		})
+		}),
 	)
 
 	if (DEV) {
 		const devFolder = gooey.addFolder('dev', {
 			closed: true,
-			saveable: false
+			saveable: false,
 		})
 
 		// setTimeout(() => {
 		// 	gooey.settingsFolder.open()
 		// })
-		devFolder.addButtonGrid({
-			title: 'dev',
-			saveable: false,
-			resettable: false,
-			value: [
+		devFolder.addButtonGrid(
+			'dev',
+			[
 				[
 					{
 						text: 'log(this)',
 						onClick: () => {
 							console.log(gooey)
-						}
+						},
 					},
 					{
 						text: 'show preset',
 						onClick: () => {
 							showCode.set(!showCode.value)
-						}
+						},
 					},
 					{
 						text: '🚫 storage',
@@ -279,12 +347,16 @@ export function demoGooey(params: Params) {
 							whiteSpace: 'nowrap',
 							textOverflow: 'ellipsis',
 							filter: 'saturate(0)',
-							alignItems: 'center'
-						}
-					}
-				]
-			]
-		})
+							alignItems: 'center',
+						},
+					},
+				],
+			],
+			{
+				saveable: false,
+				resettable: false,
+			},
+		)
 	}
 
 	// console.log(gooey._log.log('asd'))
