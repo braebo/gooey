@@ -28,5 +28,6 @@
 
 		"outDir": "dist/build"
 	},
-	"include": ["src", "global.d.ts"]
+	"include": ["src/**/*.ts", "src/**/*.js", "global.d.ts"],
+	"exclude": ["node_modules/**"]
 }
