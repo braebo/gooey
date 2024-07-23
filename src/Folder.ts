@@ -438,9 +438,15 @@ export class Folder {
 
 		this.presetId = this._resolvePresetId()
 
-		// @ts-expect-error @internal
-		let closed = this.gooey!._closedMap.get()[this.presetId]
-		this.closed = state(closed ?? opts.closed ?? false)
+		let closed = opts.closed ?? false
+		if (
+			typeof this.gooey!.opts.storage === 'object' &&
+			typeof this.gooey!.opts.storage.closed === 'boolean'
+		) {
+			// @ts-expect-error @internal
+			closed = this.gooey!._closedMap.get()[this.presetId]
+		}
+		this.closed = state(closed)
 
 		this.saveable = !!opts.saveable
 

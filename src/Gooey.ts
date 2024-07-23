@@ -266,7 +266,7 @@ export const GUI_DEFAULTS = {
 	resizable: true,
 	draggable: true,
 	loadDefaultFont: true,
-	settingsFolder: { closed: true },
+	settingsFolder: { closed: true as boolean },
 } as const satisfies GooeyOptions
 
 /**
@@ -364,7 +364,9 @@ export class Gooey {
 
 		let reposition = false
 		const storageOpts = resolveOpts(opts.storage, GUI_STORAGE_DEFAULTS)
-		if (storageOpts) {
+		if (!storageOpts) {
+			reposition = true
+		} else {
 			opts.storage = {
 				...storageOpts,
 				key: `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`,
@@ -374,8 +376,6 @@ export class Gooey {
 			if (!(`${opts.storage.key}::wm::0::position` in localStorage)) {
 				reposition = true
 			}
-		} else {
-			reposition = true
 		}
 
 		this.opts = opts as GooeyOptions & { storage: GooeyStorageOptions | false }
@@ -480,10 +480,20 @@ export class Gooey {
 		)
 		this.folder.elements.toolbar.settingsButton = button
 
+		let settingsFolderClosed = GUI_DEFAULTS.settingsFolder.closed
+		// Use localstorage, if enabled.
+		if (typeof opts.storage === 'object' && opts.storage.closed !== false) {
+			settingsFolderClosed =
+				this._closedMap.value[`${this.title}__gooey_settings_folder`] ?? true
+		} else if (opts.settingsFolder?.closed) {
+			settingsFolderClosed = opts.settingsFolder.closed
+		}
+
 		this.settingsFolder = this.addFolder('gooey_settings_folder', {
 			// @ts-expect-error @internal
 			_headerless: true,
 			...opts.settingsFolder,
+			closed: settingsFolderClosed,
 		})
 		this.settingsFolder.element.classList.add('gooey-folder-alt')
 		updateIcon()
@@ -705,10 +715,6 @@ export class Gooey {
 		})
 
 		if (folder) {
-			// uiFolder.bindSelect(finalThemer, 'theme', {
-			// 	labelKey: 'title',
-			// 	options: finalThemer.themes.value,
-			// })
 			const themeInput = uiFolder.addSelect('theme', finalThemer.themes.value, {
 				labelKey: 'title',
 				initialValue: finalThemer.theme.value,
