@@ -1,5 +1,3 @@
-import { create } from '../create.js';
-
 /**
  * A class decorator that creates a style element in the head of the document when the class is
  * instantiated.  The style element is created with the `style` property of the class.  The style
@@ -18,10 +16,12 @@ function styled(constructor) {
                     return;
                 }
                 dis.initialized = true;
-                dis.stylesheet ??= create('style', {
-                    parent: document.head,
-                    innerHTML: dis.style,
-                });
+                if (!dis.stylesheet) {
+                    const stylesheet = document.createElement('style');
+                    stylesheet.innerHTML = dis.style;
+                    document.head.appendChild(stylesheet);
+                    dis.stylesheet = stylesheet;
+                }
             }
             else {
                 throw new Error('@styled components can only be used in the browser');

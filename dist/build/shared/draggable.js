@@ -297,12 +297,14 @@ class Draggable {
             // this.node.releasePointerCapture(e.pointerId)
             this.node.style.cursor = cursor;
         };
-        //! todo - DELETEME
-        this.debugInfo('dragStart');
         // Dispatch custom events
         this._emitDragStart();
         this._emitUpdate();
     };
+    /**
+     * Used to account for any scaling or transforms on the node when calculating bounds.
+     */
+    boundsDiff = { x: 0, y: 0 };
     /**
      * This target node's cached {@link DOMRect}
      */
@@ -311,6 +313,10 @@ class Draggable {
     }
     _updateRect() {
         this._rect = this.node.getBoundingClientRect();
+        this.boundsDiff = {
+            x: this.x - this.rect.x,
+            y: this.y - this.rect.y,
+        };
     }
     drag = (e) => {
         if (!this._active)
@@ -320,18 +326,10 @@ class Draggable {
         // Apply dragging and dragged classes.
         this.node.classList.add(this.opts.classes.dragging);
         this.node.classList.add(this.opts.classes.dragged);
-        // const scale = this._getScale()
-        // const x = (e.clientX - this.clickOffset.x) / scale.x
-        // const y = (e.clientY - this.clickOffset.y) / scale.y
-        const scale = this._getScale();
-        const x = e.clientX - this.clickOffset.x * scale.x;
-        const y = e.clientY - this.clickOffset.y * scale.y;
-        // const x = e.clientX - this.clickOffset.x
-        // const y = e.clientY - this.clickOffset.y
+        const x = e.clientX - this.clickOffset.x;
+        const y = e.clientY - this.clickOffset.y;
         const target = { x, y };
         this.moveTo(target);
-        //! todo - DELETEME
-        this.debugInfo('drag');
         this._emitDrag();
     };
     dragEnd = () => {
@@ -363,22 +361,21 @@ class Draggable {
     moveTo(target) {
         if (this.disabled || this.disposed)
             return;
-        this._log.fn('moveTo').debug('Moving to:', target, { bounds: this.bounds });
-        const scale = this._getScale();
+        this._log.fn('moveTo').debug('Moving to:', target, { rect: this.rect, bounds: this.bounds });
         if (this.bounds) {
-            target.x = clamp(target.x, this.bounds.left, this.bounds.right - this.rect.width * scale.x);
-            target.y = clamp(target.y, this.bounds.top, this.bounds.bottom - this.rect.height * scale.y);
+            target.x = clamp(target.x, this.bounds.left + this.boundsDiff.x, this.bounds.right + this.boundsDiff.x - (this.rect.right - this.rect.left));
+            target.y = clamp(target.y, this.bounds.top + this.boundsDiff.y, this.bounds.bottom + this.boundsDiff.y - (this.rect.bottom - this.rect.top));
         }
         if (this.canMoveX) {
-            const deltaX = (target.x - this.x) / scale.x;
+            const deltaX = target.x - this.x;
             if (deltaX !== 0) {
                 this.x += deltaX;
             }
         }
         if (this.canMoveY) {
             if (this.bounds)
-                target.y = clamp(target.y, this.bounds.top, this.bounds.bottom);
-            const deltaY = (target.y - this.y) / scale.y;
+                target.y = clamp(target.y, this.bounds.top + this.boundsDiff.y, this.bounds.bottom + this.boundsDiff.y);
+            const deltaY = target.y - this.y;
             if (deltaY !== 0) {
                 this.y += deltaY;
             }
@@ -404,8 +401,6 @@ class Draggable {
                 this.positionStore.set({ x, y });
             }
         }
-        //! todo - DELETEME
-        this.debugInfo('moveTo');
         this._emitUpdate();
     }
     update(v = this.position) {
@@ -461,21 +456,6 @@ class Draggable {
                 pos,
             },
         });
-    }
-    /**
-     * Used to account for the scale of the draggable element when calculating positions.
-     */
-    _getScale() {
-        const style = window.getComputedStyle(this.node);
-        const cssScale = style.scale;
-        if (cssScale) {
-            const scale = cssScale.split(' ');
-            const x = +scale[0] || 1;
-            const y = scale[1] ? +scale[1] || x : x;
-            return { x, y };
-        }
-        const matrix = new DOMMatrix(style.transform);
-        return { x: matrix.a, y: matrix.d };
     }
     /**
      * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
@@ -553,10 +533,6 @@ class Draggable {
     _emitUpdate = () => {
         this.node.dispatchEvent(new CustomEvent('update', { detail: this }));
     };
-    //! todo - DELETEME
-    debugInfo(methodName) {
-        return; // Only run in development mode
-    }
     disposed = false;
     dispose() {
         this.disposed = true;

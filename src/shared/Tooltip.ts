@@ -5,7 +5,6 @@ import { deepMergeOpts } from './deepMergeOpts'
 import { EventManager } from './EventManager'
 import { styled } from './decorators/styled'
 import { entries } from './object'
-import { create } from './create'
 import { toFn } from './toFn'
 import { DEV } from 'esm-env'
 
@@ -168,11 +167,17 @@ export class Tooltip {
 
 		this.parent = options?.parent ?? document.getElementById('svelte') ?? document.body
 
-		this.element = create('div', {
-			classes: ['fractils-tooltip'],
-			innerHTML: String(this._text()),
-			style: options?.style,
-		})
+		const el = document.createElement('div')
+		el.classList.add('fractils-tooltip')
+		el.innerHTML = String(this._text())
+		if (opts.style) {
+			for (const [key, value] of entries(opts.style)) {
+				if (key && value) {
+					el.style.setProperty(key, value)
+				}
+			}
+		}
+		this.element = el
 
 		if (opts.style) {
 			for (const [key, value] of entries(opts.style)) {

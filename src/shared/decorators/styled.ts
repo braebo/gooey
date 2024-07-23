@@ -1,5 +1,3 @@
-import { create } from '../create'
-
 export interface Styled {
 	initialized: boolean
 	stylesheet: HTMLStyleElement
@@ -33,10 +31,12 @@ export function styled<T extends { new (...args: any[]): {}; style: string }>(
 
 				dis.initialized = true
 
-				dis.stylesheet ??= create('style', {
-					parent: document.head,
-					innerHTML: dis.style,
-				})
+				if (!dis.stylesheet) {
+					const stylesheet = document.createElement('style')
+					stylesheet.innerHTML = dis.style
+					document.head.appendChild(stylesheet)
+					dis.stylesheet = stylesheet
+				}
 			} else {
 				throw new Error('@styled components can only be used in the browser')
 			}

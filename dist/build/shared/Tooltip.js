@@ -3,7 +3,6 @@ import { deepMergeOpts } from './deepMergeOpts.js';
 import { EventManager } from './EventManager.js';
 import { styled } from './decorators/styled.js';
 import { entries } from './object.js';
-import { create } from './create.js';
 import { toFn } from './toFn.js';
 
 const TOOLTIP_DEFAULTS = {
@@ -55,11 +54,17 @@ let Tooltip = class Tooltip {
         this.placement = opts.placement;
         this._text = toFn(opts.text);
         this.parent = options?.parent ?? document.getElementById('svelte') ?? document.body;
-        this.element = create('div', {
-            classes: ['fractils-tooltip'],
-            innerHTML: String(this._text()),
-            style: options?.style,
-        });
+        const el = document.createElement('div');
+        el.classList.add('fractils-tooltip');
+        el.innerHTML = String(this._text());
+        if (opts.style) {
+            for (const [key, value] of entries(opts.style)) {
+                if (key && value) {
+                    el.style.setProperty(key, value);
+                }
+            }
+        }
+        this.element = el;
         if (opts.style) {
             for (const [key, value] of entries(opts.style)) {
                 if (key && value) {

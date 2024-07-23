@@ -321,6 +321,13 @@ export declare class Draggable {
     get isControlled(): boolean;
     dragStart: (e: PointerEvent) => void;
     /**
+     * Used to account for any scaling or transforms on the node when calculating bounds.
+     */
+    boundsDiff: {
+        x: number;
+        y: number;
+    };
+    /**
      * This target node's cached {@link DOMRect}
      */
     get rect(): DOMRect;
@@ -358,10 +365,6 @@ export declare class Draggable {
         y: number;
     };
     /**
-     * Used to account for the scale of the draggable element when calculating positions.
-     */
-    private _getScale;
-    /**
      * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
      * function that updates the {@link bounds} property when called.
      */
@@ -372,7 +375,6 @@ export declare class Draggable {
     private _emitDragEnd;
     private _emitDrag;
     private _emitUpdate;
-    private debugInfo;
     disposed: boolean;
     dispose(): void;
 }
