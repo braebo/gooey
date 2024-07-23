@@ -51,8 +51,6 @@
 
 	const unsubs = [] as (() => any)[]
 	onMount(() => {
-		localStorage.clear() //! DELETEME
-		
 		// Create the gui.
 		const gui = new Gooey({
 			position: 'top-center',
@@ -68,7 +66,7 @@
 				texture: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
 				gooeyness: { min: 0.1, max: 100, step: 0.1 },
 				viscosity: { min: 0.001, max: 0.5, step: 0.0001 },
-				density: { min: 1, max: 20, step: 1 }, 
+				density: { min: 1, max: 20, step: 1 },
 			},
 			orbs: { min: 0.5, max: 3, step: 0.01 },
 		})
@@ -316,7 +314,7 @@
 		contain: content;
 		backface-visibility: hidden;
 		transform: translateZ(0);
-		
+
 		* {
 			backface-visibility: hidden;
 			transform: translateZ(0);
