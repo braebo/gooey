@@ -1,5 +1,11 @@
 # gooey
 
+## 0.2.0
+
+### Minor Changes
+
+-   feat: new version ([`1b8c99dd0e31daa638ee9e96fd87d63b04212ceb`](https://github.com/braebo/gooey/commit/1b8c99dd0e31daa638ee9e96fd87d63b04212ceb))
+
 ## 0.1.2
 
 ### Patch Changes
