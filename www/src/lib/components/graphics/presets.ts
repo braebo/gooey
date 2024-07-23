@@ -1,4 +1,4 @@
-import type { GooeyPreset } from 'gooey'
+import type { GooeyPreset } from '../../../../../src/Gooey'
 
 const presets: GooeyPreset[] = [
 	{

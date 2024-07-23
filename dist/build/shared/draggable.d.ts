@@ -372,6 +372,7 @@ export declare class Draggable {
     private _emitDragEnd;
     private _emitDrag;
     private _emitUpdate;
+    private debugInfo;
     disposed: boolean;
     dispose(): void;
 }

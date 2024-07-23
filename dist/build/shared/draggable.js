@@ -297,6 +297,8 @@ class Draggable {
             // this.node.releasePointerCapture(e.pointerId)
             this.node.style.cursor = cursor;
         };
+        //! todo - DELETEME
+        this.debugInfo('dragStart');
         // Dispatch custom events
         this._emitDragStart();
         this._emitUpdate();
@@ -318,11 +320,18 @@ class Draggable {
         // Apply dragging and dragged classes.
         this.node.classList.add(this.opts.classes.dragging);
         this.node.classList.add(this.opts.classes.dragged);
+        // const scale = this._getScale()
+        // const x = (e.clientX - this.clickOffset.x) / scale.x
+        // const y = (e.clientY - this.clickOffset.y) / scale.y
         const scale = this._getScale();
-        const x = (e.clientX - this.clickOffset.x) / scale.x;
-        const y = (e.clientY - this.clickOffset.y) / scale.y;
+        const x = e.clientX - this.clickOffset.x * scale.x;
+        const y = e.clientY - this.clickOffset.y * scale.y;
+        // const x = e.clientX - this.clickOffset.x
+        // const y = e.clientY - this.clickOffset.y
         const target = { x, y };
         this.moveTo(target);
+        //! todo - DELETEME
+        this.debugInfo('drag');
         this._emitDrag();
     };
     dragEnd = () => {
@@ -395,6 +404,8 @@ class Draggable {
                 this.positionStore.set({ x, y });
             }
         }
+        //! todo - DELETEME
+        this.debugInfo('moveTo');
         this._emitUpdate();
     }
     update(v = this.position) {
@@ -456,6 +467,13 @@ class Draggable {
      */
     _getScale() {
         const style = window.getComputedStyle(this.node);
+        const cssScale = style.scale;
+        if (cssScale) {
+            const scale = cssScale.split(' ');
+            const x = +scale[0] || 1;
+            const y = scale[1] ? +scale[1] || x : x;
+            return { x, y };
+        }
         const matrix = new DOMMatrix(style.transform);
         return { x: matrix.a, y: matrix.d };
     }
@@ -535,6 +553,10 @@ class Draggable {
     _emitUpdate = () => {
         this.node.dispatchEvent(new CustomEvent('update', { detail: this }));
     };
+    //! todo - DELETEME
+    debugInfo(methodName) {
+        return; // Only run in development mode
+    }
     disposed = false;
     dispose() {
         this.disposed = true;

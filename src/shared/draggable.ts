@@ -563,6 +563,11 @@ export class Draggable {
 	}
 
 	/**
+	 * Used to account for any scaling or transforms on the node when calculating bounds.
+	 */
+	boundsDiff = { x: 0, y: 0 }
+
+	/**
 	 * This target node's cached {@link DOMRect}
 	 */
 	get rect() {
@@ -571,6 +576,11 @@ export class Draggable {
 
 	private _updateRect() {
 		this._rect = this.node.getBoundingClientRect()
+
+		this.boundsDiff = {
+			x: this.x - this.rect.x,
+			y: this.y - this.rect.y,
+		}
 	}
 
 	drag = (e: PointerEvent) => {
@@ -583,9 +593,8 @@ export class Draggable {
 		this.node.classList.add(this.opts.classes.dragging)
 		this.node.classList.add(this.opts.classes.dragged)
 
-		const scale = this._getScale()
-		const x = (e.clientX - this.clickOffset.x) / scale.x
-		const y = (e.clientY - this.clickOffset.y) / scale.y
+		const x = e.clientX - this.clickOffset.x
+		const y = e.clientY - this.clickOffset.y
 		const target = { x, y }
 		this.moveTo(target)
 
@@ -631,25 +640,23 @@ export class Draggable {
 	 */
 	moveTo(target: { x: number; y: number }) {
 		if (this.disabled || this.disposed) return
-		this._log.fn('moveTo').debug('Moving to:', target, { bounds: this.bounds })
-
-		const scale = this._getScale()
+		this._log.fn('moveTo').debug('Moving to:', target, { rect: this.rect, bounds: this.bounds })
 
 		if (this.bounds) {
 			target.x = clamp(
 				target.x,
-				this.bounds.left,
-				this.bounds.right - this.rect.width * scale.x,
+				this.bounds.left + this.boundsDiff.x,
+				this.bounds.right + this.boundsDiff.x - (this.rect.right - this.rect.left),
 			)
 			target.y = clamp(
 				target.y,
-				this.bounds.top,
-				this.bounds.bottom - this.rect.height * scale.y,
+				this.bounds.top + this.boundsDiff.y,
+				this.bounds.bottom + this.boundsDiff.y - (this.rect.bottom - this.rect.top),
 			)
 		}
 
 		if (this.canMoveX) {
-			const deltaX = (target.x - this.x) / scale.x
+			const deltaX = target.x - this.x
 
 			if (deltaX !== 0) {
 				this.x += deltaX
@@ -657,8 +664,13 @@ export class Draggable {
 		}
 
 		if (this.canMoveY) {
-			if (this.bounds) target.y = clamp(target.y, this.bounds.top, this.bounds.bottom)
-			const deltaY = (target.y - this.y) / scale.y
+			if (this.bounds)
+				target.y = clamp(
+					target.y,
+					this.bounds.top + this.boundsDiff.y,
+					this.bounds.bottom + this.boundsDiff.y,
+				)
+			const deltaY = target.y - this.y
 			if (deltaY !== 0) {
 				this.y += deltaY
 			}
@@ -756,15 +768,6 @@ export class Draggable {
 				pos,
 			},
 		})
-	}
-
-	/**
-	 * Used to account for the scale of the draggable element when calculating positions.
-	 */
-	private _getScale(): { x: number; y: number } {
-		const style = window.getComputedStyle(this.node)
-		const matrix = new DOMMatrix(style.transform)
-		return { x: matrix.a, y: matrix.d }
 	}
 
 	/**
