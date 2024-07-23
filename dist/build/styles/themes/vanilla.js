@@ -1,7 +1,7 @@
 import { resolveTheme } from '../themer/resolveTheme.js';
 
 var theme_default = resolveTheme({
-    title: 'default',
+    title: 'vanilla',
     prefix: 'gooey',
     vars: {
         color: {
@@ -33,4 +33,4 @@ var theme_default = resolveTheme({
 });
 
 export { theme_default as default };
-//# sourceMappingURL=default.js.map
+//# sourceMappingURL=vanilla.js.map

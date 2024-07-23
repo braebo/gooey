@@ -358,6 +358,10 @@ export declare class Draggable {
         y: number;
     };
     /**
+     * Used to account for the scale of the draggable element when calculating positions.
+     */
+    private _getScale;
+    /**
      * Resolves the {@link DraggableOptions.bounds|bounds} and returns a
      * function that updates the {@link bounds} property when called.
      */

@@ -19,7 +19,7 @@ import { select } from './shared/select.js';
 import { Logger } from './shared/logger.js';
 import { nanoid } from './shared/nanoid.js';
 import { toFn } from './shared/toFn.js';
-import './styles/themes/default.js';
+import './styles/themes/vanilla.js';
 import './styles/themes/scout.js';
 import './styles/themes/flat.js';
 import './svg/RenameSVG.js';
@@ -160,9 +160,13 @@ class Folder {
         this.element = this._createElement(opts);
         this.elements = this._createElements(this.element);
         this.presetId = this._resolvePresetId();
-        // @ts-expect-error @internal
-        let closed = this.gooey._closedMap.get()[this.presetId];
-        this.closed = state(closed ?? opts.closed ?? false);
+        let closed = opts.closed ?? false;
+        if (typeof this.gooey.opts.storage === 'object' &&
+            typeof this.gooey.opts.storage.closed === 'boolean') {
+            // @ts-expect-error @internal
+            closed = this.gooey._closedMap.get()[this.presetId];
+        }
+        this.closed = state(closed);
         this.saveable = !!opts.saveable;
         if (this.isRoot || opts.searchable) {
             new Search(this);
@@ -445,18 +449,26 @@ class Folder {
      * {@link Folder.load|`load`} method.
      */
     load(preset) {
-        this._log.fn('load').debug({ preset, this: this });
+        this._log.fn('load').info({ preset, this: this });
         // this.closed.set(preset.closed)
         this.hidden = preset.hidden;
         for (const child of this.children) {
-            const data = preset.children?.find(f => f.id === child.presetId);
-            if (data)
-                child.load(data);
+            const folderPreset = preset.children?.find(f => f.id === child.presetId);
+            if (folderPreset) {
+                child.load(folderPreset);
+            }
+            else {
+                console.warn(`Missing folder for preset:`, { child, folderPreset });
+            }
         }
         for (const input of this.inputs.values()) {
-            const data = preset.inputs.find(c => c.presetId === input.id);
-            if (data)
-                input.load(data);
+            const inputPreset = preset.inputs.find(c => c.presetId === input.id);
+            if (inputPreset) {
+                input.load(inputPreset);
+            }
+            else {
+                console.warn(`Missing input for preset:`, { preset, input });
+            }
         }
         return this;
     }

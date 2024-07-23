@@ -1,4 +1,4 @@
-import theme_default from './styles/themes/default.js';
+import theme_default from './styles/themes/vanilla.js';
 import theme_scout from './styles/themes/scout.js';
 import theme_flat from './styles/themes/flat.js';
 import style from './styles/gooey.css.js';
@@ -61,7 +61,7 @@ const GUI_DEFAULTS = {
     position: 'top-right',
     margin: 16,
     container: 'body',
-    theme: 'default',
+    theme: 'vanilla',
     themeMode: 'dark',
     themes: [theme_default, theme_flat, theme_scout],
     resizable: true,
@@ -145,7 +145,10 @@ class Gooey {
         }
         let reposition = false;
         const storageOpts = resolveOpts(opts.storage, GUI_STORAGE_DEFAULTS);
-        if (storageOpts) {
+        if (!storageOpts) {
+            reposition = true;
+        }
+        else {
             opts.storage = {
                 ...storageOpts,
                 key: `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`,
@@ -155,9 +158,6 @@ class Gooey {
             if (!(`${opts.storage.key}::wm::0::position` in localStorage)) {
                 reposition = true;
             }
-        }
-        else {
-            reposition = true;
         }
         this.opts = opts;
         this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' });
@@ -231,10 +231,20 @@ class Gooey {
         //⌟
         const { button, updateIcon } = this._createSettingsButton(this.folder.elements.toolbar.container);
         this.folder.elements.toolbar.settingsButton = button;
+        let settingsFolderClosed = GUI_DEFAULTS.settingsFolder.closed;
+        // Use localstorage, if enabled.
+        if (typeof opts.storage === 'object' && opts.storage.closed !== false) {
+            settingsFolderClosed =
+                this._closedMap.value[`${this.title}__gooey_settings_folder`] ?? true;
+        }
+        else if (opts.settingsFolder?.closed) {
+            settingsFolderClosed = opts.settingsFolder.closed;
+        }
         this.settingsFolder = this.addFolder('gooey_settings_folder', {
             // @ts-expect-error @internal
             _headerless: true,
             ...opts.settingsFolder,
+            closed: settingsFolderClosed,
         });
         this.settingsFolder.element.classList.add('gooey-folder-alt');
         updateIcon();
@@ -418,10 +428,6 @@ class Gooey {
             uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)');
         });
         if (folder) {
-            // uiFolder.bindSelect(finalThemer, 'theme', {
-            // 	labelKey: 'title',
-            // 	options: finalThemer.themes.value,
-            // })
             const themeInput = uiFolder.addSelect('theme', finalThemer.themes.value, {
                 labelKey: 'title',
                 initialValue: finalThemer.theme.value,

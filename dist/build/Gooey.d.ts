@@ -197,14 +197,14 @@ export declare const GUI_DEFAULTS: {
     readonly position: "top-right";
     readonly margin: 16;
     readonly container: "body";
-    readonly theme: "default";
+    readonly theme: "vanilla";
     readonly themeMode: "dark";
     readonly themes: [Theme, Theme, Theme];
     readonly resizable: true;
     readonly draggable: true;
     readonly loadDefaultFont: true;
     readonly settingsFolder: {
-        readonly closed: true;
+        readonly closed: boolean;
     };
 };
 /**

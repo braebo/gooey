@@ -318,8 +318,9 @@ class Draggable {
         // Apply dragging and dragged classes.
         this.node.classList.add(this.opts.classes.dragging);
         this.node.classList.add(this.opts.classes.dragged);
-        const x = e.clientX - this.clickOffset.x;
-        const y = e.clientY - this.clickOffset.y;
+        const scale = this._getScale();
+        const x = (e.clientX - this.clickOffset.x) / scale.x;
+        const y = (e.clientY - this.clickOffset.y) / scale.y;
         const target = { x, y };
         this.moveTo(target);
         this._emitDrag();
@@ -354,12 +355,13 @@ class Draggable {
         if (this.disabled || this.disposed)
             return;
         this._log.fn('moveTo').debug('Moving to:', target, { bounds: this.bounds });
+        const scale = this._getScale();
         if (this.bounds) {
-            target.x = clamp(target.x, this.bounds.left, this.bounds.right - (this.rect.right - this.rect.left));
-            target.y = clamp(target.y, this.bounds.top, this.bounds.bottom - (this.rect.bottom - this.rect.top));
+            target.x = clamp(target.x, this.bounds.left, this.bounds.right - this.rect.width * scale.x);
+            target.y = clamp(target.y, this.bounds.top, this.bounds.bottom - this.rect.height * scale.y);
         }
         if (this.canMoveX) {
-            const deltaX = target.x - this.x;
+            const deltaX = (target.x - this.x) / scale.x;
             if (deltaX !== 0) {
                 this.x += deltaX;
             }
@@ -367,7 +369,7 @@ class Draggable {
         if (this.canMoveY) {
             if (this.bounds)
                 target.y = clamp(target.y, this.bounds.top, this.bounds.bottom);
-            const deltaY = target.y - this.y;
+            const deltaY = (target.y - this.y) / scale.y;
             if (deltaY !== 0) {
                 this.y += deltaY;
             }
@@ -448,6 +450,14 @@ class Draggable {
                 pos,
             },
         });
+    }
+    /**
+     * Used to account for the scale of the draggable element when calculating positions.
+     */
+    _getScale() {
+        const style = window.getComputedStyle(this.node);
+        const matrix = new DOMMatrix(style.transform);
+        return { x: matrix.a, y: matrix.d };
     }
     /**
      * Resolves the {@link DraggableOptions.bounds|bounds} and returns a

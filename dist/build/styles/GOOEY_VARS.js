@@ -1,5 +1,5 @@
 import { destructureVars } from '../shared/css-custom-properties.js';
-import theme_default from './themes/default.js';
+import theme_default from './themes/vanilla.js';
 
 const VAR_PREFIX = 'gooey';
 const GUI_VARS_UTILITY = {
