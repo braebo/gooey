@@ -7,7 +7,7 @@ import type { DraggableOptions } from './shared/draggable'
 import type { Placement } from './shared/place'
 import type { Commit } from './UndoManager'
 
-import theme_default from './styles/themes/default'
+import theme_default from './styles/themes/vanilla'
 import theme_scout from './styles/themes/scout'
 import theme_flat from './styles/themes/flat'
 import style from './styles/gooey.css'
@@ -260,7 +260,7 @@ export const GUI_DEFAULTS = {
 	position: 'top-right',
 	margin: 16,
 	container: 'body',
-	theme: 'default',
+	theme: 'vanilla',
 	themeMode: 'dark',
 	themes: [theme_default, theme_flat, theme_scout],
 	resizable: true,

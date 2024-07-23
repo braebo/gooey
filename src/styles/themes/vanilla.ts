@@ -1,9 +1,9 @@
-import type { ThemeDefinition } from '../../styles/themer/types'
+import type { ThemeDefinition } from '../themer/types'
 
-import { resolveTheme } from '../../styles/themer/resolveTheme'
+import { resolveTheme } from '../themer/resolveTheme'
 
 export default resolveTheme({
-	title: 'default',
+	title: 'vanilla',
 	prefix: 'gooey',
 	vars: {
 		color: {

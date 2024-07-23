@@ -2,7 +2,7 @@ import type { DestructuredVars, ThemeVars } from '../shared/css-custom-propertie
 import type { ExtendedVars } from './themer/types'
 
 import { destructureVars } from '../shared/css-custom-properties'
-import defaultTheme from './themes/default'
+import defaultTheme from './themes/vanilla'
 
 export type GooeyCoreVars = DestructuredVars<typeof GUI_VARS_STRUCTURED, typeof VAR_PREFIX>
 
