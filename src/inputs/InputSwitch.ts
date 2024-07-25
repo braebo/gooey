@@ -147,7 +147,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 		this._evm.add(this.state.subscribe(this.refresh.bind(this)))
 	}
 
-	set(v = !this.state.value) {
+	set(v = !this.state.value): this {
 		this.#log.fn('set').debug({ v, this: this })
 
 		if (typeof v === 'boolean') {
@@ -168,9 +168,15 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 		return this
 	}
 
-	refresh(v = this.state.value) {
-		this.#log.fn('refresh').debug({ v, this: this })
+	refresh(v?: boolean): this {
 		if (this.disabled) return this
+		this.#log.fn('refresh').debug({ v, this: this })
+
+		if (typeof v === 'undefined') {
+			v = this.opts.binding
+				? this.opts.binding.target[this.opts.binding.key]
+				: this.state.value
+		}
 
 		this.elements.controllers.input.classList.toggle('active', v)
 		this.elements.controllers.input?.tooltip?.refresh()
@@ -181,18 +187,18 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 		return this
 	}
 
-	enable() {
+	enable(): this {
 		this.elements.controllers.input.disabled = false
 		super.enable()
 		return this
 	}
-	disable() {
+	disable(): this {
 		this.elements.controllers.input.disabled = true
 		super.disable()
 		return this
 	}
 
-	dispose() {
+	dispose(): void {
 		this.elements.controllers.input.tooltip?.dispose()
 		super.dispose()
 	}
