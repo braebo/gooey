@@ -1,5 +1,4 @@
-import { Color } from 'gooey'
-import { state } from 'gooey'
+import { state, Color } from '../../../../../src/index'
 
 const count = 10
 const defaults = {
@@ -24,9 +23,9 @@ const defaults = {
 		glow: {
 			r: 10,
 			g: 10,
-			b: 50
-		}
-	}
+			b: 50,
+		},
+	},
 }
 
 export type Params = typeof defaults

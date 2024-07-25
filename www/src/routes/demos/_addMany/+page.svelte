@@ -1,6 +1,7 @@
 <!-- @hmr:reset -->
 
 <script lang="ts">
+	import { Gooey } from '../../../../../src/index'
 	import { params } from '$lib/components/orbs/params'
 	import Orbs from '$lib/components/orbs/Orbs.svelte'
 	import { stringify } from '$lib/utils/stringify'
@@ -9,7 +10,6 @@
 	import { quintOut } from 'svelte/easing'
 	import { fly } from 'svelte/transition'
 	import { onMount } from 'svelte'
-	import { Gooey } from 'gooey'
 
 	let gooey: Gooey
 	let ready = false

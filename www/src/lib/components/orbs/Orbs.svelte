@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { State } from 'gooey'
+	import type { State } from '../../../../../src/index'
 
+	import { Color } from '../../../../../src/index'
 	import { tweened } from 'svelte/motion'
 	import { onMount } from 'svelte'
-	import { Color } from 'gooey'
 
 	export let params: State<typeof defaults>
 
@@ -26,7 +26,7 @@
 		accent: new Color({ r: 0, g: 50, b: 100, a: 1 }),
 		glowR: 10,
 		glowG: 10,
-		glowB: 50
+		glowB: 50,
 	}
 
 	let p = params?.value ?? defaults
@@ -43,7 +43,7 @@
 		for (let i = 0; i < p.orbs; i++) {
 			arr[i] = [
 				(Math.sin((i / Math.PI + (p.orbs - i) * p.drift) * $sinX - time) / Math.PI) * p.width + p.mid,
-				(Math.cos((i / Math.PI + (p.orbs - i) * p.drift) * $sinY - time) / Math.PI) * p.height + p.mid
+				(Math.cos((i / Math.PI + (p.orbs - i) * p.drift) * $sinY - time) / Math.PI) * p.height + p.mid,
 			]
 		}
 		return arr
@@ -87,7 +87,7 @@
 										style="stop-color:rgb({[
 											p.color.rgba.r * (((i + 1) * p.brightness) / p.orbs + 0.5),
 											p.color.rgba.g * (((i + 1) * p.brightness) / p.orbs + 0.5),
-											p.color.rgba.b * (((i + 1) * p.brightness) / p.orbs + 0.5)
+											p.color.rgba.b * (((i + 1) * p.brightness) / p.orbs + 0.5),
 										]});stop-opacity:{p.color.rgba.a}"
 									/>
 									<stop
@@ -95,7 +95,7 @@
 										style="stop-color:rgb({[
 											p.accent.rgba.r + (i + 1) * p.brightness * p.glowR,
 											p.accent.rgba.g + (i + 1) * p.brightness * p.glowG,
-											p.accent.rgba.b + (i + 1) * p.brightness * p.glowB
+											p.accent.rgba.b + (i + 1) * p.brightness * p.glowB,
 										]});stop-opacity:{p.accent.rgba.a}"
 									/>
 								</radialGradient>

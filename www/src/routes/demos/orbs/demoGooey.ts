@@ -1,13 +1,12 @@
+import type { GooeyPreset } from '../../../../../src/index'
 import type { Params } from '$lib/components/orbs/params'
-import type { GooeyPreset } from 'gooey'
 
 import { ORBS_PRESETS } from '$lib/components/orbs/ORBS_PRESETS'
+import { Gooey, state } from '../../../../../src/index'
 import { DEV } from 'esm-env'
-import { Gooey } from 'gooey'
 
 import { stringify } from '$lib/utils/stringify'
 import { debrief } from '$lib/utils/debrief'
-import { state } from 'gooey'
 
 export const showCode = state(false)
 export const code = state('')

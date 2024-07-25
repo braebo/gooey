@@ -9,8 +9,8 @@ import { serendipity } from './highlight.serendipity'
 import { getSingletonHighlighterCore } from 'shiki'
 
 import { getWasmInlined, bundledLanguages } from 'shiki'
+import { logger } from '../../../../src/index'
 import { fmtTime } from './time.js'
-import { logger } from 'gooey'
 import { dim, o } from './l'
 
 const DEBUG = false
@@ -31,7 +31,7 @@ export type HighlightOptions = CodeToHastOptions<string, string> & {
 
 export const HIGHLIGHT_DEFAULTS: HighlightOptions = {
 	lang: 'svelte',
-	theme: 'serendipity'
+	theme: 'serendipity',
 } as const
 
 const themes = new Set<ThemeInput>()
@@ -89,9 +89,9 @@ export async function highlight(text: string, options?: Partial<HighlightOptions
 			transformers: [
 				transformerNotationHighlight(),
 				transformerNotationFocus(),
-				transformerNotationDiff()
+				transformerNotationDiff(),
 				// transformerTwoSlash(),
-			]
+			],
 		})
 		const time = fmtTime(performance.now() - start)
 		log('complete', dim(time), { lang, theme, text, highlighted })
@@ -114,8 +114,8 @@ export async function getHighlighterInstance() {
 			langs: [
 				import('shiki/langs/svelte.mjs'),
 				import('shiki/langs/typescript.mjs'),
-				import('shiki/langs/javascript.mjs')
-			]
+				import('shiki/langs/javascript.mjs'),
+			],
 			// langs: [],
 		})
 	}

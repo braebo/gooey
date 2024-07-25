@@ -1,7 +1,7 @@
 import type { Waves } from './Waves'
 
 import { WAVE_PRESETS } from '../beats/BinauralBeats'
-import { Gooey } from 'gooey'
+import { Gooey } from '../../../../../../src/index'
 
 const dims = {
 	mx: 10,

@@ -1,5 +1,5 @@
+import { Gooey, type InputButtonGrid } from '../../../../../../src/index'
 import { BinauralBeats, WAVE_PRESETS } from './BinauralBeats'
-import { Gooey, type InputButtonGrid } from 'gooey'
 
 export class BinauralBeatsGooey extends Gooey {
 	constructor(public beats: BinauralBeats) {
