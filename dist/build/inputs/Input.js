@@ -93,6 +93,7 @@ class Input {
         this._index = this.opts.order ?? this.folder.inputs.size;
         this._index += 1;
         this._dirty = () => this.value !== this.initialValue;
+        this.bound = 'binding' in this.opts;
         this.elements.container = create('div', {
             classes: ['gooey-input-container'],
             parent: this.folder.elements.content,
@@ -138,9 +139,9 @@ class Input {
         if ('onChange' in options) {
             this._evm.on('change', options.onChange);
         }
-        Promise.resolve().then(() => {
-            this.index = this.index;
-        });
+        // Promise.resolve().then(() => {
+        // 	this.index = this.index
+        // })
     }
     get value() {
         return this.state.value;

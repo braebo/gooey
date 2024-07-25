@@ -107,7 +107,7 @@ let Select = class Select {
             this.add(option);
         }
         this.disabled = this._opts.disabled;
-        this._log.fn('constructor').info({ opts: this._opts, this: this });
+        this._log.fn('constructor').debug({ opts: this._opts, this: this });
     }
     /**
      * The currently selected option. Assigning a new value will update the UI.
@@ -116,7 +116,7 @@ let Select = class Select {
         return this._selected;
     }
     set selected(v) {
-        this._log.fn('set selected').info(v);
+        this._log.fn('set selected').debug(v);
         const newValue = isState(v) ? toLabeledOption(v.value) : toLabeledOption(v);
         this._selected = newValue;
         this.elements.selected.innerHTML = newValue.label;
@@ -153,7 +153,7 @@ let Select = class Select {
             element: el,
         });
         this.elements.options.push(el);
-        this._log.fn('add').info({ option, added: this.optionMap.get(id), id, this: this });
+        this._log.fn('add').debug({ option, added: this.optionMap.get(id), id, this: this });
         return this;
     }
     /**
@@ -176,7 +176,7 @@ let Select = class Select {
             throw new Error('No option found in map for id: ' + id);
         }
         const btn = found;
-        this._log.fn('remove').info({ btn, id, this: this });
+        this._log.fn('remove').debug({ btn, id, this: this });
         // If the selected option is being removed, select the next option in the list.
         if (autoSelectFallback &&
             JSON.stringify(this.selected.value) === JSON.stringify(btn.option.value)) {
@@ -186,7 +186,7 @@ let Select = class Select {
             // this.select(next)
             this._log
                 .fn('remove')
-                .info('Auto-selecting fallback btn', { fallback, btn, id, this: this });
+                .debug('Auto-selecting fallback btn', { fallback, btn, id, this: this });
             this.select(fallback, false);
         }
         this.elements.options = this.elements.options.filter(el => el !== btn.element);
@@ -198,7 +198,7 @@ let Select = class Select {
      * Removes all options and their elements.
      */
     clear() {
-        this._log.fn('clear').info({ this: this });
+        this._log.fn('clear').debug({ this: this });
         for (const id of this.optionMap.keys()) {
             this.remove(id, false);
         }
@@ -215,7 +215,7 @@ let Select = class Select {
         if (this.disabled) {
             return this;
         }
-        this._log.fn('select').info('v', v, { this: this });
+        this._log.fn('select').debug('v', v, { this: this });
         if (v instanceof Event) {
             const target = v.target;
             const id = target.dataset['optionId'];
@@ -253,7 +253,7 @@ let Select = class Select {
      * Updates the UI to reflect the current state of the source.
      */
     refresh = () => {
-        this._log.fn('refresh').info({ this: this });
+        this._log.fn('refresh').debug({ this: this });
         // Make sure the selected value text is in the selected div.
         this.elements.selected.innerHTML = this.selected.label;
         return this;
@@ -262,7 +262,7 @@ let Select = class Select {
      * Toggles the dropdown's visibility.
      */
     toggle = () => {
-        this._log.fn('toggle').info({ this: this });
+        this._log.fn('toggle').debug({ this: this });
         if (this.expanded) {
             this._evm.emit('cancel');
             this.close();
@@ -293,7 +293,7 @@ let Select = class Select {
                 const select = () => {
                     this._log
                         .fn('on(mouseenter)')
-                        .info('currentSelection', { option, element, this: this });
+                        .debug('currentSelection', { option, element, this: this });
                     this.select(option);
                 };
                 this._evm.listen(element, 'mouseenter', select, {}, 'dropdown');

@@ -161,7 +161,7 @@ class Gooey {
         }
         this.opts = opts;
         this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' });
-        this._log.fn('constructor').info({ options, opts });
+        this._log.fn('constructor').debug({ options, opts });
         if (this.opts.loadDefaultFont !== false) {
             const fredoka = new FontFace('fredoka', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2')})`, {
                 style: 'normal',
@@ -346,7 +346,7 @@ class Gooey {
      * @defaultValue {@link nanoid|nanoid(10)}
      */
     id = nanoid(10)) {
-        this._log.fn('save').info({ title, id });
+        this._log.fn('save').debug({ title, id });
         const preset = {
             __type: 'GooeyPreset',
             __version: 0,
@@ -360,7 +360,7 @@ class Gooey {
      * Loads a given preset into the gooey, updating all inputs.
      */
     load(preset) {
-        this._log.fn('load').info({ preset });
+        this._log.fn('load').debug({ preset });
         // todo - this isn't working, it's being unset immediately somewhere...
         this.dirty = false;
         this._lockCommits(preset);
@@ -374,10 +374,10 @@ class Gooey {
      */
     _commit(commit) {
         if (this._undoLock) {
-            this._log.fn('commit').info('LOCKED: prevented commit while locked');
+            this._log.fn('commit').debug('LOCKED: prevented commit while locked');
             return;
         }
-        this._log.fn('commit').info('commited', commit);
+        this._log.fn('commit').debug('commited', commit);
         this._undoManager?.commit(commit);
     }
     /**
@@ -387,7 +387,7 @@ class Gooey {
     _lockCommits = (from) => {
         this._undoManager.lockedExternally = true;
         this._lockCommit.from = from;
-        this._log.fn(o('lock')).info('commit', { from, lockCommit: this._lockCommit });
+        this._log.fn(o('lock')).debug('commit', { from, lockCommit: this._lockCommit });
     };
     /**
      * Unlocks commits and saves the current commit stored in lock.
@@ -398,10 +398,10 @@ class Gooey {
         commit.from ??= this._lockCommit.from;
         this._undoManager.lockedExternally = false;
         this._commit(commit);
-        this._log.fn(o('unlock')).info('commit', { commit, lockCommit: this._lockCommit });
+        this._log.fn(o('unlock')).debug('commit', { commit, lockCommit: this._lockCommit });
     };
     _createThemer(folder) {
-        this._log.fn('createThemer').info({ folder });
+        this._log.fn('createThemer').debug({ folder });
         let finalThemer = undefined;
         const themer = this.opts._themer;
         const themerOptions = {
@@ -526,7 +526,7 @@ class Gooey {
         }, WINDOWMANAGER_DEFAULTS);
         this._log
             .fn('_createWindowManager')
-            .info({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts });
+            .debug({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts });
         const windowManager = new WindowManager({
             ...windowManagerOpts,
             draggable: dragOpts,
@@ -540,7 +540,7 @@ class Gooey {
         return windowManager;
     }
     dispose = () => {
-        this._log.fn('dispose').info(this);
+        this._log.fn('dispose').debug(this);
         this.themer?.dispose();
         // this.themeEditor?.dispose()
         if (this._isWindowManagerOwner) {

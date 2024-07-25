@@ -66,7 +66,7 @@ class InputNumber extends Input {
             return;
         let newValue = v;
         if (v instanceof Event && v?.target && 'valueAsNumber' in v.target) {
-            newValue = v.target.valueAsNumber;
+            newValue = +v.target.value || 0;
         }
         this.commit({ to: newValue });
         this.state.set(newValue);

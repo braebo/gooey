@@ -19,7 +19,7 @@ let InputSelect = class InputSelect extends Input {
     state;
     #options;
     set options(v) {
-        this._log.fn('set options').info(v);
+        this._log.fn('set options').debug(v);
         v ??= [];
         this.#options = toFn(v);
         this.select.clear();
@@ -50,7 +50,7 @@ let InputSelect = class InputSelect extends Input {
         super(opts, folder);
         this._evm.registerEvents(['preview', 'open', 'close', 'cancel']);
         this._log = new Logger(`InputSelect ${opts.title}`, { fg: 'slategrey' });
-        this._log.fn('constructor').info({ opts, this: this });
+        this._log.fn('constructor').debug({ opts, this: this });
         opts.value ??= opts.binding?.initial ?? fromState(this.targetValue);
         this.initialValue = this.resolveInitialValue(opts);
         this.labeledSelection = {
@@ -83,7 +83,7 @@ let InputSelect = class InputSelect extends Input {
                 if (isState(this.targetValue)) {
                     this._log
                         .fn('updating binding')
-                        .info({ from: this.targetValue.value, to: v.value });
+                        .debug({ from: this.targetValue.value, to: v.value });
                     this.targetValue.set(v.value);
                 }
                 else {
@@ -101,13 +101,13 @@ let InputSelect = class InputSelect extends Input {
         }));
         if (options.onChange) {
             this._evm.on('change', v => {
-                this._log.fn('calling options onChange').info(v);
+                this._log.fn('calling options onChange').debug(v);
                 options.onChange?.(toLabeledOption(v));
             });
         }
         // Bind our state to the select controller.
         this.select.on('change', v => {
-            this._log.fn('select.onChange').info(v);
+            this._log.fn('select.onChange').debug(v);
             if (this.#stopPropagation)
                 return;
             // Make sure the select controller doesn't react to its own changes.
@@ -137,7 +137,7 @@ let InputSelect = class InputSelect extends Input {
             this._emit('cancel');
         });
         this._dirty = () => this.value.label !== this.initialValue.label;
-        this._log.fn('constructor').info({ this: this });
+        this._log.fn('constructor').debug({ this: this });
     }
     resolveOptions(providedOptions) {
         function isLabeledOptionsArray(v) {
@@ -187,7 +187,7 @@ let InputSelect = class InputSelect extends Input {
     }
     resolveInitialLabel(initialValue, opts) {
         const v = isState(initialValue) ? initialValue.value : initialValue;
-        this._log.fn('resolveInitialLabel').info({ v, initialValue, opts });
+        this._log.fn('resolveInitialLabel').debug({ v, initialValue, opts });
         if (isLabeledOption(v)) {
             return v.label;
         }
@@ -208,7 +208,7 @@ let InputSelect = class InputSelect extends Input {
     set targetValue(v) {
         if (isLabeledOption(v))
             v = fromLabeledOption(v);
-        this._log.fn('set targetValue').info(v);
+        this._log.fn('set targetValue').debug(v);
         if (typeof v === 'undefined') {
             console.error('Cannot set target value to undefined');
             console.error('this', this);
@@ -229,7 +229,7 @@ let InputSelect = class InputSelect extends Input {
      * Selects the given {@link LabeledOption} and updates the ui.
      */
     set(value) {
-        this._log.fn('set').info(value);
+        this._log.fn('set').debug(value);
         this.#stopPropagation = true;
         this.select.select(value, false);
         this.state.set(value);
@@ -237,20 +237,20 @@ let InputSelect = class InputSelect extends Input {
         return this;
     }
     enable() {
-        this._log.fn('enable').info();
+        this._log.fn('enable').debug();
         this.select.enable();
         super.enable();
         return this;
     }
     disable() {
-        this._log.fn('disable').info();
+        this._log.fn('disable').debug();
         this.select.disable();
         super.disable();
         return this;
     }
     refresh = () => {
         const v = this.state.value;
-        this._log.fn('refresh').info({ v, this: this });
+        this._log.fn('refresh').debug({ v, this: this });
         if (!this.labeledSelection) {
             throw new Error('Failed to find labeled selection.');
         }

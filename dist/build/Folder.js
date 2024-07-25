@@ -449,7 +449,7 @@ class Folder {
      * {@link Folder.load|`load`} method.
      */
     load(preset) {
-        this._log.fn('load').info({ preset, this: this });
+        this._log.fn('load').debug({ preset, this: this });
         // this.closed.set(preset.closed)
         this.hidden = preset.hidden;
         for (const child of this.children) {

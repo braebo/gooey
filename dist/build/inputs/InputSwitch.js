@@ -99,10 +99,15 @@ class InputSwitch extends Input {
         this._emit('change', v);
         return this;
     }
-    refresh(v = this.state.value) {
-        this.#log.fn('refresh').debug({ v, this: this });
+    refresh(v) {
         if (this.disabled)
             return this;
+        this.#log.fn('refresh').debug({ v, this: this });
+        if (typeof v === 'undefined') {
+            v = this.opts.binding
+                ? this.opts.binding.target[this.opts.binding.key]
+                : this.state.value;
+        }
         this.elements.controllers.input.classList.toggle('active', v);
         this.elements.controllers.input?.tooltip?.refresh();
         this.elements.controllers.stateText.innerText =
