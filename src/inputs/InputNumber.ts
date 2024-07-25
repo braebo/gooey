@@ -108,7 +108,7 @@ export class InputNumber extends Input<number, NumberInputOptions, NumberControl
 		let newValue = v as number
 
 		if (v instanceof Event && v?.target && 'valueAsNumber' in v.target) {
-			newValue = v.target.valueAsNumber as number
+			newValue = +(v.target as HTMLInputElement).value || 0
 		}
 
 		this.commit({ to: newValue })
