@@ -293,6 +293,8 @@ export abstract class Input<
 
 		this._dirty = () => this.value !== this.initialValue
 
+		this.bound = 'binding' in this.opts
+
 		this.elements.container = create('div', {
 			classes: ['gooey-input-container'],
 			parent: this.folder.elements.content,
@@ -347,9 +349,9 @@ export abstract class Input<
 			this._evm.on('change', options.onChange as EventCallback<TEvents['change']>)
 		}
 
-		Promise.resolve().then(() => {
-			this.index = this.index
-		})
+		// Promise.resolve().then(() => {
+		// 	this.index = this.index
+		// })
 	}
 
 	get value() {
