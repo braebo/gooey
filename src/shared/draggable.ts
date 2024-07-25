@@ -346,7 +346,7 @@ export class Draggable {
 		this._log = new Logger('draggable ' + Array.from(this.node.classList).join('.'), {
 			fg: 'SkyBlue',
 		})
-		this._log.fn('constructor').info({ opts: this.opts, this: this })
+		this._log.fn('constructor').debug({ opts: this.opts, this: this })
 
 		this._rect = this.node.getBoundingClientRect()
 		this._recomputeBounds = this._resolveBounds(this.opts.bounds)

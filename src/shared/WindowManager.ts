@@ -135,7 +135,7 @@ export class WindowManager {
 		options ??= WINDOWMANAGER_DEFAULTS
 		options.__type = 'WindowManagerOptions'
 		this.opts = Object.freeze(this._resolveOptions(options))
-		this._log.fn('constructor').info({ opts: this.opts, options, this: this })
+		this._log.fn('constructor').debug({ opts: this.opts, options, this: this })
 	}
 
 	add = (
@@ -265,7 +265,7 @@ export class WindowManager {
 	 * Dispose of the instance and all windows.
 	 */
 	dispose() {
-		this._log.fn('dispose').info(this)
+		this._log.fn('dispose').debug(this)
 		this._evm?.dispose()
 		for (const instance of this.windows.values()) {
 			instance?.dispose()
