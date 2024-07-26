@@ -802,7 +802,12 @@ export class Folder {
 			if (folderPreset) {
 				child.load(folderPreset)
 			} else {
-				console.warn(`Missing folder for preset:`, { child, folderPreset })
+				console.warn(`Missing folder for preset:`, {
+					presetId: child.presetId,
+					child,
+					folderPreset,
+					this: this,
+				})
 			}
 		}
 
