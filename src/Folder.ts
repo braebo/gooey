@@ -438,15 +438,16 @@ export class Folder {
 
 		this.presetId = this._resolvePresetId()
 
-		let closed = opts.closed ?? false
+		opts.closed ??= false
 		if (
 			typeof this.gooey!.opts.storage === 'object' &&
 			typeof this.gooey!.opts.storage.closed === 'boolean'
 		) {
 			// @ts-expect-error @internal
-			closed = this.gooey!._closedMap.get()[this.presetId]
+			let closedStorage = this.gooey!._closedMap.get()[this.presetId]
+			if (typeof closedStorage !== 'undefined') opts.closed = closedStorage
 		}
-		this.closed = state(closed)
+		this.closed = state(opts.closed)
 
 		this.saveable = !!opts.saveable
 
@@ -1028,14 +1029,11 @@ export class Folder {
 		}
 
 		for (const [key, value] of Object.entries(target)) {
-			const l = key === 'themes' ? console.warn : () => {}
-
 			const inputOptions = options[key as keyof T] || {}
 
 			let folderOptions = {} as FolderOptions
 
 			if (typeof value === 'object') {
-				l('themes A')
 				if (isColor(value)) {
 					this.bindColor(value, 'color', { title: key, ...inputOptions })
 				} else {
@@ -1048,11 +1046,9 @@ export class Folder {
 					subFolder.bindMany(value, inputOptions)
 				}
 			} else if ('options' in inputOptions) {
-				l('themes B')
 				// let selectOptions = inputOptions as SelectInputOptions<T>
 				this.bindSelect(target, key, inputOptions as SelectInputOptions)
 			} else {
-				l('themes C')
 				this.bind(target, key as keyof T, inputOptions)
 			}
 		}
