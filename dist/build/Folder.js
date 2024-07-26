@@ -160,13 +160,15 @@ class Folder {
         this.element = this._createElement(opts);
         this.elements = this._createElements(this.element);
         this.presetId = this._resolvePresetId();
-        let closed = opts.closed ?? false;
+        opts.closed ??= false;
         if (typeof this.gooey.opts.storage === 'object' &&
             typeof this.gooey.opts.storage.closed === 'boolean') {
             // @ts-expect-error @internal
-            closed = this.gooey._closedMap.get()[this.presetId];
+            let closedStorage = this.gooey._closedMap.get()[this.presetId];
+            if (typeof closedStorage !== 'undefined')
+                opts.closed = closedStorage;
         }
-        this.closed = state(closed);
+        this.closed = state(opts.closed);
         this.saveable = !!opts.saveable;
         if (this.isRoot || opts.searchable) {
             new Search(this);
@@ -617,11 +619,9 @@ class Folder {
             this._transientRoot = rootFolder;
         }
         for (const [key, value] of Object.entries(target)) {
-            const l = key === 'themes' ? console.warn : () => { };
             const inputOptions = options[key] || {};
             let folderOptions = {};
             if (typeof value === 'object') {
-                l('themes A');
                 if (isColor(value)) {
                     this.bindColor(value, 'color', { title: key, ...inputOptions });
                 }
@@ -637,12 +637,10 @@ class Folder {
                 }
             }
             else if ('options' in inputOptions) {
-                l('themes B');
                 // let selectOptions = inputOptions as SelectInputOptions<T>
                 this.bindSelect(target, key, inputOptions);
             }
             else {
-                l('themes C');
                 this.bind(target, key, inputOptions);
             }
         }
