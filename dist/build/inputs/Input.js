@@ -139,9 +139,7 @@ class Input {
         if ('onChange' in options) {
             this._evm.on('change', options.onChange);
         }
-        // Promise.resolve().then(() => {
-        // 	this.index = this.index
-        // })
+        this.index = this.index;
     }
     get value() {
         return this.state.value;
