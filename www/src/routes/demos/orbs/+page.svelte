@@ -70,12 +70,9 @@
 		flex-direction: column;
 		flex-grow: 1;
 
-		/* background: color-mix(in lch, var(--bg-a), var(--bg-b)); */
 		opacity: 0;
 
 		animation: slide-in 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s forwards;
-
-		/* overflow: hidden; */
 
 		&:before {
 			content: '';
@@ -106,12 +103,10 @@
 		display: flex;
 		flex-grow: 1;
 
-		/* margin: 20vh auto 0 auto; */
 		width: 100%;
 		width: min(50rem, 50vmin);
 		height: 100%;
 		margin: auto auto 0 auto;
-		/* margin-top: auto; */
 
 		z-index: 20;
 		pointer-events: none;

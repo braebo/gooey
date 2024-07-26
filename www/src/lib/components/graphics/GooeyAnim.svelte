@@ -17,9 +17,8 @@
 
 	let p = $state({
 		speed: 0.66,
-		slider: 0.73,
-		glow: 18,
-		orbs: 1.22,
+		hue: 0.73,
+		size: 1.22,
 		goo: {
 			animate: true,
 			texture: 'turbulence',
@@ -29,7 +28,7 @@
 		},
 	} satisfies Record<string, any>)
 
-	let hueShift = $derived(Math.floor(p.slider * 360))
+	let hueShift = $derived(Math.floor(p.hue * 360))
 	const shift1 = 300
 	const shift2 = 275
 	const shift3 = 307
@@ -46,7 +45,7 @@
 		const x = +sliderEl.getAttribute('x')!
 		const width = +sliderEl.getAttribute('width')!
 		const thumbWidth = +thumbEl.getAttribute('width')!
-		return mapRange(p.slider, 0, 1, x, width + x - thumbWidth)
+		return mapRange(p.hue, 0, 1, x, width + x - thumbWidth)
 	})
 
 	const unsubs = [] as (() => any)[]
@@ -60,15 +59,15 @@
 
 		// Bind to the params and configure their options.
 		gui.bindMany(p, {
-			slider: { presetId: 'slider' },
-			glow: { max: 30, step: 0.1 },
+			// hue: { presetId: 'gooey__hue' },
 			goo: {
+				folderOptions: { closed: true },
 				texture: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
 				gooeyness: { min: 0.1, max: 100, step: 0.1 },
 				viscosity: { min: 0.001, max: 0.5, step: 0.0001 },
 				density: { min: 1, max: 20, step: 1 },
 			},
-			orbs: { min: 0.5, max: 3, step: 0.01 },
+			size: { min: 0.5, max: 3, step: 0.01 },
 		})
 
 		// Store a ref to the slider input to sync it with the svg slider.
@@ -134,7 +133,7 @@
 		const maxX = sliderLeft + sliderWidth - thumbWidth
 		const newX = Math.min(Math.max(clientX - mouseOffset, minX), maxX)
 
-		p.slider = mapRange(newX, minX, maxX, 0, 1).toFixed(2) as any as number
+		p.hue = mapRange(newX, minX, maxX, 0, 1).toFixed(2) as any as number
 		sliderInput.refresh()
 	}
 
@@ -197,7 +196,7 @@
 		style="overflow: visible"
 		bind:this={svgEl}
 	>
-		<ellipse id="orb2" cx="247" cy="97" rx={14 * p.orbs} ry={14 * p.orbs} fill="url(#gooey_anim_gradient_2)">
+		<ellipse id="orb2" cx="247" cy="97" rx={14 * p.size} ry={14 * p.size} fill="url(#gooey_anim_gradient_2)">
 			<animateTransform {...randomPositions()} />
 		</ellipse>
 
@@ -227,19 +226,19 @@
 				tabindex="0"
 				aria-valuemin="0"
 				aria-valuemax="1"
-				aria-valuenow={p.slider}
+				aria-valuenow={p.hue}
 			/>
 		</g>
 
-		<ellipse id="orb1" cx="110" cy="120" rx={10 * p.orbs} ry={10 * p.orbs} fill="url(#gooey_anim_gradient_1)">
+		<ellipse id="orb1" cx="110" cy="120" rx={10 * p.size} ry={10 * p.size} fill="url(#gooey_anim_gradient_1)">
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
-		<ellipse id="orb4" cx="490" cy="75" rx={10 * p.orbs} ry={10 * p.orbs} fill="url(#gooey_anim_gradient_4)">
+		<ellipse id="orb4" cx="490" cy="75" rx={10 * p.size} ry={10 * p.size} fill="url(#gooey_anim_gradient_4)">
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
-		<ellipse id="orb3" cx="326" cy="55" rx={8.5 * p.orbs} ry={8.5 * p.orbs} fill="url(#gooey_anim_gradient_3)">
+		<ellipse id="orb3" cx="326" cy="55" rx={8.5 * p.size} ry={8.5 * p.size} fill="url(#gooey_anim_gradient_3)">
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
@@ -269,7 +268,7 @@
 			<!--//- Glow Filter -->
 
 			<filter id="gooey_anim_thumb_glow" x="-500%" y="-500%" width="1000%" height="1000%">
-				<feGaussianBlur stdDeviation={p.glow} result="coloredBlur" />
+				<feGaussianBlur stdDeviation="18" result="coloredBlur" />
 				
 				<feMerge>
 					<feMergeNode in="coloredBlur" />
