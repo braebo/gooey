@@ -323,6 +323,7 @@
 	text-rendering: optimizeLegibility;
 
 	user-select: none;
+	-webkit-user-select: none;
 	z-index: 99;
 }
 
@@ -549,6 +550,8 @@
 	transition-duration: var(--gooey-transition-duration);
 	transition-property: background, color, filter;
 	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
 
 	&.active,
 	&:hover,
@@ -1398,6 +1401,7 @@ input.gooey-search-input {
 						transition-property: color, opacity;
 
 						user-select: none;
+						-webkit-user-select: none;
 						pointer-events: none;
 					}
 
