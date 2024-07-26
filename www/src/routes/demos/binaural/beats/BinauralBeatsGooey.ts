@@ -3,7 +3,7 @@ import { BinauralBeats, WAVE_PRESETS } from './BinauralBeats'
 
 export class BinauralBeatsGooey extends Gooey {
 	constructor(public beats: BinauralBeats) {
-		super({ title: 'Binaural Beats', position: 'top-center', storage: false })
+		super({ title: 'Binaural Beats', position: 'top-center', margin: { x: 0, y: 64 }, storage: false })
 
 		this.folder.addButtonGrid('Presets', [
 			Object.keys(WAVE_PRESETS).map((kind) => {

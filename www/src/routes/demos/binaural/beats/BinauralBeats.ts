@@ -53,9 +53,9 @@ export class BinauralBeats {
 
 		this.gooey = new BinauralBeatsGooey(this)
 
-		for (const kind in WAVE_PRESETS) {
-			this.addWave(kind as keyof typeof WAVE_PRESETS)
-		}
+		// for (const kind in WAVE_PRESETS) {
+		// 	this.addWave(kind as keyof typeof WAVE_PRESETS)
+		// }
 	}
 
 	addWave = (kind: keyof typeof WAVE_PRESETS) => {

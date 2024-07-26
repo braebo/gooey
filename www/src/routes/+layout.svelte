@@ -1,19 +1,12 @@
 <script lang="ts">
-	// import type { PageData } from './$types'
-
 	import '../styles/app.scss'
 
 	import { setupViewTransition } from 'sveltekit-view-transition'
 	import Header from '$lib/components/Header/Header.svelte'
 	import PageTitle from '$lib/components/PageTitle.svelte'
-	// import { setContext } from 'svelte'
 	import { Fractils } from 'fractils'
 
-	// export let data: PageData
-
 	setupViewTransition()
-
-	// setContext('routes', data.routes)
 </script>
 
 <PageTitle />

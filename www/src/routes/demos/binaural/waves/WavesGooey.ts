@@ -5,8 +5,8 @@ import { Gooey } from '../../../../../../src/index'
 
 const dims = {
 	mx: 10,
-	my: 150,
-	w: 500,
+	my: 150 + 64,
+	w: 400,
 	h: 250,
 }
 
@@ -26,11 +26,11 @@ export class WavesGooey extends Gooey {
 			},
 			theta: {
 				x: window.innerWidth / 2 - dims.w - dims.mx,
-				y: dims.my + dims.h + dims.my,
+				y: dims.my + dims.h + 32,
 			},
 			delta: {
 				x: window.innerWidth / 2 + dims.mx,
-				y: dims.my + dims.h + dims.my,
+				y: dims.my + dims.h + 32,
 			},
 		}
 
@@ -76,7 +76,7 @@ export class WavesGooey extends Gooey {
 			],
 		])
 
-		const folderL = this.addFolder('Left')
+		const folderL = this.addFolder('Left', { closed: true })
 
 		// todo - handle state so we can do:
 		// gooey.add({
@@ -104,7 +104,7 @@ export class WavesGooey extends Gooey {
 				this.waves.freqL = v
 			})
 
-		const folderR = this.addFolder('Right')
+		const folderR = this.addFolder('Right', { closed: true })
 
 		folderR
 			.addNumber('Gain', waves.volR, {

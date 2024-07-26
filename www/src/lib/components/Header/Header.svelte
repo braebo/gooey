@@ -27,10 +27,10 @@
 	header {
 		position: relative;
 		height: 3rem;
-		
+
 		display: flex;
 		justify-content: space-between;
-		
+
 		pointer-events: none;
 		z-index: 50;
 	}
@@ -50,7 +50,7 @@
 		top: 0.33rem;
 		bottom: 0;
 		margin: auto;
-		left: $padding;
+		left: 0.66rem;
 
 		&.active a {
 			color: var(--theme-a);

@@ -78,9 +78,9 @@
 			content: '';
 			position: absolute;
 			width: 120%;
-			translate: -16% -43%;
+			translate: -16% -85%;
 			rotate: -2.5deg;
-			height: 10%;
+			height: 25%;
 			background: red;
 			background: var(--bg-a);
 		}

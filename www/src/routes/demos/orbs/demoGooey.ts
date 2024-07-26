@@ -14,7 +14,11 @@ export const code = state('')
 export function demoGooey(params: Params) {
 	const gooey = new Gooey({
 		title: 'Orbs',
-		position: 'center',
+		position: 'top-center',
+		margin: {
+			y: 150,
+			x: 10,
+		},
 		storage: {
 			key: 'gooey',
 			position: true,
@@ -28,86 +32,34 @@ export function demoGooey(params: Params) {
 		console.log(v)
 	})
 
-	const f1 = gooey.addFolder('base')
+	const f1 = gooey.addFolder('base', { closed: true })
 
-	// f1.bind('count', {
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'orbs'
-	// 	},
-	// 	min: 1,
-	// 	max: 150,
-	// 	step: 1
-	// })
 	f1.bind(params, 'orbs', {
 		min: 1,
 		max: 150,
 		step: 1,
 	})
 
-	// f1.bind({
-	// 	title: 'width',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'width',
-	// 	},
-	// 	min: 10,
-	// 	max: window.innerWidth / 4,
-	// 	step: 1,
-	// })
-
-	const widthInput = f1.bind(params, 'width', {
-		//=>
+	f1.bind(params, 'width', {
 		min: 10,
 		max: window.innerWidth / 4,
 		step: 1,
 	})
-	widthInput // InputNumber
 
-	// f1.addNumber({
-	// 	title: 'height',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'height'
-	// 	},
-	// 	min: 10,
-	// 	max: window.innerHeight / 8,
-	// 	step: 1
-	// })
 	f1.bind(params, 'height', {
 		min: 10,
 		max: window.innerHeight / 8,
 		step: 1,
 	})
 
-	const motionFolder = gooey.addFolder('motion')
+	const motionFolder = gooey.addFolder('motion', { closed: true })
 
-	// motionFolder.addNumber({
-	// 	title: 'speed',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'speed'
-	// 	},
-	// 	min: 0.0001,
-	// 	max: 1,
-	// 	step: 0.0001
-	// })
 	motionFolder.bind(params, 'speed', {
 		min: 0.0001,
 		max: 1,
 		step: 0.0001,
 	})
 
-	// motionFolder.addNumber({
-	// 	title: 'force x',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'a1'
-	// 	},
-	// 	min: 0,
-	// 	max: 3,
-	// 	step: 0.001
-	// })
 	motionFolder.bind(params, 'a1', {
 		title: 'force x',
 		min: 0,
@@ -115,16 +67,6 @@ export function demoGooey(params: Params) {
 		step: 0.001,
 	})
 
-	// motionFolder.addNumber({
-	// 	title: 'force y',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'a2'
-	// 	},
-	// 	min: 1,
-	// 	max: 3,
-	// 	step: 0.001
-	// })
 	motionFolder.bind(params, 'a2', {
 		title: 'force y',
 		min: 1,
@@ -132,16 +74,6 @@ export function demoGooey(params: Params) {
 		step: 0.001,
 	})
 
-	// motionFolder.addNumber({
-	// 	title: 'temporal drift',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'drift'
-	// 	},
-	// 	min: -1,
-	// 	max: 1,
-	// 	step: 0.001
-	// })
 	motionFolder.bind(params, 'drift', {
 		title: 'temporal drift',
 		min: -1,
@@ -149,133 +81,50 @@ export function demoGooey(params: Params) {
 		step: 0.001,
 	})
 
-	// motionFolder.addSwitch({
-	// 	title: 'modulate',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'modulate'
-	// 	}
-	// })
 	motionFolder.bind(params, 'modulate')
 
-	const appearanceFolder = gooey.addFolder('appearance')
+	const appearanceFolder = gooey.addFolder('appearance', { closed: true })
 
-	// appearanceFolder.addNumber({
-	// 	title: 'size',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'size'
-	// 	},
-	// 	min: 1,
-	// 	max: 30,
-	// 	step: 1
-	// })
 	appearanceFolder.bind(params, 'size', {
 		min: 1,
 		max: 30,
 		step: 1,
 	})
 
-	// appearanceFolder.addNumber({
-	// 	title: 'floop',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'floop'
-	// 	},
-	// 	min: 0.001,
-	// 	max: 0.5,
-	// 	step: 0.001
-	// })
 	appearanceFolder.bind(params, 'floop', {
 		min: 0.001,
 		max: 0.5,
 		step: 0.001,
 	})
 
-	// appearanceFolder.addNumber({
-	// 	title: 'brightness',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'brightness'
-	// 	},
-	// 	min: 0,
-	// 	max: 1,
-	// 	step: 0.01
-	// })
 	appearanceFolder.bind(params, 'brightness', {
 		min: 0,
 		max: 1,
 		step: 0.01,
 	})
 
-	// appearanceFolder.addColor({
-	// 	title: 'color',
-	// 	mode: 'hex8',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'color'
-	// 	}
-	// })
 	appearanceFolder.bind(params, 'color', {
 		mode: 'hex8',
 	})
 
-	// appearanceFolder.addColor({
-	// 	title: 'accent',
-	// 	mode: 'hsla',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'accent'
-	// 	}
-	// })
 	appearanceFolder.bind(params, 'accent', {
 		mode: 'hsla',
 	})
 
-	const glowFolder = appearanceFolder.addFolder('glow')
+	const glowFolder = appearanceFolder.addFolder('glow', { closed: true })
 
-	// glowFolder.addNumber({
-	// 	title: 'glowR',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'glowR'
-	// 	},
-	// 	min: 0,
-	// 	max: 20,
-	// 	step: 0.01
-	// })
 	glowFolder.bind(params, 'glowR', {
 		min: 0,
 		max: 20,
 		step: 0.01,
 	})
 
-	// glowFolder.addNumber({
-	// 	title: 'glowG',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'glowG'
-	// 	},
-	// 	min: 0,
-	// 	max: 20,
-	// 	step: 0.01
-	// })
 	glowFolder.bind(params, 'glowG', {
 		min: 0,
 		max: 20,
 		step: 0.01,
 	})
 
-	// glowFolder.addNumber({
-	// 	title: 'glowB',
-	// 	binding: {
-	// 		target: params,
-	// 		key: 'glowB'
-	// 	},
-	// 	min: 0,
-	// 	max: 20,
-	// 	step: 0.01
-	// })
 	glowFolder.bind(params, 'glowB', {
 		min: 0,
 		max: 20,
@@ -315,9 +164,6 @@ export function demoGooey(params: Params) {
 			saveable: false,
 		})
 
-		// setTimeout(() => {
-		// 	gooey.settingsFolder.open()
-		// })
 		devFolder.addButtonGrid(
 			'dev',
 			[
@@ -342,7 +188,6 @@ export function demoGooey(params: Params) {
 						style: {
 							textWrap: 'nowrap',
 							overflow: 'hidden',
-							// this css makes the overflowing text have an elipsis...
 							whiteSpace: 'nowrap',
 							textOverflow: 'ellipsis',
 							filter: 'saturate(0)',
@@ -357,8 +202,6 @@ export function demoGooey(params: Params) {
 			},
 		)
 	}
-
-	// console.log(gooey._log.log('asd'))
 
 	return gooey
 }
