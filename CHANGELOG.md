@@ -1,5 +1,11 @@
 # gooey
 
+## 0.2.2
+
+### Patch Changes
+
+-   feat: preset/folder init improvements ([`4c367900989afc5510105c8b9c4eb5e898e751fe`](https://github.com/braebo/gooey/commit/4c367900989afc5510105c8b9c4eb5e898e751fe))
+
 ## 0.2.1
 
 ### Patch Changes
