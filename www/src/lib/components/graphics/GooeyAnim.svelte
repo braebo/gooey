@@ -311,7 +311,7 @@
 
 	svg {
 		color: var(--fg-d);
-		contain: content;
+		contain: layout style;
 		backface-visibility: hidden;
 		transform: translateZ(0);
 
