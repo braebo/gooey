@@ -456,7 +456,7 @@ export class Select<T> {
 
 		const { dropdown, selected } = this.elements
 		const gooeyScrollTop = this._opts.input.folder.root.elements.content.scrollTop
-		const { top, left } = selected.getBoundingClientRect()
+		const selectedRect = selected.getBoundingClientRect()
 
 		this.elements.dropdown.style.setProperty(
 			'width',
@@ -464,12 +464,21 @@ export class Select<T> {
 		)
 		this.elements.dropdown.style.setProperty(
 			'top',
-			`${top + selected.offsetHeight - gooeyScrollTop}px`,
+			`${selectedRect.top + selected.offsetHeight - gooeyScrollTop}px`,
 		)
 		this.elements.dropdown.style.setProperty(
 			'left',
-			`${left + selected.offsetWidth / 2 - dropdown.offsetWidth / 2}px`,
+			`${selectedRect.left + selected.offsetWidth / 2 - dropdown.offsetWidth / 2}px`,
 		)
+
+		// Handle overflow.
+		const scrollHeight = dropdown.scrollHeight
+		const maxHeight = window.innerHeight - selectedRect.bottom - 10
+		if (scrollHeight > maxHeight) {
+			dropdown.style.setProperty('max-height', `${maxHeight}px`)
+		} else {
+			dropdown.style.setProperty('max-height', `${scrollHeight}px`)
+		}
 	}
 
 	/**

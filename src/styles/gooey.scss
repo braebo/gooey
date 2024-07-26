@@ -609,6 +609,10 @@
 	transform: translate(0, 0) scaleY(0);
 	transform-origin: top center;
 
+	overflow-y: auto;
+
+	@include scrollable;
+
 	&.expanded {
 		contain: content;
 		display: block;
