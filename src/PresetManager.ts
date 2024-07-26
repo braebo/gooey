@@ -571,7 +571,7 @@ export class PresetManager {
 
 		const el = this._presetsInput.select.elements.selected
 
-		if (el.classList.contains('disabled')) {
+		if (this.defaultPresetIsActive) {
 			this._log.warn('Cannot rename default preset.')
 			return
 		}

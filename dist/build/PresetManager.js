@@ -459,7 +459,7 @@ class PresetManager {
     _enableRename = (cursorToEnd = true) => {
         this._log.fn('_enableRename').debug({ this: this });
         const el = this._presetsInput.select.elements.selected;
-        if (el.classList.contains('disabled')) {
+        if (this.defaultPresetIsActive) {
             this._log.warn('Cannot rename default preset.');
             return;
         }
