@@ -450,30 +450,25 @@ class Folder {
      */
     load(preset) {
         this._log.fn('load').debug({ preset, this: this });
-        // this.closed.set(preset.closed)
+        // this.closed.set(preset.closed) // todo - global settings?
         this.hidden = preset.hidden;
-        for (const child of this.children) {
-            const folderPreset = preset.children?.find(f => f.id === child.presetId);
-            if (folderPreset) {
-                child.load(folderPreset);
-            }
-            else {
-                console.warn(`Missing folder for preset:`, {
-                    presetId: child.presetId,
-                    child,
-                    folderPreset,
-                    this: this,
-                });
-            }
-        }
         for (const input of this.inputs.values()) {
             const inputPreset = preset.inputs.find(c => c.presetId === input.id);
-            if (inputPreset) {
-                input.load(inputPreset);
-            }
-            else {
+            if (!inputPreset) {
                 console.warn(`Missing input for preset:`, { preset, input });
+                continue;
             }
+            input.load(inputPreset);
+        }
+        for (const child of this.children) {
+            if (!child.saveable)
+                continue;
+            const folderPreset = preset.children?.find(f => f.id === child.presetId);
+            if (!folderPreset) {
+                console.warn(`Missing folder for preset:`, { child, preset, this: this });
+                continue;
+            }
+            child.load(folderPreset);
         }
         return this;
     }

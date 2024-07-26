@@ -245,6 +245,7 @@ class Gooey {
             _headerless: true,
             ...opts.settingsFolder,
             closed: settingsFolderClosed,
+            saveable: false,
         });
         this.settingsFolder.element.classList.add('gooey-folder-alt');
         updateIcon();

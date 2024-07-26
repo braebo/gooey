@@ -324,7 +324,7 @@ class PresetManager {
         //? Presets Select Input
         this._presetsInput = presetsFolder.addSelect('', this.presets.value, {
             labelKey: 'title',
-            order: -1,
+            order: 0,
             value: this.activePreset.value,
             resettable: false,
             disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,

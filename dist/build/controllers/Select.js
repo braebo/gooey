@@ -314,10 +314,19 @@ let Select = class Select {
         this.elements.dropdown.style.setProperty('top', 'unset');
         const { dropdown, selected } = this.elements;
         const gooeyScrollTop = this._opts.input.folder.root.elements.content.scrollTop;
-        const { top, left } = selected.getBoundingClientRect();
+        const selectedRect = selected.getBoundingClientRect();
         this.elements.dropdown.style.setProperty('width', `${Math.max(selected.offsetWidth, dropdown.offsetWidth)}px`);
-        this.elements.dropdown.style.setProperty('top', `${top + selected.offsetHeight - gooeyScrollTop}px`);
-        this.elements.dropdown.style.setProperty('left', `${left + selected.offsetWidth / 2 - dropdown.offsetWidth / 2}px`);
+        this.elements.dropdown.style.setProperty('top', `${selectedRect.top + selected.offsetHeight - gooeyScrollTop}px`);
+        this.elements.dropdown.style.setProperty('left', `${selectedRect.left + selected.offsetWidth / 2 - dropdown.offsetWidth / 2}px`);
+        // Handle overflow.
+        const scrollHeight = dropdown.scrollHeight;
+        const maxHeight = window.innerHeight - selectedRect.bottom - 10;
+        if (scrollHeight > maxHeight) {
+            dropdown.style.setProperty('max-height', `${maxHeight}px`);
+        }
+        else {
+            dropdown.style.setProperty('max-height', `${scrollHeight}px`);
+        }
     };
     /**
      * Hides the dropdown.
