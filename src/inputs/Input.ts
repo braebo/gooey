@@ -349,9 +349,7 @@ export abstract class Input<
 			this._evm.on('change', options.onChange as EventCallback<TEvents['change']>)
 		}
 
-		// Promise.resolve().then(() => {
-		// 	this.index = this.index
-		// })
+		this.index = this.index
 	}
 
 	get value() {
