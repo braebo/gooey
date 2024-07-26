@@ -1,5 +1,11 @@
 # gooey
 
+## 0.2.1
+
+### Patch Changes
+
+-   fix: various bugs ([`3d50431196ffc95a9b22f2da771e76bc1d280f0e`](https://github.com/braebo/gooey/commit/3d50431196ffc95a9b22f2da771e76bc1d280f0e))
+
 ## 0.2.0
 
 ### Minor Changes
