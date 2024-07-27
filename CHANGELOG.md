@@ -1,5 +1,11 @@
 # gooey
 
+## 0.2.3
+
+### Patch Changes
+
+-   fix: preset renaming ([`9614a9e00f5488317e53f2d836c1d3186e8f0b3e`](https://github.com/braebo/gooey/commit/9614a9e00f5488317e53f2d836c1d3186e8f0b3e))
+
 ## 0.2.2
 
 ### Patch Changes
