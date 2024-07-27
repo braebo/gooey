@@ -1520,8 +1520,12 @@ export class Folder {
 		const i = this.parentFolder.isRootFolder() ? localIndex - 1 : localIndex
 		// Don't count the root folder.
 		const depth = this._depth - 1
-
-		return i * 20 + depth * 80
+		// return i * 20 + depth * 80
+		if (depth === 0) {
+			return i * 30
+		} else {
+			return this.parentFolder.hue + i * -20
+		}
 	}
 
 	#timeout?: ReturnType<typeof setTimeout>
