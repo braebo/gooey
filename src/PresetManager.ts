@@ -404,7 +404,6 @@ export class PresetManager {
 			{
 				order: 1,
 				resettable: false,
-				disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,
 			},
 		)
 
@@ -414,7 +413,6 @@ export class PresetManager {
 			order: 0,
 			value: this.activePreset.value,
 			resettable: false,
-			disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,
 		})
 
 		this._presetsInput.on('change', ({ value }) => {
