@@ -1,4 +1,5 @@
 import type { InputButtonGrid } from './inputs/InputButtonGrid'
+import { persist, type PersistedValue } from './shared/persist'
 import type { InputSelect } from './inputs/InputSelect'
 import type { Gooey, GooeyPreset } from './Gooey'
 import type { State } from './shared/state'
@@ -38,13 +39,14 @@ export interface PresetManagerOptions {
 
 export class PresetManager {
 	readonly __type = Object.freeze('PresetManager')
-	readonly __version = Object.freeze('1.0.0')
+	readonly __version = '1'
 
 	defaultPreset!: GooeyPreset
 	activePreset: State<GooeyPreset>
 	presets!: State<GooeyPreset[]>
 	folder!: Folder
 
+	private _version!: PersistedValue<string>
 	private _defaultPresetId = 'gooey-default-preset'
 	private _defaultPresetTitle = 'default'
 
@@ -67,15 +69,18 @@ export class PresetManager {
 
 		this.opts = options
 		this.opts.localStorageKey ??= 'gooey::presets'
+		const storageKey = this.opts.localStorageKey
+
+		this._validateVersion(storageKey)
 
 		this.activePreset = state(this.opts.defaultPreset ?? ({} as GooeyPreset), {
-			key: this.opts.localStorageKey + '::active',
+			key: storageKey + '::active',
 		})
 
 		this._log.fn('constructor').debug('activePreset', this.activePreset.value)
 
 		this.presets = state(this.opts.presets ?? [], {
-			key: this.opts.localStorageKey,
+			key: storageKey,
 		})
 
 		if (this.opts.autoInit !== false) {
@@ -87,10 +92,12 @@ export class PresetManager {
 			this.activePreset.value.id !== this._defaultPresetId
 		) {
 			Promise.resolve().then(() => {
-				console.log('loading active preset', this.activePreset.value)
+				this._log.fn('constructor').debug('loading active preset', this.activePreset.value)
 				this.gooey.load(this.activePreset.value)
 				this.gooey._undoManager.clear()
 			})
+		} else {
+			this._log.fn('constructor').debug('No active preset found. Loading default.')
 		}
 	}
 	opts: PresetManagerOptions
@@ -193,6 +200,7 @@ export class PresetManager {
 		this.defaultPreset = defaultPreset ?? this._resolveDefaultPreset()
 
 		if (!Object.keys(this.activePreset.value).length) {
+			this._log.fn('add').debug('No active preset found. Setting active to default.')
 			this.activePreset.set(this.defaultPreset)
 		}
 
@@ -633,6 +641,23 @@ export class PresetManager {
 
 		if (e.key === 'Escape') {
 			this._handleRename()
+		}
+	}
+
+	private _validateVersion(key: string) {
+		// Make sure we get the current version unmodified first.
+		let localVersion = null
+		try {
+			localVersion = JSON.parse(localStorage.getItem(key + '::version') ?? '')
+		} catch (e) {}
+
+		// Initialize the persistant version.
+		this._version = persist(key + '::version', this.__version)
+
+		// If the version is different, remove presets from storage.
+		if (localVersion !== this.__version) {
+			localStorage.removeItem(key!)
+			this._version.set(this.__version)
 		}
 	}
 
