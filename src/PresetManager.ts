@@ -171,7 +171,11 @@ export class PresetManager {
 
 		defaultPreset ??= this.presets.value.find(p => p.id === this._defaultPresetId)
 		if (!defaultPreset) {
-			defaultPreset = this.gooey.save(this._defaultPresetTitle, this._defaultPresetId)
+			defaultPreset = this.gooey.save(
+				this._defaultPresetTitle,
+				this._defaultPresetId,
+				this.__version,
+			)
 			this.presets.push(defaultPreset)
 		}
 
@@ -277,7 +281,7 @@ export class PresetManager {
 						id: 'update',
 						onClick: () => {
 							const { id, title } = this.activePreset.value
-							const current = this.gooey.save(title, id)
+							const current = this.gooey.save(title, id, this.__version)
 							this.put(current)
 						},
 						disabled: () => this.defaultPresetIsActive,
@@ -502,7 +506,7 @@ export class PresetManager {
 			throw new Error('No select input.')
 		}
 
-		preset ??= this.gooey.save(this._resolveUnusedTitle('preset'), nanoid())
+		preset ??= this.gooey.save(this._resolveUnusedTitle('preset'), nanoid(), this.__version)
 
 		const existing = this.presets.value.find(p => p.id === preset.id)
 		if (!existing) {

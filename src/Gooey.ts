@@ -210,7 +210,7 @@ export interface GooeyStorageOptions {
 
 export interface GooeyPreset {
 	__type: 'GooeyPreset'
-	__version: number
+	__version: string
 	id: string
 	title: string
 	data: FolderPreset
@@ -619,11 +619,12 @@ export class Gooey {
 		 * @defaultValue {@link nanoid|nanoid(10)}
 		 */
 		id = nanoid(10),
+		version?: string,
 	) {
 		this._log.fn('save').debug({ title, id })
 		const preset: GooeyPreset = {
 			__type: 'GooeyPreset',
-			__version: 0,
+			__version: version ?? this.presetManager.__version,
 			id,
 			title,
 			data: this.folder.save(),

@@ -5,7 +5,7 @@ import type { GooeyPreset } from '../Gooey'
 export const ORBS_PRESETS = [
 	{
 		__type: 'GooeyPreset',
-		__version: 0,
+		__version: '0',
 		id: 'gooey-default-preset',
 		title: 'default',
 		data: {
@@ -222,7 +222,7 @@ export const ORBS_PRESETS = [
 	},
 	{
 		__type: 'GooeyPreset',
-		__version: 0,
+		__version: '0',
 		id: 'nbaoNULZ3bblukz15sxzH',
 		title: 'spicy cheese floops',
 		data: {
@@ -439,7 +439,7 @@ export const ORBS_PRESETS = [
 	},
 	{
 		__type: 'GooeyPreset',
-		__version: 0,
+		__version: '0',
 		id: 'V1oU2TcKW1Ps4rFY5ZpZE',
 		title: 'raver',
 		data: {
@@ -656,7 +656,7 @@ export const ORBS_PRESETS = [
 	},
 	{
 		__type: 'GooeyPreset',
-		__version: 0,
+		__version: '0',
 		id: 'Htcxi_Wk0wyRtiQh5SDo3',
 		title: 'space banana',
 		data: {
