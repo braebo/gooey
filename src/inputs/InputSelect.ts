@@ -4,7 +4,6 @@ import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
 import { Select, isLabeledOption, toLabeledOption, fromLabeledOption } from '../controllers/Select'
-import { disableable, type Disableable } from '../shared/decorators/disableable-class-decorator'
 import { fromState, isState, state } from '../shared/state'
 import { stringify } from '../shared/stringify'
 import { Logger } from '../shared/logger'
@@ -56,9 +55,6 @@ export interface SelectInputEvents<T> extends InputEvents<LabeledOption<T>> {
 	cancel: void
 }
 
-export interface InputSelect extends Disableable {}
-
-@disableable
 export class InputSelect<TValueType = any> extends Input<
 	LabeledOption<TValueType>,
 	SelectInputOptions<TValueType>,
@@ -353,15 +349,15 @@ export class InputSelect<TValueType = any> extends Input<
 
 	enable() {
 		this._log.fn('enable').debug()
+		this.disabled = false
 		this.select.enable()
-		super.enable()
 		return this
 	}
 
 	disable() {
 		this._log.fn('disable').debug()
+		this.disabled = true
 		this.select.disable()
-		super.disable()
 		return this
 	}
 

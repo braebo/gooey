@@ -189,12 +189,14 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 
 	enable(): this {
 		this.elements.controllers.input.disabled = false
-		super.enable()
+		this.disabled = false
+		// super.enable()
 		return this
 	}
 	disable(): this {
 		this.elements.controllers.input.disabled = true
-		super.disable()
+		this.disabled = true
+		// super.disable()
 		return this
 	}
 

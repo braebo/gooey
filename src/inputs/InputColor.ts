@@ -371,13 +371,13 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 	enable() {
 		this.picker.enable()
-		super.enable()
+		this.disabled = false
 		return this
 	}
 
 	disable() {
 		this.picker.disable()
-		super.disable()
+		this.disabled = true
 		return this
 	}
 

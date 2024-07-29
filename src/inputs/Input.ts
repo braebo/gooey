@@ -350,6 +350,11 @@ export abstract class Input<
 		}
 
 		this.index = this.index
+		this.elements.container.classList.toggle('hidden', this._hidden())
+
+		setTimeout(() => {
+			this.element.classList.toggle('disabled', this._disabled())
+		}, 1)
 	}
 
 	get value() {
@@ -392,11 +397,10 @@ export abstract class Input<
 	 * disabled state.
 	 */
 	get disabled(): boolean {
-		return this._disabled()
+		return this.element.classList.contains('disabled')
 	}
 	set disabled(v: boolean | (() => boolean)) {
-		this._disabled = toFn(v)
-		this._disabled() ? this.disable() : this.enable()
+		this.element.classList.toggle('disabled', toFn(v)())
 	}
 
 	/**
@@ -499,21 +503,21 @@ export abstract class Input<
 		this.undoManager?.commit(commit as Commit)
 	}
 
-	/**
-	 * Enables the input and any associated controllers.
-	 */
-	enable() {
-		this._disabled = toFn(false)
-		return this
-	}
-	/**
-	 * Disables the input and any associated controllers. A disabled input's state can't be
-	 * changed or interacted with.
-	 */
-	disable() {
-		this._disabled = toFn(true)
-		return this
-	}
+	// /**
+	//  * Enables the input and any associated controllers.
+	//  */
+	// enable() {
+	// 	this._disabled = toFn(false)
+	// 	return this
+	// }
+	// /**
+	//  * Disables the input and any associated controllers. A disabled input's state can't be
+	//  * changed or interacted with.
+	//  */
+	// disable() {
+	// 	this._disabled = toFn(true)
+	// 	return this
+	// }
 
 	/**
 	 * Refreshes the value of any controllers to match the current input state.
@@ -522,6 +526,10 @@ export abstract class Input<
 		if (!this.opts.resettable) return
 		if (this.opts.binding) {
 			this.state.set(this.opts.binding.target[this.opts.binding.key])
+		}
+		const disabledState = this._disabled()
+		if (disabledState !== this.disabled) {
+			this.disabled = disabledState
 		}
 		this.elements.resetBtn.classList.toggle('dirty', this._dirty())
 		this._evm.emit('refresh', v as TValueType)

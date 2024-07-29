@@ -111,13 +111,13 @@ export class InputButton extends Input<
 
 	enable() {
 		this.button.enable()
-		super.enable()
+		this.disabled = false
 		return this
 	}
 
 	disable() {
 		this.button.disable()
-		super.disable()
+		this.disabled = true
 		return this
 	}
 

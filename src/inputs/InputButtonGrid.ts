@@ -241,7 +241,7 @@ export class InputButtonGrid extends Input<
 		for (const btn of this.buttons.values()) {
 			btn.enable()
 		}
-		super.enable()
+		this.disabled = false
 		return this
 	}
 
@@ -249,7 +249,7 @@ export class InputButtonGrid extends Input<
 		for (const btn of this.buttons.values()) {
 			btn.disable()
 		}
-		super.disable()
+		this.disabled = true
 		return this
 	}
 
