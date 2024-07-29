@@ -1754,6 +1754,9 @@ export class Folder {
 			clearTimeout(this.#timeout)
 			this.#timeout = setTimeout(() => {
 				this.graphics?.icon.replaceWith(createFolderSvg(this)) // todo - not this
+				setTimeout(() => {
+					this.graphics?.connector?.update() // todo - this, for icon
+				}, 1)
 			}, 1)
 		}
 	}

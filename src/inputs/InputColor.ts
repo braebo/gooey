@@ -306,6 +306,8 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 		if (this.elements.container && document.contains(this.elements.container)) {
 			containerAnim?.commitStyles()
 		}
+
+		this.folder.graphics?.connector?.update()
 	}
 
 	close = async (duration = 300) => {
