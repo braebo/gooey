@@ -156,7 +156,7 @@ export interface FolderOptions {
 
 	/**
 	 * The title of the folder.
-	 * @defaultValue `''`
+	 * @default ''
 	 */
 	title?: string
 
@@ -167,7 +167,7 @@ export interface FolderOptions {
 	 * - Use the same title for multiple inputs _in the same {@link Folder}_, or
 	 * - Leave all titles empty
 	 * Otherwise, this can be left as the default and presets will work as expected.
-	 * @defaultValue {@link title|`title`}
+	 * @default The provided `title`.
 	 */
 	presetId?: string
 
@@ -178,7 +178,7 @@ export interface FolderOptions {
 
 	/**
 	 * Whether the folder should be collapsed by default.
-	 * @defaultValue `false`
+	 * @default false
 	 */
 	closed?: boolean
 
@@ -186,7 +186,7 @@ export interface FolderOptions {
 	 * Whether the folder should be hidden by default.  If a function is
 	 * provided, it will be called to determine the hidden state.  Use
 	 * {@link refresh} to update the hidden state.
-	 * @defaultValue `false`
+	 * @default false
 	 */
 	hidden?: boolean | (() => boolean)
 
@@ -199,14 +199,15 @@ export interface FolderOptions {
 	 * Whether this Folder should be saved as a {@link FolderPreset} when saving the
 	 * {@link GooeyPreset} for the {@link Gooey} this Folder belongs to.  If `false`, this Input will
 	 * be skipped.
-	 * @defaultValue `true`
+	 * @default true
 	 */
 	saveable?: boolean
 
 	/**
 	 * The order in which this input should appear in its folder relative to the other inputs.
 	 * - To force an input to be first *(at the top of its folder)*, set `order` to `0` or below.
-	 * - To force an input to be last *(at the bottom of its folder)*, set `order` to any number greater than number of inputs + 1.
+	 * - To force an input to be last *(at the bottom of its folder)*, set `order` to any number
+	 * greater than number of inputs + 1.
 	 * @default folder.inputs.size + folder.children.size + 1
 	 */
 	order?: number
@@ -214,7 +215,7 @@ export interface FolderOptions {
 	/**
 	 * When `true`, a search input will be added to the folder's toolbar, allowing users to search
 	 * for inputs within the folder by title.  By default, only the root folder is searchable.
-	 * @defaultValue `false`
+	 * @default false
 	 */
 	searchable?: boolean
 
@@ -247,7 +248,7 @@ export interface InternalFolderOptions {
 	 * creating a `new Folder()`. Always false inside of the
 	 * `gooey.addFolder` and `folder.addFolder` methods.
 	 * Be wary of infinite loops when setting manually.
-	 * @defaultValue `true`
+	 * @default true
 	 * @internal
 	 */
 	isRoot: boolean
@@ -260,7 +261,7 @@ export interface InternalFolderOptions {
 
 	/**
 	 * Hides the folder header.
-	 * @defaultValue `false`
+	 * @default false
 	 * @internal
 	 */
 	_headerless: boolean
@@ -325,7 +326,6 @@ const FOLDER_DEFAULTS = Object.freeze({
 	controls: new Map(),
 	saveable: true,
 	disabled: false,
-	disabled: false,
 }) satisfies Omit<FolderOptions, 'container'>
 
 /**
@@ -367,7 +367,7 @@ export class Folder {
 	 * - Use the same title for multiple inputs _in the same {@link Folder}_, or
 	 * - Leave all titles empty
 	 * Otherwise, this can be left as the default and presets will work as expected.
-	 * @defaultValue {@link title|`title`}
+	 * @default The provided `title`.
 	 */
 	presetId: string
 
@@ -375,7 +375,7 @@ export class Folder {
 	 * Whether this Folder should be saved as a {@link FolderPreset} when saving the
 	 * {@link GooeyPreset} for the {@link Gooey} this Folder belongs to.  If `false`, this Input will
 	 * be skipped.
-	 * @defaultValue `true`
+	 * @default true
 	 */
 	saveable: boolean
 
@@ -391,33 +391,77 @@ export class Folder {
 	inputIdMap = new Map<string, string>()
 
 	/**
-	 * The root folder.  All folders have a reference to the same root folder.
+	 * The root folder.  All folders share a reference to the same root folder.
 	 */
 	root: Folder
+	/**
+	 * The parent folder of this folder (or a circular reference if this is the root folder).
+	 */
 	parentFolder: Folder
+	/**
+	 * The folder containing Gooey instance settings, like the `ui` and `presets` sections.
+	 */
 	settingsFolder!: Folder
+	/**
+	 * An observable responsible for the folder's open/closed state.  Setting this value will
+	 * open/close the folder, and subscribing to this value will allow you to listen for
+	 * open/close events.
+	 */
 	closed: State<boolean>
-
+	/**
+	 * The folder's root container element, containing all other related folder {@link elements}.
+	 */
 	element: HTMLDivElement
-	elements = {} as FolderElements
+	/**
+	 * All HTMLElements that make up the folder's UI.
+	 */
+	elements = {} as {
+		header: HTMLElement
+		title: HTMLElement
+		contentWrapper: HTMLElement
+		content: HTMLElement
+		toolbar: {
+			container: HTMLElement
+			settingsButton?: HTMLButtonElement & { tooltip?: Tooltip }
+		}
+	}
+	/**
+	 * The animated svg graphics belonging to the folder.
+	 */
 	graphics?: {
 		icon: HTMLDivElement
 		connector?: {
 			container: HTMLDivElement
 			svg: SVGElement
 			path: SVGPathElement
+			update: () => void
 		}
 	}
 
+	/**
+	 * The event manager for the folder.  This should rarely need to be accessed directly, since
+	 * subscribing to events can be done with a Folder's {@link on} method.
+	 * @internal
+	 */
 	evm = new EventManager<FolderEvents>(['change', 'refresh', 'toggle', 'mount'])
+	/**
+	 * Equivalent to `addEventListener`.
+	 */
 	on = this.evm.on.bind(this.evm)
 
+	/**
+	 * The pixel height of the folder element when open.
+	 * @internal
+	 */
 	initialHeight = 0
+	/**
+	 * The pixel height of the folder header element.
+	 * @internal
+	 */
 	initialHeaderHeight = 0
 
 	private _title: string
 	private _hidden = () => false
-	private _disabled = () => false
 	private _disabled = () => false
 	private _log: Logger
 	/**
@@ -856,9 +900,13 @@ export class Folder {
 		this.hidden = preset.hidden
 
 		for (const input of this.inputs.values()) {
-			const inputPreset = preset.inputs.find(c => c.presetId === input.id)
+			const inputPreset = preset.inputs.find(c => c.presetId === input.opts.presetId)
 			if (!inputPreset) {
-				console.warn(`Missing input for preset:`, { preset, input })
+				console.warn(`Missing input for preset: ${preset.title}`, {
+					preset,
+					input,
+					this: this,
+				})
 				continue
 			}
 
@@ -870,7 +918,11 @@ export class Folder {
 
 			const folderPreset = preset.children?.find(f => f.id === child.presetId)
 			if (!folderPreset) {
-				console.warn(`Missing folder for preset:`, { child, preset, this: this })
+				console.warn(`Missing folder for preset: ${preset.title}`, {
+					child,
+					preset,
+					this: this,
+				})
 				continue
 			}
 
@@ -1736,7 +1788,7 @@ export class Folder {
 	}
 }
 
-// //· Type Tests ···································································¬
+//#region Type Tests ···································································¬
 
 // const testTargetInferer = <T>(_target: T): InferTarget<T> => {
 // 	return {} as InferTarget<T>
@@ -1791,4 +1843,4 @@ export class Folder {
 // 	bindManyTest
 // }
 // test
-// //⌟
+//#endregion
