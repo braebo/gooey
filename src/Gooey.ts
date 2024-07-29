@@ -498,6 +498,7 @@ export class Gooey {
 		})
 		this.settingsFolder.element.classList.add('gooey-folder-alt')
 		updateIcon()
+		this.settingsFolder.element.style.setProperty('order', '-99')
 
 		this.themer = this.opts._themer ?? this._createThemer(this.settingsFolder)
 		this.theme = this.opts.theme
