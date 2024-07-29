@@ -186,6 +186,13 @@ export interface FolderOptions {
 	 * @defaultValue `false`
 	 */
 	searchable?: boolean
+
+	/**
+	 * Disables all user interactions and dims the folder brightness.  If a function is provided,
+	 * it will be called to update the disabled state each time the {@link refresh} method runs.
+	 * @default false
+	 */
+	disabled?: boolean | (() => boolean)
 }
 
 /**
@@ -286,6 +293,8 @@ const FOLDER_DEFAULTS = Object.freeze({
 	hidden: false,
 	controls: new Map(),
 	saveable: true,
+	disabled: false,
+	disabled: false,
 }) satisfies Omit<FolderOptions, 'container'>
 
 /**
@@ -377,6 +386,8 @@ export class Folder {
 
 	private _title: string
 	private _hidden = () => false
+	private _disabled = () => false
+	private _disabled = () => false
 	private _log: Logger
 	/**
 	 * Used to disable clicking the header to open/close the folder.
@@ -470,6 +481,7 @@ export class Folder {
 		}
 
 		this.hidden = opts.hidden ? toFn(opts.hidden) : () => false
+		this._disabled = toFn(opts.disabled ?? false)
 
 		this._createGraphics(opts._headerless).then(() => {
 			this.evm.emit('mount')
@@ -491,6 +503,10 @@ export class Folder {
 				this.closed.set(opts.closed)
 			}
 		})
+
+		setTimeout(() => {
+			this.element.classList.toggle('disabled', this._disabled())
+		}, 100)
 	}
 
 	//· Getters/Setters ··········································································¬
@@ -546,6 +562,16 @@ export class Folder {
 	set hidden(v: boolean | (() => boolean)) {
 		this._hidden = toFn(v)
 		this._hidden() ? this.hide() : this.show()
+	}
+
+	/**
+	 * Whether the input is disabled.  Modifying this value will update the UI.
+	 */
+	get disabled(): boolean {
+		return this.element.classList.contains('disabled')
+	}
+	set disabled(v: boolean | (() => boolean)) {
+		this.element.classList.toggle('disabled', toFn(v)())
 	}
 
 	/**
@@ -832,6 +858,11 @@ export class Folder {
 	 */
 	refresh(): this {
 		this._log.fn('refresh').debug(this)
+
+		const disabledState = this._disabled()
+		if (disabledState !== this.disabled) {
+			this.disabled = disabledState
+		}
 
 		for (const input of this.inputs.values()) {
 			input.refresh()
@@ -1181,7 +1212,7 @@ export class Folder {
 
 		if (!opts.value) {
 			console.warn('No value provided for select:', { title, array, options, opts })
-			throw new Error('No value provided for select.')
+			// throw new Error('No value provided for select.')
 		}
 		return this._registerInput(new InputSelect(opts, this), opts.presetId) as InputSelect<T>
 	}
