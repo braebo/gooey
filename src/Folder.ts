@@ -520,6 +520,11 @@ export class Folder {
 		this._title = opts.title ?? ''
 
 		this.element = this._createElement(opts)
+		this.element.style.setProperty(
+			'order',
+			opts.order?.toString() ??
+				`${this.parentFolder.children.length + this.parentFolder.inputs.size + 1}`,
+		)
 		this.elements = this._createElements(this.element)
 
 		this.presetId = this._resolvePresetId()
@@ -1641,9 +1646,6 @@ export class Folder {
 		return create('div', {
 			parent: this.parentFolder.elements.content,
 			classes: ['gooey-folder', 'closed'],
-			style: {
-				order: this.parentFolder.children.length + this.parentFolder.inputs.size + 1,
-			},
 		})
 	}
 
