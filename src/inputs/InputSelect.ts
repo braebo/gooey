@@ -11,11 +11,6 @@ import { create } from '../shared/create'
 import { toFn } from '../shared/toFn'
 import { Input } from './Input'
 
-// export type SelectList<
-// 	T = ValidInputValue | PrimitiveState<ValidInputValue>,
-// 	O = T extends PrimitiveState<infer U> ? Option<U> : Option<T>,
-// > = Array<O> | ArrayState<O>
-
 export type SelectInputOptions<T = ValidInputValue> = Omit<
 	InputOptions<T | { label: string; value: T }>,
 	'onChange' | 'value'
@@ -23,20 +18,10 @@ export type SelectInputOptions<T = ValidInputValue> = Omit<
 	__type?: 'SelectInputOptions'
 	onChange?: (value: LabeledOption<T>) => void
 } & {
-	// } & (
-	// | {
-	// 		labelKey?: never
-	// 		value?: { label: string; value: T }
-	// 		options: { label: string; value: T }[] | (() => { label: string; value: T }[])
-	//   }
-	// | {
 	labelKey?: string
 	value?: T
-	// options?: SelectList<T> | (() => SelectList<T>)
-	// options?: Array<unknown> | ArrayState<unknown>
 	options?: Array<T>
 }
-// )
 
 export const SELECT_INPUT_DEFAULTS: SelectInputOptions = {
 	__type: 'SelectInputOptions' as const,
