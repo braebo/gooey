@@ -1,5 +1,13 @@
 # gooey
 
+## 0.2.4
+
+### Patch Changes
+
+-   feat: lots of features / bugfixes ([`aa538e675575aefa1dc6b27cd91264b0ff6cebc9`](https://github.com/braebo/gooey/commit/aa538e675575aefa1dc6b27cd91264b0ff6cebc9))
+
+-   fix: tooltip lifecycle / default `delayOut` ([`7175380c4904393dd6f2492264c531b6850dbac4`](https://github.com/braebo/gooey/commit/7175380c4904393dd6f2492264c531b6850dbac4))
+
 ## 0.2.3
 
 ### Patch Changes
