@@ -49,7 +49,7 @@ export interface TooltipOptions {
 
 	/**
 	 * Delay in milliseconds before the tooltip is hidden.
-	 * @defaultValue 0
+	 * @defaultValue 50
 	 */
 	delayOut: number
 
@@ -114,7 +114,7 @@ export const TOOLTIP_DEFAULTS: TooltipOptions = {
 	placement: 'top',
 	anchor: 'node',
 	delay: 250,
-	delayOut: 0,
+	delayOut: 50,
 	offsetX: '0%',
 	offsetY: '0%',
 	animation: {
@@ -308,7 +308,9 @@ export class Tooltip {
 					},
 				)
 				.finished.then(() => {
-					this.element?.classList.add('showing')
+					if (this.showing) {
+						this.element?.classList.add('showing')
+					}
 				})
 
 			this._updatePosition()
@@ -329,13 +331,14 @@ export class Tooltip {
 				}
 
 				this.showing = false
-				this.element?.classList.remove('showing')
 
 				if (this._watcherId) {
 					this._evm.unlisten(this._watcherId)
 				}
 
 				if (!this.element) return
+
+				this.element.classList.remove('showing')
 
 				await this.element.animate(
 					[
