@@ -58,9 +58,10 @@ export class InputButton extends Input<
 		const opts = Object.assign({}, BUTTON_INPUT_DEFAULTS, options, {
 			__type: 'ButtonInputOptions' as const,
 		})
+		opts.resettable ??= false
+
 		super(opts, folder)
 		this._evm.registerEvents(['change', 'refresh', 'click'])
-
 		this._log = new Logger(`InputButton ${opts.title}`, { fg: 'cyan' })
 		this._log.fn('constructor').debug({ opts, this: this })
 
