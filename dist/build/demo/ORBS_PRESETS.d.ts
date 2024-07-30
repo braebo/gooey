@@ -1,6 +1,6 @@
 export declare const ORBS_PRESETS: [{
     readonly __type: "GooeyPreset";
-    readonly __version: 0;
+    readonly __version: "0";
     readonly id: "gooey-default-preset";
     readonly title: "default";
     readonly data: {
@@ -185,7 +185,7 @@ export declare const ORBS_PRESETS: [{
     };
 }, {
     readonly __type: "GooeyPreset";
-    readonly __version: 0;
+    readonly __version: "0";
     readonly id: "nbaoNULZ3bblukz15sxzH";
     readonly title: "spicy cheese floops";
     readonly data: {
@@ -370,7 +370,7 @@ export declare const ORBS_PRESETS: [{
     };
 }, {
     readonly __type: "GooeyPreset";
-    readonly __version: 0;
+    readonly __version: "0";
     readonly id: "V1oU2TcKW1Ps4rFY5ZpZE";
     readonly title: "raver";
     readonly data: {
@@ -555,7 +555,7 @@ export declare const ORBS_PRESETS: [{
     };
 }, {
     readonly __type: "GooeyPreset";
-    readonly __version: 0;
+    readonly __version: "0";
     readonly id: "Htcxi_Wk0wyRtiQh5SDo3";
     readonly title: "space banana";
     readonly data: {

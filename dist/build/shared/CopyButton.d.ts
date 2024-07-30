@@ -1,3 +1,4 @@
+import type { ValidInput } from '../inputs/Input';
 import { Tooltip } from '../shared/Tooltip';
 import { CopySVG } from '../svg/CopySVG';
 export declare class CopyButton {
@@ -5,6 +6,7 @@ export declare class CopyButton {
     container: HTMLElement;
     text: () => string;
     message: string;
+    input?: ValidInput | undefined;
     button: HTMLDivElement;
     icon: CopySVG;
     /**
@@ -16,6 +18,6 @@ export declare class CopyButton {
      */
     outro: boolean;
     tooltip: Tooltip;
-    constructor(container: HTMLElement, text: () => string, message?: string);
+    constructor(container: HTMLElement, text: () => string, message?: string, input?: ValidInput | undefined);
     copy: () => void;
 }

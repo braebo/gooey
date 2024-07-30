@@ -12,7 +12,7 @@ import { composedPathContains } from './shared/cancelClassFound.js';
 import { isColor, isColorFormat } from './shared/color/color.js';
 import { state, fromState } from './shared/state.js';
 import { EventManager } from './shared/EventManager.js';
-import './svg/TerminalSvg.js';
+import { TerminalSvg } from './svg/TerminalSvg.js';
 import { Search } from './toolbar/Search.js';
 import { create } from './shared/create.js';
 import { select } from './shared/select.js';
@@ -39,6 +39,7 @@ const FOLDER_DEFAULTS = Object.freeze({
     hidden: false,
     controls: new Map(),
     saveable: true,
+    disabled: false,
 });
 /**
  * Internal folder creation api defaults.
@@ -77,14 +78,14 @@ class Folder {
      * - Use the same title for multiple inputs _in the same {@link Folder}_, or
      * - Leave all titles empty
      * Otherwise, this can be left as the default and presets will work as expected.
-     * @defaultValue {@link title|`title`}
+     * @default The provided `title`.
      */
     presetId;
     /**
      * Whether this Folder should be saved as a {@link FolderPreset} when saving the
      * {@link GooeyPreset} for the {@link Gooey} this Folder belongs to.  If `false`, this Input will
      * be skipped.
-     * @defaultValue `true`
+     * @default true
      */
     saveable;
     /**
@@ -97,21 +98,58 @@ class Folder {
     inputs = new Map();
     inputIdMap = new Map();
     /**
-     * The root folder.  All folders have a reference to the same root folder.
+     * The root folder.  All folders share a reference to the same root folder.
      */
     root;
+    /**
+     * The parent folder of this folder (or a circular reference if this is the root folder).
+     */
     parentFolder;
+    /**
+     * The folder containing Gooey instance settings, like the `ui` and `presets` sections.
+     */
     settingsFolder;
+    /**
+     * An observable responsible for the folder's open/closed state.  Setting this value will
+     * open/close the folder, and subscribing to this value will allow you to listen for
+     * open/close events.
+     */
     closed;
+    /**
+     * The folder's root container element, containing all other related folder {@link elements}.
+     */
     element;
+    /**
+     * All HTMLElements that make up the folder's UI.
+     */
     elements = {};
+    /**
+     * The animated svg graphics belonging to the folder.
+     */
     graphics;
+    /**
+     * The event manager for the folder.  This should rarely need to be accessed directly, since
+     * subscribing to events can be done with a Folder's {@link on} method.
+     * @internal
+     */
     evm = new EventManager(['change', 'refresh', 'toggle', 'mount']);
+    /**
+     * Equivalent to `addEventListener`.
+     */
     on = this.evm.on.bind(this.evm);
+    /**
+     * The pixel height of the folder element when open.
+     * @internal
+     */
     initialHeight = 0;
+    /**
+     * The pixel height of the folder header element.
+     * @internal
+     */
     initialHeaderHeight = 0;
     _title;
     _hidden = () => false;
+    _disabled = () => false;
     _log;
     /**
      * Used to disable clicking the header to open/close the folder.
@@ -158,6 +196,8 @@ class Folder {
         this.gooey = opts.gooey;
         this._title = opts.title ?? '';
         this.element = this._createElement(opts);
+        this.element.style.setProperty('order', opts.order?.toString() ??
+            `${this.parentFolder.children.length + this.parentFolder.inputs.size + 1}`);
         this.elements = this._createElements(this.element);
         this.presetId = this._resolvePresetId();
         opts.closed ??= false;
@@ -186,6 +226,7 @@ class Folder {
             }, 0);
         }
         this.hidden = opts.hidden ? toFn(opts.hidden) : () => false;
+        this._disabled = toFn(opts.disabled ?? false);
         this._createGraphics(opts._headerless).then(() => {
             this.evm.emit('mount');
             // Open/close the folder when the closed state changes.
@@ -202,6 +243,9 @@ class Folder {
                 this.closed.set(opts.closed);
             }
         });
+        setTimeout(() => {
+            this.element.classList.toggle('disabled', this._disabled());
+        }, 100);
     }
     //· Getters/Setters ··········································································¬
     /**
@@ -249,6 +293,15 @@ class Folder {
     set hidden(v) {
         this._hidden = toFn(v);
         this._hidden() ? this.hide() : this.show();
+    }
+    /**
+     * Whether the input is disabled.  Modifying this value will update the UI.
+     */
+    get disabled() {
+        return this.element.classList.contains('disabled');
+    }
+    set disabled(v) {
+        this.element.classList.toggle('disabled', toFn(v)());
     }
     /**
      * A flat array of all child folders of this folder (and their children, etc).
@@ -455,9 +508,13 @@ class Folder {
         // this.closed.set(preset.closed) // todo - global settings?
         this.hidden = preset.hidden;
         for (const input of this.inputs.values()) {
-            const inputPreset = preset.inputs.find(c => c.presetId === input.id);
+            const inputPreset = preset.inputs.find(c => c.presetId === input.opts.presetId);
             if (!inputPreset) {
-                console.warn(`Missing input for preset:`, { preset, input });
+                console.warn(`Missing input for preset: ${preset.title}`, {
+                    preset,
+                    input,
+                    this: this,
+                });
                 continue;
             }
             input.load(inputPreset);
@@ -467,7 +524,11 @@ class Folder {
                 continue;
             const folderPreset = preset.children?.find(f => f.id === child.presetId);
             if (!folderPreset) {
-                console.warn(`Missing folder for preset:`, { child, preset, this: this });
+                console.warn(`Missing folder for preset: ${preset.title}`, {
+                    child,
+                    preset,
+                    this: this,
+                });
                 continue;
             }
             child.load(folderPreset);
@@ -482,6 +543,10 @@ class Folder {
      */
     refresh() {
         this._log.fn('refresh').debug(this);
+        const disabledState = this._disabled();
+        if (disabledState !== this.disabled) {
+            this.disabled = disabledState;
+        }
         for (const input of this.inputs.values()) {
             input.refresh();
         }
@@ -598,52 +663,124 @@ class Folder {
      * @internal
      */
     _transientRoot = null;
-    bindMany(titleOrTarget, targetOrOptions, maybeOptions) {
-        let target;
-        let options = {};
-        let rootFolder = this;
-        if (typeof titleOrTarget === 'string') {
-            if (!targetOrOptions || typeof targetOrOptions !== 'object') {
-                throw new Error('No target object provided.');
+    // bindMany<
+    // 	T extends Record<string, any>,
+    // 	TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
+    // >(folderTitle: string, targetObject: T, targetOptions?: TOptions): this & InferTarget<T>
+    // bindMany<
+    // 	T extends Record<string, any>,
+    // 	TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
+    // >(target: T, targetOptions?: TOptions, never?: never): this & InferTarget<T>
+    // bindMany<
+    // 	T extends Record<string, any>,
+    // 	TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
+    // 	TInputs extends InferTarget<T> = InferTarget<T>,
+    // >(
+    // 	titleOrTarget: string | T,
+    // 	targetOrOptions?: T | TOptions,
+    // 	maybeOptions?: TOptions,
+    // ): this & TInputs {
+    // 	let target: T
+    // 	let options = {} as TOptions
+    // 	let rootFolder: Folder = this
+    // 	if (typeof titleOrTarget === 'string') {
+    // 		if (!targetOrOptions || typeof targetOrOptions !== 'object') {
+    // 			throw new Error('No target object provided.')
+    // 		}
+    // 		target = targetOrOptions as T
+    // 		options = maybeOptions || ({} as TOptions)
+    // 		// @ts-expect-error
+    // 		rootFolder = this.addFolder(titleOrTarget, options.folderOptions)
+    // 	} else {
+    // 		target = titleOrTarget
+    // 		options = (targetOrOptions as TOptions) || {}
+    // 	}
+    // 	if (!this._transientRoot) {
+    // 		this._transientRoot = rootFolder
+    // 	}
+    // 	for (let [key, value] of Object.entries(target)) {
+    // 		const inputOptions = options[key as keyof T] || {}
+    // 		let folderOptions = {} as FolderOptions
+    // 		if (value === null) {
+    // 			if (!('value' in inputOptions)) {
+    // 				console.error(
+    // 					`Found null value for ${key}, and no valid "value" option was provided.`,
+    // 					{ key, value, inputOptions },
+    // 				)
+    // 				throw new Error('Invalid binding.')
+    // 			}
+    // 			value = inputOptions.value
+    // 		}
+    // 		if (typeof value === 'object') {
+    // 			if (isColor(value)) {
+    // 				this.bindColor(value, 'color', { title: key, ...inputOptions })
+    // 			} else {
+    // 				if ('folderOptions' in inputOptions) {
+    // 					folderOptions = inputOptions.folderOptions as FolderOptions
+    // 				} else if ('folderOptions' in value) {
+    // 					folderOptions = value.folderOptions
+    // 				}
+    // 				const subFolder = this.addFolder(key, folderOptions)
+    // 				subFolder.bindMany(value, inputOptions)
+    // 			}
+    // 		} else if ('options' in inputOptions) {
+    // 			// let selectOptions = inputOptions as SelectInputOptions<T>
+    // 			this.bindSelect(target, key, inputOptions as SelectInputOptions)
+    // 		} else {
+    // 			this.bind(target, key as keyof T, inputOptions)
+    // 		}
+    // 	}
+    // 	const finalRoot = this._transientRoot
+    // 	this._transientRoot = null
+    // 	return finalRoot as this & TInputs
+    // }
+    bindMany(target, options) {
+        const walk = (target, options, folder, seen) => {
+            if (seen.has(target))
+                return;
+            seen.add(target);
+            for (let [key, value] of Object.entries(target)) {
+                if (Array.isArray(options['exclude']) && options['exclude'].includes(key))
+                    continue;
+                if (Array.isArray(options['include']) && !options['include'].includes(key))
+                    continue;
+                const inputOptions = options[key] || {};
+                let folderOptions = {};
+                if (value === null) {
+                    if (!('value' in inputOptions)) {
+                        console.error(`bindMany() error: target object's key "${key}" is \`null\`, and no valid "value" option was provided as a fallback.`, { key, value, inputOptions });
+                        throw new Error('Invalid binding.');
+                    }
+                    value = inputOptions['value'];
+                }
+                if (typeof value === 'object') {
+                    if (isColor(value)) {
+                        folder.bindColor(value, 'color', { title: key, ...inputOptions });
+                    }
+                    else {
+                        if ('folderOptions' in inputOptions) {
+                            folderOptions = inputOptions['folderOptions'];
+                        }
+                        else if ('folderOptions' in value) {
+                            folderOptions = value.folderOptions;
+                        }
+                        const subFolder = folder.addFolder(key, folderOptions);
+                        walk(value, inputOptions, subFolder, seen);
+                    }
+                }
+                else if ('options' in inputOptions) {
+                    folder.bindSelect(target, key, inputOptions);
+                }
+                else {
+                    folder.bind(target, key, inputOptions);
+                }
             }
-            target = targetOrOptions;
-            options = maybeOptions || {};
-            // @ts-expect-error
-            rootFolder = this.addFolder(titleOrTarget, options.folderOptions);
-        }
-        else {
-            target = titleOrTarget;
-            options = targetOrOptions || {};
-        }
+        };
+        let rootFolder = this;
         if (!this._transientRoot) {
             this._transientRoot = rootFolder;
         }
-        for (const [key, value] of Object.entries(target)) {
-            const inputOptions = options[key] || {};
-            let folderOptions = {};
-            if (typeof value === 'object') {
-                if (isColor(value)) {
-                    this.bindColor(value, 'color', { title: key, ...inputOptions });
-                }
-                else {
-                    if ('folderOptions' in inputOptions) {
-                        folderOptions = inputOptions.folderOptions;
-                    }
-                    else if ('folderOptions' in value) {
-                        folderOptions = value.folderOptions;
-                    }
-                    const subFolder = this.addFolder(key, folderOptions);
-                    subFolder.bindMany(value, inputOptions);
-                }
-            }
-            else if ('options' in inputOptions) {
-                // let selectOptions = inputOptions as SelectInputOptions<T>
-                this.bindSelect(target, key, inputOptions);
-            }
-            else {
-                this.bind(target, key, inputOptions);
-            }
-        }
+        walk(target, options, rootFolder, new Set());
         const finalRoot = this._transientRoot;
         this._transientRoot = null;
         return finalRoot;
@@ -731,7 +868,7 @@ class Folder {
             options?.initialValue ?? fromState(array)?.at(0) ?? options?.binding?.initial;
         if (!opts.value) {
             console.warn('No value provided for select:', { title, array, options, opts });
-            throw new Error('No value provided for select.');
+            // throw new Error('No value provided for select.')
         }
         return this._registerInput(new InputSelect(opts, this), opts.presetId);
     }
@@ -910,9 +1047,6 @@ class Folder {
         return create('div', {
             parent: this.parentFolder.elements.content,
             classes: ['gooey-folder', 'closed'],
-            style: {
-                order: this.parentFolder.children.length + this.parentFolder.inputs.size + 1,
-            },
         });
     }
     _createElements(element) {
@@ -953,6 +1087,9 @@ class Folder {
     //⌟
     //· SVG's ····················································································¬
     async _createGraphics(headerless = false) {
+        setTimeout(() => {
+            new TerminalSvg(this);
+        }, 10);
         if (this.isRootFolder())
             return;
         this._log.fn('createGraphics').debug({ this: this });
@@ -995,7 +1132,13 @@ class Folder {
         const i = this.parentFolder.isRootFolder() ? localIndex - 1 : localIndex;
         // Don't count the root folder.
         const depth = this._depth - 1;
-        return i * 20 + depth * 80;
+        // return i * 20 + depth * 80
+        if (depth === 0) {
+            return i * 30;
+        }
+        else {
+            return this.parentFolder.hue + i * -20;
+        }
     }
     #timeout;
     _refreshIcon() {
@@ -1005,6 +1148,9 @@ class Folder {
             clearTimeout(this.#timeout);
             this.#timeout = setTimeout(() => {
                 this.graphics?.icon.replaceWith(createFolderSvg(this)); // todo - not this
+                setTimeout(() => {
+                    this.graphics?.connector?.update(); // todo - this, for icon
+                }, 1);
             }, 1);
         }
     }
@@ -1033,7 +1179,7 @@ class Folder {
         this.disposed = true;
     }
 }
-// //· Type Tests ···································································¬
+//#region Type Tests ···································································¬
 // const testTargetInferer = <T>(_target: T): InferTarget<T> => {
 // 	return {} as InferTarget<T>
 // }
@@ -1082,7 +1228,7 @@ class Folder {
 // 	bindManyTest
 // }
 // test
-// //⌟
+//#endregion
 
 export { Folder };
 //# sourceMappingURL=Folder.js.map

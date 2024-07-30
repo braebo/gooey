@@ -56,6 +56,8 @@ class InputSwitch extends Input {
                 text: () => {
                     return ((this.state.value ? opts.labels?.false.verb : opts.labels?.true.verb) || '');
                 },
+                // @ts-expect-error
+                style: this.folder.gooey?._getStyles,
                 anchor: '.gooey-controller-switch-thumb',
                 delay: 750,
             },
@@ -117,12 +119,14 @@ class InputSwitch extends Input {
     }
     enable() {
         this.elements.controllers.input.disabled = false;
-        super.enable();
+        this.disabled = false;
+        // super.enable()
         return this;
     }
     disable() {
         this.elements.controllers.input.disabled = true;
-        super.disable();
+        this.disabled = true;
+        // super.disable()
         return this;
     }
     dispose() {

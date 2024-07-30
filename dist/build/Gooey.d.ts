@@ -161,7 +161,7 @@ export interface GooeyStorageOptions {
 }
 export interface GooeyPreset {
     __type: 'GooeyPreset';
-    __version: number;
+    __version: string;
     id: string;
     title: string;
     data: FolderPreset;
@@ -292,7 +292,7 @@ export declare class Gooey {
      * A unique id for the preset.
      * @defaultValue {@link nanoid|nanoid(10)}
      */
-    id?: string): GooeyPreset;
+    id?: string, version?: string): GooeyPreset;
     /**
      * Loads a given preset into the gooey, updating all inputs.
      */
@@ -316,6 +316,11 @@ export declare class Gooey {
     private _createSettingsButton;
     private _createPresetManager;
     private _createWindowManager;
+    /**
+     * todo - Add the public resolved vars to `Themer` and remove this.
+     * @internal
+     */
+    private _getStyles;
     dispose: () => void;
 }
 export {};

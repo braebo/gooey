@@ -10,6 +10,10 @@ export type JavascriptStyleProperty = {
     [K in keyof CSSStyleDeclaration]: CSSStyleDeclaration[K] extends string ? K : never;
 }[keyof CSSStyleDeclaration] & string;
 /**
+ * An object containing CSS property names and their values.
+ */
+export type StyleDefinition = Partial<Record<CSSProperty | `--${string}`, string>>;
+/**
  * A CSS variable reference value, used to reference other CSS variables.
  * @see [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)
  */

@@ -75,14 +75,14 @@ class InputNumber extends Input {
     };
     enable() {
         this._log.fn('enable').debug();
+        this.disabled = false;
         this.elements.controllers.input.disabled = false;
-        super.enable();
         return this;
     }
     disable() {
         this._log.fn('disable').debug();
+        this.disabled = true;
         this.elements.controllers.input.disabled = true;
-        super.disable();
         return this;
     }
     refresh = () => {

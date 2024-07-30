@@ -38,13 +38,11 @@ export class InputTextArea extends Input {
     enable() {
         this.elements.controllers.input.disabled = false;
         this.disabled = false;
-        super.enable();
         return this;
     }
     disable() {
         this.elements.controllers.input.disabled = true;
         this.disabled = true;
-        super.disable();
         return this;
     }
     set = (v) => {

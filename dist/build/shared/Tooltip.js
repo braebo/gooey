@@ -39,6 +39,7 @@ let Tooltip = class Tooltip {
     showing = false;
     opts;
     _text;
+    _style = () => undefined;
     _evm = new EventManager();
     _animPositions;
     _delayInTimer;
@@ -53,28 +54,31 @@ let Tooltip = class Tooltip {
         this.opts = opts;
         this.placement = opts.placement;
         this._text = toFn(opts.text);
+        this.style = opts.style;
         this.parent = options?.parent ?? document.getElementById('svelte') ?? document.body;
         const el = document.createElement('div');
-        el.classList.add('fractils-tooltip');
+        el.classList.add('gooey-tooltip');
         el.innerHTML = String(this._text());
-        if (opts.style) {
-            for (const [key, value] of entries(opts.style)) {
-                if (key && value) {
-                    el.style.setProperty(key, value);
-                }
-            }
-        }
         this.element = el;
-        if (opts.style) {
-            for (const [key, value] of entries(opts.style)) {
-                if (key && value) {
-                    this.element?.style.setProperty(key, value);
+        if (this.style) {
+            requestAnimationFrame(() => {
+                for (const [key, value] of entries(this.style)) {
+                    if (key && value) {
+                        this.element.style.setProperty(key, value);
+                    }
                 }
-            }
+            });
         }
-        this._evm.listen(node, 'pointerenter', this.show);
-        this._evm.listen(node, 'pointerleave', this.hide);
-        this._evm.listen(node, 'pointermove', this._updatePosition);
+        this._evm.listen(this.element, 'pointerenter', () => this._hoverIn());
+        this._evm.listen(node, 'pointerenter', () => {
+            this._hoveringNode = true;
+            this.show();
+        });
+        this._evm.listen(node, 'pointerleave', () => {
+            this._hoveringNode = false;
+            this.hide();
+        });
+        this._evm.listen(node, 'pointermove', () => this._updatePosition());
         this._evm.listen(node, 'click', () => {
             if (opts.hideOnClick)
                 this.hide();
@@ -101,7 +105,15 @@ let Tooltip = class Tooltip {
         this._text = toFn(text);
         if (!this.element)
             return;
-        this.element.innerHTML = String(this._text());
+        const t = this._text();
+        this.element.innerHTML = String(typeof t === 'object' ? JSON.stringify(t) : t);
+    }
+    get style() {
+        return this._style();
+    }
+    set style(style) {
+        this._style = toFn(style);
+        this.refresh();
     }
     get placement() {
         return this.opts.placement;
@@ -139,42 +151,60 @@ let Tooltip = class Tooltip {
     /**
      * Animates the tooltip into view.
      */
-    show = () => {
+    show() {
         if (this.showing)
             return;
         if (!this.text)
             return;
+        const style = this.style;
+        if (style) {
+            for (const [key, value] of entries(style)) {
+                if (key && value) {
+                    this.element?.style.setProperty(key, value);
+                }
+            }
+        }
         clearTimeout(this._delayInTimer);
         clearTimeout(this._delayOutTimer);
         this._delayInTimer = setTimeout(async () => {
             if (this.element)
                 this.parent?.appendChild(this.element);
             this.showing = true;
-            this.element?.animate([
+            this.element
+                ?.animate([
                 { opacity: '0', transform: this._animPositions.from },
                 { opacity: '1', transform: this._animPositions.to },
             ], {
                 duration: this.opts.animation.duration,
                 easing: this.opts.animation.easing,
                 fill: 'forwards',
+            })
+                .finished.then(() => {
+                this.element?.classList.add('showing');
             });
             this._updatePosition();
             this._maybeWatchAnchor();
         }, this.opts.delay);
-    };
+    }
     /**
      * Animates the tooltip out of view.
+     * @param force - If `true`, the tooltip will hide immediately regardless of delay or hover state.
      */
-    hide = () => {
-        clearTimeout(this._delayInTimer);
-        clearTimeout(this._delayOutTimer);
-        this._delayOutTimer = setTimeout(async () => {
+    hide(force = false) {
+        const hide = async () => {
             if (this.showing) {
+                if (!force && (this._hoveringEl || this._hoveringNode)) {
+                    queueHide(true);
+                    return;
+                }
                 this.showing = false;
+                this.element?.classList.remove('showing');
                 if (this._watcherId) {
                     this._evm.unlisten(this._watcherId);
                 }
-                await this.element?.animate([
+                if (!this.element)
+                    return;
+                await this.element.animate([
                     { opacity: '1', transform: this._animPositions.to },
                     { opacity: '0', transform: this._animPositions.from },
                 ], {
@@ -182,9 +212,32 @@ let Tooltip = class Tooltip {
                     easing: this.opts.animation.easing,
                     fill: 'forwards',
                 }).finished;
+                this.element.style.setProperty('max-width', this.element.dataset['maxWidth'] ?? 'initial');
+                delete this.element.dataset['maxWidth'];
                 this.unmount();
             }
-        }, this.opts.delayOut);
+        };
+        const queueHide = (isRetry = false) => {
+            clearTimeout(this._delayInTimer);
+            clearTimeout(this._delayOutTimer);
+            if (force) {
+                hide();
+            }
+            else {
+                const delay = isRetry ? Math.max(250, this.opts.delayOut) : this.opts.delayOut;
+                this._delayOutTimer = setTimeout(hide, delay);
+            }
+        };
+        queueHide();
+    }
+    _hoveringEl = false;
+    _hoveringNode = false;
+    _hoverIn = () => {
+        this._hoveringEl = true;
+        this._evm.listen(this.element, 'pointerleave', this._hoverOut, {}, 'hide');
+    };
+    _hoverOut = () => {
+        this._hoveringEl = false;
     };
     /**
      * Whether the tooltip is currently mounted to the DOM.
@@ -205,7 +258,7 @@ let Tooltip = class Tooltip {
         if (this.element)
             this.parent?.removeChild(this.element);
     }
-    _updatePosition = (e) => {
+    _updatePosition(e) {
         if (!this.element)
             return;
         const tooltipRect = this.element.getBoundingClientRect();
@@ -222,34 +275,93 @@ let Tooltip = class Tooltip {
         const anchor = this._getAnchorRects();
         if (!anchor)
             return;
-        let left = 0;
-        let top = 0;
-        const baseOffset = 4;
-        this.element.classList.add('fractils-tooltip-' + this.placement);
+        const PADDING = 8;
+        const BASE_OFFSET = 4;
+        let flipX = false;
+        let pos = { x: 0, y: 0 };
+        this.element.classList.add('gooey-tooltip-' + this.placement);
+        // TODO - Finish this!
         switch (this.placement) {
             case 'top':
-                left = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
-                top = anchor.y.top + window.scrollY - tooltipRect.height - baseOffset;
+                pos = getPlacement('top');
+                if (pos.y < 0) {
+                    pos = getPlacement('bottom');
+                }
                 break;
             case 'bottom':
-                left = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
-                top = anchor.y.top + window.scrollY + anchor.y.height + baseOffset;
+                pos = getPlacement('bottom');
+                if (pos.y + tooltipRect.height > window.innerHeight) {
+                    pos = getPlacement('top');
+                }
                 break;
             case 'left':
-                left = anchor.x.left + window.scrollX - tooltipRect.width - baseOffset;
-                top = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
+                pos = getPlacement('left');
+                if (pos.x < 0) {
+                    const freeSpace = anchor.x.left - BASE_OFFSET - PADDING * 2;
+                    const overflow = Math.abs(tooltipRect.width - freeSpace);
+                    // console.log('freeSpace', freeSpace, 'overflow', overflow)
+                    if (overflow > 0) {
+                        if (tooltipRect.width < freeSpace) {
+                            // todo - not sure this branch even runs / helps
+                            // console.log('A')
+                            pos.x = 0;
+                        }
+                        else {
+                            if (freeSpace < 150) {
+                                if (this._text() === 'x (readonly)')
+                                    console.log('B');
+                                pos = getPlacement('right');
+                                flipX = true;
+                            }
+                            else {
+                                if (this._text() === 'x (readonly)')
+                                    console.log('C');
+                                pos.x = PADDING;
+                                this.element.dataset['maxWidth'] ??= this.element.style.maxWidth;
+                                this.element.style.setProperty('max-width', `${freeSpace - PADDING}px`);
+                            }
+                        }
+                    }
+                }
                 break;
             case 'right':
-                left = anchor.x.left + window.scrollX + anchor.x.width + baseOffset;
-                top = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
+                pos = getPlacement('right');
+                if (pos.x + tooltipRect.width > window.innerWidth) {
+                    pos = getPlacement('left');
+                }
                 break;
+        }
+        function getPlacement(placement) {
+            const p = { x: 0, y: 0 };
+            if (!anchor)
+                return p;
+            // prettier-ignore
+            switch (placement) {
+                case 'top':
+                    p.x = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
+                    p.y = anchor.y.top + window.scrollY - tooltipRect.height - BASE_OFFSET;
+                    break;
+                case 'bottom':
+                    p.x = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
+                    p.y = anchor.y.top + window.scrollY + anchor.y.height + BASE_OFFSET;
+                    break;
+                case 'left':
+                    p.x = anchor.x.left + window.scrollX - tooltipRect.width - BASE_OFFSET;
+                    p.y = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
+                    break;
+                case 'right':
+                    p.x = anchor.x.left + window.scrollX + anchor.x.width + BASE_OFFSET;
+                    p.y = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
+                    break;
+            }
+            return p;
         }
         const parentRect = this.parent?.getBoundingClientRect();
         if (!parentRect)
             return;
-        this.element.style.left = `calc(${left - parentRect.left}px + ${this.opts.offsetX})`;
-        this.element.style.top = `calc(${top - parentRect.top}px + ${this.opts.offsetY})`;
-    };
+        this.element.style.left = `calc(${pos.x - parentRect.left}px ${flipX ? '-' : '+'} ${this.opts.offsetX})`;
+        this.element.style.top = `calc(${pos.y - parentRect.top}px ${'+'} ${this.opts.offsetY})`;
+    }
     // todo - mobile touch events support?
     _mouse = { x: 0, y: 0 };
     _getAnchorRects() {
@@ -417,48 +529,68 @@ let Tooltip = class Tooltip {
         this.element?.remove();
     }
     static style = /*css*/ `
-		.fractils-tooltip {
+		.gooey-tooltip {
 			position: absolute;
-
-			min-width: 3rem;
-			max-width: auto;
-			min-height: auto;
-			max-height: auto;
+			
+			display: flex;
+			flex-shrink: 1;
+			flex-wrap: wrap;
+			gap: 0.25rem;
+			
+			width: auto;
+			max-width: 400px;
 			padding: 4px 8px;
-
+			
 			opacity: 0;
 			color: var(--fg-a, #fff);
 			background-color: var(--bg-a, #000);
 			border-radius: var(--radius-sm, 4px);
-			box-shadow: var(--shadow, 0rem 0.0313rem 0.0469rem hsl(var(--shadow-color) / 0.02),
-				0rem 0.125rem 0.0938rem hsl(var(--shadow-color) / 0.02),
-				0rem 0.1563rem 0.125rem hsl(var(--shadow-color) / 0.025),
-				0rem 0.1875rem 0.1875rem hsl(var(--shadow-color) / 0.05),
-				0rem 0.3125rem 0.3125rem hsl(var(--shadow-color) / 0.05),
-				0rem 0.4375rem 0.625rem hsl(var(--shadow-color) / 0.075));
+			box-shadow: 0rem 0.1563rem 0.125rem hsla(250, 10%, var(--shadow-lightness, 30%), 0.025),
+				0rem 0.1875rem 0.1875rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.05),
+				0rem 0.3125rem 0.3125rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.05),
+				0rem 0.4375rem 0.625rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.075);
+			outline: 1px solid var(--bg-b, #222);
 
 			text-align: center;
-			font-size: var(--font-size-sm, 12px);
-			font-family: var(--gooey-font, var(--font-a, 'fredoka'));
+			font-size: var(--font-sm, 0.8rem);
+			font-family: var(--font-a, 'fredoka');
 			letter-spacing: 1px;
+			text-wrap: pretty;
 
 			z-index: 1000;
-			pointer-events: none;
 			transition: opacity 0.1s;
+
+
+			code {
+				font-size: var(--font-sm, 0.8rem);
+				background: var(--bg-b, #1118);
+				padding: 2px 4px;
+				border-radius: 2px;
+				height: fit-content;
+			}
+
+			pointer-events: none;
+			
+			&.showing {
+				pointer-events: auto;
+			}
+
+			a {
+				color: var(--theme-a, #08f);
+				text-decoration: underline;
+				text-decoration-thickness: 0.5px;
+				text-decoration-skip-ink: auto;
+			}
 		}
 
-		.fractils-tooltip .fractils-hotkey {
+		.gooey-tooltip .gooey-hotkey {
 			filter: contrast(1.1);
-			background: var(--fractils-hotkey_background, #1118);
-			background: var(--fractils-hotkey_background, color-mix(in sRGB, var(--bg-c) 66%, transparent));
-			color: var(--fractils-hotkey_color, var(--fg-a, #fff));
+			background: var(--bg-b, #1118);
+			color: var(--fg-a, #fff);
 			padding: 0px 3px;
 			border-radius: 2px;
 			box-shadow: 0 0 2px rgba(0, 0, 0, 0.33);
-		}
-
-		:root[theme='dark'] .fractils-tooltip .fractils-hotkey {
-			background: var(--fractils-hotkey_background, color-mix(in sRGB, var(--bg-d) 100%, transparent));
+			display: flex;
 		}
 	`;
 };

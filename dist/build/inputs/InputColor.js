@@ -161,7 +161,7 @@ class InputColor extends Input {
         this._evm.listen(display, 'click', this.togglePicker);
         const copyButton = new CopyButton(container, () => {
             return this.state.value.hex;
-        }, 'Copy Hex');
+        }, 'Copy Hex', this);
         return {
             container,
             displayBackground,
@@ -199,6 +199,7 @@ class InputColor extends Input {
         if (this.elements.container && document.contains(this.elements.container)) {
             containerAnim?.commitStyles();
         }
+        this.folder.graphics?.connector?.update();
     };
     close = async (duration = 300) => {
         this.expanded = false;
@@ -249,12 +250,12 @@ class InputColor extends Input {
     };
     enable() {
         this.picker.enable();
-        super.enable();
+        this.disabled = false;
         return this;
     }
     disable() {
         this.picker.disable();
-        super.disable();
+        this.disabled = true;
         return this;
     }
     save() {

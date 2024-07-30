@@ -1,4 +1,4 @@
-import type { JavascriptStyleProperty } from './css-types';
+import type { JavascriptStyleProperty, StyleDefinition } from './css-types';
 type Selector = `#${string}` | `.${string}`;
 type Anchor = Element | Selector | 'mouse' | 'node' | null;
 type Anchors = {
@@ -71,10 +71,12 @@ export interface TooltipOptions {
     };
     /**
      * Custom style overrides for the tooltip element (all valid CSS properties are allowed).
-     * i.e. { padding: '4px 8px', color: 'var(--fg-a, #fff)' }
+     * i.e. { 'background-color': 'red' }
+     * For dynamic styles, you can provide a function that returns the overrides instead, and
+     * it will be called before the tooltip is shown and apply any changes to the tooltip.
      * @defaultValue undefined
      */
-    style?: Partial<Record<JavascriptStyleProperty, string>>;
+    style?: StyleDefinition | (() => StyleDefinition);
     /**
      * If specified, the container element for the tooltip.
      * @defaultValue document.body
@@ -107,6 +109,7 @@ export declare class Tooltip {
     showing: boolean;
     opts: TooltipOptions;
     private _text;
+    private _style;
     private _evm;
     private _animPositions;
     private _delayInTimer;
@@ -122,6 +125,8 @@ export declare class Tooltip {
      */
     get text(): string | (() => string);
     set text(text: string | (() => string));
+    get style(): StyleDefinition | undefined;
+    set style(style: Partial<Record<JavascriptStyleProperty, string> | undefined> | (() => StyleDefinition | undefined));
     get placement(): "bottom" | "left" | "right" | "top";
     set placement(v: "bottom" | "left" | "right" | "top");
     get offsetX(): string;
@@ -131,11 +136,16 @@ export declare class Tooltip {
     /**
      * Animates the tooltip into view.
      */
-    show: () => void;
+    show(): void;
     /**
      * Animates the tooltip out of view.
+     * @param force - If `true`, the tooltip will hide immediately regardless of delay or hover state.
      */
-    hide: () => void;
+    hide(force?: boolean): void;
+    private _hoveringEl;
+    private _hoveringNode;
+    private _hoverIn;
+    private _hoverOut;
     /**
      * Whether the tooltip is currently mounted to the DOM.
      * @internal

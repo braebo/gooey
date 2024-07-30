@@ -7,6 +7,7 @@ class CopyButton {
     container;
     text;
     message;
+    input;
     button;
     icon;
     /**
@@ -19,10 +20,11 @@ class CopyButton {
     outro = false;
     #completeTimeout;
     tooltip;
-    constructor(container, text, message = 'Copy') {
+    constructor(container, text, message = 'Copy', input) {
         this.container = container;
         this.text = text;
         this.message = message;
+        this.input = input;
         const button = create('div', {
             classes: ['copy-button'],
             title: 'Copy',
@@ -43,6 +45,13 @@ class CopyButton {
             placement: 'top',
             offsetY: '6px',
             delay: 600,
+            style: input
+                ? () => ({
+                    '--fg-a': this.input?.folder.gooey?.wrapper.style.getPropertyValue('--gooey-fg-a'),
+                    '--bg-a': this.input?.folder.gooey?.wrapper.style.getPropertyValue('--gooey-bg-a'),
+                    '--bg-b': this.input?.folder.gooey?.wrapper.style.getPropertyValue('--gooey-bg-b'),
+                })
+                : undefined,
         });
     }
     copy = () => {

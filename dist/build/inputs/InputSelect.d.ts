@@ -3,7 +3,6 @@ import type { LabeledOption } from '../controllers/Select';
 import type { State } from '../shared/state';
 import type { Folder } from '../Folder';
 import { Select } from '../controllers/Select';
-import { type Disableable } from '../shared/decorators/disableable-class-decorator';
 import { Input } from './Input';
 export type SelectInputOptions<T = ValidInputValue> = Omit<InputOptions<T | {
     label: string;
@@ -26,8 +25,6 @@ export interface SelectInputEvents<T> extends InputEvents<LabeledOption<T>> {
     open: void;
     close: void;
     cancel: void;
-}
-export interface InputSelect extends Disableable {
 }
 export declare class InputSelect<TValueType = any> extends Input<LabeledOption<TValueType>, SelectInputOptions<TValueType>, SelectControllerElements<TValueType>, SelectInputEvents<TValueType>> {
     #private;

@@ -1,6 +1,4 @@
-import { __decorate, __metadata } from './../external/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.18.1_tslib@2.6.3_typescript@5.5.3/external/tslib/tslib.es6.js';
 import { fromLabeledOption, Select, toLabeledOption, isLabeledOption } from '../controllers/Select.js';
-import { disableable } from '../shared/decorators/disableable-class-decorator.js';
 import { fromState, state, isState } from '../shared/state.js';
 import { stringify } from '../shared/stringify.js';
 import { Logger } from '../shared/logger.js';
@@ -8,12 +6,11 @@ import { create } from '../shared/create.js';
 import { toFn } from '../shared/toFn.js';
 import { Input } from './Input.js';
 
-// )
 const SELECT_INPUT_DEFAULTS = {
     __type: 'SelectInputOptions',
     options: [],
 };
-let InputSelect = class InputSelect extends Input {
+class InputSelect extends Input {
     __type = 'InputSelect';
     initialValue;
     state;
@@ -238,14 +235,14 @@ let InputSelect = class InputSelect extends Input {
     }
     enable() {
         this._log.fn('enable').debug();
+        this.disabled = false;
         this.select.enable();
-        super.enable();
         return this;
     }
     disable() {
         this._log.fn('disable').debug();
+        this.disabled = true;
         this.select.disable();
-        super.disable();
         return this;
     }
     refresh = () => {
@@ -265,11 +262,7 @@ let InputSelect = class InputSelect extends Input {
     dispose() {
         super.dispose();
     }
-};
-InputSelect = __decorate([
-    disableable,
-    __metadata("design:paramtypes", [Object, Function])
-], InputSelect);
+}
 
 export { InputSelect, SELECT_INPUT_DEFAULTS };
 //# sourceMappingURL=InputSelect.js.map

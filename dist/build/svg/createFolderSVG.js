@@ -198,7 +198,16 @@ function createFolderConnector(folder, icon) {
     svg.style.top = iconOffset;
     const iconCenter = icon.scrollHeight / 2 + stroke + 2;
     svg.style.top = iconCenter + 'px';
-    return { container, svg, path };
+    const update = () => {
+        const height = folder.element.scrollHeight;
+        svg.style.height = `${height}px`;
+        svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`);
+        const length = path.getTotalLength();
+        path.style.strokeDashoffset = `${length}`;
+        path.style.strokeDasharray = `${length * 1.2}`;
+    };
+    return { container, svg, path, update };
 }
 function animateConnector(folder, action) {
     if (!folder.graphics?.connector)

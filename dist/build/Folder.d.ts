@@ -32,11 +32,34 @@ export type InferInput<TValueType> = TValueType extends number ? InputNumber : T
 export type InferTarget<TTarget> = TTarget extends Record<string, any> ? {
     [K in keyof TTarget]: TTarget[K] extends number ? InputNumber : TTarget[K] extends boolean ? InputSwitch : TTarget[K] extends string ? InputText : TTarget[K] extends Array<infer T> ? InputSelect<T> : TTarget[K] extends ColorFormat ? InputColor : TTarget[K] extends object ? InferTarget<TTarget[K]> : never;
 } : never;
-export type InferTargetOptions<T> = {
-    [K in keyof T]?: T[K] extends Array<infer U> ? Partial<SelectInputOptions<U>> : T[K] extends object ? InferTargetOptions<T[K]> & {
+/**
+ * Resolves a target object to a type that represents the same structure, but with all values
+ * replaced with the corresponding input options type accepted by the input type that would be
+ * @template TTarget - The target object being used to generate inputs.
+ * @example
+ * ```typescript
+ * const target = { foo: 5, bar: 'baz' }
+ * // The inferred result:
+ * type TargetOptions = InferTargetOptions<typeof target>
+ * // Generates:
+ * 	foo: NumberInputOptions,
+ * 	bar: TextInputOptions,
+ * }
+ * ```
+ */
+export type InferTargetOptions<TTarget> = {
+    [K in keyof TTarget]?: TTarget[K] extends Array<infer U> ? Partial<SelectInputOptions<U>> : TTarget[K] extends object ? InferTargetOptions<TTarget[K]> & {
         folderOptions?: Partial<FolderOptions>;
-    } : Partial<InferOptions<T[K]>>;
+    } : Partial<InferOptions<TTarget[K]>>;
 };
+/**
+ * Resolves a target object into a flat array of all keys that are not objects,
+ * recursively resolving objects into their keys.
+ * @template TTarget - The target object being used to generate inputs.
+ */
+type InferTargetKeys<TTarget> = TTarget extends object ? {
+    [K in keyof TTarget]: K | InferTargetKeys<Exclude<TTarget[K], TTarget>>;
+}[keyof TTarget] : never;
 export interface FolderOptions {
     __type?: 'FolderOptions';
     /**
@@ -46,7 +69,7 @@ export interface FolderOptions {
     container: HTMLElement;
     /**
      * The title of the folder.
-     * @defaultValue `''`
+     * @default ''
      */
     title?: string;
     /**
@@ -56,7 +79,7 @@ export interface FolderOptions {
      * - Use the same title for multiple inputs _in the same {@link Folder}_, or
      * - Leave all titles empty
      * Otherwise, this can be left as the default and presets will work as expected.
-     * @defaultValue {@link title|`title`}
+     * @default The provided `title`.
      */
     presetId?: string;
     /**
@@ -65,14 +88,14 @@ export interface FolderOptions {
     children?: Folder[];
     /**
      * Whether the folder should be collapsed by default.
-     * @defaultValue `false`
+     * @default false
      */
     closed?: boolean;
     /**
      * Whether the folder should be hidden by default.  If a function is
      * provided, it will be called to determine the hidden state.  Use
      * {@link refresh} to update the hidden state.
-     * @defaultValue `false`
+     * @default false
      */
     hidden?: boolean | (() => boolean);
     /**
@@ -83,22 +106,29 @@ export interface FolderOptions {
      * Whether this Folder should be saved as a {@link FolderPreset} when saving the
      * {@link GooeyPreset} for the {@link Gooey} this Folder belongs to.  If `false`, this Input will
      * be skipped.
-     * @defaultValue `true`
+     * @default true
      */
     saveable?: boolean;
     /**
      * The order in which this input should appear in its folder relative to the other inputs.
      * - To force an input to be first *(at the top of its folder)*, set `order` to `0` or below.
-     * - To force an input to be last *(at the bottom of its folder)*, set `order` to any number greater than number of inputs + 1.
+     * - To force an input to be last *(at the bottom of its folder)*, set `order` to any number
+     * greater than number of inputs + 1.
      * @default folder.inputs.size + folder.children.size + 1
      */
     order?: number;
     /**
      * When `true`, a search input will be added to the folder's toolbar, allowing users to search
      * for inputs within the folder by title.  By default, only the root folder is searchable.
-     * @defaultValue `false`
+     * @default false
      */
     searchable?: boolean;
+    /**
+     * Disables all user interactions and dims the folder brightness.  If a function is provided,
+     * it will be called to update the disabled state each time the {@link refresh} method runs.
+     * @default false
+     */
+    disabled?: boolean | (() => boolean);
 }
 /**
  * @internal
@@ -118,7 +148,7 @@ export interface InternalFolderOptions {
      * creating a `new Folder()`. Always false inside of the
      * `gooey.addFolder` and `folder.addFolder` methods.
      * Be wary of infinite loops when setting manually.
-     * @defaultValue `true`
+     * @default true
      * @internal
      */
     isRoot: boolean;
@@ -129,7 +159,7 @@ export interface InternalFolderOptions {
     _skipAnimations: boolean;
     /**
      * Hides the folder header.
-     * @defaultValue `false`
+     * @default false
      * @internal
      */
     _headerless: boolean;
@@ -202,14 +232,14 @@ export declare class Folder {
      * - Use the same title for multiple inputs _in the same {@link Folder}_, or
      * - Leave all titles empty
      * Otherwise, this can be left as the default and presets will work as expected.
-     * @defaultValue {@link title|`title`}
+     * @default The provided `title`.
      */
     presetId: string;
     /**
      * Whether this Folder should be saved as a {@link FolderPreset} when saving the
      * {@link GooeyPreset} for the {@link Gooey} this Folder belongs to.  If `false`, this Input will
      * be skipped.
-     * @defaultValue `true`
+     * @default true
      */
     saveable: boolean;
     /**
@@ -222,28 +252,77 @@ export declare class Folder {
     inputs: Map<string, ValidInput>;
     inputIdMap: Map<string, string>;
     /**
-     * The root folder.  All folders have a reference to the same root folder.
+     * The root folder.  All folders share a reference to the same root folder.
      */
     root: Folder;
+    /**
+     * The parent folder of this folder (or a circular reference if this is the root folder).
+     */
     parentFolder: Folder;
+    /**
+     * The folder containing Gooey instance settings, like the `ui` and `presets` sections.
+     */
     settingsFolder: Folder;
+    /**
+     * An observable responsible for the folder's open/closed state.  Setting this value will
+     * open/close the folder, and subscribing to this value will allow you to listen for
+     * open/close events.
+     */
     closed: State<boolean>;
+    /**
+     * The folder's root container element, containing all other related folder {@link elements}.
+     */
     element: HTMLDivElement;
-    elements: FolderElements;
+    /**
+     * All HTMLElements that make up the folder's UI.
+     */
+    elements: {
+        header: HTMLElement;
+        title: HTMLElement;
+        contentWrapper: HTMLElement;
+        content: HTMLElement;
+        toolbar: {
+            container: HTMLElement;
+            settingsButton?: HTMLButtonElement & {
+                tooltip?: Tooltip;
+            };
+        };
+    };
+    /**
+     * The animated svg graphics belonging to the folder.
+     */
     graphics?: {
         icon: HTMLDivElement;
         connector?: {
             container: HTMLDivElement;
             svg: SVGElement;
             path: SVGPathElement;
+            update: () => void;
         };
     };
+    /**
+     * The event manager for the folder.  This should rarely need to be accessed directly, since
+     * subscribing to events can be done with a Folder's {@link on} method.
+     * @internal
+     */
     evm: EventManager<FolderEvents>;
+    /**
+     * Equivalent to `addEventListener`.
+     */
     on: <K extends keyof FolderEvents>(event: K, callback: import("./shared/EventManager").EventCallback<FolderEvents[K]>) => string;
+    /**
+     * The pixel height of the folder element when open.
+     * @internal
+     */
     initialHeight: number;
+    /**
+     * The pixel height of the folder header element.
+     * @internal
+     */
     initialHeaderHeight: number;
     private _title;
     private _hidden;
+    private _disabled;
     private _log;
     /**
      * Used to disable clicking the header to open/close the folder.
@@ -273,6 +352,11 @@ export declare class Folder {
      */
     get hidden(): boolean;
     set hidden(v: boolean | (() => boolean));
+    /**
+     * Whether the input is disabled.  Modifying this value will update the UI.
+     */
+    get disabled(): boolean;
+    set disabled(v: boolean | (() => boolean));
     /**
      * A flat array of all child folders of this folder (and their children, etc).
      */
@@ -365,8 +449,16 @@ export declare class Folder {
      * @internal
      */
     private _transientRoot;
-    bindMany<T extends Record<string, any>, TOptions extends InferTargetOptions<T> = InferTargetOptions<T>>(folderTitle: string, targetObject: T, targetOptions?: TOptions): this & InferTarget<T>;
-    bindMany<T extends Record<string, any>, TOptions extends InferTargetOptions<T> = InferTargetOptions<T>>(target: T, targetOptions?: TOptions, never?: never): this & InferTarget<T>;
+    bindMany<T extends object, TOptions extends InferTargetOptions<T> = InferTargetOptions<T>, TInputs extends InferTarget<T> = this & InferTarget<T>>(target: T, options?: TOptions & {
+        /**
+         * An array of keys to exclude from a target object when generating inputs.
+         */
+        exclude?: InferTargetKeys<T>[];
+        /**
+         * An array of keys to include in a target object when generating inputs.
+         */
+        include?: InferTargetKeys<T>[];
+    }): TInputs;
     /**
      * Adds a new {@link InputNumber} to the folder.
      * @example

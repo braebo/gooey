@@ -25,11 +25,12 @@ export declare class PresetManager {
     gooey: Gooey;
     parentFolder: Folder;
     readonly __type: string;
-    readonly __version: string;
+    readonly __version = "1";
     defaultPreset: GooeyPreset;
     activePreset: State<GooeyPreset>;
     presets: State<GooeyPreset[]>;
     folder: Folder;
+    private _version;
     private _defaultPresetId;
     private _defaultPresetTitle;
     private _presetSnapshot?;
@@ -80,6 +81,7 @@ export declare class PresetManager {
     private _enableRename;
     private _handleRename;
     private _handleKeydown;
+    private _validateVersion;
     private _refreshInputs;
     /**
      * Refresh the presets input.

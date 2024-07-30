@@ -249,6 +249,7 @@ class Gooey {
         });
         this.settingsFolder.element.classList.add('gooey-folder-alt');
         updateIcon();
+        this.settingsFolder.element.style.setProperty('order', '-99');
         this.themer = this.opts._themer ?? this._createThemer(this.settingsFolder);
         this.theme = this.opts.theme;
         this.presetManager = this._createPresetManager(this.settingsFolder);
@@ -346,11 +347,11 @@ class Gooey {
      * A unique id for the preset.
      * @defaultValue {@link nanoid|nanoid(10)}
      */
-    id = nanoid(10)) {
+    id = nanoid(10), version) {
         this._log.fn('save').debug({ title, id });
         const preset = {
             __type: 'GooeyPreset',
-            __version: 0,
+            __version: version ?? this.presetManager.__version,
             id,
             title,
             data: this.folder.save(),
@@ -461,6 +462,7 @@ class Gooey {
                 delay: 750,
                 delayOut: 0,
                 hideOnClick: true,
+                style: this._getStyles,
             },
         });
         const updateIcon = () => {
@@ -540,6 +542,19 @@ class Gooey {
         });
         return windowManager;
     }
+    /**
+     * todo - Add the public resolved vars to `Themer` and remove this.
+     * @internal
+     */
+    _getStyles = () => {
+        return {
+            '--fg-a': this.wrapper?.style.getPropertyValue('--gooey-fg-a'),
+            '--bg-a': this.wrapper?.style.getPropertyValue('--gooey-bg-a'),
+            '--bg-b': this.wrapper?.style.getPropertyValue('--gooey-bg-b'),
+            '--font-a': this.wrapper?.style.getPropertyValue('--gooey-font-family'),
+            '--shadow-lightness': this.wrapper?.style.getPropertyValue('--gooey-shadow-lightness'),
+        };
+    };
     dispose = () => {
         this._log.fn('dispose').debug(this);
         this.themer?.dispose();

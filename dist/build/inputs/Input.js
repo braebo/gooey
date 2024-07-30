@@ -102,10 +102,27 @@ class Input {
         if (!this.title) {
             this.element.style.setProperty('--gooey-input-section-1_width', '0px');
         }
-        this.elements.drawerToggle = create('div', {
+        const drawerToggleOptions = {
             classes: ['gooey-input-drawer-toggle'],
             parent: this.elements.container,
-        });
+        };
+        if (this.opts.description) {
+            drawerToggleOptions.classes.push('has-description');
+            drawerToggleOptions.tooltip = {
+                text: this.opts.description,
+                placement: 'left',
+                delay: 0,
+                offsetX: '-4px',
+                ...this.opts.tooltipOptions,
+                style: () => ({
+                    'text-align': 'left',
+                    'padding-left': '8px',
+                    // @ts-expect-error @internal
+                    ...this.folder.gooey?._getStyles(),
+                }),
+            };
+        }
+        this.elements.drawerToggle = create('div', drawerToggleOptions);
         this.elements.title = create('div', {
             classes: ['gooey-input-title'],
             parent: this.elements.container,
@@ -120,9 +137,31 @@ class Input {
             // parent: this.elements.content,
             parent: this.elements.title,
             tooltip: {
-                text: 'Reset',
+                text: !this.opts.resettable
+                    ? undefined
+                    : () => {
+                        let initialValue = this.initialValue;
+                        if (typeof initialValue === 'object') {
+                            if ('labelKey' in this.opts) {
+                                initialValue =
+                                    initialValue[this.opts.labelKey];
+                            }
+                            else {
+                                try {
+                                    initialValue = JSON.stringify(initialValue);
+                                }
+                                catch (e) {
+                                    console.error(e, { initialValue, this: this });
+                                    throw new Error(e);
+                                }
+                            }
+                        }
+                        return `Reset · <em style="opacity:0.5;">${initialValue}</em>`;
+                    },
                 placement: 'left',
                 delay: 0,
+                // @ts-expect-error
+                style: this.folder.gooey?._getStyles,
             },
             onclick: () => {
                 this.__log.fn('reset').debug('resetting to initial value', this.initialValue);
@@ -140,6 +179,10 @@ class Input {
             this._evm.on('change', options.onChange);
         }
         this.index = this.index;
+        this.elements.container.classList.toggle('hidden', this._hidden());
+        setTimeout(() => {
+            this.element.classList.toggle('disabled', this._disabled());
+        }, 1);
     }
     get value() {
         return this.state.value;
@@ -176,11 +219,10 @@ class Input {
      * disabled state.
      */
     get disabled() {
-        return this._disabled();
+        return this.element.classList.contains('disabled');
     }
     set disabled(v) {
-        this._disabled = toFn(v);
-        this._disabled() ? this.disable() : this.enable();
+        this.element.classList.toggle('disabled', toFn(v)());
     }
     /**
      * Completely hides the Input from view when set to `true`.
@@ -264,21 +306,21 @@ class Input {
         this.__log.fn('commit').debug('commited', commit);
         this.undoManager?.commit(commit);
     }
-    /**
-     * Enables the input and any associated controllers.
-     */
-    enable() {
-        this._disabled = toFn(false);
-        return this;
-    }
-    /**
-     * Disables the input and any associated controllers. A disabled input's state can't be
-     * changed or interacted with.
-     */
-    disable() {
-        this._disabled = toFn(true);
-        return this;
-    }
+    // /**
+    //  * Enables the input and any associated controllers.
+    //  */
+    // enable() {
+    // 	this._disabled = toFn(false)
+    // 	return this
+    // }
+    // /**
+    //  * Disables the input and any associated controllers. A disabled input's state can't be
+    //  * changed or interacted with.
+    //  */
+    // disable() {
+    // 	this._disabled = toFn(true)
+    // 	return this
+    // }
     /**
      * Refreshes the value of any controllers to match the current input state.
      */
@@ -287,6 +329,10 @@ class Input {
             return;
         if (this.opts.binding) {
             this.state.set(this.opts.binding.target[this.opts.binding.key]);
+        }
+        const disabledState = this._disabled();
+        if (disabledState !== this.disabled) {
+            this.disabled = disabledState;
         }
         this.elements.resetBtn.classList.toggle('dirty', this._dirty());
         this._evm.emit('refresh', v);

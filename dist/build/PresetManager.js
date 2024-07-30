@@ -1,4 +1,5 @@
 import { RenameSVG } from './svg/RenameSVG.js';
+import { persist } from './shared/persist.js';
 import { Tooltip } from './shared/Tooltip.js';
 import { Logger } from './shared/logger.js';
 import { nanoid } from './shared/nanoid.js';
@@ -11,11 +12,12 @@ class PresetManager {
     gooey;
     parentFolder;
     __type = Object.freeze('PresetManager');
-    __version = Object.freeze('1.0.0');
+    __version = '1';
     defaultPreset;
     activePreset;
     presets;
     folder;
+    _version;
     _defaultPresetId = 'gooey-default-preset';
     _defaultPresetTitle = 'default';
     _presetSnapshot;
@@ -31,12 +33,14 @@ class PresetManager {
         this._log.fn('constructor').debug({ options, this: this });
         this.opts = options;
         this.opts.localStorageKey ??= 'gooey::presets';
+        const storageKey = this.opts.localStorageKey;
+        this._validateVersion(storageKey);
         this.activePreset = state(this.opts.defaultPreset ?? {}, {
-            key: this.opts.localStorageKey + '::active',
+            key: storageKey + '::active',
         });
         this._log.fn('constructor').debug('activePreset', this.activePreset.value);
         this.presets = state(this.opts.presets ?? [], {
-            key: this.opts.localStorageKey,
+            key: storageKey,
         });
         if (this.opts.autoInit !== false) {
             this.init();
@@ -44,10 +48,13 @@ class PresetManager {
         if (Object.keys(this.activePreset.value).length &&
             this.activePreset.value.id !== this._defaultPresetId) {
             Promise.resolve().then(() => {
-                console.log('loading active preset', this.activePreset.value);
+                this._log.fn('constructor').debug('loading active preset', this.activePreset.value);
                 this.gooey.load(this.activePreset.value);
                 this.gooey._undoManager.clear();
             });
+        }
+        else {
+            this._log.fn('constructor').debug('No active preset found. Loading default.');
         }
     }
     opts;
@@ -62,6 +69,7 @@ class PresetManager {
         this._initialized = true;
         await Promise.resolve();
         this.folder = await this.addGui(this.parentFolder, this.opts.defaultPreset);
+        this._refresh();
         return this;
     }
     /**
@@ -104,9 +112,12 @@ class PresetManager {
     _resolveDefaultPreset(defaultPreset) {
         if (!this._isInitialized())
             throw new Error('PresetManager not initialized.');
+        if (this.opts.defaultPreset) {
+            return this.opts.defaultPreset;
+        }
         defaultPreset ??= this.presets.value.find(p => p.id === this._defaultPresetId);
         if (!defaultPreset) {
-            defaultPreset = this.gooey.save(this._defaultPresetTitle, this._defaultPresetId);
+            defaultPreset = this.gooey.save(this._defaultPresetTitle, this._defaultPresetId, this.__version);
             this.presets.push(defaultPreset);
         }
         return defaultPreset;
@@ -128,6 +139,7 @@ class PresetManager {
         });
         this.defaultPreset = defaultPreset ?? this._resolveDefaultPreset();
         if (!Object.keys(this.activePreset.value).length) {
+            this._log.fn('add').debug('No active preset found. Setting active to default.');
             this.activePreset.set(this.defaultPreset);
         }
         if (!this.activePreset.value) {
@@ -200,7 +212,7 @@ class PresetManager {
                     id: 'update',
                     onClick: () => {
                         const { id, title } = this.activePreset.value;
-                        const current = this.gooey.save(title, id);
+                        const current = this.gooey.save(title, id, this.__version);
                         this.put(current);
                     },
                     disabled: () => this.defaultPresetIsActive,
@@ -228,6 +240,8 @@ class PresetManager {
                         delay: 0,
                         placement: 'bottom',
                         hideOnClick: true,
+                        // @ts-expect-error - @internal
+                        style: this.gooey?._getStyles,
                     },
                     style: { maxWidth: '1.5rem', padding: '0.3rem' },
                     onClick: () => {
@@ -244,6 +258,8 @@ class PresetManager {
                         delay: 0,
                         placement: 'bottom',
                         hideOnClick: true,
+                        // @ts-expect-error - @internal
+                        style: this.gooey?._getStyles,
                     },
                     style: { maxWidth: '1.5rem', padding: '0.3rem' },
                     onClick: async ({ button }) => {
@@ -276,6 +292,8 @@ class PresetManager {
                         delay: 0,
                         placement: 'bottom',
                         hideOnClick: true,
+                        // @ts-expect-error - @internal
+                        style: this.gooey?._getStyles,
                     },
                     style: { maxWidth: '1.5rem', padding: '0.3rem' },
                     onClick: () => {
@@ -293,6 +311,8 @@ class PresetManager {
                         placement: 'bottom',
                         hideOnClick: true,
                         // offsetY: '0.1rem',
+                        // @ts-expect-error - @internal
+                        style: this.gooey?._getStyles,
                     },
                     style: { maxWidth: '1.5rem', padding: '0.3rem' },
                     onClick: () => {
@@ -309,6 +329,8 @@ class PresetManager {
                         delay: 0,
                         placement: 'bottom',
                         hideOnClick: true,
+                        // @ts-expect-error - @internal
+                        style: this.gooey?._getStyles,
                     },
                     style: { maxWidth: '1.5rem', padding: '0.3rem' },
                     onClick: () => {
@@ -319,7 +341,6 @@ class PresetManager {
         ], {
             order: 1,
             resettable: false,
-            disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,
         });
         //? Presets Select Input
         this._presetsInput = presetsFolder.addSelect('', this.presets.value, {
@@ -327,7 +348,6 @@ class PresetManager {
             order: 0,
             value: this.activePreset.value,
             resettable: false,
-            disabled: () => this.defaultPresetIsActive && this.presets.value.length === 1,
         });
         this._presetsInput.on('change', ({ value }) => {
             this._log.fn('_presetsInput.on(change)').debug({ value, this: this });
@@ -372,6 +392,8 @@ class PresetManager {
                     return this.defaultPresetIsActive ? `Can't rename default preset` : `Rename`;
                 }
             },
+            // @ts-expect-error - @internal
+            style: this.gooey._getStyles,
         });
         this._presetsInput.listen(this._renamePresetButton.element, 'click', this._toggleRename);
         this._presetsInput.elements.content.prepend(this._renamePresetButton.element);
@@ -397,7 +419,7 @@ class PresetManager {
         if (!this._presetsInput) {
             throw new Error('No select input.');
         }
-        preset ??= this.gooey.save(this._resolveUnusedTitle('preset'), nanoid());
+        preset ??= this.gooey.save(this._resolveUnusedTitle('preset'), nanoid(), this.__version);
         const existing = this.presets.value.find(p => p.id === preset.id);
         if (!existing) {
             this._log.fn('put').debug('pushing preset:', { preset, existing });
@@ -514,6 +536,21 @@ class PresetManager {
             this._handleRename();
         }
     };
+    _validateVersion(key) {
+        // Make sure we get the current version unmodified first.
+        let localVersion = null;
+        try {
+            localVersion = JSON.parse(localStorage.getItem(key + '::version') ?? '');
+        }
+        catch (e) { }
+        // Initialize the persistant version.
+        this._version = persist(key + '::version', this.__version);
+        // If the version is different, remove presets from storage.
+        if (localVersion !== this.__version) {
+            localStorage.removeItem(key);
+            this._version.set(this.__version);
+        }
+    }
     _refreshInputs() {
         const disableRename = this.defaultPresetIsActive;
         this._renamePresetButton.element.classList.toggle('disabled', disableRename);

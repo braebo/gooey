@@ -19,6 +19,7 @@ class InputButton extends Input {
         const opts = Object.assign({}, BUTTON_INPUT_DEFAULTS, options, {
             __type: 'ButtonInputOptions',
         });
+        opts.resettable ??= false;
         super(opts, folder);
         this._evm.registerEvents(['change', 'refresh', 'click']);
         this._log = new Logger(`InputButton ${opts.title}`, { fg: 'cyan' });
@@ -58,12 +59,12 @@ class InputButton extends Input {
     }
     enable() {
         this.button.enable();
-        super.enable();
+        this.disabled = false;
         return this;
     }
     disable() {
         this.button.disable();
-        super.disable();
+        this.disabled = true;
         return this;
     }
     /**

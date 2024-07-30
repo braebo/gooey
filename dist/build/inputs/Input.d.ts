@@ -8,6 +8,7 @@ import type { InputColor, ColorInputOptions } from './InputColor';
 import type { InputText, TextInputOptions } from './InputText';
 import type { ColorFormat } from '../shared/color/types/colorFormat';
 import type { EventCallback } from '../shared/EventManager';
+import type { TooltipOptions } from '../shared/Tooltip';
 import type { Option } from '../controllers/Select';
 import type { Color } from '../shared/color/color';
 import type { State } from '../shared/state';
@@ -108,6 +109,14 @@ export type InputOptions<TValue = ValidInputValue, TBindTarget extends BindTarge
      * `Input.on('change', value => {})`.
      */
     onChange?: (value: TValue) => void;
+    /**
+     * Optional tooltip text to display when hovering over the input's title.
+     */
+    description?: string;
+    /**
+     * When {@link description} is provided, these options can be used to customize the tooltip.
+     */
+    tooltipOptions?: Partial<TooltipOptions>;
 } & ValueOrBinding<TValue, TBindTarget>;
 export type InputPreset<T extends ValidInputOptions> = Omit<InputOptions<T>, 'title' | 'saveable'> & {
     __type: InputOptionType;
@@ -263,15 +272,6 @@ export declare abstract class Input<TValueType extends ValidInputValue = ValidIn
      * Commits a change to the input's value to the undo manager.
      */
     commit(commit: Partial<Commit>): void;
-    /**
-     * Enables the input and any associated controllers.
-     */
-    enable(): this;
-    /**
-     * Disables the input and any associated controllers. A disabled input's state can't be
-     * changed or interacted with.
-     */
-    disable(): this;
     /**
      * Refreshes the value of any controllers to match the current input state.
      */
