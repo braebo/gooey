@@ -1,11 +1,12 @@
 import type { InputButtonGrid } from './inputs/InputButtonGrid'
-import { persist, type PersistedValue } from './shared/persist'
 import type { InputSelect } from './inputs/InputSelect'
+import type { PersistedValue } from './shared/persist'
 import type { Gooey, GooeyPreset } from './Gooey'
 import type { State } from './shared/state'
 import type { Folder } from './Folder'
 
 import { RenameSVG } from './svg/RenameSVG'
+import { persist } from './shared/persist'
 import { Tooltip } from './shared/Tooltip'
 import { Logger } from './shared/logger'
 import { nanoid } from './shared/nanoid'
@@ -115,6 +116,7 @@ export class PresetManager {
 
 		await Promise.resolve()
 		this.folder = await this.addGui(this.parentFolder, this.opts.defaultPreset)
+		this._refresh()
 
 		return this
 	}
