@@ -1691,6 +1691,10 @@ export class Folder {
 	//· SVG's ····················································································¬
 
 	private async _createGraphics(headerless = false): Promise<void> {
+		setTimeout(() => {
+			new TerminalSvg(this)
+		}, 10)
+
 		if (this.isRootFolder()) return
 		this._log.fn('createGraphics').debug({ this: this })
 
@@ -1705,8 +1709,6 @@ export class Folder {
 				this.graphics.connector = createFolderConnector(this, this.graphics.icon)
 			}
 		}
-
-		if (DEV) new TerminalSvg(this)
 	}
 
 	private _resolveHeaderHeight(): number {
