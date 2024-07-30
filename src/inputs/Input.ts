@@ -356,7 +356,29 @@ export abstract class Input<
 			// parent: this.elements.content,
 			parent: this.elements.title,
 			tooltip: {
-				text: 'Reset',
+				text: !this.opts.resettable
+					? undefined
+					: () => {
+							let initialValue = this.initialValue
+
+							if (typeof initialValue === 'object') {
+								if ('labelKey' in this.opts) {
+									initialValue =
+										initialValue[
+											this.opts.labelKey as keyof typeof initialValue
+										]
+								} else {
+									try {
+										initialValue = JSON.stringify(initialValue)
+									} catch (e) {
+										console.error(e, { initialValue, this: this })
+										throw new Error(e as any)
+									}
+								}
+							}
+
+							return `Reset · <em style="opacity:0.5;">${initialValue}</em>`
+						},
 				placement: 'left',
 				delay: 0,
 				// @ts-expect-error
