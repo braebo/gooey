@@ -168,20 +168,25 @@ export class PresetManager {
 		return newTitle
 	}
 
-	private _resolveDefaultPreset(defaultPreset?: GooeyPreset) {
-		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
+	private _resolveDefaultPreset() {
+		const newDefaultPreset = this.gooey.save(
+			this._defaultPresetTitle,
+			this._defaultPresetId,
+			this.__version,
+		)
 
-		defaultPreset ??= this.presets.value.find(p => p.id === this._defaultPresetId)
-		if (!defaultPreset) {
-			defaultPreset = this.gooey.save(
-				this._defaultPresetTitle,
-				this._defaultPresetId,
-				this.__version,
-			)
-			this.presets.push(defaultPreset)
+		const existingIndex = this.presets.value.findIndex(p => p.id === this._defaultPresetId)
+
+		if (existingIndex === -1) {
+			this.presets.push(newDefaultPreset)
+		} else {
+			this.presets.update(presets => {
+				presets[existingIndex] = newDefaultPreset
+				return presets
+			})
 		}
 
-		return defaultPreset
+		return newDefaultPreset
 	}
 
 	async addGui(parentFolder: Folder, defaultPreset?: GooeyPreset) {
@@ -439,7 +444,15 @@ export class PresetManager {
 			resettable: false,
 		})
 
+		let first = true
 		this._presetsInput.on('change', ({ value }) => {
+			if (first) {
+				this._log
+					.fn("_presetsInput.on('change')")
+					.debug('Skipping initial change.', { value, this: this })
+				first = false
+				return
+			}
 			this._log.fn('_presetsInput.on(change)').debug({ value, this: this })
 			this.gooey.load(value)
 			this.activePreset.set(value)
