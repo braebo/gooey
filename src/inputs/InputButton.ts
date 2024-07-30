@@ -91,7 +91,7 @@ export class InputButton extends Input<
 			button: this.button.element,
 		} as const satisfies ButtonControllerElements
 
-		this._evm.listen(this.elements.controllers.button, 'click', this.click.bind(this))
+		// this._evm.listen(this.elements.controllers.button, 'click', this.click.bind(this))
 
 		this._evm.add(this.state.subscribe(this.refresh.bind(this)))
 	}
@@ -107,7 +107,7 @@ export class InputButton extends Input<
 	 * Manually calls the {@link onClick} function.
 	 */
 	click() {
-		this.button.click({ ...new MouseEvent('click'), target: this.button.element })
+		this.button.click.call(this, { ...new MouseEvent('click'), target: this.button.element })
 	}
 
 	enable() {
@@ -127,7 +127,6 @@ export class InputButton extends Input<
 	 */
 	set = (v: ButtonController | unknown) => {
 		if (ButtonController.is(v)) {
-			v //=>
 			this.state.set(v)
 		}
 	}
