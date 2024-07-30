@@ -263,7 +263,11 @@ let Tooltip = class Tooltip {
     _updatePosition(e) {
         if (!this.element)
             return;
-        const tooltipRect = this.element.getBoundingClientRect();
+        const ghost = this.element.cloneNode(true);
+        ghost.style.opacity = '0';
+        this.parent?.appendChild(ghost);
+        const tooltipRect = ghost.getBoundingClientRect();
+        ghost.remove();
         if (this.element.innerHTML !== this.text) {
             this.element.innerHTML = String(this.text);
         }

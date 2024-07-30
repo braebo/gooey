@@ -406,7 +406,12 @@ export class Tooltip {
 	private _updatePosition(e?: PointerEvent) {
 		if (!this.element) return
 
-		const tooltipRect = this.element.getBoundingClientRect()
+		const ghost = this.element.cloneNode(true) as HTMLElement
+		ghost.style.opacity = '0'
+		this.parent?.appendChild(ghost)
+
+		const tooltipRect = ghost.getBoundingClientRect()
+		ghost.remove()
 
 		if (this.element.innerHTML !== this.text) {
 			this.element.innerHTML = String(this.text)
