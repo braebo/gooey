@@ -136,7 +136,7 @@ export declare class Tooltip {
     /**
      * Animates the tooltip into view.
      */
-    show(): void;
+    show(): this;
     /**
      * Animates the tooltip out of view.
      * @param force - If `true`, the tooltip will hide immediately regardless of delay or hover state.

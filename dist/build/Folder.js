@@ -824,6 +824,7 @@ class Folder {
     }
     addButton(title, onclick, options) {
         const opts = this._resolveOpts(title, onclick, options);
+        opts.onClick = onclick || opts.value;
         const input = new InputButton(opts, this);
         return this._registerInput(input, opts.presetId);
     }

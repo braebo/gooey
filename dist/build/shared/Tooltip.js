@@ -78,7 +78,7 @@ let Tooltip = class Tooltip {
             this._hoveringNode = false;
             this.hide();
         });
-        this._evm.listen(node, 'pointermove', () => this._updatePosition());
+        this._evm.listen(node, 'pointermove', e => this._updatePosition(e));
         this._evm.listen(node, 'click', () => {
             if (opts.hideOnClick)
                 this.hide();
@@ -153,9 +153,9 @@ let Tooltip = class Tooltip {
      */
     show() {
         if (this.showing)
-            return;
+            return this;
         if (!this.text)
-            return;
+            return this;
         const style = this.style;
         if (style) {
             for (const [key, value] of entries(style)) {
@@ -187,6 +187,7 @@ let Tooltip = class Tooltip {
             this._updatePosition();
             this._maybeWatchAnchor();
         }, this.opts.delay);
+        return this;
     }
     /**
      * Animates the tooltip out of view.
@@ -284,6 +285,7 @@ let Tooltip = class Tooltip {
         const PADDING = 8;
         const BASE_OFFSET = 4;
         let flipX = false;
+        let flipY = false;
         let pos = { x: 0, y: 0 };
         this.element.classList.add('gooey-tooltip-' + this.placement);
         // TODO - Finish this!
@@ -291,13 +293,54 @@ let Tooltip = class Tooltip {
             case 'top':
                 pos = getPlacement('top');
                 if (pos.y < 0) {
-                    pos = getPlacement('bottom');
+                    // prettier-ignore
+                    const freeSpace = anchor.y.top
+                        - BASE_OFFSET
+                        - PADDING
+                            * 2;
+                    const overflow = Math.abs(tooltipRect.height - freeSpace);
+                    if (overflow > 0) {
+                        if (tooltipRect.height < freeSpace) {
+                            pos.y = 0;
+                        }
+                        else {
+                            if (freeSpace < 150) {
+                                pos = getPlacement('bottom');
+                                flipY = true;
+                            }
+                            else {
+                                this.element.dataset['maxHeight'] ??= this.element.style.maxHeight;
+                                this.element.style.setProperty('max-height', `${freeSpace - PADDING}px`);
+                            }
+                        }
+                    }
                 }
                 break;
             case 'bottom':
                 pos = getPlacement('bottom');
                 if (pos.y + tooltipRect.height > window.innerHeight) {
-                    pos = getPlacement('top');
+                    // prettier-ignore
+                    const freeSpace = window.innerHeight
+                        - (anchor.y.top + anchor.y.height)
+                        - BASE_OFFSET
+                        - PADDING
+                            * 2;
+                    const overflow = Math.abs(tooltipRect.height - freeSpace);
+                    if (overflow > 0) {
+                        if (tooltipRect.height < freeSpace) {
+                            pos.y = window.innerHeight - tooltipRect.height;
+                        }
+                        else {
+                            if (freeSpace < 150) {
+                                pos = getPlacement('top');
+                                flipY = true;
+                            }
+                            else {
+                                this.element.dataset['maxHeight'] ??= this.element.style.maxHeight;
+                                this.element.style.setProperty('max-height', `${freeSpace - PADDING}px`);
+                            }
+                        }
+                    }
                 }
                 break;
             case 'left':
@@ -305,11 +348,8 @@ let Tooltip = class Tooltip {
                 if (pos.x < 0) {
                     const freeSpace = anchor.x.left - BASE_OFFSET - PADDING * 2;
                     const overflow = Math.abs(tooltipRect.width - freeSpace);
-                    // console.log('freeSpace', freeSpace, 'overflow', overflow)
                     if (overflow > 0) {
                         if (tooltipRect.width < freeSpace) {
-                            // todo - not sure this branch even runs / helps
-                            // console.log('A')
                             pos.x = 0;
                         }
                         else {
@@ -333,7 +373,29 @@ let Tooltip = class Tooltip {
             case 'right':
                 pos = getPlacement('right');
                 if (pos.x + tooltipRect.width > window.innerWidth) {
-                    pos = getPlacement('left');
+                    // prettier-ignore
+                    const freeSpace = window.innerWidth
+                        - (anchor.x.left + anchor.x.width)
+                        - BASE_OFFSET
+                        - PADDING
+                            * 2;
+                    const overflow = Math.abs(tooltipRect.width - freeSpace);
+                    if (overflow > 0) {
+                        if (tooltipRect.width < freeSpace) {
+                            pos.x = window.innerWidth - tooltipRect.width;
+                        }
+                        else {
+                            if (freeSpace < 150) {
+                                pos = getPlacement('left');
+                                flipX = true;
+                            }
+                            else {
+                                // pos.x = window.innerWidth - freeSpace + PADDING
+                                this.element.dataset['maxWidth'] ??= this.element.style.maxWidth;
+                                this.element.style.setProperty('max-width', `${freeSpace - PADDING}px`);
+                            }
+                        }
+                    }
                 }
                 break;
         }
@@ -366,7 +428,7 @@ let Tooltip = class Tooltip {
         if (!parentRect)
             return;
         this.element.style.left = `calc(${pos.x - parentRect.left}px ${flipX ? '-' : '+'} ${this.opts.offsetX})`;
-        this.element.style.top = `calc(${pos.y - parentRect.top}px ${'+'} ${this.opts.offsetY})`;
+        this.element.style.top = `calc(${pos.y - parentRect.top}px ${flipY ? '-' : '+'} ${this.opts.offsetY})`;
     }
     // todo - mobile touch events support?
     _mouse = { x: 0, y: 0 };

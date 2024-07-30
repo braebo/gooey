@@ -42,7 +42,7 @@ class InputButton extends Input {
             container,
             button: this.button.element,
         };
-        this._evm.listen(this.elements.controllers.button, 'click', this.click.bind(this));
+        // this._evm.listen(this.elements.controllers.button, 'click', this.click.bind(this))
         this._evm.add(this.state.subscribe(this.refresh.bind(this)));
     }
     get text() {
@@ -55,7 +55,7 @@ class InputButton extends Input {
      * Manually calls the {@link onClick} function.
      */
     click() {
-        this.button.click({ ...new MouseEvent('click'), target: this.button.element });
+        this.button.click.call(this, { ...new MouseEvent('click'), target: this.button.element });
     }
     enable() {
         this.button.enable();
