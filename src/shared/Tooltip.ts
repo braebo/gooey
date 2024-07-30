@@ -195,7 +195,7 @@ export class Tooltip {
 			this._hoveringNode = false
 			this.hide()
 		})
-		this._evm.listen(node!, 'pointermove', () => this._updatePosition())
+		this._evm.listen(node!, 'pointermove', e => this._updatePosition(e))
 		this._evm.listen(node!, 'click', () => {
 			if (opts.hideOnClick) this.hide()
 			else this.refresh()
@@ -275,9 +275,9 @@ export class Tooltip {
 	/**
 	 * Animates the tooltip into view.
 	 */
-	show() {
-		if (this.showing) return
-		if (!this.text) return
+	show(): this {
+		if (this.showing) return this
+		if (!this.text) return this
 
 		const style = this.style
 		if (style) {
@@ -316,6 +316,8 @@ export class Tooltip {
 			this._updatePosition()
 			this._maybeWatchAnchor()
 		}, this.opts.delay)
+
+		return this
 	}
 
 	/**
@@ -442,13 +444,60 @@ export class Tooltip {
 			case 'top':
 				pos = getPlacement('top')
 				if (pos.y < 0) {
-					pos = getPlacement('bottom')
+					// prettier-ignore
+					const freeSpace =
+                anchor.y.top
+                    - BASE_OFFSET
+                    - PADDING
+                    * 2
+
+					const overflow = Math.abs(tooltipRect.height - freeSpace)
+					if (overflow > 0) {
+						if (tooltipRect.height < freeSpace) {
+							pos.y = 0
+						} else {
+							if (freeSpace < 150) {
+								pos = getPlacement('bottom')
+								flipY = true
+							} else {
+								this.element.dataset['maxHeight'] ??= this.element.style.maxHeight
+								this.element.style.setProperty(
+									'max-height',
+									`${freeSpace - PADDING}px`,
+								)
+							}
+						}
+					}
 				}
 				break
 			case 'bottom':
 				pos = getPlacement('bottom')
 				if (pos.y + tooltipRect.height > window.innerHeight) {
-					pos = getPlacement('top')
+					// prettier-ignore
+					const freeSpace =
+                window.innerHeight
+                    - (anchor.y.top + anchor.y.height)
+                    - BASE_OFFSET
+                    - PADDING
+                    * 2
+
+					const overflow = Math.abs(tooltipRect.height - freeSpace)
+					if (overflow > 0) {
+						if (tooltipRect.height < freeSpace) {
+							pos.y = window.innerHeight - tooltipRect.height
+						} else {
+							if (freeSpace < 150) {
+								pos = getPlacement('top')
+								flipY = true
+							} else {
+								this.element.dataset['maxHeight'] ??= this.element.style.maxHeight
+								this.element.style.setProperty(
+									'max-height',
+									`${freeSpace - PADDING}px`,
+								)
+							}
+						}
+					}
 				}
 				break
 			case 'left':
@@ -456,11 +505,8 @@ export class Tooltip {
 				if (pos.x < 0) {
 					const freeSpace = anchor.x.left - BASE_OFFSET - PADDING * 2
 					const overflow = Math.abs(tooltipRect.width - freeSpace)
-					// console.log('freeSpace', freeSpace, 'overflow', overflow)
 					if (overflow > 0) {
 						if (tooltipRect.width < freeSpace) {
-							// todo - not sure this branch even runs / helps
-							// console.log('A')
 							pos.x = 0
 						} else {
 							if (freeSpace < 150) {
@@ -483,7 +529,32 @@ export class Tooltip {
 			case 'right':
 				pos = getPlacement('right')
 				if (pos.x + tooltipRect.width > window.innerWidth) {
-					pos = getPlacement('left')
+					// prettier-ignore
+					const freeSpace =
+						window.innerWidth
+							- (anchor.x.left + anchor.x.width)
+							- BASE_OFFSET
+							- PADDING
+							* 2
+
+					const overflow = Math.abs(tooltipRect.width - freeSpace)
+					if (overflow > 0) {
+						if (tooltipRect.width < freeSpace) {
+							pos.x = window.innerWidth - tooltipRect.width
+						} else {
+							if (freeSpace < 150) {
+								pos = getPlacement('left')
+								flipX = true
+							} else {
+								// pos.x = window.innerWidth - freeSpace + PADDING
+								this.element.dataset['maxWidth'] ??= this.element.style.maxWidth
+								this.element.style.setProperty(
+									'max-width',
+									`${freeSpace - PADDING}px`,
+								)
+							}
+						}
+					}
 				}
 				break
 		}
