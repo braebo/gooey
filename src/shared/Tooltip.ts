@@ -210,6 +210,9 @@ export class Tooltip {
 	set text(text: string | (() => string)) {
 		this._text = toFn(text)
 		if (!this.element) return
+		const t = this._text()
+		this.element.innerHTML = String(typeof t === 'object' ? JSON.stringify(t) : t)
+	}
 
 	get style(): StyleDefinition | undefined {
 		return this._style()
