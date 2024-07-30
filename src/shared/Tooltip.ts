@@ -400,7 +400,7 @@ export class Tooltip {
 		if (this.element) this.parent?.removeChild(this.element)
 	}
 
-	private _updatePosition = (e?: PointerEvent) => {
+	private _updatePosition(e?: PointerEvent) {
 		if (!this.element) return
 
 		const tooltipRect = this.element.getBoundingClientRect()
@@ -420,37 +420,99 @@ export class Tooltip {
 		const anchor = this._getAnchorRects()
 		if (!anchor) return
 
-		let left = 0
-		let top = 0
+		const PADDING = 8
+		const BASE_OFFSET = 4
 
-		const baseOffset = 4
+		let flipX = false
+		let flipY = false
+		let pos = { x: 0, y: 0 }
 
-		this.element.classList.add('fractils-tooltip-' + this.placement)
+		this.element.classList.add('gooey-tooltip-' + this.placement)
 
+		// TODO - Finish this!
 		switch (this.placement) {
 			case 'top':
-				left = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2
-				top = anchor.y.top + window.scrollY - tooltipRect.height - baseOffset
+				pos = getPlacement('top')
+				if (pos.y < 0) {
+					pos = getPlacement('bottom')
+				}
 				break
 			case 'bottom':
-				left = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2
-				top = anchor.y.top + window.scrollY + anchor.y.height + baseOffset
+				pos = getPlacement('bottom')
+				if (pos.y + tooltipRect.height > window.innerHeight) {
+					pos = getPlacement('top')
+				}
 				break
 			case 'left':
-				left = anchor.x.left + window.scrollX - tooltipRect.width - baseOffset
-				top = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2
+				pos = getPlacement('left')
+				if (pos.x < 0) {
+					const freeSpace = anchor.x.left - BASE_OFFSET - PADDING * 2
+					const overflow = Math.abs(tooltipRect.width - freeSpace)
+					// console.log('freeSpace', freeSpace, 'overflow', overflow)
+					if (overflow > 0) {
+						if (tooltipRect.width < freeSpace) {
+							// todo - not sure this branch even runs / helps
+							// console.log('A')
+							pos.x = 0
+						} else {
+							if (freeSpace < 150) {
+								if (this._text() === 'x (readonly)') console.log('B')
+								pos = getPlacement('right')
+								flipX = true
+							} else {
+								if (this._text() === 'x (readonly)') console.log('C')
+								pos.x = PADDING
+								this.element.dataset['maxWidth'] ??= this.element.style.maxWidth
+								this.element.style.setProperty(
+									'max-width',
+									`${freeSpace - PADDING}px`,
+								)
+							}
+						}
+					}
+				}
 				break
 			case 'right':
-				left = anchor.x.left + window.scrollX + anchor.x.width + baseOffset
-				top = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2
+				pos = getPlacement('right')
+				if (pos.x + tooltipRect.width > window.innerWidth) {
+					pos = getPlacement('left')
+				}
 				break
+		}
+
+		function getPlacement(placement: 'top' | 'right' | 'bottom' | 'left') {
+			const p = { x: 0, y: 0 }
+
+			if (!anchor) return p
+
+			// prettier-ignore
+			switch (placement) {
+				case 'top':
+					p.x = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2
+					p.y = anchor.y.top + window.scrollY - tooltipRect.height - BASE_OFFSET
+					break
+				case 'bottom':
+					p.x = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2
+					p.y = anchor.y.top + window.scrollY + anchor.y.height + BASE_OFFSET
+					break
+				case 'left':
+					p.x = anchor.x.left + window.scrollX - tooltipRect.width - BASE_OFFSET
+					p.y = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2
+					break
+				case 'right':
+					p.x = anchor.x.left + window.scrollX + anchor.x.width + BASE_OFFSET
+					p.y = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2
+					break
+			}
+
+			return p
 		}
 
 		const parentRect = this.parent?.getBoundingClientRect()
 		if (!parentRect) return
 
-		this.element.style.left = `calc(${left - parentRect.left}px + ${this.opts.offsetX!})`
-		this.element.style.top = `calc(${top - parentRect.top}px + ${this.opts.offsetY!})`
+		this.element.style.left = `calc(${pos.x - parentRect.left}px ${flipX ? '-' : '+'} ${this.opts.offsetX!})`
+		this.element.style.top = `calc(${pos.y - parentRect.top}px ${flipY ? '-' : '+'} ${this.opts.offsetY!})`
 	}
 
 	// todo - mobile touch events support?
