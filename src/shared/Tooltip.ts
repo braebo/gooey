@@ -186,6 +186,16 @@ export class Tooltip {
 			})
 		}
 
+		this._evm.listen(this.element, 'pointerenter', () => this._hoverIn())
+		this._evm.listen(node!, 'pointerenter', () => {
+			this._hoveringNode = true
+			this.show()
+		})
+		this._evm.listen(node!, 'pointerleave', () => {
+			this._hoveringNode = false
+			this.hide()
+		})
+		this._evm.listen(node!, 'pointermove', () => this._updatePosition())
 		this._evm.listen(node!, 'click', () => {
 			if (opts.hideOnClick) this.hide()
 			else this.refresh()
@@ -265,7 +275,7 @@ export class Tooltip {
 	/**
 	 * Animates the tooltip into view.
 	 */
-	show = () => {
+	show() {
 		if (this.showing) return
 		if (!this.text) return
 
@@ -285,17 +295,21 @@ export class Tooltip {
 			if (this.element) this.parent?.appendChild(this.element)
 			this.showing = true
 
-			this.element?.animate(
-				[
-					{ opacity: '0', transform: this._animPositions.from },
-					{ opacity: '1', transform: this._animPositions.to },
-				],
-				{
-					duration: this.opts.animation!.duration,
-					easing: this.opts.animation!.easing,
-					fill: 'forwards',
-				},
-			)
+			this.element
+				?.animate(
+					[
+						{ opacity: '0', transform: this._animPositions.from },
+						{ opacity: '1', transform: this._animPositions.to },
+					],
+					{
+						duration: this.opts.animation!.duration,
+						easing: this.opts.animation!.easing,
+						fill: 'forwards',
+					},
+				)
+				.finished.then(() => {
+					this.element?.classList.add('showing')
+				})
 
 			this._updatePosition()
 			this._maybeWatchAnchor()
@@ -304,20 +318,26 @@ export class Tooltip {
 
 	/**
 	 * Animates the tooltip out of view.
+	 * @param force - If `true`, the tooltip will hide immediately regardless of delay or hover state.
 	 */
-	hide = () => {
-		clearTimeout(this._delayInTimer)
-		clearTimeout(this._delayOutTimer)
-
-		this._delayOutTimer = setTimeout(async () => {
+	hide(force = false) {
+		const hide = async () => {
 			if (this.showing) {
+				if (!force && (this._hoveringEl || this._hoveringNode)) {
+					queueHide(true)
+					return
+				}
+
 				this.showing = false
+				this.element?.classList.remove('showing')
 
 				if (this._watcherId) {
 					this._evm.unlisten(this._watcherId)
 				}
 
-				await this.element?.animate(
+				if (!this.element) return
+
+				await this.element.animate(
 					[
 						{ opacity: '1', transform: this._animPositions.to },
 						{ opacity: '0', transform: this._animPositions.from },
@@ -329,9 +349,38 @@ export class Tooltip {
 					},
 				).finished
 
+				this.element.style.setProperty(
+					'max-width',
+					this.element.dataset['maxWidth'] ?? 'initial',
+				)
+				delete this.element.dataset['maxWidth']
 				this.unmount()
 			}
-		}, this.opts.delayOut)
+		}
+
+		const queueHide = (isRetry = false) => {
+			clearTimeout(this._delayInTimer)
+			clearTimeout(this._delayOutTimer)
+
+			if (force) {
+				hide()
+			} else {
+				const delay = isRetry ? Math.max(250, this.opts.delayOut) : this.opts.delayOut
+				this._delayOutTimer = setTimeout(hide, delay)
+			}
+		}
+
+		queueHide()
+	}
+
+	private _hoveringEl = false
+	private _hoveringNode = false
+	private _hoverIn = () => {
+		this._hoveringEl = true
+		this._evm.listen(this.element!, 'pointerleave', this._hoverOut, {}, 'hide')
+	}
+	private _hoverOut = () => {
+		this._hoveringEl = false
 	}
 
 	/**
@@ -347,6 +396,7 @@ export class Tooltip {
 	unmount() {
 		if (!this._mounted) return
 		this._mounted = false
+
 		if (this.element) this.parent?.removeChild(this.element)
 	}
 
