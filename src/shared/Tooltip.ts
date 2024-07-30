@@ -1,4 +1,4 @@
-import type { JavascriptStyleProperty } from './css-types'
+import type { JavascriptStyleProperty, StyleDefinition } from './css-types'
 import type { ElementOrSelector } from './select'
 
 import { deepMergeOpts } from './deepMergeOpts'
@@ -88,10 +88,12 @@ export interface TooltipOptions {
 
 	/**
 	 * Custom style overrides for the tooltip element (all valid CSS properties are allowed).
-	 * i.e. { padding: '4px 8px', color: 'var(--fg-a, #fff)' }
+	 * i.e. { 'background-color': 'red' }
+	 * For dynamic styles, you can provide a function that returns the overrides instead, and
+	 * it will be called before the tooltip is shown and apply any changes to the tooltip.
 	 * @defaultValue undefined
 	 */
-	style?: Partial<Record<JavascriptStyleProperty, string>>
+	style?: StyleDefinition | (() => StyleDefinition)
 
 	/**
 	 * If specified, the container element for the tooltip.
@@ -146,6 +148,7 @@ export class Tooltip {
 	opts: TooltipOptions
 
 	private _text: () => string
+	private _style: () => StyleDefinition | undefined = () => undefined
 	private _evm = new EventManager()
 	private _animPositions!: { from: string; to: string }
 	private _delayInTimer!: ReturnType<typeof setTimeout>
@@ -164,32 +167,25 @@ export class Tooltip {
 		this.placement = opts.placement
 
 		this._text = toFn(opts.text)
+		this.style = opts.style
 
 		this.parent = options?.parent ?? document.getElementById('svelte') ?? document.body
 
 		const el = document.createElement('div')
-		el.classList.add('fractils-tooltip')
+		el.classList.add('gooey-tooltip')
 		el.innerHTML = String(this._text())
-		if (opts.style) {
-			for (const [key, value] of entries(opts.style)) {
-				if (key && value) {
-					el.style.setProperty(key, value)
-				}
-			}
-		}
 		this.element = el
 
-		if (opts.style) {
-			for (const [key, value] of entries(opts.style)) {
-				if (key && value) {
-					this.element?.style.setProperty(key, value)
+		if (this.style) {
+			requestAnimationFrame(() => {
+				for (const [key, value] of entries(this.style!)) {
+					if (key && value) {
+						this.element!.style.setProperty(key, value)
+					}
 				}
-			}
+			})
 		}
 
-		this._evm.listen(node!, 'pointerenter', this.show)
-		this._evm.listen(node!, 'pointerleave', this.hide)
-		this._evm.listen(node!, 'pointermove', this._updatePosition)
 		this._evm.listen(node!, 'click', () => {
 			if (opts.hideOnClick) this.hide()
 			else this.refresh()
@@ -214,7 +210,17 @@ export class Tooltip {
 	set text(text: string | (() => string)) {
 		this._text = toFn(text)
 		if (!this.element) return
-		this.element.innerHTML = String(this._text())
+
+	get style(): StyleDefinition | undefined {
+		return this._style()
+	}
+	set style(
+		style:
+			| Partial<Record<JavascriptStyleProperty, string> | undefined>
+			| (() => StyleDefinition | undefined),
+	) {
+		this._style = toFn(style)
+		this.refresh()
 	}
 
 	get placement() {
@@ -259,6 +265,15 @@ export class Tooltip {
 	show = () => {
 		if (this.showing) return
 		if (!this.text) return
+
+		const style = this.style
+		if (style) {
+			for (const [key, value] of entries(style)) {
+				if (key && value) {
+					this.element?.style.setProperty(key, value)
+				}
+			}
+		}
 
 		clearTimeout(this._delayInTimer)
 		clearTimeout(this._delayOutTimer)
@@ -586,48 +601,68 @@ export class Tooltip {
 	}
 
 	static style = /*css*/ `
-		.fractils-tooltip {
+		.gooey-tooltip {
 			position: absolute;
-
-			min-width: 3rem;
-			max-width: auto;
-			min-height: auto;
-			max-height: auto;
+			
+			display: flex;
+			flex-shrink: 1;
+			flex-wrap: wrap;
+			gap: 0.25rem;
+			
+			width: auto;
+			max-width: 400px;
 			padding: 4px 8px;
-
+			
 			opacity: 0;
 			color: var(--fg-a, #fff);
 			background-color: var(--bg-a, #000);
 			border-radius: var(--radius-sm, 4px);
-			box-shadow: var(--shadow, 0rem 0.0313rem 0.0469rem hsl(var(--shadow-color) / 0.02),
-				0rem 0.125rem 0.0938rem hsl(var(--shadow-color) / 0.02),
-				0rem 0.1563rem 0.125rem hsl(var(--shadow-color) / 0.025),
-				0rem 0.1875rem 0.1875rem hsl(var(--shadow-color) / 0.05),
-				0rem 0.3125rem 0.3125rem hsl(var(--shadow-color) / 0.05),
-				0rem 0.4375rem 0.625rem hsl(var(--shadow-color) / 0.075));
+			box-shadow: 0rem 0.1563rem 0.125rem hsla(250, 10%, var(--shadow-lightness, 30%), 0.025),
+				0rem 0.1875rem 0.1875rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.05),
+				0rem 0.3125rem 0.3125rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.05),
+				0rem 0.4375rem 0.625rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.075);
+			outline: 1px solid var(--bg-b, #222);
 
 			text-align: center;
-			font-size: var(--font-size-sm, 12px);
-			font-family: var(--gooey-font, var(--font-a, 'fredoka'));
+			font-size: var(--font-sm, 0.8rem);
+			font-family: var(--font-a, 'fredoka');
 			letter-spacing: 1px;
+			text-wrap: pretty;
 
 			z-index: 1000;
-			pointer-events: none;
 			transition: opacity 0.1s;
+
+
+			code {
+				font-size: var(--font-sm, 0.8rem);
+				background: var(--bg-b, #1118);
+				padding: 2px 4px;
+				border-radius: 2px;
+				height: fit-content;
+			}
+
+			pointer-events: none;
+			
+			&.showing {
+				pointer-events: auto;
+			}
+
+			a {
+				color: var(--theme-a, #08f);
+				text-decoration: underline;
+				text-decoration-thickness: 0.5px;
+				text-decoration-skip-ink: auto;
+			}
 		}
 
-		.fractils-tooltip .fractils-hotkey {
+		.gooey-tooltip .gooey-hotkey {
 			filter: contrast(1.1);
-			background: var(--fractils-hotkey_background, #1118);
-			background: var(--fractils-hotkey_background, color-mix(in sRGB, var(--bg-c) 66%, transparent));
-			color: var(--fractils-hotkey_color, var(--fg-a, #fff));
+			background: var(--bg-b, #1118);
+			color: var(--fg-a, #fff);
 			padding: 0px 3px;
 			border-radius: 2px;
 			box-shadow: 0 0 2px rgba(0, 0, 0, 0.33);
-		}
-
-		:root[theme='dark'] .fractils-tooltip .fractils-hotkey {
-			background: var(--fractils-hotkey_background, color-mix(in sRGB, var(--bg-d) 100%, transparent));
+			display: flex;
 		}
 	`
 }

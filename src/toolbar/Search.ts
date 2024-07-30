@@ -44,6 +44,8 @@ export class Search {
 			text: this.defaultTooltipText,
 			placement: 'left',
 			delay: 500,
+			// @ts-expect-error
+			style: this.folder.gooey?._getStyles,
 		})
 
 		const icon = this._searchIcon()

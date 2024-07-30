@@ -117,6 +117,8 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 						(this.state.value ? opts.labels?.false.verb : opts.labels?.true.verb) || ''
 					)
 				},
+				// @ts-expect-error
+				style: this.folder.gooey?._getStyles,
 				anchor: '.gooey-controller-switch-thumb',
 				delay: 750,
 			},

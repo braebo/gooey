@@ -315,6 +315,8 @@ export class PresetManager {
 							delay: 0,
 							placement: 'bottom',
 							hideOnClick: true,
+							// @ts-expect-error - @internal
+							style: this.gooey?._getStyles,
 						},
 						style: { maxWidth: '1.5rem', padding: '0.3rem' },
 						onClick: () => {
@@ -335,6 +337,8 @@ export class PresetManager {
 							delay: 0,
 							placement: 'bottom',
 							hideOnClick: true,
+							// @ts-expect-error - @internal
+							style: this.gooey?._getStyles,
 						},
 						style: { maxWidth: '1.5rem', padding: '0.3rem' },
 						onClick: async ({ button }) => {
@@ -370,6 +374,8 @@ export class PresetManager {
 							delay: 0,
 							placement: 'bottom',
 							hideOnClick: true,
+							// @ts-expect-error - @internal
+							style: this.gooey?._getStyles,
 						},
 						style: { maxWidth: '1.5rem', padding: '0.3rem' },
 						onClick: () => {
@@ -389,6 +395,8 @@ export class PresetManager {
 							placement: 'bottom',
 							hideOnClick: true,
 							// offsetY: '0.1rem',
+							// @ts-expect-error - @internal
+							style: this.gooey?._getStyles,
 						},
 						style: { maxWidth: '1.5rem', padding: '0.3rem' },
 						onClick: () => {
@@ -407,6 +415,8 @@ export class PresetManager {
 							delay: 0,
 							placement: 'bottom',
 							hideOnClick: true,
+							// @ts-expect-error - @internal
+							style: this.gooey?._getStyles,
 						},
 						style: { maxWidth: '1.5rem', padding: '0.3rem' },
 						onClick: () => {
@@ -475,6 +485,8 @@ export class PresetManager {
 					return this.defaultPresetIsActive ? `Can't rename default preset` : `Rename`
 				}
 			},
+			// @ts-expect-error - @internal
+			style: this.gooey._getStyles,
 		})
 		this._presetsInput.listen(this._renamePresetButton.element, 'click', this._toggleRename)
 

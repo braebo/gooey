@@ -32,16 +32,11 @@ export class NumberController<
 			value: String(input.state.value),
 			parent,
 			tooltip: {
-				text: /*html*/ `Hold <span class="fractils-hotkey">${modIcon()}</span> to drag`,
+				text: /*html*/ `Hold <span class="gooey-hotkey">${modIcon()}</span> to drag`,
 				placement: 'top',
-				delay: 1500,
-				parent,
-				styles: {
-					background: 'var(--gooey-bg-a)',
-					color: 'var(--gooey-fg-a)',
-					'--fractils-hotkey_background': 'var(--gooey-bg-b)',
-					'--fractils-hotkey_color': 'var(--gooey-fg-a)',
-				},
+				delay: 1250,
+				// @ts-expect-error - @internal
+				style: input.folder.gooey?._getStyles,
 			},
 		})
 

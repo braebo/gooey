@@ -760,6 +760,7 @@ export class Gooey {
 				delay: 750,
 				delayOut: 0,
 				hideOnClick: true,
+				style: this._getStyles,
 			},
 		})
 
@@ -863,6 +864,20 @@ export class Gooey {
 		})
 
 		return windowManager
+	}
+
+	/**
+	 * todo - Add the public resolved vars to `Themer` and remove this.
+	 * @internal
+	 */
+	private _getStyles = () => {
+		return {
+			'--fg-a': this.wrapper?.style.getPropertyValue('--gooey-fg-a'),
+			'--bg-a': this.wrapper?.style.getPropertyValue('--gooey-bg-a'),
+			'--bg-b': this.wrapper?.style.getPropertyValue('--gooey-bg-b'),
+			'--font-a': this.wrapper?.style.getPropertyValue('--gooey-font-family'),
+			'--shadow-lightness': this.wrapper?.style.getPropertyValue('--gooey-shadow-lightness'),
+		}
 	}
 
 	dispose = () => {

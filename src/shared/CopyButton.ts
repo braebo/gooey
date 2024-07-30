@@ -1,3 +1,5 @@
+import type { ValidInput } from '../inputs/Input'
+
 import { Tooltip } from '../shared/Tooltip'
 import { create } from '../shared/create'
 import { append } from '../shared/mount'
@@ -23,6 +25,7 @@ export class CopyButton {
 		public container: HTMLElement,
 		public text: () => string,
 		public message = 'Copy',
+		public input?: ValidInput,
 	) {
 		const button = create('div', {
 			classes: ['copy-button'],
@@ -49,6 +52,22 @@ export class CopyButton {
 			placement: 'top',
 			offsetY: '6px',
 			delay: 600,
+			style: input
+				? () => ({
+						'--fg-a':
+							this.input?.folder.gooey?.wrapper.style.getPropertyValue(
+								'--gooey-fg-a',
+							),
+						'--bg-a':
+							this.input?.folder.gooey?.wrapper.style.getPropertyValue(
+								'--gooey-bg-a',
+							),
+						'--bg-b':
+							this.input?.folder.gooey?.wrapper.style.getPropertyValue(
+								'--gooey-bg-b',
+							),
+					})
+				: undefined,
 		})
 	}
 

@@ -252,6 +252,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 				return this.state.value.hex
 			},
 			'Copy Hex',
+			this,
 		)
 
 		return {

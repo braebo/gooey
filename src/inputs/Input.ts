@@ -359,6 +359,8 @@ export abstract class Input<
 				text: 'Reset',
 				placement: 'left',
 				delay: 0,
+				// @ts-expect-error
+				style: this.folder.gooey?._getStyles,
 			},
 			onclick: () => {
 				this.__log.fn('reset').debug('resetting to initial value', this.initialValue)
