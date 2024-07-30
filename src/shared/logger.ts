@@ -224,10 +224,10 @@ export class Logger {
 	 */
 	fn(str: string, ...args: any[]) {
 		this.buffer.push(
-			gr(str) +
-				dim('(') +
+			str +
+				gr('(') +
 				args.map(a => gr(typeof a === 'object' ? stringify(a) : a)).join(', ') +
-				dim(')'),
+				gr(')'),
 		)
 		return this
 	}
