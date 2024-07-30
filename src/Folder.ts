@@ -1339,6 +1339,7 @@ export class Folder {
 
 	addButton(title: string, onclick: () => void, options?: ButtonInputOptions): InputButton {
 		const opts = this._resolveOpts(title, onclick, options)
+		opts.onClick = onclick || opts.value
 		const input = new InputButton(opts, this)
 		return this._registerInput(input, opts.presetId)
 	}
