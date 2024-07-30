@@ -25,6 +25,16 @@ export type { InputText, TextInputOptions } from './inputs/InputText'
 
 // Shared
 
+export type { LoggerOptions, LogLevel } from './shared/logger'
 export { Logger, logger } from './shared/logger'
 
-export { WindowManager } from './shared/WindowManager'
+export type { TooltipOptions } from './shared/Tooltip'
+export { Tooltip, tooltip, TOOLTIP_DEFAULTS } from './shared/Tooltip'
+
+export type { WindowManagerOptions, WindowInstanceOptions } from './shared/WindowManager'
+export {
+	WindowManager,
+	WindowInstance,
+	WINDOWMANAGER_DEFAULTS,
+	WINDOWMANGER_STORAGE_DEFAULTS,
+} from './shared/WindowManager'
