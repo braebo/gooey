@@ -1,5 +1,15 @@
 # gooey
 
+## 0.2.5
+
+### Patch Changes
+
+-   fix: get correct initial position before mounting ([`d6c182c51c9610c8bcb1a67f180951d1ebc08bcb`](https://github.com/braebo/gooey/commit/d6c182c51c9610c8bcb1a67f180951d1ebc08bcb))
+
+-   feat: more exports ([`c7b98bc1803c761ff9990f05ae48a158950ab6ff`](https://github.com/braebo/gooey/commit/c7b98bc1803c761ff9990f05ae48a158950ab6ff))
+
+-   feat: bugfixes ([`9c3360901d6e6806ccce81ddbec882f95e8a5ab3`](https://github.com/braebo/gooey/commit/9c3360901d6e6806ccce81ddbec882f95e8a5ab3))
+
 ## 0.2.4
 
 ### Patch Changes
