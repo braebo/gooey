@@ -135,10 +135,10 @@ class Logger {
      * ```
      */
     fn(str, ...args) {
-        this.buffer.push(gr(str) +
-            dim('(') +
+        this.buffer.push(str +
+            gr('(') +
             args.map(a => gr(typeof a === 'object' ? stringify(a) : a)).join(', ') +
-            dim(')'));
+            gr(')'));
         return this;
     }
     static createLogger(title, options) {
