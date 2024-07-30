@@ -11,7 +11,7 @@ const TOOLTIP_DEFAULTS = {
     placement: 'top',
     anchor: 'node',
     delay: 250,
-    delayOut: 0,
+    delayOut: 50,
     offsetX: '0%',
     offsetY: '0%',
     animation: {
@@ -180,7 +180,9 @@ let Tooltip = class Tooltip {
                 fill: 'forwards',
             })
                 .finished.then(() => {
-                this.element?.classList.add('showing');
+                if (this.showing) {
+                    this.element?.classList.add('showing');
+                }
             });
             this._updatePosition();
             this._maybeWatchAnchor();
@@ -198,12 +200,12 @@ let Tooltip = class Tooltip {
                     return;
                 }
                 this.showing = false;
-                this.element?.classList.remove('showing');
                 if (this._watcherId) {
                     this._evm.unlisten(this._watcherId);
                 }
                 if (!this.element)
                     return;
+                this.element.classList.remove('showing');
                 await this.element.animate([
                     { opacity: '1', transform: this._animPositions.to },
                     { opacity: '0', transform: this._animPositions.from },

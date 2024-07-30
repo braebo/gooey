@@ -112,9 +112,6 @@ class PresetManager {
     _resolveDefaultPreset(defaultPreset) {
         if (!this._isInitialized())
             throw new Error('PresetManager not initialized.');
-        if (this.opts.defaultPreset) {
-            return this.opts.defaultPreset;
-        }
         defaultPreset ??= this.presets.value.find(p => p.id === this._defaultPresetId);
         if (!defaultPreset) {
             defaultPreset = this.gooey.save(this._defaultPresetTitle, this._defaultPresetId, this.__version);

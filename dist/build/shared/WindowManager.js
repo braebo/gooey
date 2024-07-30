@@ -1,5 +1,5 @@
-import { Resizable, RESIZABLE_DEFAULTS } from './resizable.js';
-import { Draggable, DRAGGABLE_DEFAULTS } from './draggable.js';
+import { RESIZABLE_DEFAULTS, Resizable } from './resizable.js';
+import { DRAGGABLE_DEFAULTS, Draggable } from './draggable.js';
 import { EventManager } from './EventManager.js';
 import { resolveOpts } from './resolveOpts.js';
 import { Logger } from './logger.js';

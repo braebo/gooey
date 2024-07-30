@@ -36,7 +36,7 @@ export interface TooltipOptions {
     delay: number;
     /**
      * Delay in milliseconds before the tooltip is hidden.
-     * @defaultValue 0
+     * @defaultValue 50
      */
     delayOut: number;
     /**
