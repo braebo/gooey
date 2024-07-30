@@ -1188,6 +1188,10 @@ input.gooey-search-input {
 	}
 }
 
+.gooey-folder.disabled .gooey-input-reset-btn {
+	pointer-events: none;
+}
+
 .gooey-input-title {
 	position: relative;
 	contain: content;
