@@ -9,6 +9,8 @@ import type { InputText, TextInputOptions } from './InputText'
 
 import type { ColorFormat } from '../shared/color/types/colorFormat'
 import type { EventCallback } from '../shared/EventManager'
+import type { TooltipOptions } from '../shared/Tooltip'
+import type { CreateOptions } from '../shared/create'
 import type { Option } from '../controllers/Select'
 import type { Color } from '../shared/color/color'
 import type { State } from '../shared/state'
@@ -126,6 +128,16 @@ export type InputOptions<
 	 * `Input.on('change', value => {})`.
 	 */
 	onChange?: (value: TValue) => void
+
+	/**
+	 * Optional tooltip text to display when hovering over the input's title.
+	 */
+	description?: string
+
+	/**
+	 * When {@link description} is provided, these options can be used to customize the tooltip.
+	 */
+	tooltipOptions?: Partial<TooltipOptions>
 } & ValueOrBinding<TValue, TBindTarget>
 
 export type InputPreset<T extends ValidInputOptions> = Omit<
@@ -305,10 +317,28 @@ export abstract class Input<
 			this.element.style.setProperty('--gooey-input-section-1_width', '0px')
 		}
 
-		this.elements.drawerToggle = create('div', {
+		const drawerToggleOptions: Partial<CreateOptions> = {
 			classes: ['gooey-input-drawer-toggle'],
 			parent: this.elements.container,
-		})
+		}
+		if (this.opts.description) {
+			drawerToggleOptions.classes!.push('has-description')
+			drawerToggleOptions.tooltip = {
+				text: this.opts.description,
+				placement: 'left',
+				delay: 0,
+				offsetX: '-4px',
+				...this.opts.tooltipOptions,
+				style: () => ({
+					'text-align': 'left',
+					'padding-left': '8px',
+					// @ts-expect-error @internal
+					...this.folder.gooey?._getStyles(),
+				}),
+			}
+		}
+
+		this.elements.drawerToggle = create('div', drawerToggleOptions)
 
 		this.elements.title = create('div', {
 			classes: ['gooey-input-title'],

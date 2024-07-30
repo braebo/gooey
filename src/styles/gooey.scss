@@ -1107,10 +1107,14 @@ input.gooey-search-input {
 	border-top-right-radius: var(--gooey-radius-sm);
 	border-bottom-right-radius: var(--gooey-radius-sm);
 
-	cursor: pointer;
+	&.has-description {
+		background: var(--gooey-bg-b);
+		cursor: pointer;
+		pointer-events: auto;
 
-	&:hover {
-		background: var(--gooey-bg-c);
+		&:hover {
+			background: var(--gooey-bg-c);
+		}
 	}
 }
 
