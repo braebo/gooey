@@ -362,18 +362,44 @@ export abstract class Input<
 							let initialValue = this.initialValue
 
 							if (typeof initialValue === 'object') {
-								if ('labelKey' in this.opts) {
-									initialValue =
-										initialValue[
-											this.opts.labelKey as keyof typeof initialValue
-										]
-								} else {
-									try {
-										initialValue = JSON.stringify(initialValue)
-									} catch (e) {
-										console.error(e, { initialValue, this: this })
-										throw new Error(e as any)
+								switch (this.__type) {
+									case 'InputSelect': {
+										if ('labelKey' in this.opts) {
+											initialValue =
+												initialValue[
+													this.opts.labelKey as keyof typeof initialValue
+												]
+											break
+										}
 									}
+									case 'InputColor': {
+										if ('hex' in initialValue) {
+											initialValue =
+												initialValue[(this as any as InputColor).mode]
+
+											if (CSS.supports('color', initialValue)) {
+												return `Reset · <em style="color:${initialValue}">${initialValue}</em>`
+											}
+											break
+										}
+									}
+									default: {
+										try {
+											initialValue = JSON.stringify(initialValue)
+										} catch (e) {
+											console.error(e, { initialValue, this: this })
+											throw new Error(e as any)
+										}
+									}
+								}
+							} else if (typeof initialValue === 'boolean') {
+								if (this.__type === 'InputSwitch') {
+									let text = `${initialValue}`
+									text =
+										(this as any as InputSwitch).opts.labels?.[
+											text as 'true' | 'false'
+										].state ?? text
+									return `Reset · <em>${text}</em>`
 								}
 							}
 
