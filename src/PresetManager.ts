@@ -40,7 +40,7 @@ export interface PresetManagerOptions {
 
 export class PresetManager {
 	readonly __type = Object.freeze('PresetManager')
-	readonly __version = '1'
+	readonly __version = '2' // todo - this needs to be settable externally (added to GooeyOptions)
 
 	defaultPreset!: GooeyPreset
 	activePreset: State<GooeyPreset>
