@@ -200,6 +200,7 @@ export class Tooltip {
 			if (opts.hideOnClick) this.hide()
 			else this.refresh()
 		})
+		// this.show()
 	}
 
 	refresh() {
@@ -292,7 +293,7 @@ export class Tooltip {
 		clearTimeout(this._delayOutTimer)
 
 		this._delayInTimer = setTimeout(async () => {
-			if (this.element) this.parent?.appendChild(this.element)
+			this.mount()
 			this.showing = true
 
 			this.element
@@ -354,11 +355,6 @@ export class Tooltip {
 					},
 				).finished
 
-				this.element.style.setProperty(
-					'max-width',
-					this.element.dataset['maxWidth'] ?? 'initial',
-				)
-				delete this.element.dataset['maxWidth']
 				this.unmount()
 			}
 		}
@@ -396,13 +392,28 @@ export class Tooltip {
 	mount() {
 		if (this._mounted) return
 		this._mounted = true
-		if (this.element) this.parent?.appendChild(this.element)
+		if (this.element) {
+			this.parent?.appendChild(this.element)
+
+			if (!('maxWidth' in this.element.dataset)) {
+				const maxWidth = getComputedStyle(this.element).maxWidth
+				if (maxWidth) this.element.dataset['maxWidth'] = maxWidth
+			}
+		}
 	}
 	unmount() {
 		if (!this._mounted) return
 		this._mounted = false
 
-		if (this.element) this.parent?.removeChild(this.element)
+		if (this.element) {
+			this.parent?.removeChild(this.element)
+
+			// Reset the max-width in case it was modified during positioning.
+			this.element.style.setProperty(
+				'max-width',
+				this.element.dataset['maxWidth'] ?? 'initial',
+			)
+		}
 	}
 
 	private _updatePosition(e?: PointerEvent) {
@@ -796,36 +807,33 @@ export class Tooltip {
 
 	static style = /*css*/ `
 		.gooey-tooltip {
-			position: absolute;
-			
-			display: flex;
-			flex-shrink: 1;
-			flex-wrap: wrap;
-			gap: 0.25rem;
+			position: absolute;			
 			
 			width: auto;
-			max-width: 400px;
-			padding: 4px 8px;
-			
+			max-width: 420px;
+			padding: 6px 8px;
+
 			opacity: 0;
 			color: var(--fg-a, #fff);
 			background-color: var(--bg-a, #000);
 			border-radius: var(--radius-sm, 4px);
 			box-shadow: 0rem 0.1563rem 0.125rem hsla(250, 10%, var(--shadow-lightness, 30%), 0.025),
-				0rem 0.1875rem 0.1875rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.05),
-				0rem 0.3125rem 0.3125rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.05),
-				0rem 0.4375rem 0.625rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.075);
+			0rem 0.1875rem 0.1875rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.05),
+			0rem 0.3125rem 0.3125rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.05),
+			0rem 0.4375rem 0.625rem hsla(250, 10%, var(--shadow-lightness, 25%), 0.075);
 			outline: 1px solid var(--bg-b, #222);
 
 			text-align: center;
 			font-size: var(--font-sm, 0.8rem);
 			font-family: var(--font-a, 'fredoka');
 			letter-spacing: 1px;
+
 			text-wrap: pretty;
+			white-space: pre-wrap;
+			font-synthesis: style; /* fredoka doesn't have italics */
 
 			z-index: 1000;
 			transition: opacity 0.1s;
-
 
 			code {
 				font-size: var(--font-sm, 0.8rem);
@@ -836,16 +844,16 @@ export class Tooltip {
 			}
 
 			pointer-events: none;
-			
-			&.showing {
-				pointer-events: auto;
-			}
 
 			a {
 				color: var(--theme-a, #08f);
 				text-decoration: underline;
 				text-decoration-thickness: 0.5px;
 				text-decoration-skip-ink: auto;
+			}
+
+			&.showing {
+				pointer-events: auto;
 			}
 		}
 
