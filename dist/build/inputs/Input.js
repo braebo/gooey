@@ -142,18 +142,41 @@ class Input {
                     : () => {
                         let initialValue = this.initialValue;
                         if (typeof initialValue === 'object') {
-                            if ('labelKey' in this.opts) {
-                                initialValue =
-                                    initialValue[this.opts.labelKey];
+                            switch (this.__type) {
+                                case 'InputSelect': {
+                                    if ('labelKey' in this.opts) {
+                                        initialValue =
+                                            initialValue[this.opts.labelKey];
+                                        break;
+                                    }
+                                }
+                                case 'InputColor': {
+                                    if ('hex' in initialValue) {
+                                        initialValue =
+                                            initialValue[this.mode];
+                                        if (CSS.supports('color', initialValue)) {
+                                            return `Reset · <em style="color:${initialValue}">${initialValue}</em>`;
+                                        }
+                                        break;
+                                    }
+                                }
+                                default: {
+                                    try {
+                                        initialValue = JSON.stringify(initialValue);
+                                    }
+                                    catch (e) {
+                                        console.error(e, { initialValue, this: this });
+                                        throw new Error(e);
+                                    }
+                                }
                             }
-                            else {
-                                try {
-                                    initialValue = JSON.stringify(initialValue);
-                                }
-                                catch (e) {
-                                    console.error(e, { initialValue, this: this });
-                                    throw new Error(e);
-                                }
+                        }
+                        else if (typeof initialValue === 'boolean') {
+                            if (this.__type === 'InputSwitch') {
+                                let text = `${initialValue}`;
+                                text =
+                                    this.opts.labels?.[text].state ?? text;
+                                return `Reset · <em>${text}</em>`;
                             }
                         }
                         return `Reset · <em style="opacity:0.5;">${initialValue}</em>`;

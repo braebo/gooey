@@ -25,7 +25,7 @@ export declare class PresetManager {
     gooey: Gooey;
     parentFolder: Folder;
     readonly __type: string;
-    readonly __version = "1";
+    readonly __version = "2";
     defaultPreset: GooeyPreset;
     activePreset: State<GooeyPreset>;
     presets: State<GooeyPreset[]>;

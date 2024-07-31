@@ -12,7 +12,7 @@ class PresetManager {
     gooey;
     parentFolder;
     __type = Object.freeze('PresetManager');
-    __version = '1';
+    __version = '2'; // todo - this needs to be settable externally (added to GooeyOptions)
     defaultPreset;
     activePreset;
     presets;
