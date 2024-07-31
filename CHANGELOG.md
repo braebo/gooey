@@ -1,5 +1,13 @@
 # gooey
 
+## 0.2.6
+
+### Patch Changes
+
+-   feat: better default preset handling ([`d48eda50db8e5c8c3fe67103690e35a2bd6c9a36`](https://github.com/braebo/gooey/commit/d48eda50db8e5c8c3fe67103690e35a2bd6c9a36))
+
+-   feat: ures ([`37aaa97cc6ac4fc25ed25d98205ef739d516a0b5`](https://github.com/braebo/gooey/commit/37aaa97cc6ac4fc25ed25d98205ef739d516a0b5))
+
 ## 0.2.5
 
 ### Patch Changes
