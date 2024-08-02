@@ -9,7 +9,7 @@ class Theme {
 	}
 
 	systemPreference = $state<'light' | 'dark' | null>(
-		globalThis?.window.matchMedia('prefers-color-scheme: dark').matches ? 'dark' : 'light' || null,
+		globalThis?.window.matchMedia('prefers-color-scheme: dark').matches ? 'dark' : 'light',
 	)
 
 	constructor(
