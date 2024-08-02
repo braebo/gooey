@@ -1,5 +1,11 @@
 # gooey
 
+## 0.2.7
+
+### Patch Changes
+
+-   fix: `bindMany` throwing when options are missing ([`e0e3d205b78e4a29b1bcbdf8793698083db7f83d`](https://github.com/braebo/gooey/commit/e0e3d205b78e4a29b1bcbdf8793698083db7f83d))
+
 ## 0.2.6
 
 ### Patch Changes
