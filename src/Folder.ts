@@ -818,7 +818,7 @@ export class Folder {
 	}
 
 	hide(): this {
-		this._log.fn('hide').error()
+		this._log.fn('hide').debug()
 		this.element.classList.add('hidden')
 		return this
 	}
