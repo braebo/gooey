@@ -194,10 +194,16 @@ class InputColor extends Input {
         this._pickerContainer?.classList.add('expanded');
         await Promise.all([pickerAnim?.finished, containerAnim?.finished]);
         if (this._pickerContainer && document.contains(this._pickerContainer)) {
-            pickerAnim?.commitStyles();
+            try {
+                pickerAnim?.commitStyles();
+            }
+            catch (e) { }
         }
         if (this.elements.container && document.contains(this.elements.container)) {
-            containerAnim?.commitStyles();
+            try {
+                containerAnim?.commitStyles();
+            }
+            catch (e) { }
         }
         this.folder.graphics?.connector?.update();
     };
