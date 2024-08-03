@@ -152,6 +152,14 @@ export interface GooeyOptions {
 	loadDefaultFont?: boolean
 
 	/**
+	 * Any {@link FolderOptions} for the builtin global settings folder.
+	 * @default { closed: true }
+	 */
+	settingsFolder?: Partial<FolderOptions>
+}
+
+export interface GooeyOptionsInternal extends GooeyOptions {
+	/**
 	 * @internal
 	 */
 	_windowManager?: WindowManager
@@ -160,12 +168,6 @@ export interface GooeyOptions {
 	 * @internal
 	 */
 	_themer?: Themer
-
-	/**
-	 * Any {@link FolderOptions} for the builtin global settings folder.
-	 * @default { closed: true }
-	 */
-	settingsFolder?: Partial<FolderOptions>
 }
 
 export interface GooeyStorageOptions {
@@ -500,7 +502,8 @@ export class Gooey {
 		updateIcon()
 		this.settingsFolder.element.style.setProperty('order', '-99')
 
-		this.themer = this.opts._themer ?? this._createThemer(this.settingsFolder)
+		this.themer =
+			(this.opts as GooeyOptionsInternal)._themer ?? this._createThemer(this.settingsFolder)!
 		this.theme = this.opts.theme
 		this.presetManager = this._createPresetManager(this.settingsFolder)
 
@@ -690,7 +693,7 @@ export class Gooey {
 	private _createThemer(folder: Folder) {
 		this._log.fn('createThemer').debug({ folder })
 		let finalThemer = undefined as Themer | undefined
-		const themer = this.opts._themer
+		const themer = (this.opts as GooeyOptionsInternal)._themer
 		const themerOptions: Partial<ThemerOptions> = {
 			localStorageKey: this.opts.storage ? this.opts.storage.key + '::themer' : undefined,
 			mode: this.opts.themeMode,
@@ -826,8 +829,8 @@ export class Gooey {
 		}
 
 		// Use the provided window manager if it's an instance.
-		if (options?._windowManager instanceof WindowManager) {
-			const windowManager = options._windowManager
+		if ((options as GooeyOptionsInternal)?._windowManager instanceof WindowManager) {
+			const windowManager = (options as GooeyOptionsInternal)._windowManager!
 
 			windowManager.add(this.folder.element, {
 				id: this.id,
