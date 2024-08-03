@@ -663,83 +663,13 @@ class Folder {
      * @internal
      */
     _transientRoot = null;
-    // bindMany<
-    // 	T extends Record<string, any>,
-    // 	TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
-    // >(folderTitle: string, targetObject: T, targetOptions?: TOptions): this & InferTarget<T>
-    // bindMany<
-    // 	T extends Record<string, any>,
-    // 	TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
-    // >(target: T, targetOptions?: TOptions, never?: never): this & InferTarget<T>
-    // bindMany<
-    // 	T extends Record<string, any>,
-    // 	TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
-    // 	TInputs extends InferTarget<T> = InferTarget<T>,
-    // >(
-    // 	titleOrTarget: string | T,
-    // 	targetOrOptions?: T | TOptions,
-    // 	maybeOptions?: TOptions,
-    // ): this & TInputs {
-    // 	let target: T
-    // 	let options = {} as TOptions
-    // 	let rootFolder: Folder = this
-    // 	if (typeof titleOrTarget === 'string') {
-    // 		if (!targetOrOptions || typeof targetOrOptions !== 'object') {
-    // 			throw new Error('No target object provided.')
-    // 		}
-    // 		target = targetOrOptions as T
-    // 		options = maybeOptions || ({} as TOptions)
-    // 		// @ts-expect-error
-    // 		rootFolder = this.addFolder(titleOrTarget, options.folderOptions)
-    // 	} else {
-    // 		target = titleOrTarget
-    // 		options = (targetOrOptions as TOptions) || {}
-    // 	}
-    // 	if (!this._transientRoot) {
-    // 		this._transientRoot = rootFolder
-    // 	}
-    // 	for (let [key, value] of Object.entries(target)) {
-    // 		const inputOptions = options[key as keyof T] || {}
-    // 		let folderOptions = {} as FolderOptions
-    // 		if (value === null) {
-    // 			if (!('value' in inputOptions)) {
-    // 				console.error(
-    // 					`Found null value for ${key}, and no valid "value" option was provided.`,
-    // 					{ key, value, inputOptions },
-    // 				)
-    // 				throw new Error('Invalid binding.')
-    // 			}
-    // 			value = inputOptions.value
-    // 		}
-    // 		if (typeof value === 'object') {
-    // 			if (isColor(value)) {
-    // 				this.bindColor(value, 'color', { title: key, ...inputOptions })
-    // 			} else {
-    // 				if ('folderOptions' in inputOptions) {
-    // 					folderOptions = inputOptions.folderOptions as FolderOptions
-    // 				} else if ('folderOptions' in value) {
-    // 					folderOptions = value.folderOptions
-    // 				}
-    // 				const subFolder = this.addFolder(key, folderOptions)
-    // 				subFolder.bindMany(value, inputOptions)
-    // 			}
-    // 		} else if ('options' in inputOptions) {
-    // 			// let selectOptions = inputOptions as SelectInputOptions<T>
-    // 			this.bindSelect(target, key, inputOptions as SelectInputOptions)
-    // 		} else {
-    // 			this.bind(target, key as keyof T, inputOptions)
-    // 		}
-    // 	}
-    // 	const finalRoot = this._transientRoot
-    // 	this._transientRoot = null
-    // 	return finalRoot as this & TInputs
-    // }
     bindMany(target, options) {
         const walk = (target, options, folder, seen) => {
             if (seen.has(target))
                 return;
             seen.add(target);
             for (let [key, value] of Object.entries(target)) {
+                console.log({ options });
                 if (Array.isArray(options['exclude']) && options['exclude'].includes(key))
                     continue;
                 if (Array.isArray(options['include']) && !options['include'].includes(key))
@@ -780,7 +710,7 @@ class Folder {
         if (!this._transientRoot) {
             this._transientRoot = rootFolder;
         }
-        walk(target, options, rootFolder, new Set());
+        walk(target, (options || undefined) ?? {}, rootFolder, new Set());
         const finalRoot = this._transientRoot;
         this._transientRoot = null;
         return finalRoot;

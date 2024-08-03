@@ -21,34 +21,13 @@ export class ThemeEditor {
         if (isType(opts.storage, 'GooeyStorageOptions')) {
             opts.storage.key += '::theme-editor';
         }
-        // console.log(opts)
-        // const storageOpts = isType(opts?.storage, 'GooeyStorageOptions') ? opts.storage : undefined
-        // const key = storageOpts ? storageOpts.key + '::theme-editor' : ''
         this.gooey = new Gooey({
             title: 'Theme Editor',
             container: targetGooey.container,
+            // @ts-expect-error - @internal
+            _windowManager: targetGooey.windowManager,
             _themer: targetGooey.themer,
-            _windowManager: targetGooey.windowManager, // Recycling!
         });
-        // const dragOpts = isType(this.targetGooey.windowManager?.opts.draggable, 'object')
-        // 	? this.targetGooey.windowManager.opts.draggable
-        // 	: DRAGGABLE_DEFAULTS
-        // const resizeOpts = isType(this.targetGooey.windowManager?.opts.resizable, 'object')
-        // 	? this.targetGooey.windowManager.opts.resizable
-        // 	: RESIZABLE_DEFAULTS
-        // this.targetGooey.windowManager?.add(this.gooey.wrapper, {
-        // 	id: this.gooey.id,
-        // 	...this.targetGooey.windowManager.opts,
-        // 	draggable: {
-        // 		...dragOpts,
-        // 		handle: this.gooey.elements.header,
-        // 	},
-        // 	resizable: {
-        // 		...resizeOpts,
-        // 	},
-        // })
-        // console.log(targetGooey.container)
-        // console.log(this.gooey.container)
         if (!this.targetGooey.themer) {
             throw new Error('Themer not found.');
         }
@@ -59,12 +38,6 @@ export class ThemeEditor {
         this.targetGooey.themer.applyTheme();
         setTimeout(() => {
             this.generate();
-            // console.log(this.targetGooey.folder.id, this.gooey.folder.id)
-            // console.log(this.targetGooey.windowManager?.windows.map(w => w.id))
-            // console.log(
-            // 	this.targetGooey.windowManager?.windows.find(w => w.id === this.targetGooey.folder.id),
-            // )
-            // console.log(this.gooey.windowManager?.windows.find(w => w.id === this.gooey.folder.id))
         }, 0);
     }
     dispose() {

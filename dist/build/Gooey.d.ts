@@ -113,6 +113,13 @@ export interface GooeyOptions {
      */
     loadDefaultFont?: boolean;
     /**
+     * Any {@link FolderOptions} for the builtin global settings folder.
+     * @default { closed: true }
+     */
+    settingsFolder?: Partial<FolderOptions>;
+}
+export interface GooeyOptionsInternal extends GooeyOptions {
+    /**
      * @internal
      */
     _windowManager?: WindowManager;
@@ -120,11 +127,6 @@ export interface GooeyOptions {
      * @internal
      */
     _themer?: Themer;
-    /**
-     * Any {@link FolderOptions} for the builtin global settings folder.
-     * @default { closed: true }
-     */
-    settingsFolder?: Partial<FolderOptions>;
 }
 export interface GooeyStorageOptions {
     __type: 'GooeyStorageOptions';
@@ -211,7 +213,7 @@ export declare const GUI_DEFAULTS: {
  * Methods inherited from {@link Folder} to forward to the gooey.
  * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
  */
-declare const FORWARDED_METHODS: ["on", "add", "addMany", "addButtonGrid", "addSelect", "addButton", "addText", "addNumber", "addSwitch", "addColor", "bind", "bindMany", "bindButtonGrid", "bindSelect", "bindButton", "bindText", "bindNumber", "bindSwitch", "bindColor"];
+declare const FORWARDED_METHODS: ["on", "add", "addMany", "addButtonGrid", "addSelect", "addButton", "addText", "addNumber", "addSwitch", "addColor", "bind", "bindMany", "bindButtonGrid", "bindSelect", "bindButton", "bindText", "bindNumber", "bindSwitch", "bindColor", "show", "hide"];
 export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {
 }
 /**
@@ -312,6 +314,7 @@ export declare class Gooey {
      * Unlocks commits and saves the current commit stored in lock.
      */
     private _unlockCommits;
+    private _loadFonts;
     private _createThemer;
     private _createSettingsButton;
     private _createPresetManager;

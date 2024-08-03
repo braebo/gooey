@@ -74,7 +74,7 @@ const GUI_DEFAULTS = {
  * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
  */
 // prettier-ignore
-const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor'];
+const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor', 'show', 'hide'];
 /**
  * The root Gooey instance.  This is the entry point for creating
  * a gooey.  You can create multiple root gooeys, but each gooey
@@ -163,28 +163,7 @@ class Gooey {
         this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' });
         this._log.fn('constructor').debug({ options, opts });
         if (this.opts.loadDefaultFont !== false) {
-            const fredoka = new FontFace('fredoka', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2')})`, {
-                style: 'normal',
-                display: 'swap',
-                weight: '300 700',
-                stretch: '75% 125%',
-                unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
-            });
-            fredoka.load().then(font => {
-                // @ts-expect-error - ¯\_(ツ)_/¯
-                document.fonts.add(font);
-            });
-            const inconsolata = new FontFace('inconsolata', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2')})`, {
-                style: 'normal',
-                display: 'swap',
-                weight: '300 700',
-                stretch: '75% 125%',
-                unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
-            });
-            inconsolata.load().then(font => {
-                // @ts-expect-error - ¯\_(ツ)_/¯
-                document.fonts.add(font);
-            });
+            this._loadFonts();
         }
         this.container = select(this.opts.container)[0];
         this.wrapper = create('div', {
@@ -250,7 +229,8 @@ class Gooey {
         this.settingsFolder.element.classList.add('gooey-folder-alt');
         updateIcon();
         this.settingsFolder.element.style.setProperty('order', '-99');
-        this.themer = this.opts._themer ?? this._createThemer(this.settingsFolder);
+        this.themer =
+            this.opts._themer ?? this._createThemer(this.settingsFolder);
         this.theme = this.opts.theme;
         this.presetManager = this._createPresetManager(this.settingsFolder);
         this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage);
@@ -402,6 +382,30 @@ class Gooey {
         this._commit(commit);
         this._log.fn(o('unlock')).debug('commit', { commit, lockCommit: this._lockCommit });
     };
+    _loadFonts() {
+        const fredoka = new FontFace('fredoka', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2')})`, {
+            style: 'normal',
+            display: 'swap',
+            weight: '300 700',
+            stretch: '75% 125%',
+            unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
+        });
+        fredoka.load().then(font => {
+            // @ts-expect-error - ¯\_(ツ)_/¯
+            document.fonts.add(font);
+        });
+        const inconsolata = new FontFace('inconsolata', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2')})`, {
+            style: 'normal',
+            display: 'swap',
+            weight: '300 700',
+            stretch: '75% 125%',
+            unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
+        });
+        inconsolata.load().then(font => {
+            // @ts-expect-error - ¯\_(ツ)_/¯
+            document.fonts.add(font);
+        });
+    }
     _createThemer(folder) {
         this._log.fn('createThemer').debug({ folder });
         let finalThemer = undefined;
