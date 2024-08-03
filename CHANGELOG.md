@@ -1,5 +1,13 @@
 # gooey
 
+## 0.2.9
+
+### Patch Changes
+
+-   fix: wrong loglevel ([`4aa2a1fce90e2aff2fc5d0c9e7d0b4e1201d225d`](https://github.com/braebo/gooey/commit/4aa2a1fce90e2aff2fc5d0c9e7d0b4e1201d225d))
+
+-   fix: unhandled error ([`5d7d4c449d968c02b148a3589b76a7f76841cfe4`](https://github.com/braebo/gooey/commit/5d7d4c449d968c02b148a3589b76a7f76841cfe4))
+
 ## 0.2.8
 
 ### Patch Changes
