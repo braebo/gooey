@@ -1,5 +1,13 @@
 # gooey
 
+## 0.2.8
+
+### Patch Changes
+
+-   fix:es ([`e885641a1ea3b0bc84bca71cc3644e6a15306c40`](https://github.com/braebo/gooey/commit/e885641a1ea3b0bc84bca71cc3644e6a15306c40))
+
+-   fix: swallow commitStyles err ([`e35de98be114da936990708fccd2b36272d0c73f`](https://github.com/braebo/gooey/commit/e35de98be114da936990708fccd2b36272d0c73f))
+
 ## 0.2.7
 
 ### Patch Changes
