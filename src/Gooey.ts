@@ -386,45 +386,7 @@ export class Gooey {
 		this._log.fn('constructor').debug({ options, opts })
 
 		if (this.opts.loadDefaultFont !== false) {
-			const fredoka = new FontFace(
-				'fredoka',
-				`url(${encodeURI?.(
-					'https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2',
-				)})`,
-				{
-					style: 'normal',
-					display: 'swap',
-					weight: '300 700',
-					stretch: '75% 125%',
-					unicodeRange:
-						'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
-				},
-			)
-
-			fredoka.load().then(font => {
-				// @ts-expect-error - ¯\_(ツ)_/¯
-				document.fonts.add(font)
-			})
-
-			const inconsolata = new FontFace(
-				'inconsolata',
-				`url(${encodeURI?.(
-					'https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2',
-				)})`,
-				{
-					style: 'normal',
-					display: 'swap',
-					weight: '300 700',
-					stretch: '75% 125%',
-					unicodeRange:
-						'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
-				},
-			)
-
-			inconsolata.load().then(font => {
-				// @ts-expect-error - ¯\_(ツ)_/¯
-				document.fonts.add(font)
-			})
+			this._loadFonts()
 		}
 
 		this.container = select(this.opts.container)[0]
@@ -688,6 +650,48 @@ export class Gooey {
 		this._commit(commit)
 
 		this._log.fn(o('unlock')).debug('commit', { commit, lockCommit: this._lockCommit })
+	}
+
+	private _loadFonts() {
+		const fredoka = new FontFace(
+			'fredoka',
+			`url(${encodeURI?.(
+				'https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2',
+			)})`,
+			{
+				style: 'normal',
+				display: 'swap',
+				weight: '300 700',
+				stretch: '75% 125%',
+				unicodeRange:
+					'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
+			},
+		)
+
+		fredoka.load().then(font => {
+			// @ts-expect-error - ¯\_(ツ)_/¯
+			document.fonts.add(font)
+		})
+
+		const inconsolata = new FontFace(
+			'inconsolata',
+			`url(${encodeURI?.(
+				'https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2',
+			)})`,
+			{
+				style: 'normal',
+				display: 'swap',
+				weight: '300 700',
+				stretch: '75% 125%',
+				unicodeRange:
+					'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
+			},
+		)
+
+		inconsolata.load().then(font => {
+			// @ts-expect-error - ¯\_(ツ)_/¯
+			document.fonts.add(font)
+		})
 	}
 
 	private _createThemer(folder: Folder) {
