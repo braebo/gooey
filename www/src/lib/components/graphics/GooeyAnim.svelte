@@ -13,7 +13,7 @@
 	let sliderEl = $state<SVGRectElement>()
 	let thumbEl = $state<SVGRectElement>()
 
-	let sliderInput: InputNumber
+	let hueInput: InputNumber
 
 	let p = $state({
 		speed: 0.66,
@@ -71,7 +71,7 @@
 		})
 
 		// Store a ref to the slider input to sync it with the svg slider.
-		sliderInput = gui.allInputs.get('slider') as InputNumber
+		hueInput = gui.allInputs.get('hue') as InputNumber
 
 		// Update the page theme when the gui theme changes.
 		unsubs.push(
@@ -114,12 +114,12 @@
 	function onpointerdown(e: PointerEvent) {
 		grabbing = true
 		mouseOffset = e.clientX - thumbEl!.getBoundingClientRect().left
-		sliderInput?.elements.controllers.range.classList.add('active')
+		hueInput?.elements.controllers.range.classList.add('active')
 	}
 
 	function onblur() {
 		grabbing = false
-		sliderInput?.elements.controllers.range.classList.remove('active')
+		hueInput?.elements.controllers.range.classList.remove('active')
 	}
 
 	function onpointermove(e: PointerEvent) {
@@ -134,7 +134,7 @@
 		const newX = Math.min(Math.max(clientX - mouseOffset, minX), maxX)
 
 		p.hue = mapRange(newX, minX, maxX, 0, 1).toFixed(2) as any as number
-		sliderInput.refresh()
+		hueInput.refresh()
 	}
 
 	function randomPositions(n = 3) {
