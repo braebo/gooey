@@ -1144,7 +1144,6 @@ export class Folder {
 			seen.add(target)
 
 			for (let [key, value] of Object.entries(target)) {
-				console.log({ options })
 				if (Array.isArray(options['exclude']) && options['exclude'].includes(key as any))
 					continue
 				if (Array.isArray(options['include']) && !options['include'].includes(key as any))
