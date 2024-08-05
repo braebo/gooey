@@ -27,7 +27,6 @@
 
 		return () => {
 			gooey?.dispose()
-			globalThis.window?.location.reload()
 		}
 	})
 
