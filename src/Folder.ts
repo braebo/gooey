@@ -1016,7 +1016,11 @@ export class Folder {
 
 		// this.closed.set(preset.closed) // todo - global settings?
 		// this.hidden = preset.hidden
-		preset.hidden ? this.hide() : this.show()
+		// preset.hidden !== this.hidden ? this.hide() : this.show(true)
+
+		if (preset.hidden !== this.hidden) {
+			preset.hidden ? this.hide() : this.show(true)
+		}
 
 		for (const input of this.inputs.values()) {
 			const inputPreset = preset.inputs.find(c => c.presetId === input.opts.presetId)
