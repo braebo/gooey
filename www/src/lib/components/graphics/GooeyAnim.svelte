@@ -9,6 +9,7 @@
 		height: 190,
 	}
 
+	let gooey: Gooey
 	let svgEl = $state<SVGSVGElement>()
 	let sliderEl = $state<SVGRectElement>()
 	let thumbEl = $state<SVGRectElement>()
@@ -51,14 +52,14 @@
 	const unsubs = [] as (() => any)[]
 	onMount(() => {
 		// Create the gui.
-		const gui = new Gooey({
+		gooey = new Gooey({
 			position: 'top-center',
 			margin: { y: 100 },
 			presets,
 		})
 
 		// Bind to the params and configure their options.
-		gui.bindMany(p, {
+		gooey.bindMany(p, {
 			// hue: { presetId: 'gooey__hue' },
 			goo: {
 				folderOptions: { closed: true },
@@ -71,30 +72,30 @@
 		})
 
 		// Store a ref to the slider input to sync it with the svg slider.
-		hueInput = gui.allInputs.get('hue') as InputNumber
+		hueInput = gooey.allInputs.get('hue') as InputNumber
 
 		// Update the page theme when the gui theme changes.
 		unsubs.push(
-			gui.themer.mode.subscribe((m) => {
+			gooey.themer.mode.subscribe((m) => {
 				themer.theme = m
 			}),
 		)
 
 		// Update the gui when the page theme changes.
 		$effect(() => {
-			gui.themer.mode.set(themer.theme)
+			gooey.themer.mode.set(themer.theme)
 			updateTheme()
 		})
 
 		// Update the page theme when the gui theme changes.
 		unsubs.push(
-			gui.themer.theme.subscribe(() => {
+			gooey.themer.theme.subscribe(() => {
 				updateTheme()
 			}),
 		)
 
 		function updateTheme() {
-			for (const [k, v] of Object.entries(gui.themer.modeColors)) {
+			for (const [k, v] of Object.entries(gooey.themer.modeColors)) {
 				document.documentElement.style.setProperty(`--${k}`, v)
 			}
 		}
@@ -103,7 +104,7 @@
 			for (const unsubscribe of unsubs) {
 				unsubscribe()
 			}
-			gui?.dispose()
+			gooey?.dispose()
 			disposed = true
 		}
 	})
