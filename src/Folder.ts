@@ -185,7 +185,7 @@ export interface FolderOptions {
 	/**
 	 * Whether the folder should be hidden by default.  If a function is
 	 * provided, it will be called to determine the hidden state.  Use
-	 * {@link refresh} to update the hidden state.
+	 * {@link Folder.refresh} to update the hidden state.
 	 * @default false
 	 */
 	hidden?: boolean | (() => boolean)
