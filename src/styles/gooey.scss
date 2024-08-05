@@ -183,10 +183,6 @@
 	contain: content;
 	height: fit-content;
 
-	&.hidden {
-		display: none;
-	}
-
 	&.disabled {
 		opacity: 0.8;
 		filter: brightness(0.5) contrast(1.3);
