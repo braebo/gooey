@@ -100,10 +100,13 @@
 	}
 
 	&.instant {
-		.gooey-content-wrapper {
-			grid-template-rows: 1fr;
-			animation: none;
-		}
+		// animation-duration: 0s !important;
+		// transition-duration: 0s !important;
+
+		// .gooey-content-wrapper {
+		// 	grid-template-rows: 1fr;
+		// 	animation: none;
+		// }
 
 		.gooey-folder .gooey-header {
 			height: var(--gooey-header_height);
@@ -156,6 +159,8 @@
 		grid-template-rows: 1fr;
 	}
 }
+
+// `Gooey.closed` animations
 
 @keyframes open {
 	from {
@@ -391,7 +396,7 @@
 	border-top-right-radius: var(--gooey-radius-sm);
 	background: var(--gooey-root-content_background);
 	backdrop-filter: var(--gooey-backdrop-filter);
-	transform: translateZ(100);
+	transform: translateZ(1px);
 	-webkit-backdrop-filter: var(--gooey-backdrop-filter);
 	outline-offset: -1px;
 
