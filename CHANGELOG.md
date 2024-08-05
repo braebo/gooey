@@ -1,5 +1,15 @@
 # gooey
 
+## 0.2.10
+
+### Patch Changes
+
+-   feat: ures ([`a00748a0be099f2c24a58b061bb07355de0e9845`](https://github.com/braebo/gooey/commit/a00748a0be099f2c24a58b061bb07355de0e9845))
+
+-   fix: bugs ([`15b45063c8f80fca7b86422186d4d77461513d45`](https://github.com/braebo/gooey/commit/15b45063c8f80fca7b86422186d4d77461513d45))
+
+-   chore: cleanup logs ([`1b2ee4f67fb313d2ac3ee90bd5f9619778782455`](https://github.com/braebo/gooey/commit/1b2ee4f67fb313d2ac3ee90bd5f9619778782455))
+
 ## 0.2.9
 
 ### Patch Changes
