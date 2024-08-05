@@ -453,10 +453,11 @@ export class Folder {
 	 * The pixel height of the folder header element.
 	 * @internal
 	 */
-	initialHeaderHeight = 0
+	private initialHeaderHeight = 0
 
 	private _title: string
-	private _hidden = () => false
+	private _hidden = false
+	private _hiddenFn?: () => boolean
 	private _disabled = () => false
 	private _log: Logger
 	/**
@@ -476,6 +477,14 @@ export class Folder {
 	 * Maps preset ids to their inputs.
 	 */
 	private static _presetIdMap = new Map<string, string>()
+	/**
+	 * The duration of the open/close and hide/show animations in ms.
+	 * @default 450
+	 *
+	 * @todo This needs to sync with the animation duration in the css.
+	 */
+	// private _animDuration = 450
+	private _animDuration = 350
 	//⌟
 	constructor(options: FolderOptions) {
 		if (!('container' in options)) {
@@ -541,21 +550,16 @@ export class Folder {
 			new Search(this)
 		}
 
-		if (opts._skipAnimations) {
-			// We need to bypass animations so I can get the rect.
-			this.element.classList.add('instant')
+		this.element.classList.add('instant')
+		this.initialHeaderHeight = this.elements.header.scrollHeight
 
-			this.initialHeight = this.element.scrollHeight
-			this.initialHeaderHeight = this.elements.header.scrollHeight
-			if (this.initialHeaderHeight === 0) {
-				console.error(`${this.title} header has a height of 0.`, this.elements.header)
-			}
-			setTimeout(() => {
-				this.element.classList.remove('instant')
-			}, 0)
+		if (typeof opts.hidden === 'function') {
+			this._hiddenFn = opts.hidden
+			this._hidden = this._hiddenFn()
+		} else {
+			this._hidden = !!opts.hidden
 		}
 
-		this.hidden = opts.hidden ? toFn(opts.hidden) : () => false
 		this._disabled = toFn(opts.disabled ?? false)
 
 		this._createGraphics(opts._headerless).then(() => {
@@ -577,6 +581,8 @@ export class Folder {
 			if (opts.closed) {
 				this.closed.set(opts.closed)
 			}
+
+			if (this._hidden) this.hide(true)
 		})
 
 		setTimeout(() => {
@@ -632,11 +638,7 @@ export class Folder {
 	 * Whether the folder is visible.
 	 */
 	get hidden(): boolean {
-		return this._hidden()
-	}
-	set hidden(v: boolean | (() => boolean)) {
-		this._hidden = toFn(v)
-		this._hidden() ? this.hide() : this.show()
+		return this._hidden
 	}
 
 	/**
@@ -758,7 +760,7 @@ export class Folder {
 	//·· Open/Close ······································································¬
 
 	toggle = (): this => {
-		this._log.fn('toggle').debug()
+		this._log.fn('toggle').info()
 		clearTimeout(this._disabledTimer)
 		if (this._clicksDisabled) {
 			this._resetClicks()
@@ -781,57 +783,173 @@ export class Folder {
 	}
 
 	open(updateState = false): this {
-		this._log.fn('open').debug()
+		this._log.fn('open').info()
 		this.element.classList.remove('closed')
 		this.evm.emit('toggle', false)
 		if (updateState) this.closed.set(false)
 
 		this._clicksDisabled = false
 
-		this.#toggleAnimClass()
+		this._toggleClass()
 		animateConnector(this, 'open')
 		return this
 	}
 
 	close(updateState = false): this {
-		this._log.fn('close').debug()
+		this._log.fn('close').info()
 
 		this.element.classList.add('closed')
 		if (updateState) this.closed.set(true)
 		this.evm.emit('toggle', true)
 		this._clicksDisabled = false
 
-		this.#toggleAnimClass()
+		this._toggleClass()
 		animateConnector(this, 'close')
 		return this
 	}
 
-	toggleHidden(): this {
-		this._log.fn('toggleHidden').debug()
-		this.element.classList.toggle('hidden')
+	private static _EASE = {
+		show: 'cubic-bezier(.05,1,.56,.91)',
+		hide: 'cubic-bezier(0.9, 0, 0.9, 0)',
+		slow: 'cubic-bezier(.41,.77,.36,.96)',
+	}
+
+	private static _SHOW_ANIM = [
+		{
+			offset: 0,
+			gridTemplateRows: '0fr',
+			clipPath: 'inset(50%)',
+			webkitClipPath: 'inset(50%)',
+			easing: Folder._EASE.show,
+		},
+		{
+			offset: 0.1,
+			clipPath: 'inset(49% 50%)',
+			webkitClipPath: 'inset(49% 50%)',
+			easing: Folder._EASE.show,
+			// filter: 'invert(0.85)',
+			filter: 'brightness(10)',
+		},
+		{
+			offset: 0.35,
+			clipPath: 'inset(49% 0%)',
+			webkitClipPath: 'inset(49% 0%)',
+			easing: 'linear',
+			// filter: 'invert(0)',
+			filter: 'brightness(1)',
+		},
+		{
+			offset: 0.36,
+			clipPath: 'inset(49% 0%)',
+			webkitClipPath: 'inset(49% 0%)',
+			easing: Folder._EASE.slow,
+		},
+		{
+			offset: 1,
+			gridTemplateRows: '1fr',
+			clipPath: 'inset(0%)',
+			webkitClipPath: 'inset(0%)',
+		},
+	]
+
+	private static _HIDE_ANIM = [
+		{
+			offset: 0,
+			gridTemplateRows: '0fr',
+			clipPath: 'inset(50%)',
+			webkitClipPath: 'inset(50%)',
+			easing: Folder._EASE.hide,
+		},
+		{
+			offset: 0.1,
+			clipPath: 'inset(49% 50%)',
+			webkitClipPath: 'inset(49% 50%)',
+			// filter: 'invert(0.85)',
+			filter: 'brightness(10)',
+		},
+		{
+			offset: 0.42,
+			clipPath: 'inset(49% 0%)',
+			webkitClipPath: 'inset(49% 0%)',
+			// filter: 'invert(0)',
+			filter: 'brightness(1)',
+		},
+		{
+			offset: 0.43,
+			clipPath: 'inset(49% 0%)',
+			webkitClipPath: 'inset(49% 0%)',
+			easing: Folder._EASE.slow,
+		},
+		{
+			offset: 1,
+			gridTemplateRows: '1fr',
+			clipPath: 'inset(0%)',
+			webkitClipPath: 'inset(0%)',
+		},
+	]
+
+	toggleHidden(
+		/**
+		 * Whether to show the folder instantly, bypassing the animation.
+		 * @default false
+		 */
+		instant = false,
+	): this {
+		this._log.fn('toggleHidden').info()
+		this.hidden ? this.show(instant) : this.hide(instant)
 		return this
 	}
 
-	hide(): this {
-		this._log.fn('hide').debug()
-		this.element.classList.add('hidden')
+	async show(
+		/**
+		 * Whether to show the folder instantly, bypassing the animation.
+		 * @default false
+		 */
+		instant = false,
+	): Promise<this> {
+		this._log.fn('show').info({ instant })
+		this._hidden = false
+
+		const anim = await this.element.animate(Folder._SHOW_ANIM, {
+			duration: instant ? 0 : this._animDuration,
+			fill: 'forwards',
+		}).finished
+
+		if (!this._hidden && this.element) anim.commitStyles()
+
 		return this
 	}
 
-	show(): this {
-		this._log.fn('show').debug()
-		this.element.classList.remove('hidden')
+	async hide(
+		/**
+		 * Whether to show the folder instantly, bypassing the animation.
+		 * @default false
+		 */
+		instant = false,
+	): Promise<this> {
+		this._log.fn('hide').info({ instant })
+		this._hidden = true
+
+		const anim = await this.element.animate(Folder._HIDE_ANIM, {
+			duration: instant ? 0 : this._animDuration,
+			direction: 'reverse',
+			fill: 'forwards',
+		}).finished
+
+		if (this._hidden && this.element) anim.commitStyles()
+
 		return this
 	}
 
-	#toggleTimeout!: ReturnType<typeof setTimeout>
-	#toggleAnimClass = (): void => {
-		this.element.classList.add('animating')
+	private _toggleTimeout!: ReturnType<typeof setTimeout>
+	private _toggleClass = (classname = 'animating' as string | string[]): void => {
+		const classes = Array.isArray(classname) ? classname : [classname]
+		this.element.classList.add(...classes)
 
-		clearTimeout(this.#toggleTimeout)
-		this.#toggleTimeout = setTimeout(() => {
-			this.element.classList.remove('animating')
-		}, 600) // todo - This needs to sync with the animation duration in the css... smelly.
+		clearTimeout(this._toggleTimeout)
+		this._toggleTimeout = setTimeout(() => {
+			this.element.classList.remove(...classes)
+		}, this._animDuration)
 	}
 	//⌟
 
@@ -897,7 +1015,8 @@ export class Folder {
 		this._log.fn('load').debug({ preset, this: this })
 
 		// this.closed.set(preset.closed) // todo - global settings?
-		this.hidden = preset.hidden
+		// this.hidden = preset.hidden
+		preset.hidden ? this.hide() : this.show()
 
 		for (const input of this.inputs.values()) {
 			const inputPreset = preset.inputs.find(c => c.presetId === input.opts.presetId)
@@ -945,6 +1064,10 @@ export class Folder {
 		const disabledState = this._disabled()
 		if (disabledState !== this.disabled) {
 			this.disabled = disabledState
+		}
+		const hiddenState = this._hiddenFn?.()
+		if (typeof hiddenState !== 'undefined' && hiddenState !== this._hidden) {
+			hiddenState ? this.hide() : this.show()
 		}
 
 		for (const input of this.inputs.values()) {
