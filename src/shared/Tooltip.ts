@@ -858,13 +858,17 @@ export class Tooltip {
 		}
 
 		.gooey-tooltip .gooey-hotkey {
-			filter: contrast(1.1);
-			background: var(--bg-b, #1118);
+			display: inline-flex;
+			
+			width: fit-content;
+			padding: 1px 2px;
+			
+			background: #1118;
+			background: color-mix(in lch, var(--bg-b), var(--bg-c));
 			color: var(--fg-a, #fff);
-			padding: 0px 3px;
-			border-radius: 2px;
+			outline: 1px solid var(--bg-d, #222);
 			box-shadow: 0 0 2px rgba(0, 0, 0, 0.33);
-			display: flex;
+			border-radius: 2px;
 		}
 	`
 }
