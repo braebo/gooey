@@ -649,16 +649,5 @@ export abstract class Input<
 	dispose() {
 		this.__log.fn('dispose').debug(this)
 		this._evm.dispose()
-
-		const rm = (elOrObj: any) => {
-			if (elOrObj instanceof HTMLElement || elOrObj instanceof SVGElement) {
-				elOrObj.remove()
-			} else if (typeof elOrObj === 'object') {
-				for (const k in elOrObj) {
-					rm(elOrObj[k])
-				}
-			}
-		}
-		rm(this.elements)
 	}
 }
