@@ -1,9 +1,9 @@
 import type { InputButtonGrid } from './inputs/InputButtonGrid'
 import type { InputSelect } from './inputs/InputSelect'
 import type { PersistedValue } from './shared/persist'
+import type { Folder, FolderOptions } from './Folder'
 import type { Gooey, GooeyPreset } from './Gooey'
 import type { State } from './shared/state'
-import type { Folder } from './Folder'
 
 import { RenameSVG } from './svg/RenameSVG'
 import { persist } from './shared/persist'
@@ -17,7 +17,12 @@ import { r } from './shared/l'
 
 export interface PresetManagerOptions {
 	__type?: 'PresetManagerOptions'
+
+	/**
+	 * Whether the preset manager should be disabled entirely *(no presets/gui/storage/etc)*.
+	 */
 	disabled?: boolean
+
 	/**
 	 * Optionsal existing presets.
 	 * @default []
@@ -35,7 +40,17 @@ export interface PresetManagerOptions {
 	 * @default undefined
 	 */
 	localStorageKey?: string
+
+	/**
+	 * Whether to automatically call {@link PresetManager.init|init()} (which mainly adds the gui).
+	 */
 	autoInit?: boolean
+
+	/**
+	 * Options for the "presets" folder that is added to the
+	 * {@link Gooey.settingsFolder|settings folder}.
+	 */
+	folderOptions?: Partial<FolderOptions>
 }
 
 export class PresetManager {
@@ -195,6 +210,7 @@ export class PresetManager {
 		if (!this._isInitialized()) throw new Error('PresetManager not initialized.')
 
 		const presetsFolder = parentFolder.addFolder('presets', {
+			...this.opts.folderOptions,
 			saveable: false,
 			// @ts-expect-error - @internal
 			gooey: this.gooey,
