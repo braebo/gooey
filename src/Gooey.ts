@@ -152,10 +152,15 @@ export interface GooeyOptions {
 	loadDefaultFont?: boolean
 
 	/**
-	 * Any {@link FolderOptions} for the builtin global settings folder.
+	 * Any {@link FolderOptions} for the builtin global settings folder.  It also accepts 2
+	 * additional settings, `uiFolder` and `presetsFolder`, which are {@link FolderOptions}
+	 * for the 2 sub-folders.
 	 * @default { closed: true }
 	 */
-	settingsFolder?: Partial<FolderOptions>
+	settingsFolder?: Partial<FolderOptions> & {
+		uiFolder?: Partial<FolderOptions>
+		presetsFolder?: Partial<FolderOptions>
+	}
 }
 
 export interface GooeyOptionsInternal extends GooeyOptions {
@@ -268,7 +273,11 @@ export const GUI_DEFAULTS = {
 	resizable: true,
 	draggable: true,
 	loadDefaultFont: true,
-	settingsFolder: { closed: true as boolean },
+	settingsFolder: {
+		closed: true as boolean,
+		uiFolder: { closed: true },
+		presetsFolder: { closed: true },
+	},
 } as const satisfies GooeyOptions
 
 /**
@@ -716,7 +725,14 @@ export class Gooey {
 			finalThemer = new Themer(this.folder.element, themerOptions)
 		}
 
-		const uiFolder = folder.addFolder('ui')
+		const uiFolder = folder.addFolder(
+			'ui',
+			Object.assign(
+				{},
+				GUI_DEFAULTS.settingsFolder.uiFolder,
+				this.opts.settingsFolder?.uiFolder,
+			),
+		)
 
 		// Fully desaturate the ui folder's header connector to svg.
 		uiFolder.on('mount', () => {
@@ -796,10 +812,20 @@ export class Gooey {
 			localStorageKey = storage.key + '::presets'
 		}
 
+		let closed = GUI_DEFAULTS.settingsFolder.presetsFolder.closed
+
+		if (this.opts.settingsFolder?.presetsFolder?.closed) {
+			closed = this.opts.settingsFolder.presetsFolder.closed
+		}
+
 		return new PresetManager(this, settingsFolder, {
 			presets,
 			defaultPreset,
 			localStorageKey,
+			folderOptions: {
+				...this.opts.settingsFolder?.presetsFolder,
+				closed,
+			},
 		})
 	}
 
