@@ -116,7 +116,7 @@ export class Logger {
 	 * Logs any args as well as any logs in the current buffer.
 	 * @param args
 	 */
-	dump = (...args: any[]) => {
+	flush = (...args: any[]) => {
 		if (this.buffer.length) {
 			if (args[0].match(/ⓘ|⚠|⛔|💀/)) {
 				this.buffer.unshift(args.shift())
@@ -137,28 +137,28 @@ export class Logger {
 
 	debug(...args: any[]) {
 		// @ts-ignore
-		if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === 'debug') this.dump('🐞', ...args)
+		if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === 'debug') this.flush('🐞', ...args)
 		return this
 	}
 
 	i = hex('#426685')('ⓘ')
 	info(...args: any[]) {
-		this.dump(this.i, ...args)
+		this.flush(this.i, ...args)
 		return this
 	}
 
 	warn(...args: any[]) {
-		this.dump(y('⚠'), ...args)
+		this.flush(y('⚠'), ...args)
 		return this
 	}
 
 	error(...args: any[]) {
-		this.dump(r('⛔'), ...args)
+		this.flush(r('⛔'), ...args)
 		return this
 	}
 
 	fatal(...args: any[]) {
-		this.dump(r('💀'), ...args)
+		this.flush(r('💀'), ...args)
 		return this
 	}
 
@@ -224,11 +224,12 @@ export class Logger {
 	 */
 	fn(str: string, ...args: any[]) {
 		this.buffer.push(
-			str +
+			gr(str) +
 				gr('(') +
 				args.map(a => gr(typeof a === 'object' ? stringify(a) : a)).join(', ') +
 				gr(')'),
 		)
+		Promise.resolve().then(() => (this.buffer = []))
 		return this
 	}
 
