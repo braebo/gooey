@@ -1,8 +1,8 @@
 import type { Folder } from '../Folder'
 
-import { TOOLTIP_DEFAULTS, Tooltip } from '../shared/Tooltip'
 import { EventManager } from '../shared/EventManager'
 import { fuzzysearch } from '../shared/fuzzySearch'
+import { Tooltip } from '../shared/Tooltip'
 import { create } from '../shared/create'
 
 export class Search {
@@ -42,8 +42,9 @@ export class Search {
 
 		this.tooltip = new Tooltip(button, {
 			text: this.defaultTooltipText,
-			placement: 'left',
-			delay: 500,
+			placement: 'top',
+			delay: 250,
+			offsetY: '-5px',
 			// @ts-expect-error
 			style: this.folder.gooey?._getStyles,
 		})
@@ -160,10 +161,7 @@ export class Search {
 		this.tooltip.hide()
 		clearTimeout(this._tooltipTimeout)
 		this._tooltipTimeout = setTimeout(() => {
-			this.tooltip.text = 'Cancel (esc)'
-			this.tooltip.placement = 'top'
-			this.tooltip.offsetX = '-40px'
-			this.tooltip.offsetY = '-2px'
+			this.tooltip.text = 'Cancel <span class="gooey-hotkey">esc</span>'
 		}, 100)
 
 		// Open all folders that are closed, and mark them for closing on cancel/close.
@@ -194,9 +192,6 @@ export class Search {
 		clearTimeout(this._tooltipTimeout)
 		this._tooltipTimeout = setTimeout(() => {
 			this.tooltip.text = this.defaultTooltipText
-			this.tooltip.placement = 'left'
-			this.tooltip.offsetX = TOOLTIP_DEFAULTS.offsetX
-			this.tooltip.offsetY = TOOLTIP_DEFAULTS.offsetY
 		}, 100)
 
 		// Re-close all folders that were opened by the search.
