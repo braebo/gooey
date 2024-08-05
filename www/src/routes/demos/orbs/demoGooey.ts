@@ -28,9 +28,9 @@ export function demoGooey(params: Params) {
 		presets: ORBS_PRESETS,
 	})
 
-	gooey.folder.on('toggle', (v) => {
-		console.log(v)
-	})
+	// gooey.folder.on('toggle', (v) => {
+	// 	console.log(v)
+	// })
 
 	const f1 = gooey.addFolder('base', { closed: true })
 

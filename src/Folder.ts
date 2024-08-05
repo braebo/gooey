@@ -760,7 +760,7 @@ export class Folder {
 	//·· Open/Close ······································································¬
 
 	toggle = (): this => {
-		this._log.fn('toggle').info()
+		this._log.fn('toggle').debug()
 		clearTimeout(this._disabledTimer)
 		if (this._clicksDisabled) {
 			this._resetClicks()
@@ -783,7 +783,7 @@ export class Folder {
 	}
 
 	open(updateState = false): this {
-		this._log.fn('open').info()
+		this._log.fn('open').debug()
 		this.element.classList.remove('closed')
 		this.evm.emit('toggle', false)
 		if (updateState) this.closed.set(false)
@@ -796,7 +796,7 @@ export class Folder {
 	}
 
 	close(updateState = false): this {
-		this._log.fn('close').info()
+		this._log.fn('close').debug()
 
 		this.element.classList.add('closed')
 		if (updateState) this.closed.set(true)
@@ -895,7 +895,7 @@ export class Folder {
 		 */
 		instant = false,
 	): this {
-		this._log.fn('toggleHidden').info()
+		this._log.fn('toggleHidden').debug()
 		this.hidden ? this.show(instant) : this.hide(instant)
 		return this
 	}
@@ -907,7 +907,7 @@ export class Folder {
 		 */
 		instant = false,
 	): Promise<this> {
-		this._log.fn('show').info({ instant })
+		this._log.fn('show').debug({ instant })
 		this._hidden = false
 
 		const anim = await this.element.animate(Folder._SHOW_ANIM, {
@@ -927,7 +927,7 @@ export class Folder {
 		 */
 		instant = false,
 	): Promise<this> {
-		this._log.fn('hide').info({ instant })
+		this._log.fn('hide').debug({ instant })
 		this._hidden = true
 
 		const anim = await this.element.animate(Folder._HIDE_ANIM, {
