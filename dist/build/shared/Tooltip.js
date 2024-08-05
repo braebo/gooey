@@ -1,4 +1,4 @@
-import { __decorate, __metadata } from './../external/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.18.1_tslib@2.6.3_typescript@5.5.3/external/tslib/tslib.es6.js';
+import { __decorate, __metadata } from './../external/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.20.0_tslib@2.6.3_typescript@5.5.4/external/tslib/tslib.es6.js';
 import { deepMergeOpts } from './deepMergeOpts.js';
 import { EventManager } from './EventManager.js';
 import { styled } from './decorators/styled.js';
@@ -507,7 +507,7 @@ let Tooltip = class Tooltip {
                 return;
             const anchor = el instanceof HTMLElement
                 ? el
-                : this.node?.querySelector(el) ?? document.querySelector(el);
+                : (this.node?.querySelector(el) ?? document.querySelector(el));
             const watchAnchor = () => {
                 if (anchor) {
                     this._watch(anchor);
@@ -605,11 +605,13 @@ let Tooltip = class Tooltip {
     }
     static style = /*css*/ `
 		.gooey-tooltip {
-			position: absolute;			
+			view-transition-name: gooey-tooltip; /* todo - try to get this working */
+			
+			position: absolute;
 			
 			width: auto;
 			max-width: 420px;
-			padding: 6px 8px;
+			padding: 5px 7px;
 
 			opacity: 0;
 			color: var(--fg-a, #fff);
@@ -622,7 +624,7 @@ let Tooltip = class Tooltip {
 			outline: 1px solid var(--bg-b, #222);
 
 			text-align: center;
-			font-size: var(--font-sm, 0.8rem);
+			font-size: var(--font-size, 0.8rem);
 			font-family: var(--font-a, 'fredoka');
 			letter-spacing: 1px;
 
@@ -634,7 +636,7 @@ let Tooltip = class Tooltip {
 			transition: opacity 0.1s;
 
 			code {
-				font-size: var(--font-sm, 0.8rem);
+				font-size: var(--font-size, 0.8rem);
 				background: var(--bg-b, #1118);
 				padding: 2px 4px;
 				border-radius: 2px;
@@ -656,13 +658,17 @@ let Tooltip = class Tooltip {
 		}
 
 		.gooey-tooltip .gooey-hotkey {
-			filter: contrast(1.1);
-			background: var(--bg-b, #1118);
+			display: inline-flex;
+			
+			width: fit-content;
+			padding: 1px 2px;
+			
+			background: #1118;
+			background: color-mix(in lch, var(--bg-b), var(--bg-c));
 			color: var(--fg-a, #fff);
-			padding: 0px 3px;
-			border-radius: 2px;
+			outline: 1px solid var(--bg-d, #222);
 			box-shadow: 0 0 2px rgba(0, 0, 0, 0.33);
-			display: flex;
+			border-radius: 2px;
 		}
 	`;
 };

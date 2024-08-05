@@ -94,7 +94,7 @@ export interface FolderOptions {
     /**
      * Whether the folder should be hidden by default.  If a function is
      * provided, it will be called to determine the hidden state.  Use
-     * {@link refresh} to update the hidden state.
+     * {@link Folder.refresh} to update the hidden state.
      * @default false
      */
     hidden?: boolean | (() => boolean);
@@ -311,17 +311,13 @@ export declare class Folder {
      */
     on: <K extends keyof FolderEvents>(event: K, callback: import("./shared/EventManager").EventCallback<FolderEvents[K]>) => string;
     /**
-     * The pixel height of the folder element when open.
-     * @internal
-     */
-    initialHeight: number;
-    /**
      * The pixel height of the folder header element.
      * @internal
      */
-    initialHeaderHeight: number;
+    private initialHeaderHeight;
     private _title;
     private _hidden;
+    private _hiddenFn?;
     private _disabled;
     private _log;
     /**
@@ -341,6 +337,13 @@ export declare class Folder {
      * Maps preset ids to their inputs.
      */
     private static _presetIdMap;
+    /**
+     * The duration of the open/close and hide/show animations in ms.
+     * @default 450
+     *
+     * @todo This needs to sync with the animation duration in the css.
+     */
+    private _animDuration;
     constructor(options: FolderOptions);
     /**
      * The folder's title.  Changing this will update the UI.
@@ -351,7 +354,6 @@ export declare class Folder {
      * Whether the folder is visible.
      */
     get hidden(): boolean;
-    set hidden(v: boolean | (() => boolean));
     /**
      * Whether the input is disabled.  Modifying this value will update the UI.
      */
@@ -376,9 +378,29 @@ export declare class Folder {
     toggle: () => this;
     open(updateState?: boolean): this;
     close(updateState?: boolean): this;
-    toggleHidden(): this;
-    hide(): this;
-    show(): this;
+    private static _EASE;
+    private static _SHOW_ANIM;
+    private static _HIDE_ANIM;
+    toggleHidden(
+    /**
+     * Whether to show the folder instantly, bypassing the animation.
+     * @default false
+     */
+    instant?: boolean): this;
+    show(
+    /**
+     * Whether to show the folder instantly, bypassing the animation.
+     * @default false
+     */
+    instant?: boolean): Promise<this>;
+    hide(
+    /**
+     * Whether to show the folder instantly, bypassing the animation.
+     * @default false
+     */
+    instant?: boolean): Promise<this>;
+    private _toggleTimeout;
+    private _toggleClass;
     private _resolvePresetId;
     save(): FolderPreset;
     /**

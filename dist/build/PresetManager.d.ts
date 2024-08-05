@@ -1,8 +1,11 @@
+import type { Folder, FolderOptions } from './Folder';
 import type { Gooey, GooeyPreset } from './Gooey';
 import type { State } from './shared/state';
-import type { Folder } from './Folder';
 export interface PresetManagerOptions {
     __type?: 'PresetManagerOptions';
+    /**
+     * Whether the preset manager should be disabled entirely *(no presets/gui/storage/etc)*.
+     */
     disabled?: boolean;
     /**
      * Optionsal existing presets.
@@ -19,7 +22,15 @@ export interface PresetManagerOptions {
      * @default undefined
      */
     localStorageKey?: string;
+    /**
+     * Whether to automatically call {@link PresetManager.init|init()} (which mainly adds the gui).
+     */
     autoInit?: boolean;
+    /**
+     * Options for the "presets" folder that is added to the
+     * {@link Gooey.settingsFolder|settings folder}.
+     */
+    folderOptions?: Partial<FolderOptions>;
 }
 export declare class PresetManager {
     gooey: Gooey;

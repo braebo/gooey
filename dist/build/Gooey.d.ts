@@ -92,6 +92,11 @@ export interface GooeyOptions {
      */
     closed: boolean;
     /**
+     * The initial hidden state of the gooey.
+     * @default false
+     */
+    hidden?: boolean;
+    /**
      * Presets to make available in the gooey.
      * @default []
      */
@@ -113,10 +118,15 @@ export interface GooeyOptions {
      */
     loadDefaultFont?: boolean;
     /**
-     * Any {@link FolderOptions} for the builtin global settings folder.
+     * Any {@link FolderOptions} for the builtin global settings folder.  It also accepts 2
+     * additional settings, `uiFolder` and `presetsFolder`, which are {@link FolderOptions}
+     * for the 2 sub-folders.
      * @default { closed: true }
      */
-    settingsFolder?: Partial<FolderOptions>;
+    settingsFolder?: Partial<FolderOptions> & {
+        uiFolder?: Partial<FolderOptions>;
+        presetsFolder?: Partial<FolderOptions>;
+    };
 }
 export interface GooeyOptionsInternal extends GooeyOptions {
     /**
@@ -207,13 +217,19 @@ export declare const GUI_DEFAULTS: {
     readonly loadDefaultFont: true;
     readonly settingsFolder: {
         readonly closed: boolean;
+        readonly uiFolder: {
+            readonly closed: true;
+        };
+        readonly presetsFolder: {
+            readonly closed: true;
+        };
     };
 };
 /**
  * Methods inherited from {@link Folder} to forward to the gooey.
  * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
  */
-declare const FORWARDED_METHODS: ["on", "add", "addMany", "addButtonGrid", "addSelect", "addButton", "addText", "addNumber", "addSwitch", "addColor", "bind", "bindMany", "bindButtonGrid", "bindSelect", "bindButton", "bindText", "bindNumber", "bindSwitch", "bindColor", "show", "hide"];
+declare const FORWARDED_METHODS: ["on", "add", "addMany", "addButtonGrid", "addSelect", "addButton", "addText", "addNumber", "addSwitch", "addColor", "bind", "bindMany", "bindButtonGrid", "bindSelect", "bindButton", "bindText", "bindNumber", "bindSwitch", "bindColor", "open", "close", "show", "hide", "toggle", "toggleHidden"];
 export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {
 }
 /**
@@ -276,6 +292,7 @@ export declare class Gooey {
     get title(): string;
     set title(v: string);
     get closed(): Folder['closed'];
+    get hidden(): boolean;
     get inputs(): Map<string, import("./inputs/Input").ValidInput>;
     get allInputs(): Map<string, import("./inputs/Input").ValidInput>;
     get window(): WindowInstance | undefined;
@@ -319,6 +336,7 @@ export declare class Gooey {
     private _createSettingsButton;
     private _createPresetManager;
     private _createWindowManager;
+    private _resolveInitialPosition;
     /**
      * todo - Add the public resolved vars to `Themer` and remove this.
      * @internal

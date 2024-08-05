@@ -40,7 +40,7 @@ class Logger {
      * Logs any args as well as any logs in the current buffer.
      * @param args
      */
-    dump = (...args) => {
+    flush = (...args) => {
         if (this.buffer.length) {
             if (args[0].match(/ⓘ|⚠|⛔|💀/)) {
                 this.buffer.unshift(args.shift());
@@ -60,24 +60,24 @@ class Logger {
     debug(...args) {
         // @ts-ignore
         if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === 'debug')
-            this.dump('🐞', ...args);
+            this.flush('🐞', ...args);
         return this;
     }
     i = hex('#426685')('ⓘ');
     info(...args) {
-        this.dump(this.i, ...args);
+        this.flush(this.i, ...args);
         return this;
     }
     warn(...args) {
-        this.dump(y('⚠'), ...args);
+        this.flush(y('⚠'), ...args);
         return this;
     }
     error(...args) {
-        this.dump(r('⛔'), ...args);
+        this.flush(r('⛔'), ...args);
         return this;
     }
     fatal(...args) {
-        this.dump(r('💀'), ...args);
+        this.flush(r('💀'), ...args);
         return this;
     }
     group(label) {
@@ -135,10 +135,11 @@ class Logger {
      * ```
      */
     fn(str, ...args) {
-        this.buffer.push(str +
+        this.buffer.push(gr(str) +
             gr('(') +
             args.map(a => gr(typeof a === 'object' ? stringify(a) : a)).join(', ') +
             gr(')'));
+        Promise.resolve().then(() => (this.buffer = []));
         return this;
     }
     static createLogger(title, options) {

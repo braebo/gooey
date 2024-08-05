@@ -1,4 +1,4 @@
-import { __decorate, __metadata } from './../external/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.18.1_tslib@2.6.3_typescript@5.5.3/external/tslib/tslib.es6.js';
+import { __decorate, __metadata } from './../external/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.20.0_tslib@2.6.3_typescript@5.5.4/external/tslib/tslib.es6.js';
 import { styled } from '../shared/decorators/styled.js';
 import { create } from '../shared/create.js';
 

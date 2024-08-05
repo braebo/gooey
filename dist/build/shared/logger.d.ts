@@ -70,7 +70,7 @@ export declare class Logger {
      * Logs any args as well as any logs in the current buffer.
      * @param args
      */
-    dump: (...args: any[]) => void;
+    flush: (...args: any[]) => void;
     trace(...args: any[]): this;
     debug(...args: any[]): this;
     i: string;

@@ -1,6 +1,6 @@
-import { Tooltip, TOOLTIP_DEFAULTS } from '../shared/Tooltip.js';
 import { EventManager } from '../shared/EventManager.js';
 import { fuzzysearch } from '../shared/fuzzySearch.js';
+import { Tooltip } from '../shared/Tooltip.js';
 import { create } from '../shared/create.js';
 
 class Search {
@@ -30,8 +30,9 @@ class Search {
         });
         this.tooltip = new Tooltip(button, {
             text: this.defaultTooltipText,
-            placement: 'left',
-            delay: 500,
+            placement: 'top',
+            delay: 250,
+            offsetY: '-5px',
             // @ts-expect-error
             style: this.folder.gooey?._getStyles,
         });
@@ -122,10 +123,7 @@ class Search {
         this.tooltip.hide();
         clearTimeout(this._tooltipTimeout);
         this._tooltipTimeout = setTimeout(() => {
-            this.tooltip.text = 'Cancel (esc)';
-            this.tooltip.placement = 'top';
-            this.tooltip.offsetX = '-40px';
-            this.tooltip.offsetY = '-2px';
+            this.tooltip.text = 'Cancel <span class="gooey-hotkey">esc</span>';
         }, 100);
         // Open all folders that are closed, and mark them for closing on cancel/close.
         // todo - It would be nice to allow clicking a folder to keep it open after the search.
@@ -150,9 +148,6 @@ class Search {
         clearTimeout(this._tooltipTimeout);
         this._tooltipTimeout = setTimeout(() => {
             this.tooltip.text = this.defaultTooltipText;
-            this.tooltip.placement = 'left';
-            this.tooltip.offsetX = TOOLTIP_DEFAULTS.offsetX;
-            this.tooltip.offsetY = TOOLTIP_DEFAULTS.offsetY;
         }, 100);
         // Re-close all folders that were opened by the search.
         // todo - It would be better to only open folders if they contain a search hit.

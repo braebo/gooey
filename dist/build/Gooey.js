@@ -67,14 +67,18 @@ const GUI_DEFAULTS = {
     resizable: true,
     draggable: true,
     loadDefaultFont: true,
-    settingsFolder: { closed: true },
+    settingsFolder: {
+        closed: true,
+        uiFolder: { closed: true },
+        presetsFolder: { closed: true },
+    },
 };
 /**
  * Methods inherited from {@link Folder} to forward to the gooey.
  * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
  */
 // prettier-ignore
-const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor', 'show', 'hide'];
+const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor', 'open', 'close', 'show', 'hide', 'toggle', 'toggleHidden'];
 /**
  * The root Gooey instance.  This is the entry point for creating
  * a gooey.  You can create multiple root gooeys, but each gooey
@@ -228,40 +232,22 @@ class Gooey {
         });
         this.settingsFolder.element.classList.add('gooey-folder-alt');
         updateIcon();
-        this.settingsFolder.element.style.setProperty('order', '-99');
+        this.settingsFolder.element.style.setProperty('order', '-99'); // todo - sup with this?
         this.themer =
             this.opts._themer ?? this._createThemer(this.settingsFolder);
         this.theme = this.opts.theme;
         this.presetManager = this._createPresetManager(this.settingsFolder);
         this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage);
-        // Give the user a chance to add folders / inputs before positioning.
-        this._reveal(reposition);
+        this._resolveInitialPosition(reposition);
+        if (!!!this.opts.hidden) {
+            this._reveal();
+        }
         return this;
     }
-    async _reveal(reposition) {
+    async _reveal() {
         // In case dispose() was called before this resolved...
         if (!this.container)
             return;
-        // Append a non-animating, full-size clone to get the proper rect.
-        const ghost = this.wrapper.cloneNode(true);
-        ghost.style.visibility = 'hidden';
-        this.container.prepend(ghost);
-        // This is the only way to get the correct future rect afaik 😅
-        const rect = ghost.children[0].getBoundingClientRect();
-        ghost.remove();
-        if (typeof this.opts.position === 'string') {
-            const placementPosition = place(rect, this.opts.position, {
-                bounds: this.opts.container,
-                margin: this.opts.margin,
-            });
-            // Use the rect to correct the window manager's positioning when storage is off.
-            if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
-                const win = this.window;
-                if (win?.draggableInstance) {
-                    win.draggableInstance.position = placementPosition;
-                }
-            }
-        }
         // Now that we're in position and inputs are loaded, we can animate-in.
         this.container.appendChild(this.wrapper);
         this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
@@ -286,6 +272,9 @@ class Gooey {
     get closed() {
         return this.folder.closed;
     }
+    get hidden() {
+        return this.folder.hidden;
+    }
     get inputs() {
         return this.folder.inputs;
     }
@@ -307,7 +296,7 @@ class Gooey {
     addFolder(title, options) {
         if (this._honeymoon && this._birthday - Date.now() < 1000) {
             this._honeymoon = false;
-            this._reveal(true);
+            this._reveal();
         }
         return this.folder.addFolder(title, {
             ...options,
@@ -427,7 +416,7 @@ class Gooey {
             themerOptions.wrapper = this.wrapper;
             finalThemer = new Themer(this.folder.element, themerOptions);
         }
-        const uiFolder = folder.addFolder('ui');
+        const uiFolder = folder.addFolder('ui', Object.assign({}, GUI_DEFAULTS.settingsFolder.uiFolder, this.opts.settingsFolder?.uiFolder));
         // Fully desaturate the ui folder's header connector to svg.
         uiFolder.on('mount', () => {
             uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)');
@@ -462,8 +451,9 @@ class Gooey {
                 text: () => {
                     return this.settingsFolder?.closed.value ? 'Open Settings' : 'Close Settings';
                 },
-                placement: 'left',
-                delay: 750,
+                placement: 'right',
+                offsetX: '.5rem',
+                delay: 250,
                 delayOut: 0,
                 hideOnClick: true,
                 style: this._getStyles,
@@ -486,10 +476,18 @@ class Gooey {
         if (typeof storage === 'object' && storage.presets) {
             localStorageKey = storage.key + '::presets';
         }
+        let closed = GUI_DEFAULTS.settingsFolder.presetsFolder.closed;
+        if (this.opts.settingsFolder?.presetsFolder?.closed) {
+            closed = this.opts.settingsFolder.presetsFolder.closed;
+        }
         return new PresetManager(this, settingsFolder, {
             presets,
             defaultPreset,
             localStorageKey,
+            folderOptions: {
+                ...this.opts.settingsFolder?.presetsFolder,
+                closed,
+            },
         });
     }
     _createWindowManager(options, storageOpts) {
@@ -545,6 +543,27 @@ class Gooey {
             id: this.id,
         });
         return windowManager;
+    }
+    _resolveInitialPosition(reposition) {
+        // Append a non-animating, full-size clone to get the proper rect.
+        const ghost = this.wrapper.cloneNode(true);
+        ghost.style.visibility = 'hidden';
+        this.container.prepend(ghost);
+        const rect = ghost.children[0].getBoundingClientRect();
+        ghost.remove();
+        if (typeof this.opts.position === 'string') {
+            const placementPosition = place(rect, this.opts.position, {
+                bounds: this.opts.container,
+                margin: this.opts.margin,
+            });
+            // Use the rect to correct the window manager's positioning when storage is off.
+            if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
+                const win = this.window;
+                if (win?.draggableInstance) {
+                    win.draggableInstance.position = placementPosition;
+                }
+            }
+        }
     }
     /**
      * todo - Add the public resolved vars to `Themer` and remove this.

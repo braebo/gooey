@@ -138,17 +138,13 @@ class Folder {
      */
     on = this.evm.on.bind(this.evm);
     /**
-     * The pixel height of the folder element when open.
-     * @internal
-     */
-    initialHeight = 0;
-    /**
      * The pixel height of the folder header element.
      * @internal
      */
     initialHeaderHeight = 0;
     _title;
-    _hidden = () => false;
+    _hidden = false;
+    _hiddenFn;
     _disabled = () => false;
     _log;
     /**
@@ -168,6 +164,14 @@ class Folder {
      * Maps preset ids to their inputs.
      */
     static _presetIdMap = new Map();
+    /**
+     * The duration of the open/close and hide/show animations in ms.
+     * @default 450
+     *
+     * @todo This needs to sync with the animation duration in the css.
+     */
+    // private _animDuration = 450
+    _animDuration = 350;
     //⌟
     constructor(options) {
         if (!('container' in options)) {
@@ -213,19 +217,15 @@ class Folder {
         if (this.isRoot || opts.searchable) {
             new Search(this);
         }
-        if (opts._skipAnimations) {
-            // We need to bypass animations so I can get the rect.
-            this.element.classList.add('instant');
-            this.initialHeight = this.element.scrollHeight;
-            this.initialHeaderHeight = this.elements.header.scrollHeight;
-            if (this.initialHeaderHeight === 0) {
-                console.error(`${this.title} header has a height of 0.`, this.elements.header);
-            }
-            setTimeout(() => {
-                this.element.classList.remove('instant');
-            }, 0);
+        this.element.classList.add('instant');
+        this.initialHeaderHeight = this.elements.header.scrollHeight;
+        if (typeof opts.hidden === 'function') {
+            this._hiddenFn = opts.hidden;
+            this._hidden = this._hiddenFn();
         }
-        this.hidden = opts.hidden ? toFn(opts.hidden) : () => false;
+        else {
+            this._hidden = !!opts.hidden;
+        }
         this._disabled = toFn(opts.disabled ?? false);
         this._createGraphics(opts._headerless).then(() => {
             this.evm.emit('mount');
@@ -242,6 +242,8 @@ class Folder {
             if (opts.closed) {
                 this.closed.set(opts.closed);
             }
+            if (this._hidden)
+                this.hide(true);
         });
         setTimeout(() => {
             this.element.classList.toggle('disabled', this._disabled());
@@ -288,11 +290,7 @@ class Folder {
      * Whether the folder is visible.
      */
     get hidden() {
-        return this._hidden();
-    }
-    set hidden(v) {
-        this._hidden = toFn(v);
-        this._hidden() ? this.hide() : this.show();
+        return this._hidden;
     }
     /**
      * Whether the input is disabled.  Modifying this value will update the UI.
@@ -395,7 +393,7 @@ class Folder {
     }
     //·· Open/Close ······································································¬
     toggle = () => {
-        this._log.fn('toggle').debug();
+        this._log.fn('toggle').info();
         clearTimeout(this._disabledTimer);
         if (this._clicksDisabled) {
             this._resetClicks();
@@ -412,49 +410,155 @@ class Folder {
         return this;
     };
     open(updateState = false) {
-        this._log.fn('open').debug();
+        this._log.fn('open').info();
         this.element.classList.remove('closed');
         this.evm.emit('toggle', false);
         if (updateState)
             this.closed.set(false);
         this._clicksDisabled = false;
-        this.#toggleAnimClass();
+        this._toggleClass();
         animateConnector(this, 'open');
         return this;
     }
     close(updateState = false) {
-        this._log.fn('close').debug();
+        this._log.fn('close').info();
         this.element.classList.add('closed');
         if (updateState)
             this.closed.set(true);
         this.evm.emit('toggle', true);
         this._clicksDisabled = false;
-        this.#toggleAnimClass();
+        this._toggleClass();
         animateConnector(this, 'close');
         return this;
     }
-    toggleHidden() {
-        this._log.fn('toggleHidden').debug();
-        this.element.classList.toggle('hidden');
+    static _EASE = {
+        show: 'cubic-bezier(.05,1,.56,.91)',
+        hide: 'cubic-bezier(0.9, 0, 0.9, 0)',
+        slow: 'cubic-bezier(.41,.77,.36,.96)',
+    };
+    static _SHOW_ANIM = [
+        {
+            offset: 0,
+            gridTemplateRows: '0fr',
+            clipPath: 'inset(50%)',
+            webkitClipPath: 'inset(50%)',
+            easing: Folder._EASE.show,
+        },
+        {
+            offset: 0.1,
+            clipPath: 'inset(49% 50%)',
+            webkitClipPath: 'inset(49% 50%)',
+            easing: Folder._EASE.show,
+            // filter: 'invert(0.85)',
+            filter: 'brightness(10)',
+        },
+        {
+            offset: 0.35,
+            clipPath: 'inset(49% 0%)',
+            webkitClipPath: 'inset(49% 0%)',
+            easing: 'linear',
+            // filter: 'invert(0)',
+            filter: 'brightness(1)',
+        },
+        {
+            offset: 0.36,
+            clipPath: 'inset(49% 0%)',
+            webkitClipPath: 'inset(49% 0%)',
+            easing: Folder._EASE.slow,
+        },
+        {
+            offset: 1,
+            gridTemplateRows: '1fr',
+            clipPath: 'inset(0%)',
+            webkitClipPath: 'inset(0%)',
+        },
+    ];
+    static _HIDE_ANIM = [
+        {
+            offset: 0,
+            gridTemplateRows: '0fr',
+            clipPath: 'inset(50%)',
+            webkitClipPath: 'inset(50%)',
+            easing: Folder._EASE.hide,
+        },
+        {
+            offset: 0.1,
+            clipPath: 'inset(49% 50%)',
+            webkitClipPath: 'inset(49% 50%)',
+            // filter: 'invert(0.85)',
+            filter: 'brightness(10)',
+        },
+        {
+            offset: 0.42,
+            clipPath: 'inset(49% 0%)',
+            webkitClipPath: 'inset(49% 0%)',
+            // filter: 'invert(0)',
+            filter: 'brightness(1)',
+        },
+        {
+            offset: 0.43,
+            clipPath: 'inset(49% 0%)',
+            webkitClipPath: 'inset(49% 0%)',
+            easing: Folder._EASE.slow,
+        },
+        {
+            offset: 1,
+            gridTemplateRows: '1fr',
+            clipPath: 'inset(0%)',
+            webkitClipPath: 'inset(0%)',
+        },
+    ];
+    toggleHidden(
+    /**
+     * Whether to show the folder instantly, bypassing the animation.
+     * @default false
+     */
+    instant = false) {
+        this._log.fn('toggleHidden').info();
+        this.hidden ? this.show(instant) : this.hide(instant);
         return this;
     }
-    hide() {
-        this._log.fn('hide').error();
-        this.element.classList.add('hidden');
+    async show(
+    /**
+     * Whether to show the folder instantly, bypassing the animation.
+     * @default false
+     */
+    instant = false) {
+        this._log.fn('show').info({ instant });
+        this._hidden = false;
+        const anim = await this.element.animate(Folder._SHOW_ANIM, {
+            duration: instant ? 0 : this._animDuration,
+            fill: 'forwards',
+        }).finished;
+        if (!this._hidden && this.element)
+            anim.commitStyles();
         return this;
     }
-    show() {
-        this._log.fn('show').debug();
-        this.element.classList.remove('hidden');
+    async hide(
+    /**
+     * Whether to show the folder instantly, bypassing the animation.
+     * @default false
+     */
+    instant = false) {
+        this._log.fn('hide').info({ instant });
+        this._hidden = true;
+        const anim = await this.element.animate(Folder._HIDE_ANIM, {
+            duration: instant ? 0 : this._animDuration,
+            direction: 'reverse',
+            fill: 'forwards',
+        }).finished;
+        if (this._hidden && this.element)
+            anim.commitStyles();
         return this;
     }
-    #toggleTimeout;
-    #toggleAnimClass = () => {
-        this.element.classList.add('animating');
-        clearTimeout(this.#toggleTimeout);
-        this.#toggleTimeout = setTimeout(() => {
-            this.element.classList.remove('animating');
-        }, 600); // todo - This needs to sync with the animation duration in the css... smelly.
+    _toggleTimeout;
+    _toggleClass = (classname = 'animating') => {
+        const classes = Array.isArray(classname) ? classname : [classname];
+        this.element.classList.add(...classes);
+        clearTimeout(this._toggleTimeout);
+        this._toggleTimeout = setTimeout(() => {
+            this.element.classList.remove(...classes);
+        }, this._animDuration);
     };
     //⌟
     //·· Save/Load ···············································································¬
@@ -506,7 +610,8 @@ class Folder {
     load(preset) {
         this._log.fn('load').debug({ preset, this: this });
         // this.closed.set(preset.closed) // todo - global settings?
-        this.hidden = preset.hidden;
+        // this.hidden = preset.hidden
+        preset.hidden ? this.hide() : this.show();
         for (const input of this.inputs.values()) {
             const inputPreset = preset.inputs.find(c => c.presetId === input.opts.presetId);
             if (!inputPreset) {
@@ -546,6 +651,10 @@ class Folder {
         const disabledState = this._disabled();
         if (disabledState !== this.disabled) {
             this.disabled = disabledState;
+        }
+        const hiddenState = this._hiddenFn?.();
+        if (typeof hiddenState !== 'undefined' && hiddenState !== this._hidden) {
+            hiddenState ? this.hide() : this.show();
         }
         for (const input of this.inputs.values()) {
             input.refresh();
@@ -669,7 +778,6 @@ class Folder {
                 return;
             seen.add(target);
             for (let [key, value] of Object.entries(target)) {
-                console.log({ options });
                 if (Array.isArray(options['exclude']) && options['exclude'].includes(key))
                     continue;
                 if (Array.isArray(options['include']) && !options['include'].includes(key))

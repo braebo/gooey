@@ -128,6 +128,7 @@ class PresetManager {
         if (!this._isInitialized())
             throw new Error('PresetManager not initialized.');
         const presetsFolder = parentFolder.addFolder('presets', {
+            ...this.opts.folderOptions,
             saveable: false,
             // @ts-expect-error - @internal
             gooey: this.gooey,
