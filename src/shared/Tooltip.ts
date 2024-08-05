@@ -690,7 +690,7 @@ export class Tooltip {
 			const anchor =
 				el instanceof HTMLElement
 					? el
-					: this.node?.querySelector(el) ?? document.querySelector(el)
+					: (this.node?.querySelector(el) ?? document.querySelector(el))
 
 			const watchAnchor = () => {
 				if (anchor) {
@@ -807,11 +807,13 @@ export class Tooltip {
 
 	static style = /*css*/ `
 		.gooey-tooltip {
-			position: absolute;			
+			view-transition-name: gooey-tooltip; /* todo - try to get this working */
+			
+			position: absolute;
 			
 			width: auto;
 			max-width: 420px;
-			padding: 6px 8px;
+			padding: 5px 7px;
 
 			opacity: 0;
 			color: var(--fg-a, #fff);
@@ -824,7 +826,7 @@ export class Tooltip {
 			outline: 1px solid var(--bg-b, #222);
 
 			text-align: center;
-			font-size: var(--font-sm, 0.8rem);
+			font-size: var(--font-size, 0.8rem);
 			font-family: var(--font-a, 'fredoka');
 			letter-spacing: 1px;
 
@@ -836,7 +838,7 @@ export class Tooltip {
 			transition: opacity 0.1s;
 
 			code {
-				font-size: var(--font-sm, 0.8rem);
+				font-size: var(--font-size, 0.8rem);
 				background: var(--bg-b, #1118);
 				padding: 2px 4px;
 				border-radius: 2px;
