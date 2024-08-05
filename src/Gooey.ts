@@ -127,6 +127,12 @@ export interface GooeyOptions {
 	closed: boolean
 
 	/**
+	 * The initial hidden state of the gooey.
+	 * @default false
+	 */
+	hidden?: boolean
+
+	/**
 	 * Presets to make available in the gooey.
 	 * @default []
 	 */
@@ -285,7 +291,7 @@ export const GUI_DEFAULTS = {
  * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
  */
 // prettier-ignore
-const FORWARDED_METHODS = ['on','add','addMany','addButtonGrid','addSelect','addButton','addText','addNumber','addSwitch','addColor','bind','bindMany','bindButtonGrid','bindSelect','bindButton','bindText','bindNumber','bindSwitch','bindColor', 'show', 'hide'] as const satisfies Array<keyof Folder>
+const FORWARDED_METHODS = ['on','add','addMany','addButtonGrid','addSelect','addButton','addText','addNumber','addSwitch','addColor','bind','bindMany','bindButtonGrid','bindSelect','bindButton','bindText','bindNumber','bindSwitch','bindColor','open','close','show','hide','toggle','toggleHidden'] as const satisfies Array<keyof Folder>
 //⌟
 
 export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {}
@@ -471,7 +477,7 @@ export class Gooey {
 		})
 		this.settingsFolder.element.classList.add('gooey-folder-alt')
 		updateIcon()
-		this.settingsFolder.element.style.setProperty('order', '-99')
+		this.settingsFolder.element.style.setProperty('order', '-99') // todo - sup with this?
 
 		this.themer =
 			(this.opts as GooeyOptionsInternal)._themer ?? this._createThemer(this.settingsFolder)!
@@ -480,40 +486,18 @@ export class Gooey {
 
 		this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage)
 
-		// Give the user a chance to add folders / inputs before positioning.
-		this._reveal(reposition)
+		this._resolveInitialPosition(reposition)
+
+		if (!!!this.opts.hidden) {
+			this._reveal()
+		}
 
 		return this
 	}
 
-	private async _reveal(reposition: boolean): Promise<void> {
+	private async _reveal(): Promise<void> {
 		// In case dispose() was called before this resolved...
 		if (!this.container) return
-
-		// Append a non-animating, full-size clone to get the proper rect.
-		const ghost = this.wrapper.cloneNode(true) as HTMLElement
-		ghost.style.visibility = 'hidden'
-		this.container.prepend(ghost)
-
-		// This is the only way to get the correct future rect afaik 😅
-		const rect = ghost.children[0].getBoundingClientRect()
-
-		ghost.remove()
-
-		if (typeof this.opts.position === 'string') {
-			const placementPosition = place(rect, this.opts.position, {
-				bounds: this.opts.container,
-				margin: this.opts.margin,
-			})
-
-			// Use the rect to correct the window manager's positioning when storage is off.
-			if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
-				const win = this.window
-				if (win?.draggableInstance) {
-					win.draggableInstance.position = placementPosition
-				}
-			}
-		}
 
 		// Now that we're in position and inputs are loaded, we can animate-in.
 		this.container.appendChild(this.wrapper)
@@ -541,6 +525,10 @@ export class Gooey {
 
 	get closed(): Folder['closed'] {
 		return this.folder.closed
+	}
+
+	get hidden(): boolean {
+		return this.folder.hidden
 	}
 
 	get inputs() {
@@ -571,7 +559,7 @@ export class Gooey {
 	public addFolder(title: string, options?: Partial<FolderOptions>) {
 		if (this._honeymoon && this._birthday - Date.now() < 1000) {
 			this._honeymoon = false
-			this._reveal(true)
+			this._reveal()
 		}
 
 		return this.folder.addFolder(title, {
@@ -771,7 +759,7 @@ export class Gooey {
 		button: HTMLButtonElement
 		updateIcon: () => void
 	} {
-		const button = create<'button', any, HTMLButtonElement>('button', {
+		const button = create('button', {
 			parent,
 			classes: ['gooey-toolbar-item', 'gooey-settings-button'],
 			innerHTML: settingsIcon,
@@ -779,8 +767,9 @@ export class Gooey {
 				text: () => {
 					return this.settingsFolder?.closed.value ? 'Open Settings' : 'Close Settings'
 				},
-				placement: 'left',
-				delay: 750,
+				placement: 'right',
+				offsetX: '.5rem',
+				delay: 250,
 				delayOut: 0,
 				hideOnClick: true,
 				style: this._getStyles,
@@ -899,11 +888,35 @@ export class Gooey {
 		return windowManager
 	}
 
+	private _resolveInitialPosition(reposition: boolean): void {
+		// Append a non-animating, full-size clone to get the proper rect.
+		const ghost = this.wrapper.cloneNode(true) as HTMLElement
+		ghost.style.visibility = 'hidden'
+		this.container.prepend(ghost)
+		const rect = ghost.children[0].getBoundingClientRect()
+		ghost.remove()
+
+		if (typeof this.opts.position === 'string') {
+			const placementPosition = place(rect, this.opts.position, {
+				bounds: this.opts.container,
+				margin: this.opts.margin,
+			})
+
+			// Use the rect to correct the window manager's positioning when storage is off.
+			if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
+				const win = this.window
+				if (win?.draggableInstance) {
+					win.draggableInstance.position = placementPosition
+				}
+			}
+		}
+	}
+
 	/**
 	 * todo - Add the public resolved vars to `Themer` and remove this.
 	 * @internal
 	 */
-	private _getStyles = () => {
+	private _getStyles = (): Record<string, string> => {
 		return {
 			'--fg-a': this.wrapper?.style.getPropertyValue('--gooey-fg-a'),
 			'--bg-a': this.wrapper?.style.getPropertyValue('--gooey-bg-a'),
@@ -913,7 +926,7 @@ export class Gooey {
 		}
 	}
 
-	dispose = () => {
+	dispose = (): void => {
 		this._log.fn('dispose').debug(this)
 		this.themer?.dispose()
 		// this.themeEditor?.dispose()
