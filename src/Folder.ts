@@ -450,11 +450,6 @@ export class Folder {
 	on = this.evm.on.bind(this.evm)
 
 	/**
-	 * The pixel height of the folder element when open.
-	 * @internal
-	 */
-	initialHeight = 0
-	/**
 	 * The pixel height of the folder header element.
 	 * @internal
 	 */
