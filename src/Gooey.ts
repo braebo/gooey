@@ -889,6 +889,8 @@ export class Gooey {
 	}
 
 	private _resolveInitialPosition(reposition: boolean): void {
+		if (!this.container || !this.wrapper) return
+
 		// Append a non-animating, full-size clone to get the proper rect.
 		const ghost = this.wrapper.cloneNode(true) as HTMLElement
 		ghost.style.visibility = 'hidden'
