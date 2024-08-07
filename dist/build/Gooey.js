@@ -545,6 +545,8 @@ class Gooey {
         return windowManager;
     }
     _resolveInitialPosition(reposition) {
+        if (!this.container || !this.wrapper)
+            return;
         // Append a non-animating, full-size clone to get the proper rect.
         const ghost = this.wrapper.cloneNode(true);
         ghost.style.visibility = 'hidden';

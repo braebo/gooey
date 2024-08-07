@@ -612,7 +612,7 @@ export class Folder {
 				fill: 'forwards',
 			},
 		).onfinish = () => {
-			this.elements.title.textContent = v
+			this.elements.title.innerHTML = v
 			this.elements.title.animate(
 				[
 					{
@@ -827,7 +827,6 @@ export class Folder {
 			clipPath: 'inset(49% 50%)',
 			webkitClipPath: 'inset(49% 50%)',
 			easing: Folder._EASE.show,
-			// filter: 'invert(0.85)',
 			filter: 'brightness(10)',
 		},
 		{
@@ -835,7 +834,6 @@ export class Folder {
 			clipPath: 'inset(49% 0%)',
 			webkitClipPath: 'inset(49% 0%)',
 			easing: 'linear',
-			// filter: 'invert(0)',
 			filter: 'brightness(1)',
 		},
 		{
@@ -864,14 +862,12 @@ export class Folder {
 			offset: 0.1,
 			clipPath: 'inset(49% 50%)',
 			webkitClipPath: 'inset(49% 50%)',
-			// filter: 'invert(0.85)',
 			filter: 'brightness(10)',
 		},
 		{
 			offset: 0.42,
 			clipPath: 'inset(49% 0%)',
 			webkitClipPath: 'inset(49% 0%)',
-			// filter: 'invert(0)',
 			filter: 'brightness(1)',
 		},
 		{

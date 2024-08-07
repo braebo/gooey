@@ -218,7 +218,7 @@ class Input {
     }
     set title(v) {
         this._title = v;
-        this.elements.title.textContent = v;
+        this.elements.title.innerHTML = v;
     }
     /**
      * The main Element.  Usually a container div for the rest of the Input's
@@ -389,17 +389,6 @@ class Input {
     dispose() {
         this.__log.fn('dispose').debug(this);
         this._evm.dispose();
-        const rm = (elOrObj) => {
-            if (elOrObj instanceof HTMLElement || elOrObj instanceof SVGElement) {
-                elOrObj.remove();
-            }
-            else if (typeof elOrObj === 'object') {
-                for (const k in elOrObj) {
-                    rm(elOrObj[k]);
-                }
-            }
-        };
-        rm(this.elements);
     }
 }
 

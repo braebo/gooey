@@ -449,7 +449,7 @@ export abstract class Input<
 	}
 	set title(v: string) {
 		this._title = v
-		this.elements.title.textContent = v
+		this.elements.title.innerHTML = v
 	}
 
 	/**

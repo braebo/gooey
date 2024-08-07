@@ -393,7 +393,7 @@ class Folder {
     }
     //·· Open/Close ······································································¬
     toggle = () => {
-        this._log.fn('toggle').info();
+        this._log.fn('toggle').debug();
         clearTimeout(this._disabledTimer);
         if (this._clicksDisabled) {
             this._resetClicks();
@@ -410,7 +410,7 @@ class Folder {
         return this;
     };
     open(updateState = false) {
-        this._log.fn('open').info();
+        this._log.fn('open').debug();
         this.element.classList.remove('closed');
         this.evm.emit('toggle', false);
         if (updateState)
@@ -421,7 +421,7 @@ class Folder {
         return this;
     }
     close(updateState = false) {
-        this._log.fn('close').info();
+        this._log.fn('close').debug();
         this.element.classList.add('closed');
         if (updateState)
             this.closed.set(true);
@@ -449,7 +449,6 @@ class Folder {
             clipPath: 'inset(49% 50%)',
             webkitClipPath: 'inset(49% 50%)',
             easing: Folder._EASE.show,
-            // filter: 'invert(0.85)',
             filter: 'brightness(10)',
         },
         {
@@ -457,7 +456,6 @@ class Folder {
             clipPath: 'inset(49% 0%)',
             webkitClipPath: 'inset(49% 0%)',
             easing: 'linear',
-            // filter: 'invert(0)',
             filter: 'brightness(1)',
         },
         {
@@ -485,14 +483,12 @@ class Folder {
             offset: 0.1,
             clipPath: 'inset(49% 50%)',
             webkitClipPath: 'inset(49% 50%)',
-            // filter: 'invert(0.85)',
             filter: 'brightness(10)',
         },
         {
             offset: 0.42,
             clipPath: 'inset(49% 0%)',
             webkitClipPath: 'inset(49% 0%)',
-            // filter: 'invert(0)',
             filter: 'brightness(1)',
         },
         {
@@ -514,7 +510,7 @@ class Folder {
      * @default false
      */
     instant = false) {
-        this._log.fn('toggleHidden').info();
+        this._log.fn('toggleHidden').debug();
         this.hidden ? this.show(instant) : this.hide(instant);
         return this;
     }
@@ -524,7 +520,7 @@ class Folder {
      * @default false
      */
     instant = false) {
-        this._log.fn('show').info({ instant });
+        this._log.fn('show').debug({ instant });
         this._hidden = false;
         const anim = await this.element.animate(Folder._SHOW_ANIM, {
             duration: instant ? 0 : this._animDuration,
@@ -540,7 +536,7 @@ class Folder {
      * @default false
      */
     instant = false) {
-        this._log.fn('hide').info({ instant });
+        this._log.fn('hide').debug({ instant });
         this._hidden = true;
         const anim = await this.element.animate(Folder._HIDE_ANIM, {
             duration: instant ? 0 : this._animDuration,
@@ -611,7 +607,10 @@ class Folder {
         this._log.fn('load').debug({ preset, this: this });
         // this.closed.set(preset.closed) // todo - global settings?
         // this.hidden = preset.hidden
-        preset.hidden ? this.hide() : this.show();
+        // preset.hidden !== this.hidden ? this.hide() : this.show(true)
+        if (preset.hidden !== this.hidden) {
+            preset.hidden ? this.hide() : this.show(true);
+        }
         for (const input of this.inputs.values()) {
             const inputPreset = preset.inputs.find(c => c.presetId === input.opts.presetId);
             if (!inputPreset) {
