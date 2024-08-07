@@ -1,5 +1,11 @@
 # gooey
 
+## 0.2.12
+
+### Patch Changes
+
+-   fix: initial title not using `innerHTML` ([`a4e6fc31848b6febbd8cff5f138c8833358e8b95`](https://github.com/braebo/gooey/commit/a4e6fc31848b6febbd8cff5f138c8833358e8b95))
+
 ## 0.2.11
 
 ### Patch Changes
