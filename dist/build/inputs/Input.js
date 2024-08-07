@@ -126,7 +126,7 @@ class Input {
         this.elements.title = create('div', {
             classes: ['gooey-input-title'],
             parent: this.elements.container,
-            textContent: this.title,
+            innerHTML: this.title,
         });
         this.elements.content = create('div', {
             classes: ['gooey-input-content'],

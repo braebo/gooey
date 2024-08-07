@@ -268,7 +268,7 @@ class Folder {
             easing: 'ease-out',
             fill: 'forwards',
         }).onfinish = () => {
-            this.elements.title.textContent = v;
+            this.elements.title.innerHTML = v;
             this.elements.title.animate([
                 {
                     opacity: 0,
@@ -1097,7 +1097,7 @@ class Folder {
         const title = create('div', {
             parent: header,
             classes: ['gooey-title'],
-            textContent: this.title,
+            innerHTML: this.title,
         });
         const toolbar = create('div', {
             parent: header,
