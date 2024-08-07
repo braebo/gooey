@@ -1698,7 +1698,7 @@ export class Folder {
 		const title = create('div', {
 			parent: header,
 			classes: ['gooey-title'],
-			textContent: this.title,
+			innerHTML: this.title,
 		})
 
 		const toolbar = create('div', {
