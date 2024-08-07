@@ -1,5 +1,11 @@
 # gooey
 
+## 0.2.11
+
+### Patch Changes
+
+-   feat: innerhtml titles ([`0c1b9415a790dd950e7e8a679b2d98a613b64cd3`](https://github.com/braebo/gooey/commit/0c1b9415a790dd950e7e8a679b2d98a613b64cd3))
+
 ## 0.2.10
 
 ### Patch Changes
