@@ -36,14 +36,13 @@ $max-height: 80vh;
 	overflow: hidden;
 	cursor: default;
 
-	clip-path: inset(0);
-	// transition: clip-path 0.75s cubic-bezier(.05,1,.55,.99);
+	clip-path: inset(-20%);
+
 	transition: clip-path 0.25s;
 	transition-timing-function: $ease-open;
 	&:has(.collapsed) {
 		transition-timing-function: $ease-close;
-		// max-height: 0px;
-		clip-path: inset(0 0 calc(100% - $header-height) 0);
+		clip-path: inset(-20% -20% calc(100% - $header-height) -20%);
 	}
 
 	.codeblock {
