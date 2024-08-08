@@ -1,23 +1,29 @@
 <script lang="ts">
 	import { themer } from '$lib/themer.svelte'
-	import { onDestroy } from 'svelte'
 
-	let checked = $derived(themer.theme === 'light')
+	let state = $derived(themer.preference)
 
 	const toggle = () => {
-		themer.theme = checked ? 'dark' : 'light'
+		switch (state) {
+			case 'light':
+				themer.theme = 'dark'
+				break
+			case 'dark':
+				themer.theme = 'system'
+				break
+			case 'system':
+				themer.theme = 'light'
+				break
+		}
 	}
 </script>
 
 <button class="switch" title="toggle theme" onclick={toggle}>
-	<input type="checkbox" {checked} />
+	<input type="checkbox" class={state} />
 	<div class="track round">
 		<span class="thumb-content on" aria-hidden="true"></span>
 		<span class="thumb-content off" aria-hidden="true"></span>
-		<!-- {#key checked} -->
-		<div class="track-content light" aria-hidden="true">light</div>
-		<div class="track-content dark" aria-hidden="true">dark</div>
-		<!-- {/key} -->
+		<div class="track-content {state}" aria-hidden="true">{state}</div>
 	</div>
 </button>
 
@@ -38,8 +44,6 @@
 		--outline: var(--bg-b);
 		--outline-focus: var(--bg-c);
 
-		/* Internal */
-
 		--height: calc(var(--thumb-size) * 1 + var(--padding) * 2);
 		--transition: all var(--duration) cubic-bezier(0.05, 1, 0.56, 0.91);
 		--transform: calc(var(--width) - var(--thumb-size) - var(--padding) * 2);
@@ -53,7 +57,7 @@
 		}
 	}
 
-	/* Switch Container */
+	/* Container */
 
 	.switch {
 		position: relative;
@@ -64,7 +68,14 @@
 		max-width: 100%;
 		max-height: 100%;
 
+		border-radius: 0.5rem;
+
 		cursor: pointer;
+
+		&:focus-visible {
+			outline: 1px solid var(--bg-e);
+			outline-width: 2px;
+		}
 	}
 
 	/* Track */
@@ -92,17 +103,6 @@
 			outline 0.15s;
 
 		overflow: hidden;
-	}
-
-	// :global(:root[theme='light'] .track) {
-	// 	background-color: var(--bg-d);
-	// }
-
-	input:focus + .track {
-		&:not(:active) {
-			outline-color: var(--outline-focus);
-			outline-width: 2px;
-		}
 	}
 
 	/* Track Thumb */
@@ -133,7 +133,6 @@
 	}
 
 	/* Track Content */
-	
 
 	.track-content {
 		position: absolute;
@@ -148,6 +147,7 @@
 		max-height: 100%;
 
 		color: var(--fg-d);
+		opacity: 0;
 
 		user-select: none;
 		pointer-events: none;
@@ -159,59 +159,69 @@
 			'wdth' 95;
 		letter-spacing: 0.1rem;
 
+		&.light {
+			animation: in-left var(--duration) cubic-bezier(0.05, 1, 0.56, 0.91) forwards;
+			left: 0.5rem;
+		}
+
 		&.dark {
-			right: var(--padding);
+			animation: in-right var(--duration) cubic-bezier(0.05, 1, 0.56, 0.91) forwards;
+			right: 0.5rem;
+		}
+
+		&.system {
+			animation: in-center var(--duration) cubic-bezier(0.05, 1, 0.56, 0.91) forwards;
+			left: 0;
+			right: 0;
+			margin: auto;
+			width: fit-content;
 		}
 	}
 
-	/* Checked */
+	/* Thumb */
 
-	$amount: 1rem;
-	$padding: 0.5rem;
-
-	@mixin out {
-		transition-duration: calc(var(--duration) * 1.5);
-		transition-delay: 0.1s;
-		transition-timing-function: cubic-bezier(0.08, 0.96, 0.16, 0.97);
-	}
-
-	@mixin in {
-		transition-duration: var(--duration);
-		transition-delay: 0s;
-		transition-timing-function: cubic-bezier(0.05, 1, 0.56, 0.91);
-	}
-
-	input:checked + #{$thumb} {
+	input.light + #{$thumb} {
 		transform: translateX(var(--transform));
 	}
 
-	button:has(input:checked) .track-content {
-		&.light {
-			transform: translateX($padding);
-			opacity: 1;
-			@include out;
-		}
+	input.system + #{$thumb} {
+		transform: translate(0, 0);
+		width: calc(var(--width) - var(--padding) * 2);
+		border-radius: 5px;
+	}
 
-		&.dark {
-			transform: translateX(calc($amount * 2));
+	/* Animations */
+
+	@keyframes in-left {
+		from {
+			transform: translateX(calc(var(--transform) * -1));
 			opacity: 0;
-			@include in;
+		}
+		to {
+			transform: translateX(0);
+			opacity: 1;
 		}
 	}
 
-	/* Unchecked */
-
-	button:has(input:not(:checked)) .track-content {
-		&.light {
+	@keyframes in-right {
+		from {
+			transform: translateX(var(--transform));
 			opacity: 0;
-			transform: translateX(calc($amount * -2));
-			@include in;
 		}
-
-		&.dark {
+		to {
 			transform: translateX(0);
 			opacity: 1;
-			@include out;
+		}
+	}
+
+	@keyframes in-center {
+		from {
+			transform: translateX(-0.25rem) scale(1);
+			opacity: 0;
+		}
+		to {
+			transform: scale(0.9);
+			opacity: 1;
 		}
 	}
 

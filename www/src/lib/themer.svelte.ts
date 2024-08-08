@@ -2,57 +2,69 @@ import { parse } from 'cookie'
 
 type Preference = 'dark' | 'light' | 'system'
 
-class Theme {
-	#preference = $state<Preference>('dark')
-	get() {
-		return this.#preference
-	}
+const log = (...args: any[]) => console.log('\x1b[31m[themer]', ...args)
 
-	systemPreference = $state<'light' | 'dark' | null>(
-		globalThis?.window.matchMedia('prefers-color-scheme: dark').matches ? 'dark' : 'light',
-	)
+class Theme {
+	preference = $state<Preference>('dark')
 
 	constructor(
 		public readonly defaultTheme: Preference = 'dark',
 		public readonly storageKey: string = 'global-theme',
 	) {
-		this.#preference = (globalThis.localStorage?.getItem(this.storageKey) as Preference) || defaultTheme
+		this.preference = (globalThis.localStorage?.getItem(this.storageKey) as Preference) || defaultTheme
 
-		globalThis.window?.matchMedia('prefers-color-scheme: dark').addEventListener('change', (event) => {
-			this.systemPreference = event.matches ? 'dark' : 'light'
-		})
+		globalThis.window?.matchMedia('prefers-color-scheme: dark').addEventListener('change', this._onSystemChange)
 
 		const cookieTheme = parse(globalThis.document?.cookie)[this.storageKey]
 
 		if (['light', 'dark', 'system'].includes(cookieTheme)) {
-			this.#preference = cookieTheme as Preference
+			this.preference = cookieTheme as Preference
 		}
 
-		this.theme = this.#preference
+		this.theme = this.preference
+
+		globalThis.window.addEventListener('storage', (event) => {
+			if (event.key === this.storageKey) {
+				this.theme = event.newValue as Preference
+			}
+		})
 	}
 
 	get theme(): 'light' | 'dark' {
-		return this._resolveTheme(this.#preference)
+		return this._resolveTheme(this.preference)
 	}
 	set theme(newPreference: Preference) {
-		if (globalThis.document?.documentElement.getAttribute('theme') === newPreference) {
-			return
-		}
+		log(`New theme preference incoming: ${newPreference}`)
 
 		globalThis.localStorage?.setItem(this.storageKey, newPreference)
-		this.#preference = newPreference
+		this.preference = newPreference
+		log(`Updated preference: ${newPreference}`)
 
 		const theme = this.theme
+		log(`Setting theme to ${theme}`)
 
-		globalThis.document?.documentElement.setAttribute('theme', theme)
-
-		if (typeof globalThis.window !== 'undefined') {
+		if (typeof globalThis.document !== 'undefined') {
 			document.cookie = `${this.storageKey}=${theme}; path=/;`
+
+			if (document.documentElement.getAttribute('theme') !== theme) {
+				globalThis.document?.documentElement.setAttribute('theme', theme)
+			}
 		}
 	}
 
-	private _resolveTheme(mode: Preference, defaultTheme = this.defaultTheme): 'light' | 'dark' {
-		return mode === 'system' ? this._resolveTheme(defaultTheme, 'dark') : mode
+	private _resolveTheme(preference: Preference): 'light' | 'dark' {
+		// return mode === 'system' ? this._resolveTheme(defaultTheme, 'dark') : mode
+		return preference === 'system'
+			? globalThis.window?.matchMedia('prefers-color-scheme: dark').matches
+				? 'dark'
+				: 'light'
+			: preference
+	}
+
+	private _onSystemChange = (e: MediaQueryListEvent) => {
+		if (this.preference !== 'system') {
+			this.theme = e.matches ? 'dark' : 'light'
+		}
 	}
 }
 
