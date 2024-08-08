@@ -38,12 +38,18 @@ importers:
       csstype:
         specifier: 3.1.3
         version: 3.1.3
+      docinator:
+        specifier: link:../docinator
+        version: link:../docinator
       esbuild:
         specifier: 0.23.0
         version: 0.23.0
       esm-env:
         specifier: 1.0.0
         version: 1.0.0
+      extractinator:
+        specifier: link:../extractinator
+        version: link:../extractinator
       nodemon:
         specifier: ^3.1.4
         version: 3.1.4
