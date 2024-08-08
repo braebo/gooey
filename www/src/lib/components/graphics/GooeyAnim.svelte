@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Gooey, type InputNumber } from '../../../../../src/index'
-	import { themer } from '$lib/themer.svelte'
+	import GooeyThemeSync from '../GooeyThemeSync.svelte'
+	// import { themer } from '$lib/themer.svelte'
 	import { onMount } from 'svelte'
 	import presets from './presets'
 
@@ -10,7 +11,7 @@
 	}
 
 	let gooey: Gooey
-	let svgEl = $state<SVGSVGElement>()
+	let ready = $state(false)
 	let sliderEl = $state<SVGRectElement>()
 	let thumbEl = $state<SVGRectElement>()
 
@@ -49,7 +50,6 @@
 		return mapRange(p.hue, 0, 1, x, width + x - thumbWidth)
 	})
 
-	const unsubs = [] as (() => any)[]
 	onMount(() => {
 		// Create the gui.
 		gooey = new Gooey({
@@ -60,7 +60,6 @@
 
 		// Bind to the params and configure their options.
 		gooey.bindMany(p, {
-			// hue: { presetId: 'gooey__hue' },
 			goo: {
 				folderOptions: { closed: true },
 				texture: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
@@ -74,36 +73,9 @@
 		// Store a ref to the slider input to sync it with the svg slider.
 		hueInput = gooey.allInputs.get('hue') as InputNumber
 
-		// Update the page theme when the gui theme changes.
-		unsubs.push(
-			gooey.themer.mode.subscribe((m) => {
-				themer.theme = m
-			}),
-		)
-
-		// Update the gui when the page theme changes.
-		$effect(() => {
-			gooey.themer.mode.set(themer.theme)
-			updateTheme()
-		})
-
-		// Update the page theme when the gui theme changes.
-		unsubs.push(
-			gooey.themer.theme.subscribe(() => {
-				updateTheme()
-			}),
-		)
-
-		function updateTheme() {
-			for (const [k, v] of Object.entries(gooey.themer.modeColors)) {
-				document.documentElement.style.setProperty(`--${k}`, v)
-			}
-		}
+		ready = true
 
 		return () => {
-			for (const unsubscribe of unsubs) {
-				unsubscribe()
-			}
 			gooey?.dispose()
 			disposed = true
 		}
@@ -184,6 +156,10 @@
 
 <svelte:window {onblur} onpointerup={onblur} {onpointermove} />
 
+{#if ready}
+	<GooeyThemeSync {gooey} />
+{/if}
+
 <div class="logo">
 	<!-- prettier-ignore -->
 	<svg
@@ -195,7 +171,6 @@
 		viewBox="0 0 {viewBox.width} {viewBox.height}"
 		overflow="visible"
 		style="overflow: visible"
-		bind:this={svgEl}
 	>
 		<ellipse id="orb2" cx="247" cy="97" rx={14 * p.size} ry={14 * p.size} fill="url(#gooey_anim_gradient_2)">
 			<animateTransform {...randomPositions()} />
@@ -313,11 +288,11 @@
 		color: var(--fg-d);
 		contain: layout style;
 		backface-visibility: hidden;
-		transform: translateZ(0);
+		transform: translateZ(0px);
 
 		* {
 			backface-visibility: hidden;
-			transform: translateZ(0);
+			transform: translateZ(0px);
 			contain: content;
 		}
 	}
