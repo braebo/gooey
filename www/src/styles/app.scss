@@ -76,3 +76,7 @@ body {
 
 	overflow-x: hidden;
 }
+
+*:focus-visible {
+	outline-color: var(--fg-e);
+}
