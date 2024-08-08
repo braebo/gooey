@@ -24,7 +24,7 @@ $max-height: 80vh;
 	height: 100%;
 	max-height: $max-height;
 
-	background: var(--bg, var(--dark-c, #15161d));
+	background: var(--bg, var(--dark-a, #15161d));
 	backdrop-filter: blur(0.5rem);
 	-webkit-backdrop-filter: blur(0.5rem);
 	border-radius: 0.25rem;
@@ -71,7 +71,7 @@ $max-height: 80vh;
 
 		height: $header-height;
 
-		background: var(--bg-b, #282a36);
+		background: var(--bg-c, #282a36);
 
 		font-family: var(--font-a);
 
@@ -169,11 +169,11 @@ $max-height: 80vh;
 pre.shiki-wrapper {
 	height: var(--height, 100%);
 	max-height: $max-height;
-	padding: 0 var(--padding-sm, 0.5rem);
+	padding: 0 1rem;
 	padding-top: 0rem;
 	margin: 0;
 
-	box-shadow: var(--shadow-inset);
+	box-shadow: var(--shadow) inset;
 	overflow: auto;
 }
 
@@ -216,7 +216,6 @@ pre.shiki-wrapper::-webkit-scrollbar {
 	background: transparent; /* make scrollbar transparent */
 }
 pre.shiki-wrapper::-webkit-scrollbar-thumb {
-	// border: 1px solid var(--bg-a);
 	background: var(--bg-b);
 	border-radius: 0.125rem;
 
