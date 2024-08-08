@@ -92,7 +92,7 @@ $max-height: 80vh;
 
 			.dot {
 				all: unset;
-				cursor: pointer;
+				// cursor: pointer;
 				min-width: 0.5rem;
 				min-height: 0.5rem;
 
@@ -103,24 +103,16 @@ $max-height: 80vh;
 
 				&.red {
 					background: $red;
-					&:focus {
-						outline-offset: 2px;
-						outline: 1px solid $red;
-					}
 				}
 				&.yellow {
 					background: $yellow;
-					&:focus {
-						outline-offset: 2px;
-						outline: 1px solid $yellow;
-					}
 				}
 				&.green {
 					background: $green;
-					&:focus {
-						outline-offset: 2px;
-						outline: 1px solid $green;
-					}
+				}
+
+				&:focus {
+					scale: 1.1;
 				}
 			}
 
