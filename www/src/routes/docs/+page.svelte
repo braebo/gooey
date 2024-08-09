@@ -1,3 +1,10 @@
+<script lang="ts">
+	import Doc from '$lib/components/doc/Doc.svelte'
+	export let data
+</script>
+
 <section>
-	<h1>todo</h1>
+	{#each data.docs as doc}
+		<Doc {doc} />
+	{/each}
 </section>
