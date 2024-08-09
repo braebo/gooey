@@ -52,7 +52,7 @@
 <script lang="ts">
 	import type { BundledLanguage } from 'shiki'
 
-	import { highlight } from '../utils/highlight'
+	// import { highlight } from '../utils/highlight'
 	import CopyButton from './CopyButton.svelte'
 	import { DEV } from 'esm-env'
 	import './code.scss'
@@ -138,13 +138,26 @@
 	}: Boilerplate = $props()
 
 	let text = $state(_text ?? '')
-	let highlightedText = $state(_highlightedText ?? ssr ? text : sanitize(text ?? ''))
+	let highlightedText = $state((_highlightedText ?? ssr) ? text : sanitize(text ?? ''))
+	const alreadyHighlighted = highlightedText === text
 	let collapsed = $state(_collapsed)
+	let highlight: typeof import('../utils/highlight').highlight | undefined = undefined
 
 	$effect(() => {
-		highlight(text ?? '', { lang: lang, theme: theme }).then((t) => {
-			highlightedText = pretty ? t.replaceAll(/"/g, '') : t
-		})
+		if (alreadyHighlighted || ssr) return
+
+		if (!highlight) {
+			import('../utils/highlight').then((m) => {
+				highlight = m.highlight
+				highlight(text ?? '', { lang: lang, theme: theme }).then((t) => {
+					highlightedText = pretty ? t.replaceAll(/"/g, '') : t
+				})
+			})
+		} else {
+			highlight(text ?? '', { lang: lang, theme: theme }).then((t) => {
+				highlightedText = pretty ? t.replaceAll(/"/g, '') : t
+			})
+		}
 	})
 
 	if (DEV && !text && !highlightedText) {
@@ -222,8 +235,8 @@
 		position: absolute;
 		clip: rect(1px, 1px, 1px, 1px);
 		clip-path: inset(50%);
+		overflow: hidden;
 		width: 1px;
 		height: 1px;
-		overflow: hidden;
 	}
 </style>
