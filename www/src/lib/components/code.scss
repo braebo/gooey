@@ -90,6 +90,9 @@ $max-height: 80vh;
 			$yellow: var(--yellow, #febc2e);
 			$green: var(--green, #28c941);
 
+			filter: saturate(0.5);
+			transition: filter 0.1s;
+
 			.dot {
 				all: unset;
 				// cursor: pointer;
@@ -115,9 +118,6 @@ $max-height: 80vh;
 					scale: 1.1;
 				}
 			}
-
-			filter: saturate(0.5);
-			transition: filter 0.1s;
 		}
 
 		.title {

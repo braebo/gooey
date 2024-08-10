@@ -102,6 +102,13 @@
 		outline: 1px solid transparent;
 		color: var(--bg-d);
 
+		line-height: 1;
+		height: 1rem;
+		font-size: 0.8rem;
+		font-family: var(--font-mono);
+
+		transition: 0.25s;
+
 		&:hover {
 			color: var(--fg-c);
 			background: var(--bg-b);
@@ -125,13 +132,6 @@
 			color: var(--fg-b);
 			background: var(--bg-c);
 		}
-
-		line-height: 1;
-		height: 1rem;
-		font-size: 0.8rem;
-		font-family: var(--font-mono);
-
-		transition: 0.25s;
 	}
 
 	.svg-container {
