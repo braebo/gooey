@@ -127,8 +127,6 @@ $max-height: 80vh;
 	}
 
 	&:hover {
-		cursor: grab;
-
 		.dots {
 			filter: saturate(1);
 		}

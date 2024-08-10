@@ -50,17 +50,18 @@
 -->
 
 <script lang="ts">
-	import type { BundledLanguage } from 'shiki'
+	import type { LanguageRegistration, ThemeInput } from 'shiki'
 
 	// import { highlight } from '../utils/highlight'
+	import type { ValidLanguage } from '../utils/highlight'
 	import CopyButton from './CopyButton.svelte'
 	import { DEV } from 'esm-env'
 	import './code.scss'
 
 	type Boilerplate = {
 		/**
-		 * Effectively just disables the client-side highlighting,
-		 * assuming the text has already been highlighted on the server.
+		 * Effectively just disables the client-side highlighting, assuming the text has already
+		 * been highlighted on the server.
 		 * @defaultValue false
 		 */
 		ssr?: boolean
@@ -70,15 +71,16 @@
 		 */
 		title?: string
 		/**
-		 * The language to use.  Must be a {@link BundledLanguage}.
+		 * The language to use.  Must be a {@link LanguageRegistration}, ideally important
+		 * directly from the corresponding `shiki/langs/<lang>.mjs' module.
 		 * @defaultValue 'json'
 		 */
-		lang?: BundledLanguage
+		lang?: ValidLanguage
 		/**
 		 * The theme to use.
 		 * @defaultValue 'github'
 		 */
-		theme?: string
+		theme?: 'serendipity' | ThemeInput
 		/**
 		 * If true, a button will be displayed to copy the code to the clipboard.
 		 * @defaultValue true
@@ -127,7 +129,7 @@
 		text: _text = '',
 		highlightedText: _highlightedText = '',
 		title = 'code',
-		lang = 'json5' as BundledLanguage,
+		lang = 'json',
 		theme = 'serendipity',
 		copyButton = true,
 		collapsed: _collapsed = false,
@@ -138,7 +140,7 @@
 	}: Boilerplate = $props()
 
 	let text = $state(_text ?? '')
-	let highlightedText = $state((_highlightedText ?? ssr) ? text : sanitize(text ?? ''))
+	let highlightedText = $state(_highlightedText ?? (ssr ? text : sanitize(text ?? '')))
 	const alreadyHighlighted = highlightedText === text
 	let collapsed = $state(_collapsed)
 	let highlight: typeof import('../utils/highlight').highlight | undefined = undefined
@@ -149,12 +151,12 @@
 		if (!highlight) {
 			import('../utils/highlight').then((m) => {
 				highlight = m.highlight
-				highlight(text ?? '', { lang: lang, theme: theme }).then((t) => {
+				highlight(text ?? '', { lang, theme }).then((t) => {
 					highlightedText = pretty ? t.replaceAll(/"/g, '') : t
 				})
 			})
 		} else {
-			highlight(text ?? '', { lang: lang, theme: theme }).then((t) => {
+			highlight(text ?? '', { lang, theme }).then((t) => {
 				highlightedText = pretty ? t.replaceAll(/"/g, '') : t
 			})
 		}
