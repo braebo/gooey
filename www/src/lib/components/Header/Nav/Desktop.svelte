@@ -44,17 +44,11 @@
 	<nav class="showMenu">
 		<ul>
 			{#each links ?? [] as link, i (link.name)}
-				<!-- <div class="li depth-0"> -->
 				<div class="li depth-0" in:fly={{ y: -10 - 5 * i }} style:view-transition-name="li-{link.name}">
-					<!-- <a
-					style:view-transition-name="li-{link.name}"
-					data-sveltekit-prefetch
-					href={link.path}
-					class:active={isActive(link.name)}
-				> -->
 					<a data-sveltekit-prefetch href={link.path} class:active={isActive(link.name, $page.url.pathname)}>
 						{link.name}
 					</a>
+
 					{#if $page.url.pathname.includes(link.path)}
 						{@render subnav(link, i)}
 					{/if}
@@ -64,10 +58,6 @@
 	</nav>
 {/if}
 
-<!-- <div class="code" use:wm.add={{ draggable: { handle: '.nav', cancel: '.dots', position: 'bottom-left', margin: 16 } }}>
-	<Code title="nav" text={JSON.stringify(tree, null, 2)} lang="json" pretty />
-</div> -->
-
 <style lang="scss">
 	.code {
 		display: flex;
@@ -76,7 +66,7 @@
 		max-width: clamp(20rem, 50vw, 90vw);
 		box-sizing: border-box;
 		z-index: 1;
-		contain: layout paint style;
+		contain: strict;
 	}
 
 	nav {
@@ -84,12 +74,8 @@
 		top: 0;
 		bottom: 0;
 		left: 1rem;
-		// right: 0;
 		display: flex;
-		// flex-direction: column;
-		// justify-content: center;
 		align-items: center;
-		// flex-wrap: nowrap;
 
 		width: 100%;
 		max-width: 50rem;
@@ -97,7 +83,7 @@
 		gap: 1rem;
 
 		pointer-events: none;
-		contain: layout paint style;
+		contain: strict;
 
 		z-index: 1;
 	}
@@ -115,7 +101,6 @@
 	}
 
 	.li {
-		// outline: 1px solid hsla(240, 100%, 50%, 0.5);
 		position: relative;
 		height: 100%;
 
@@ -143,7 +128,6 @@
 		color: currentColor;
 
 		font-family: fredoka;
-		// font-size: var(--font-sm);
 		font-variation-settings:
 			'wght' 300,
 			'wdth' 97;
@@ -153,9 +137,7 @@
 
 		transition: 0.2s;
 		pointer-events: all;
-		// contain: layout paint style;
-		// transform: scale(1) !important;
-		// scale: 1 !important;
+
 		animation: fade 0.2s;
 	}
 	@keyframes fade {
