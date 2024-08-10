@@ -13,7 +13,9 @@ class Theme {
 	) {
 		this.preference = (globalThis.localStorage?.getItem(this.storageKey) as Preference) || defaultTheme
 
-		globalThis.window?.matchMedia('prefers-color-scheme: dark').addEventListener('change', this._onSystemChange)
+		const systemPref = globalThis.window?.matchMedia('(prefers-color-scheme: dark)')
+		systemPref.removeEventListener('change', this._onSystemChange)
+		systemPref.addEventListener('change', this._onSystemChange)
 
 		const cookieTheme = parse(globalThis.document?.cookie)[this.storageKey]
 
@@ -23,11 +25,8 @@ class Theme {
 
 		this.theme = this.preference
 
-		globalThis.window.addEventListener('storage', (event) => {
-			if (event.key === this.storageKey) {
-				this.theme = event.newValue as Preference
-			}
-		})
+		globalThis.window.removeEventListener('storage', this._onStorageChange)
+		globalThis.window.addEventListener('storage', this._onStorageChange)
 	}
 
 	get theme(): 'light' | 'dark' {
@@ -55,15 +54,19 @@ class Theme {
 	private _resolveTheme(preference: Preference): 'light' | 'dark' {
 		// return mode === 'system' ? this._resolveTheme(defaultTheme, 'dark') : mode
 		return preference === 'system'
-			? globalThis.window?.matchMedia('prefers-color-scheme: dark').matches
+			? globalThis.window?.matchMedia('(prefers-color-scheme: dark)').matches
 				? 'dark'
 				: 'light'
 			: preference
 	}
 
 	private _onSystemChange = (e: MediaQueryListEvent) => {
-		if (this.preference !== 'system') {
-			this.theme = e.matches ? 'dark' : 'light'
+		this.theme = 'system'
+	}
+
+	private _onStorageChange = (e: StorageEvent) => {
+		if (e.key === this.storageKey) {
+			this.theme = e.newValue as Preference
 		}
 	}
 }
