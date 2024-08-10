@@ -1121,7 +1121,7 @@ export class Folder {
 	): TOptions & { title: string; value: TValue; presetId: string } {
 		o ??= {} as TOptions
 		o.title ??= t
-		if (v) o.value ??= v
+		if (typeof v !== 'undefined') o.value ??= v
 		o.presetId ??= this._resolvePresetId([t])
 		return o as TOptions & { title: string; value: TValue; presetId: string }
 	}
