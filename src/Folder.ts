@@ -29,8 +29,8 @@ import {
 } from './inputs/InputButtonGrid'
 
 import { animateConnector, createFolderConnector, createFolderSvg } from './svg/createFolderSVG'
-import { composedPathContains } from './shared/cancelClassFound'
 import { Color, isColor, isColorFormat } from './shared/color/color'
+import { composedPathContains } from './shared/cancelClassFound'
 import { fromState, state, type State } from './shared/state'
 import { EventManager } from './shared/EventManager'
 import { TerminalSvg } from './svg/TerminalSvg'
@@ -39,6 +39,7 @@ import { create } from './shared/create'
 import { select } from './shared/select'
 import { Logger } from './shared/logger'
 import { nanoid } from './shared/nanoid'
+import { defer } from './shared/defer'
 import { toFn } from './shared/toFn'
 import { Gooey } from './Gooey'
 
@@ -1738,8 +1739,6 @@ export class Folder {
 		if (this.isRootFolder()) return
 		this._log.fn('createGraphics').debug({ this: this })
 
-		await new Promise(resolve => setTimeout(resolve, 0))
-
 		if (!this.isRootFolder()) {
 			this.graphics = { icon: createFolderSvg(this) }
 			this.elements.header.prepend(this.graphics.icon)
@@ -1747,6 +1746,7 @@ export class Folder {
 			if (!headerless) {
 				this.initialHeaderHeight ??= this._resolveHeaderHeight()
 				this.graphics.connector = createFolderConnector(this, this.graphics.icon)
+				animateConnector(this, this.closed.value ? 'close' : 'open')
 			}
 		}
 	}
@@ -1787,19 +1787,37 @@ export class Folder {
 		}
 	}
 
+	get scrollHeight(): number {
+		let height = this.element.scrollHeight
+		height += this.elements.header.scrollHeight
+		for (const child of this.allChildren) {
+			height += child.scrollHeight
+			height += this.elements.header.scrollHeight
+		}
+		return height
+	}
+
 	#timeout?: ReturnType<typeof setTimeout>
+	#first = true
 	private _refreshIcon(): void {
 		this._log.fn('#refreshIcon').debug(this)
 
 		// Really don't love this...
 		if (this.graphics) {
-			clearTimeout(this.#timeout)
-			this.#timeout = setTimeout(() => {
-				this.graphics?.icon.replaceWith(createFolderSvg(this)) // todo - not this
-				setTimeout(() => {
-					this.graphics?.connector?.update() // todo - this, for icon
+			defer(() => {
+				clearTimeout(this.#timeout)
+				this.#timeout = setTimeout(() => {
+					const svg = createFolderSvg(this)
+					this.graphics?.icon.replaceWith(svg)
+					if (this.graphics) this.graphics.icon = svg
+					if (this.#first) {
+						this.graphics?.connector?.update()
+						this.#first = false
+					} else {
+						this.graphics?.connector?.update()
+					}
 				}, 1)
-			}, 1)
+			})
 		}
 	}
 	//⌟
