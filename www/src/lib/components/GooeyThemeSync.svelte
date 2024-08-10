@@ -12,28 +12,40 @@
 
 	const subs = [] as (() => any)[]
 
+	let locked = false
+	let lockTimer: ReturnType<typeof setTimeout>
+	function lock() {
+		locked = true
+		clearTimeout(lockTimer)
+		lockTimer = setTimeout(() => {
+			locked = false
+		})
+	}
+
 	onMount(() => {
-		// Update the page theme when the gui theme changes.
+		// gooey mode change -> update page theme (aka mode)
 		subs.push(
 			gooey.themer.mode.subscribe((m) => {
+				if (locked) return
 				themer.theme = m
 			}),
 		)
 
-		// Update the gui when the page theme changes.
+		// page theme (aka mode) change -> update gooey mode
 		$effect(() => {
-			gooey.themer.mode.set(themer.theme)
-			updateTheme()
+			lock()
+			gooey.themer.mode.set(themer.preference)
+			applyTheme()
 		})
 
-		// Update the page theme when the gui theme changes.
+		// gooey theme change -> apply theme
 		subs.push(
 			gooey.themer.theme.subscribe(() => {
-				updateTheme()
+				applyTheme()
 			}),
 		)
 
-		function updateTheme() {
+		function applyTheme() {
 			for (const [k, v] of Object.entries(gooey.themer.modeColors)) {
 				document.documentElement.style.setProperty(`--${k}`, v)
 			}
