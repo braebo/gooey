@@ -1,53 +1,88 @@
-// todo - update this to use the new shiki API
-import svelte from 'shiki/langs/svelte.mjs'
 import typescript from 'shiki/langs/typescript.mjs'
-import javascript from 'shiki/langs/javascript.mjs'
+import svelte from 'shiki/langs/svelte.mjs'
+import json from 'shiki/langs/json.mjs'
 
-import type { LanguageInput, ThemeInput } from 'shiki'
 import type { HighlighterCore } from 'shiki/core'
 import type { CodeToHastOptions } from 'shiki'
+import type { ThemeInput } from 'shiki'
 
 import { transformerNotationHighlight, transformerNotationFocus, transformerNotationDiff } from '@shikijs/transformers'
 import { serendipity } from './highlight.serendipity'
 import { createHighlighterCore } from 'shiki/core'
 import getWasm from 'shiki/wasm'
 
-export type HighlightOptions = CodeToHastOptions<string, string> & {
+export type HighlightOptions = Partial<Omit<CodeToHastOptions<string, string>, 'lang' | 'theme'>> & {
 	/**
-	 * The language to highlight.
-	 * @defaultValue 'svelte'
+	 * The language to use for highlighting.
+	 * @default 'typescript'
 	 */
-	lang: LanguageInput | string
+	lang: ValidLanguage
 	/**
-	 * The language to highlight.
-	 * @defaultValue 'javascript'
+	 * The theme to use for highlighting.
+	 * @default 'serendipity'
 	 */
 	theme: ThemeInput | 'serendipity'
 }
 
 export const HIGHLIGHT_DEFAULTS: HighlightOptions = {
-	lang: 'svelte',
+	lang: 'typescript',
 	theme: 'serendipity',
 } as const
 
 const themes = new Set<ThemeInput>()
 
+export type ValidLanguage = (typeof LANGUAGES)[number]
+const LANGUAGES = [
+	'json',
+	'javascript',
+	'typescript',
+	'stylus',
+	'sass',
+	'css',
+	'less',
+	'postcss',
+	'coffee',
+	'scss',
+	'html',
+	'pug',
+	'markdown',
+	'svelte',
+	'js',
+	'ts',
+	'styl',
+	'coffeescript',
+	'jade',
+	'md',
+]
+
 // The default theme.
 themes.add('serendipity' as ThemeInput)
 
 /**
- * Converts text to HTML with syntax highlighting using shikiji.
+ * Generates syntax highlighted HTML from text using {@link https://shiki.style/|shiki}.
+ *
+ * @param text The text to highlight.
+ * @param options {@link HighlightOptions} to customize the highlighting.
+ * @returns An `HTML` string.
+ *
+ * @example
+ * ```ts
+ * const html = highlight('let x = 1', { lang: 'javascript' })
+ * ```
  */
 export async function highlight(text: string, options?: Partial<HighlightOptions>): Promise<string> {
 	const opts = { ...HIGHLIGHT_DEFAULTS, ...options } as HighlightOptions
 
 	const highlighter = await getHighlighterInstance()
 
+	const langs = highlighter.getLoadedLanguages()
+	console.log('langs', langs)
+
 	try {
 		const highlighted = highlighter.codeToHtml(text, {
 			...opts,
 			transformers: [transformerNotationHighlight(), transformerNotationFocus(), transformerNotationDiff()],
-		})
+		} as CodeToHastOptions<string, string>)
 		return highlighted
 	} catch (error) {
 		console.error(error)
@@ -56,15 +91,17 @@ export async function highlight(text: string, options?: Partial<HighlightOptions
 }
 
 let highlighterInstance: HighlighterCore
+
 /**
  * Highlighter instance singleton used internally.
+ * @internal
  */
-export async function getHighlighterInstance() {
+async function getHighlighterInstance() {
 	if (!highlighterInstance) {
 		highlighterInstance = await createHighlighterCore({
 			loadWasm: getWasm,
 			themes: [serendipity],
-			langs: [svelte, typescript, javascript],
+			langs: [svelte, typescript, json],
 		})
 	}
 	return highlighterInstance
