@@ -186,7 +186,7 @@ export class Themer {
 			node === 'document'
 				? document.documentElement
 				: typeof node === 'string'
-					? select(node)[0] ?? document.documentElement
+					? (select(node)[0] ?? document.documentElement)
 					: (node as HTMLElement)
 
 		this._log = new Logger(`themer ${this.node.classList[0]}`, { fg: 'DarkCyan' })
