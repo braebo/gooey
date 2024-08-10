@@ -2,6 +2,7 @@ import type { Waves } from './Waves'
 
 import { WAVE_PRESETS } from '../beats/BinauralBeats'
 import { Gooey } from '../../../../../../src/index'
+import type { GooeyOptionsInternal } from '../../../../../../src/Gooey'
 
 const dims = {
 	mx: 10,
@@ -37,10 +38,11 @@ export class WavesGooey extends Gooey {
 		super({
 			title: kind,
 			closed: false,
+			// todo - not this
 			_windowManager: waves.beats.gooey!.windowManager,
 			position: positions[kind],
 			storage: false,
-		})
+		} as GooeyOptionsInternal)
 
 		const btnGrid = this.addButtonGrid('Playback', [
 			[
