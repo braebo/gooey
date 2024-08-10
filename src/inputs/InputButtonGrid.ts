@@ -69,9 +69,6 @@ export type ButtonGridInputOptions = {
 
 	/**
 	 * Whether to apply the `active` classname to the button when it is clicked.
-	 *
-	 * _note:_ The {@link InputButtonGrid.state} value will always be the `id` of the most recently
-	 * clicked button.  The `id` is derived from `text` when unspecified.
 	 * @default true
 	 */
 	applyActiveClass?: boolean
@@ -125,7 +122,6 @@ export class InputButtonGrid extends Input<
 	buttons: Map<ButtonId, ButtonController> = new Map()
 	buttonGrid: ButtonGrid
 
-	// active = state<ButtonId>('')
 	/**
 	 * A Set of active button ids.
 	 */
