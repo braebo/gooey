@@ -11,7 +11,7 @@ import { toFn } from '../shared/toFn'
 export type ButtonClickFunction = () => void
 
 export type ButtonEventPayload = {
-	e: MouseEvent & { target: HTMLButtonElement }
+	event: MouseEvent & { target: HTMLButtonElement }
 	button: ButtonController
 }
 
@@ -72,9 +72,8 @@ export type ButtonControllerOptions = {
 	tooltip?: Partial<TooltipOptions>
 
 	/**
-	 * Optional function to determine if the button is active.  If the function returns `true`,
-	 * the button will have the `active` class added to it, and removed if `false`.  This updates
-	 * in the {@link InputButtonGrid.refresh|`refresh`} method.
+	 * An arbitrary value used externally by {@link InputButtonGrid}.  If a function is passed, it
+	 * will be called whenever the button is refreshed.
 	 * @defaultValue `false`
 	 */
 	active?: boolean | (() => boolean)
@@ -111,7 +110,7 @@ export const BUTTON_INPUT_DEFAULTS: ButtonControllerOptions = {
 	__type: 'ButtonControllerOptions' as const,
 	text: () => 'click me',
 	onClick: () => void 0,
-	id: undefined,
+	id: nanoid(8),
 	disabled: false,
 	style: undefined,
 	tooltip: undefined,
@@ -131,12 +130,12 @@ export class ButtonController {
 	private _disabled = () => false
 
 	element: HTMLButtonElement
+	parent: HTMLElement | undefined
 
 	private _evm = new EventManager<ButtonControllerEvents>(['change', 'refresh', 'click'])
 	on = this._evm.on.bind(this._evm)
 
 	private _log = new Logger('ButtonController', { fg: 'coral' })
-	parent: HTMLElement | undefined
 
 	constructor(options: Partial<ButtonControllerOptions>) {
 		const opts = Object.assign({}, BUTTON_INPUT_DEFAULTS, options)
@@ -161,6 +160,10 @@ export class ButtonController {
 		}
 	}
 
+	get id() {
+		return this.element.id
+	}
+
 	get text(): string {
 		return this._text()
 	}
@@ -175,7 +178,7 @@ export class ButtonController {
 	set active(value: boolean | (() => boolean) | undefined) {
 		if (typeof value === 'undefined') return
 		this._active = toFn(value)
-		this.element.classList.toggle('active', this._active())
+		// this.element.classList.toggle('active', this._active())
 	}
 
 	/**
@@ -200,9 +203,9 @@ export class ButtonController {
 		this.refresh()
 	}
 
-	click = (e: MouseEvent & { target: HTMLButtonElement }) => {
+	click = (event: MouseEvent & { target: HTMLButtonElement }) => {
 		this._log.fn('click').debug({ this: this })
-		this._evm.emit('click', { e, button: this })
+		this._evm.emit('click', { event, button: this })
 		this.refresh()
 	}
 
@@ -224,9 +227,19 @@ export class ButtonController {
 		this.element.toggleAttribute('disabled', this.disabled)
 		this.element.classList.toggle('disabled', this.disabled)
 		this.element.innerHTML = this.text
-		this.element.classList.toggle('active', this.active)
+		// this.element.classList.toggle('active', this.active)
 		this._evm.emit('refresh')
 		return this
+	}
+
+	toJSON() {
+		return {
+			__type: this.__type,
+			id: this.id,
+			text: this.text,
+			active: this.active,
+			disabled: this.disabled,
+		}
 	}
 
 	dispose() {

@@ -171,6 +171,8 @@ export interface GooeyOptions {
 
 export interface GooeyOptionsInternal extends GooeyOptions {
 	/**
+	 * todo - this needs to be public, maybe as `GooeyOptions.parentGooey` so the user doesn't
+	 * todo - have to think about the window manager?
 	 * @internal
 	 */
 	_windowManager?: WindowManager
@@ -723,6 +725,7 @@ export class Gooey {
 		)
 
 		// Fully desaturate the ui folder's header connector to svg.
+		// todo - this doesn't work anymore due to the changes in `connector.update` or `animateConnector` iirc
 		uiFolder.on('mount', () => {
 			uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
 			uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
@@ -737,7 +740,7 @@ export class Gooey {
 				finalThemer.theme.set(v.value)
 			})
 
-			uiFolder.addButtonGrid(
+			const modeButtons = uiFolder.addButtonGrid(
 				'mode',
 				[
 					['light', 'dark', 'system'].map(m => ({
@@ -747,8 +750,13 @@ export class Gooey {
 					})),
 				],
 				{
-					activeOnClick: true,
+					applyActiveClass: true,
 				},
+			)
+			uiFolder.evm.add(
+				finalThemer.mode.subscribe(v => {
+					modeButtons.setActive(v)
+				}),
 			)
 		}
 
