@@ -56,10 +56,6 @@ describe('InputButtonGrid', () => {
 						text: 'foo',
 						onClick: console.log,
 					},
-					{
-						text: 'foo',
-						onClick: console.log,
-					},
 				],
 			],
 			{
@@ -67,32 +63,36 @@ describe('InputButtonGrid', () => {
 			},
 		)
 
-		const [, b, c] = grid.buttons.values()
+		const [, b] = grid.buttons.values()
 		expect(b.id).toBe('foo1')
-		expect(c.id).toBe('foo2')
+
+		const foo = grid.buttons.get('foo')
+		expect(foo).toBeDefined()
+
+		const foo1 = grid.buttons.get('foo1')
+		expect(foo1).toBeDefined()
+
+		const foo2 = grid.buttons.get('foo2')
+		expect(foo2).toBeDefined()
+
+		const foo3 = grid.buttons.get('foo3')
+		expect(foo3).toBeUndefined()
 	})
 
 	test('multiple', () => {
 		gooey.addButtonGrid(
-			'id collisions',
+			'multiple',
 			[
 				[
 					{
-						text: 'foo',
+						text: 'activate me',
 						onClick: v => {
 							console.log(v.button.id)
 							console.log(v)
 						},
 					},
 					{
-						text: 'foo',
-						onClick: v => {
-							console.log(v.button.id)
-							console.log(v)
-						},
-					},
-					{
-						text: 'foo',
+						text: 'and me too',
 						onClick: v => {
 							console.log(v.button.id)
 							console.log(v)
