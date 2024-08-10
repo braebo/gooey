@@ -25,17 +25,19 @@ A modern gui library for typescript and javascript _(yet another web gui)_.
 
 ## Inputs
 
-| Status | Feature  | Primitive                      |
-| ------ | -------- | ------------------------------ |
-| ✅      | Number   | `number`                       |
-| ✅      | Color    | `Color \| ColorRepresentation` |
-| ✅      | Select   | `Array<any>`                   |
-| ✅      | Switch   | `boolean`                      |
-| ✅      | Text     | `string`                       |
-| 🚧      | Textarea | `string`                       |
-| 🚧      | Range    | `{ min, max }`                 |
-| 🚧      | Vector3  | `{ x, y, z }`                  |
-| 🚧      | Vector2  | `{ x, y }`                     |
+| Status  | Feature    | Primitive                      |
+| ------- | ---------- | ------------------------------ |
+| ✅      | Number     | `number`                       |
+| ✅      | Color      | `Color \| ColorRepresentation` |
+| ✅      | Select     | `Array<any>`                   |
+| ✅      | Switch     | `boolean`                      |
+| ✅      | Text       | `string`                       |
+| ✅      | Button     | `{ text, onClick, ... }`       |
+| ✅      | ButtonGrid | `{ text, onClick, ... }[][]`   |
+| 🚧      | Textarea   | `string`                       |
+| 🚧      | Range      | `{ min, max }`                 |
+| 🚧      | Vector3    | `{ x, y, z }`                  |
+| 🚧      | Vector2    | `{ x, y }`                     |
 
 
 ## Installation
