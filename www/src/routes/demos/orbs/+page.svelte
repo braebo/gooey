@@ -1,6 +1,7 @@
 <!-- @hmr:reset -->
 
 <script lang="ts">
+	import GooeyThemeSync from '$lib/components/GooeyThemeSync.svelte'
 	import { params } from '$lib/components/orbs/params'
 	import Orbs from '$lib/components/orbs/Orbs.svelte'
 	import { Gooey } from '../../../../../src/index'
@@ -40,6 +41,10 @@
 </script>
 
 <svelte:window on:resize={onResize} />
+
+{#if gooey}
+	<GooeyThemeSync {gooey} />
+{/if}
 
 <div class="page">
 	{#if $showCode}
