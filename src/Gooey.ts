@@ -32,7 +32,7 @@ import { o } from './shared/l'
 
 //· Types ························································································¬
 
-type GooeyTheme = 'default' | 'flat' | 'scour' | (string & {})
+type GooeyTheme = 'default' | 'flat' | 'scout' | (string & {})
 
 export interface GooeyElements {
 	root: HTMLElement
