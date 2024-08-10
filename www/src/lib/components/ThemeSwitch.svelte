@@ -18,8 +18,7 @@
 	}
 </script>
 
-<button class="switch" title="toggle theme" onclick={toggle}>
-	<input type="checkbox" class={state} />
+<button class="switch {state}" title="toggle theme" onclick={toggle}>
 	<div class="track round">
 		<span class="thumb-content on" aria-hidden="true"></span>
 		<span class="thumb-content off" aria-hidden="true"></span>
@@ -42,7 +41,7 @@
 		--thumb: var(--bg-a);
 
 		--outline: var(--bg-b);
-		--outline-focus: var(--bg-c);
+		--outline-focus: var(--bg-d);
 
 		--height: calc(var(--thumb-size) * 1 + var(--padding) * 2);
 		--transition: all var(--duration) cubic-bezier(0.05, 1, 0.56, 0.91);
@@ -50,6 +49,7 @@
 	}
 
 	:global(:root[theme='dark'] .switch) {
+		--outline-focus: var(--bg-c);
 		.track {
 			box-shadow:
 				-1px 1.5px 0.3rem rgba(0, 0, 0, 0.25) inset,
@@ -73,8 +73,9 @@
 		cursor: pointer;
 
 		&:focus-visible {
-			outline: 1px solid var(--bg-e);
-			outline-width: 2px;
+			.track {
+				outline: 2px solid var(--outline-focus);
+			}
 		}
 	}
 
@@ -175,16 +176,17 @@
 			right: 0;
 			margin: auto;
 			width: fit-content;
+			color: var(--fg-a);
 		}
 	}
 
 	/* Thumb */
 
-	input.light + #{$thumb} {
+	button.light #{$thumb} {
 		transform: translateX(var(--transform));
 	}
 
-	input.system + #{$thumb} {
+	button.system #{$thumb} {
 		transform: translate(0, 0);
 		width: calc(var(--width) - var(--padding) * 2);
 		border-radius: 5px;
@@ -223,13 +225,5 @@
 			transform: scale(0.9);
 			opacity: 1;
 		}
-	}
-
-	/* Hide default HTML checkbox. */
-
-	.switch input {
-		opacity: 0;
-		width: 0;
-		height: 0;
 	}
 </style>
