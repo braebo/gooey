@@ -119,8 +119,7 @@
 		position: relative;
 		height: 100%;
 
-		padding: 0.5rem 0;
-		// min-width: 10rem;
+		padding: 0.5rem 2px;
 		margin: 0;
 
 		color: var(--fg-a);
