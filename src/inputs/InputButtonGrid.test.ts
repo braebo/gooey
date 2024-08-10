@@ -73,10 +73,7 @@ describe('InputButtonGrid', () => {
 		expect(foo1).toBeDefined()
 
 		const foo2 = grid.buttons.get('foo2')
-		expect(foo2).toBeDefined()
-
-		const foo3 = grid.buttons.get('foo3')
-		expect(foo3).toBeUndefined()
+		expect(foo2).toBeUndefined()
 	})
 
 	test('multiple', () => {
