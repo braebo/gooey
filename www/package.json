@@ -33,6 +33,7 @@
 		"@sveltejs/vite-plugin-svelte": "3.1.1",
 		"@types/cookie": "0.6.0",
 		"@types/node": "22.1.0",
+		"@vitest/ui": "^2.0.5",
 		"autoprefixer": "10.4.20",
 		"cookie": "0.6.0",
 		"cssnano": "7.0.4",
