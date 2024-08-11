@@ -9,20 +9,18 @@ export class BinauralBeatsGooey extends Gooey {
 			Object.keys(WAVE_PRESETS).map((kind) => {
 				return {
 					text: kind,
-					onClick: ({ button }) => {
+					onClick: () => {
 						let wave = this.beats.waves.get(kind)
 
 						if (!wave) {
-							button.active = true
 							wave = this.beats.addWave(kind as keyof typeof WAVE_PRESETS)
 						} else {
-							button.active = false
 							this.beats.removeWave(kind as keyof typeof WAVE_PRESETS)
 						}
 					},
 				}
 			}),
-		])
+		], { multiple: true })
 
 		this.folder.addNumber('Volume', this.beats.volume).on('change', (v) => {
 			this.beats.volume = v

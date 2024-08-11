@@ -28,7 +28,7 @@ export const WAVE_PRESETS = {
 } as const
 
 export class BinauralBeats {
-	gooey?: BinauralBeatsGooey
+	gooey!: BinauralBeatsGooey
 
 	ctx!: AudioContext
 	gain_node!: GainNode
@@ -52,10 +52,6 @@ export class BinauralBeats {
 		this.gain_node.connect(this.ctx.destination)
 
 		this.gooey = new BinauralBeatsGooey(this)
-
-		// for (const kind in WAVE_PRESETS) {
-		// 	this.addWave(kind as keyof typeof WAVE_PRESETS)
-		// }
 	}
 
 	addWave = (kind: keyof typeof WAVE_PRESETS) => {
