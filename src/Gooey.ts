@@ -558,6 +558,13 @@ export class Gooey {
 		return this._theme!
 	}
 
+	/**
+	 * Alias for the {@link container} element.
+	 */
+	get element(): HTMLElement {
+		return this.container
+	}
+
 	public addFolder(title: string, options?: Partial<FolderOptions>) {
 		if (this._honeymoon && this._birthday - Date.now() < 1000) {
 			this._honeymoon = false
