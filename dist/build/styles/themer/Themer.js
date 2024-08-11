@@ -90,7 +90,7 @@ class Themer {
     mode;
     /**
      * If provided, theme css vars will be added to the wrapper.
-    */
+     */
     wrapper;
     _initialized = false;
     _prefersDark;
@@ -159,11 +159,6 @@ class Themer {
             this.init();
         }
     }
-    #handlePrefChange = () => {
-        if (this.mode.value === 'system') {
-            this.applyTheme();
-        }
-    };
     #addSub(state, cb) {
         this._unsubs.push(state.subscribe(v => cb(v)));
     }
@@ -205,6 +200,10 @@ class Themer {
     get #systemPreference() {
         return this._prefersDark.matches ? 'dark' : 'light';
     }
+    #handlePrefChange = () => {
+        if (this.mode.value === 'system')
+            this.theme.set(this.theme.value);
+    };
     /**
      * Adds a new theme to the Themer and optionally saves it to localStorage.
      */

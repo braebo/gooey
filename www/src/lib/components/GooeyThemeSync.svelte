@@ -8,7 +8,6 @@
 		autoInit?: boolean
 	} = $props()
 	const gooey = props.gooey
-	// const autoInit = props.autoInit ?? true
 
 	const subs = [] as (() => any)[]
 

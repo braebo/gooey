@@ -119,7 +119,7 @@ export declare class Themer {
     mode: State<'light' | 'dark' | 'system'>;
     /**
      * If provided, theme css vars will be added to the wrapper.
-    */
+     */
     wrapper?: HTMLElement;
     private _initialized;
     private _prefersDark;
