@@ -1825,7 +1825,7 @@ export class Folder {
 	disposed = false
 	dispose(): void {
 		if (this.disposed && DEV) {
-			this._log.fn('dispose').error('Already disposed.', this)
+			this._log.fn('dispose').debug('Already disposed.', this)
 			return
 		}
 		this.elements.header.removeEventListener('click', this.toggle)
