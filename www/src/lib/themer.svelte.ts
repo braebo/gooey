@@ -3,7 +3,6 @@ import { parse } from 'cookie'
 type Preference = 'dark' | 'light' | 'system'
 
 // const log = (...args: any[]) => console.log('\x1b[31m[themer]', ...args)
-const log = (...args: any[]) => {}
 
 class Theme {
 	preference = $state<Preference>('dark')
@@ -35,14 +34,14 @@ class Theme {
 		return this.#resolvePreference(this.preference)
 	}
 	set theme(newPreference: Preference) {
-		log(`New theme preference incoming: ${newPreference}`)
+		// log(`New theme preference incoming: ${newPreference}`)
 
 		globalThis.localStorage?.setItem(this.storageKey, newPreference)
 		this.preference = newPreference
-		log(`Updated preference: ${newPreference}`)
+		// log(`Updated preference: ${newPreference}`)
 
 		const theme = this.theme
-		log(`Setting theme to ${theme}`)
+		// log(`Setting theme to ${theme}`)
 
 		if (typeof globalThis.document !== 'undefined') {
 			document.cookie = `${this.storageKey}=${theme}; path=/;`
