@@ -1012,8 +1012,6 @@ export class Folder {
 		this._log.fn('load').debug({ preset, this: this })
 
 		// this.closed.set(preset.closed) // todo - global settings?
-		// this.hidden = preset.hidden
-		// preset.hidden !== this.hidden ? this.hide() : this.show(true)
 
 		if (preset.hidden !== this.hidden) {
 			preset.hidden ? this.hide() : this.show(true)
@@ -1149,34 +1147,65 @@ export class Folder {
 	}
 	//⌟
 
-	addMany<T extends Record<string, any>>(
-		obj: T,
-		options?: { folder?: Folder },
-	): Folder & { inputs: Map<keyof T | (string & {}), InferInput<T[keyof T]>> } {
-		const folder = options?.folder ?? this
+	// addMany<T extends Record<string, any>>(
+	// 	obj: T,
+	// 	options?: { folder?: Folder },
+	// ): Folder & { inputs: Map<keyof T | (string & {}), InferInput<T[keyof T]>> } {
+	// addMany<
+	// 	T extends object,
+	// 	TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
+	// 	TInputs extends InferTarget<T> = this & InferTarget<T>,
+	// >(
+	// 	obj: T,
+	// 	options?: TOptions & {
+	// 		/**
+	// 		 * An array of keys to exclude from a target object when generating inputs.
+	// 		 */
+	// 		exclude?: InferTargetKeys<T>[]
+	// 		/**
+	// 		 * An array of keys to include in a target object when generating inputs.
+	// 		 */
+	// 		include?: InferTargetKeys<T>[]
+	// 	},
+	// ): Folder & { inputs: Map<keyof T | (string & {}), InferInput<T[keyof T]>> } {
+	// 	const walk = (
+	// 		obj: T,
+	// 		options: TOptions & {
+	// 			/**
+	// 			 * An array of keys to exclude from a target object when generating inputs.
+	// 			 */
+	// 			exclude?: InferTargetKeys<T>[]
+	// 			/**
+	// 			 * An array of keys to include in a target object when generating inputs.
+	// 			 */
+	// 			include?: InferTargetKeys<T>[]
+	// 		},
+	// 		folder: Folder,
+	// 		seen: Set<any>,
+	// 	) => {
+	// 		for (const [key, value] of Object.entries(obj)) {
+	// 			if (typeof value === 'object') {
+	// 				if (isColor(value)) {
+	// 					this.addColor(key, value)
+	// 					continue
+	// 				}
 
-		for (const [key, value] of Object.entries(obj)) {
-			if (typeof value === 'object') {
-				if (isColor(value)) {
-					this.addColor(key, value)
-					continue
-				}
+	// 				const subFolder = folder.addFolder(key)
+	// 				subFolder.addMany(value, options, subFolder, seen)
+	// 			} else {
+	// 				const opts = {
+	// 					binding: {
+	// 						target: obj,
+	// 						key,
+	// 					},
+	// 				}
+	// 				this.add(key, value, opts)
+	// 			}
+	// 		}
+	// 	}
 
-				const subFolder = folder.addFolder(key)
-				subFolder.addMany(value, { folder: subFolder })
-			} else {
-				const opts = {
-					binding: {
-						target: obj,
-						key,
-					},
-				}
-				this.add(key, value, opts)
-			}
-		}
-
-		return this as any
-	}
+	// 	return this as any
+	// }
 
 	//·· Bind ···································································¬
 
@@ -1227,6 +1256,36 @@ export class Folder {
 	 */
 	private _transientRoot: Folder | null = null
 
+	addMany<
+		T extends object,
+		TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
+		TInputs extends InferTarget<T> = this & InferTarget<T>,
+	>(
+		target: T,
+		options?: TOptions & {
+			/**
+			 * An array of keys to exclude from a target object when generating inputs.
+			 */
+			exclude?: InferTargetKeys<T>[]
+			/**
+			 * An array of keys to include in a target object when generating inputs.
+			 */
+			include?: InferTargetKeys<T>[]
+		},
+	): TInputs {
+		let rootFolder: Folder = this
+
+		if (!this._transientRoot) {
+			this._transientRoot = rootFolder
+		}
+
+		this._walk(target, ((options as any) || undefined) ?? {}, rootFolder, new Set(), 'add')
+
+		const finalRoot = this._transientRoot
+		this._transientRoot = null
+		return finalRoot as this & TInputs
+	}
+
 	bindMany<
 		T extends object,
 		TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
@@ -1244,80 +1303,94 @@ export class Folder {
 			include?: InferTargetKeys<T>[]
 		},
 	): TInputs {
-		const walk = (
-			target: T,
-			options: TOptions & {
-				/**
-				 * An array of keys to exclude from a target object when generating inputs.
-				 */
-				exclude?: InferTargetKeys<T>[]
-				/**
-				 * An array of keys to include in a target object when generating inputs.
-				 */
-				include?: InferTargetKeys<T>[]
-			},
-			folder: Folder,
-			seen: Set<any>,
-		) => {
-			if (seen.has(target)) return
-			seen.add(target)
-
-			for (let [key, value] of Object.entries(target)) {
-				if (Array.isArray(options['exclude']) && options['exclude'].includes(key as any))
-					continue
-				if (Array.isArray(options['include']) && !options['include'].includes(key as any))
-					continue
-
-				const inputOptions =
-					(options[key as keyof T] as any as TOptions) || ({} as TOptions)
-
-				let folderOptions = {} as FolderOptions
-
-				if (value === null) {
-					if (!('value' in inputOptions)) {
-						console.error(
-							`bindMany() error: target object's key "${key}" is \`null\`, and no valid "value" option was provided as a fallback.`,
-							{ key, value, inputOptions },
-						)
-						throw new Error('Invalid binding.')
-					}
-
-					value = inputOptions['value']
-				}
-
-				if (typeof value === 'object') {
-					if (isColor(value)) {
-						folder.bindColor(value, 'color', { title: key, ...inputOptions })
-					} else {
-						if ('folderOptions' in inputOptions) {
-							folderOptions = inputOptions['folderOptions'] as FolderOptions
-						} else if ('folderOptions' in value) {
-							folderOptions = value.folderOptions
-						}
-						const subFolder = folder.addFolder(key, folderOptions)
-						walk(value, inputOptions, subFolder, seen)
-					}
-				} else if ('options' in inputOptions) {
-					folder.bindSelect(target, key as keyof T, inputOptions as SelectInputOptions)
-				} else {
-					folder.bind(target, key as keyof T, inputOptions as any)
-				}
-			}
-		}
-
 		let rootFolder: Folder = this
 
 		if (!this._transientRoot) {
 			this._transientRoot = rootFolder
 		}
 
-		walk(target, ((options as any) || undefined) ?? {}, rootFolder, new Set())
+		this._walk(target, ((options as any) || undefined) ?? {}, rootFolder, new Set(), 'bind')
 
 		const finalRoot = this._transientRoot
 		this._transientRoot = null
 		return finalRoot as this & TInputs
 	}
 	//⌟
+
+	private _walk<T extends object, TOptions extends InferTargetOptions<T> = InferTargetOptions<T>>(
+		target: T,
+		options: TOptions & {
+			/**
+			 * An array of keys to exclude from a target object when generating inputs.
+			 */
+			exclude?: InferTargetKeys<T>[]
+			/**
+			 * An array of keys to include in a target object when generating inputs.
+			 */
+			include?: InferTargetKeys<T>[]
+		},
+		folder: Folder,
+		seen: Set<any>,
+		mode: 'bind' | 'add',
+	) {
+		if (seen.has(target)) return
+		seen.add(target)
+
+		for (let [key, value] of Object.entries(target)) {
+			if (Array.isArray(options['exclude']) && options['exclude'].includes(key as any))
+				continue
+			if (Array.isArray(options['include']) && !options['include'].includes(key as any))
+				continue
+
+			const inputOptions = (options[key as keyof T] as any as TOptions) || ({} as TOptions)
+
+			let folderOptions = {} as FolderOptions
+
+			if (value === null) {
+				const hasValue = 'value' in inputOptions
+
+				if (!hasValue && mode === 'bind') {
+					console.error(
+						`bindMany() error: target object's key "${key}" is \`null\`, and no valid "value" option was provided as a fallback.`,
+						{ key, value, inputOptions },
+					)
+					throw new Error('Invalid binding.')
+				}
+
+				if (hasValue) {
+					value = inputOptions['value']
+				}
+			}
+
+			if (typeof value === 'object') {
+				if (isColor(value)) {
+					mode === 'bind'
+						? folder.bindColor(value, 'color', { title: key, ...inputOptions })
+						: folder.addColor(key, value, inputOptions)
+				} else {
+					if ('folderOptions' in inputOptions) {
+						folderOptions = inputOptions['folderOptions'] as FolderOptions
+					} else if ('folderOptions' in value) {
+						folderOptions = value.folderOptions
+					}
+					const subFolder = folder.addFolder(key, folderOptions)
+					this._walk(value, inputOptions, subFolder, seen, mode)
+				}
+			} else if ('options' in inputOptions) {
+				mode === 'bind'
+					? folder.bindSelect(target, key as keyof T, inputOptions as SelectInputOptions)
+					: folder.addSelect(
+							key,
+							(inputOptions as SelectInputOptions).options!,
+							inputOptions,
+						)
+			} else {
+				mode === 'bind'
+					? folder.bind(target, key as keyof T, inputOptions as any)
+					: folder.add(key, value, inputOptions)
+			}
+		}
+	}
 
 	//·· Adders ···································································¬
 
