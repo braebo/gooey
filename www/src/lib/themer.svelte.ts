@@ -2,7 +2,8 @@ import { parse } from 'cookie'
 
 type Preference = 'dark' | 'light' | 'system'
 
-const log = (...args: any[]) => console.log('\x1b[31m[themer]', ...args)
+// const log = (...args: any[]) => console.log('\x1b[31m[themer]', ...args)
+const log = (...args: any[]) => {}
 
 class Theme {
 	preference = $state<Preference>('dark')
