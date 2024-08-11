@@ -153,12 +153,11 @@ export class Themer {
 	 */
 	mode: State<'light' | 'dark' | 'system'>
 
-	
 	/**
 	 * If provided, theme css vars will be added to the wrapper.
-	*/
+	 */
 	wrapper?: HTMLElement
-	
+
 	private _initialized = false
 	private _prefersDark: MediaQueryList
 	private _persistent: boolean
@@ -249,12 +248,6 @@ export class Themer {
 		}
 	}
 
-	#handlePrefChange = () => {
-		if (this.mode.value === 'system') {
-			this.applyTheme()
-		}
-	}
-
 	#addSub<
 		S extends PrimitiveState<unknown>,
 		V extends Parameters<Parameters<S['subscribe']>[0]>[0],
@@ -308,6 +301,10 @@ export class Themer {
 
 	get #systemPreference() {
 		return this._prefersDark.matches ? 'dark' : 'light'
+	}
+
+	#handlePrefChange = () => {
+		if (this.mode.value === 'system') this.theme.set(this.theme.value)
 	}
 
 	/**
@@ -420,6 +417,7 @@ export class Themer {
 		this._log
 			.fn(c('applyTheme'))
 			.debug({ theme: this.theme.value.title, targets: this._targets, this: this })
+
 		if (!('document' in globalThis)) return
 
 		const theme = this.theme.value
