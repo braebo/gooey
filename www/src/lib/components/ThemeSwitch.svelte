@@ -147,7 +147,6 @@
 		max-width: 100%;
 		max-height: 100%;
 
-		color: var(--fg-d);
 		opacity: 0;
 
 		user-select: none;
@@ -176,7 +175,18 @@
 			right: 0;
 			margin: auto;
 			width: fit-content;
-			color: var(--fg-a);
+		}
+	}
+
+	.track {
+		color: var(--fg-d);
+
+		&:has(.system) {
+			color: var(--fg-c);
+		}
+
+		&:hover {
+			color: var(--fg-b);
 		}
 	}
 
