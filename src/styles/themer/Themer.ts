@@ -153,14 +153,14 @@ export class Themer {
 	 */
 	mode: State<'light' | 'dark' | 'system'>
 
-	#prefersDark: MediaQueryList
-
+	
 	/**
 	 * If provided, theme css vars will be added to the wrapper.
-	 */
+	*/
 	wrapper?: HTMLElement
-
+	
 	private _initialized = false
+	private _prefersDark: MediaQueryList
 	private _persistent: boolean
 	private _key: string
 	private _unsubs: Array<() => void> = []
@@ -217,6 +217,13 @@ export class Themer {
 			key: this._key + '::mode',
 		})
 
+		this._prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
+
+		this._prefersDark.addEventListener('change', this.#handlePrefChange)
+		this._unsubs.push(() =>
+			this._prefersDark.removeEventListener('change', this.#handlePrefChange),
+		)
+
 		this._persistent = opts.persistent ?? true
 
 		this.#addSub(this.theme, v => {
@@ -240,13 +247,6 @@ export class Themer {
 		if (opts.autoInit) {
 			this.init()
 		}
-
-		this.#prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
-
-		this.#prefersDark.addEventListener('change', this.#handlePrefChange)
-		this._unsubs.push(() =>
-			this.#prefersDark.removeEventListener('change', this.#handlePrefChange),
-		)
 	}
 
 	#handlePrefChange = () => {
@@ -307,7 +307,7 @@ export class Themer {
 	}
 
 	get #systemPreference() {
-		return this.#prefersDark.matches ? 'dark' : 'light'
+		return this._prefersDark.matches ? 'dark' : 'light'
 	}
 
 	/**
