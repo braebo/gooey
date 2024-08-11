@@ -68,7 +68,8 @@ export type ButtonGridInputOptions = {
 	style?: CreateOptions['style']
 
 	/**
-	 * Whether to apply the `active` classname to the button when it is clicked.
+	 * Whether to apply the `active` classname to the button when it is clicked, changing its
+	 * appearance.
 	 * @default true
 	 */
 	applyActiveClass?: boolean
@@ -93,7 +94,7 @@ export const BUTTONGRID_INPUT_DEFAULTS = {
 	style: {
 		gap: '0.5em',
 	},
-	applyActiveClass: false,
+	applyActiveClass: true,
 	resettable: false,
 } as const satisfies ButtonGridInputOptions
 
