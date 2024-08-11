@@ -106,6 +106,13 @@ export interface TooltipOptions {
 	 * @defaultValue false
 	 */
 	hideOnClick: boolean
+
+	/**
+	 * If `true`, the tooltip will not be shown automatically and must be controlled manually with
+	 * the {@link Tooltip.show} and {@link Tooltip.hide} methods.
+	 * @defaultValue false
+	 */
+	manual?: boolean
 }
 
 export const TOOLTIP_DEFAULTS: TooltipOptions = {
@@ -124,6 +131,7 @@ export const TOOLTIP_DEFAULTS: TooltipOptions = {
 	},
 	style: undefined,
 	hideOnClick: false,
+	manual: false,
 }
 
 @styled
@@ -186,20 +194,22 @@ export class Tooltip {
 			})
 		}
 
-		this._evm.listen(this.element, 'pointerenter', () => this._hoverIn())
-		this._evm.listen(node!, 'pointerenter', () => {
-			this._hoveringNode = true
-			this.show()
-		})
-		this._evm.listen(node!, 'pointerleave', () => {
-			this._hoveringNode = false
-			this.hide()
-		})
-		this._evm.listen(node!, 'pointermove', e => this._updatePosition(e))
-		this._evm.listen(node!, 'click', () => {
-			if (opts.hideOnClick) this.hide()
-			else this.refresh()
-		})
+		if (!this.opts.manual) {
+			this._evm.listen(this.element, 'pointerenter', () => this._hoverIn())
+			this._evm.listen(node!, 'pointerenter', () => {
+				this._hoveringNode = true
+				this.show()
+			})
+			this._evm.listen(node!, 'pointerleave', () => {
+				this._hoveringNode = false
+				this.hide()
+			})
+			this._evm.listen(node!, 'pointermove', e => this._updatePosition(e))
+			this._evm.listen(node!, 'click', () => {
+				if (opts.hideOnClick) this.hide()
+				else this.refresh()
+			})
+		}
 		// this.show()
 	}
 
@@ -836,6 +846,7 @@ export class Tooltip {
 
 			z-index: 1000;
 			transition: opacity 0.1s;
+			pointer-events: none;
 
 			code {
 				font-size: var(--font-size, 0.8rem);
@@ -844,8 +855,6 @@ export class Tooltip {
 				border-radius: 2px;
 				height: fit-content;
 			}
-
-			pointer-events: none;
 
 			a {
 				color: var(--theme-a, #08f);
