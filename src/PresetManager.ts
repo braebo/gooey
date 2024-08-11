@@ -549,6 +549,8 @@ export class PresetManager {
 			throw new Error('No select input.')
 		}
 
+		const initialPresetCount = this.presets.value.length
+
 		preset ??= this.gooey.save(this._resolveUnusedTitle('preset'), nanoid(), this.__version)
 
 		const existing = this.presets.value.find(p => p.id === preset.id)
@@ -567,7 +569,9 @@ export class PresetManager {
 		this.set(preset)
 		this._refresh()
 
-		this._enableRename()
+		if (initialPresetCount === 1) {
+			this._enableRename(false)
+		}
 	}
 
 	/**
