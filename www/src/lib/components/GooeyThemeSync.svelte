@@ -23,7 +23,7 @@
 	}
 
 	onMount(() => {
-		// gooey mode change -> update page theme (aka mode)
+		/* gooey mode change -> update page theme (aka mode) */
 		subs.push(
 			gooey.themer.mode.subscribe((m) => {
 				if (locked) return
@@ -31,14 +31,14 @@
 			}),
 		)
 
-		// page theme (aka mode) change -> update gooey mode
+		/* page theme (aka mode) change -> update gooey mode */
 		$effect(() => {
 			lock()
 			gooey.themer.mode.set(themer.preference)
 			applyTheme()
 		})
 
-		// gooey theme change -> apply theme
+		/* gooey theme change -> apply theme */
 		subs.push(
 			gooey.themer.theme.subscribe(() => {
 				applyTheme()

@@ -52,7 +52,6 @@
 <script lang="ts">
 	import type { LanguageRegistration, ThemeInput } from 'shiki'
 
-	// import { highlight } from '../utils/highlight'
 	import type { ValidLanguage } from '../utils/highlight'
 	import CopyButton from './CopyButton.svelte'
 	import { DEV } from 'esm-env'
