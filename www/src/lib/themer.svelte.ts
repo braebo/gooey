@@ -7,6 +7,7 @@ const log = (...args: any[]) => {}
 
 class Theme {
 	preference = $state<Preference>('dark')
+	#prefersDark: MediaQueryList
 
 	constructor(
 		public readonly defaultTheme: Preference = 'dark',
@@ -14,9 +15,9 @@ class Theme {
 	) {
 		this.preference = (globalThis.localStorage?.getItem(this.storageKey) as Preference) || defaultTheme
 
-		const systemPref = globalThis.window?.matchMedia('(prefers-color-scheme: dark)')
-		systemPref.removeEventListener('change', this._onSystemChange)
-		systemPref.addEventListener('change', this._onSystemChange)
+		this.#prefersDark = globalThis.window?.matchMedia('(prefers-color-scheme: dark)')
+		this.#prefersDark.removeEventListener('change', this.#onSystemChange)
+		this.#prefersDark.addEventListener('change', this.#onSystemChange)
 
 		const cookieTheme = parse(globalThis.document?.cookie)[this.storageKey]
 
@@ -26,12 +27,12 @@ class Theme {
 
 		this.theme = this.preference
 
-		globalThis.window.removeEventListener('storage', this._onStorageChange)
-		globalThis.window.addEventListener('storage', this._onStorageChange)
+		globalThis.window.removeEventListener('storage', this.#onStorageChange)
+		globalThis.window.addEventListener('storage', this.#onStorageChange)
 	}
 
 	get theme(): 'light' | 'dark' {
-		return this._resolveTheme(this.preference)
+		return this.#resolvePreference(this.preference)
 	}
 	set theme(newPreference: Preference) {
 		log(`New theme preference incoming: ${newPreference}`)
@@ -52,20 +53,15 @@ class Theme {
 		}
 	}
 
-	private _resolveTheme(preference: Preference): 'light' | 'dark' {
-		// return mode === 'system' ? this._resolveTheme(defaultTheme, 'dark') : mode
-		return preference === 'system'
-			? globalThis.window?.matchMedia('(prefers-color-scheme: dark)').matches
-				? 'dark'
-				: 'light'
-			: preference
+	#resolvePreference(preference: Preference): 'light' | 'dark' {
+		return preference === 'system' ? (this.#prefersDark.matches ? 'dark' : 'light') : preference
 	}
 
-	private _onSystemChange = (e: MediaQueryListEvent) => {
+	#onSystemChange = (e: MediaQueryListEvent) => {
 		this.theme = 'system'
 	}
 
-	private _onStorageChange = (e: StorageEvent) => {
+	#onStorageChange = (e: StorageEvent) => {
 		if (e.key === this.storageKey) {
 			this.theme = e.newValue as Preference
 		}
