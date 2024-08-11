@@ -499,9 +499,10 @@
 	transition-duration: var(--gooey-transition-duration);
 	transition-property: background, color, transform, box-shadow;
 
-	@at-root .gooey-root[mode='dark'] & {
-		outline: none;
-	}
+	// @at-root .gooey-root[mode='dark'] & {
+	// 	outline: 1px solid color-mix(in sRGB, var(--gooey-bg-a), transparent 50%);
+	// 	outline: none;
+	// }
 
 	svg {
 		width: 100%;
@@ -550,6 +551,11 @@
 	&[contenteditable='true'] .gooey-controller-select-selected {
 		cursor: text;
 		outline: 1px solid var(--gooey-theme-a);
+	}
+	
+	& *::selection {
+		background-color: var(--gooey-theme-a);
+		color: var(--gooey-bg-b);
 	}
 }
 
