@@ -8,7 +8,7 @@ const BUTTON_INPUT_DEFAULTS = {
     __type: 'ButtonControllerOptions',
     text: () => 'click me',
     onClick: () => void 0,
-    id: undefined,
+    id: nanoid(8),
     disabled: false,
     style: undefined,
     tooltip: undefined,
@@ -25,10 +25,10 @@ class ButtonController {
     _active = () => false;
     _disabled = () => false;
     element;
+    parent;
     _evm = new EventManager(['change', 'refresh', 'click']);
     on = this._evm.on.bind(this._evm);
     _log = new Logger('ButtonController', { fg: 'coral' });
-    parent;
     constructor(options) {
         const opts = Object.assign({}, BUTTON_INPUT_DEFAULTS, options);
         this._log.fn('constructor').debug({ opts, this: this });
@@ -48,6 +48,9 @@ class ButtonController {
             this._evm.on('click', opts.onClick);
         }
     }
+    get id() {
+        return this.element.id;
+    }
     get text() {
         return this._text();
     }
@@ -62,7 +65,7 @@ class ButtonController {
         if (typeof value === 'undefined')
             return;
         this._active = toFn(value);
-        this.element.classList.toggle('active', this._active());
+        // this.element.classList.toggle('active', this._active())
     }
     /**
      * Set this to `true` to disable the button.  If a function is assigned, it will be called
@@ -85,9 +88,9 @@ class ButtonController {
         this._evm.emit('change', this);
         this.refresh();
     }
-    click = (e) => {
+    click = (event) => {
         this._log.fn('click').debug({ this: this });
-        this._evm.emit('click', { e, button: this });
+        this._evm.emit('click', { event, button: this });
         this.refresh();
     };
     enable = () => {
@@ -108,10 +111,19 @@ class ButtonController {
         this.element.toggleAttribute('disabled', this.disabled);
         this.element.classList.toggle('disabled', this.disabled);
         this.element.innerHTML = this.text;
-        this.element.classList.toggle('active', this.active);
+        // this.element.classList.toggle('active', this.active)
         this._evm.emit('refresh');
         return this;
     };
+    toJSON() {
+        return {
+            __type: this.__type,
+            id: this.id,
+            text: this.text,
+            active: this.active,
+            disabled: this.disabled,
+        };
+    }
     dispose() {
         this.element.remove();
         this._evm.dispose();

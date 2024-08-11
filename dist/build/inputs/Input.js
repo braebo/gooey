@@ -34,6 +34,10 @@ Object.freeze(values(INPUT_TYPE_MAP));
  */
 class Input {
     folder;
+    /**
+     * The options object used to create this input.  More specifically, the input's default
+     * options merged with the options passed by the consumer.
+     */
     opts;
     /**
      * Unique identifier for the input. Also used for saving and loading presets.

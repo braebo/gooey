@@ -7,7 +7,7 @@ import { PresetManager } from './PresetManager';
 import { Themer } from './styles/themer/Themer';
 import { UndoManager } from './UndoManager';
 import { Folder } from './Folder';
-type GooeyTheme = 'default' | 'flat' | 'scour' | (string & {});
+type GooeyTheme = 'default' | 'flat' | 'scout' | (string & {});
 export interface GooeyElements {
     root: HTMLElement;
 }
@@ -130,6 +130,8 @@ export interface GooeyOptions {
 }
 export interface GooeyOptionsInternal extends GooeyOptions {
     /**
+     * todo - this needs to be public, maybe as `GooeyOptions.parentGooey` so the user doesn't
+     * todo - have to think about the window manager?
      * @internal
      */
     _windowManager?: WindowManager;
@@ -298,6 +300,10 @@ export declare class Gooey {
     get window(): WindowInstance | undefined;
     set theme(theme: GooeyTheme);
     get theme(): GooeyTheme;
+    /**
+     * Alias for the {@link container} element.
+     */
+    get element(): HTMLElement;
     addFolder(title: string, options?: Partial<FolderOptions>): Folder;
     /**
      * Saves the current gooey state as a preset.

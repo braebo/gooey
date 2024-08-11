@@ -90,9 +90,10 @@ class Themer {
     mode;
     /**
      * If provided, theme css vars will be added to the wrapper.
-     */
+    */
     wrapper;
     _initialized = false;
+    _prefersDark;
     _persistent;
     _key;
     _unsubs = [];
@@ -115,7 +116,7 @@ class Themer {
             node === 'document'
                 ? document.documentElement
                 : typeof node === 'string'
-                    ? select(node)[0] ?? document.documentElement
+                    ? (select(node)[0] ?? document.documentElement)
                     : node;
         this._log = new Logger(`themer ${this.node.classList[0]}`, { fg: 'DarkCyan' });
         this._log.fn(g('constructor')).debug({ node, opts, this: this });
@@ -135,6 +136,9 @@ class Themer {
         this.mode = state(opts.mode, {
             key: this._key + '::mode',
         });
+        this._prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        this._prefersDark.addEventListener('change', this.#handlePrefChange);
+        this._unsubs.push(() => this._prefersDark.removeEventListener('change', this.#handlePrefChange));
         this._persistent = opts.persistent ?? true;
         this.#addSub(this.theme, v => {
             this._log.fn(o('theme.subscribe')).debug({ v, this: this });
@@ -155,6 +159,11 @@ class Themer {
             this.init();
         }
     }
+    #handlePrefChange = () => {
+        if (this.mode.value === 'system') {
+            this.applyTheme();
+        }
+    };
     #addSub(state, cb) {
         this._unsubs.push(state.subscribe(v => cb(v)));
     }
@@ -189,18 +198,12 @@ class Themer {
             ? _mode.value
             : _mode;
         if (mode === 'system') {
-            return this.#systemPref;
+            return this.#systemPreference;
         }
         return mode;
     }
-    get #systemPref() {
-        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-            return 'light';
-        }
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
-        }
-        return 'dark';
+    get #systemPreference() {
+        return this._prefersDark.matches ? 'dark' : 'light';
     }
     /**
      * Adds a new theme to the Themer and optionally saves it to localStorage.

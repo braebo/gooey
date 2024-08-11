@@ -8,8 +8,8 @@ import { InputText } from './inputs/InputText.js';
 import { isLabeledOption } from './controllers/Select.js';
 import { InputButtonGrid } from './inputs/InputButtonGrid.js';
 import { animateConnector, createFolderSvg, createFolderConnector } from './svg/createFolderSVG.js';
-import { composedPathContains } from './shared/cancelClassFound.js';
 import { isColor, isColorFormat } from './shared/color/color.js';
+import { composedPathContains } from './shared/cancelClassFound.js';
 import { state, fromState } from './shared/state.js';
 import { EventManager } from './shared/EventManager.js';
 import { TerminalSvg } from './svg/TerminalSvg.js';
@@ -18,6 +18,7 @@ import { create } from './shared/create.js';
 import { select } from './shared/select.js';
 import { Logger } from './shared/logger.js';
 import { nanoid } from './shared/nanoid.js';
+import { defer } from './shared/defer.js';
 import { toFn } from './shared/toFn.js';
 import './styles/themes/vanilla.js';
 import './styles/themes/scout.js';
@@ -698,7 +699,7 @@ class Folder {
     _resolveOpts(t, v, o) {
         o ??= {};
         o.title ??= t;
-        if (v)
+        if (typeof v !== 'undefined')
             o.value ??= v;
         o.presetId ??= this._resolvePresetId([t]);
         return o;
@@ -1131,13 +1132,13 @@ class Folder {
         if (this.isRootFolder())
             return;
         this._log.fn('createGraphics').debug({ this: this });
-        await new Promise(resolve => setTimeout(resolve, 0));
         if (!this.isRootFolder()) {
             this.graphics = { icon: createFolderSvg(this) };
             this.elements.header.prepend(this.graphics.icon);
             if (!headerless) {
                 this.initialHeaderHeight ??= this._resolveHeaderHeight();
                 this.graphics.connector = createFolderConnector(this, this.graphics.icon);
+                animateConnector(this, this.closed.value ? 'close' : 'open');
             }
         }
     }
@@ -1178,25 +1179,44 @@ class Folder {
             return this.parentFolder.hue + i * -20;
         }
     }
+    get scrollHeight() {
+        let height = this.element.scrollHeight;
+        height += this.elements.header.scrollHeight;
+        for (const child of this.allChildren) {
+            height += child.scrollHeight;
+            height += this.elements.header.scrollHeight;
+        }
+        return height;
+    }
     #timeout;
+    #first = true;
     _refreshIcon() {
         this._log.fn('#refreshIcon').debug(this);
         // Really don't love this...
         if (this.graphics) {
-            clearTimeout(this.#timeout);
-            this.#timeout = setTimeout(() => {
-                this.graphics?.icon.replaceWith(createFolderSvg(this)); // todo - not this
-                setTimeout(() => {
-                    this.graphics?.connector?.update(); // todo - this, for icon
+            defer(() => {
+                clearTimeout(this.#timeout);
+                this.#timeout = setTimeout(() => {
+                    const svg = createFolderSvg(this);
+                    this.graphics?.icon.replaceWith(svg);
+                    if (this.graphics)
+                        this.graphics.icon = svg;
+                    if (this.#first) {
+                        this.graphics?.connector?.update();
+                        this.#first = false;
+                    }
+                    else {
+                        this.graphics?.connector?.update();
+                    }
                 }, 1);
-            }, 1);
+            });
         }
     }
     //⌟
     disposed = false;
     dispose() {
         if (this.disposed && DEV) {
-            this._log.fn('dispose').error('Already disposed.', this);
+            this._log.fn('dispose').debug('Already disposed.', this);
             return;
         }
         this.elements.header.removeEventListener('click', this.toggle);

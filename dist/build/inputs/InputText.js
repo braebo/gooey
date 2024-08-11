@@ -6,7 +6,7 @@ import { Input } from './Input.js';
 
 const TEXT_INPUT_DEFAULTS = {
     __type: 'TextInputOptions',
-    value: 'foo',
+    value: '',
     maxLength: 50,
 };
 class InputText extends Input {

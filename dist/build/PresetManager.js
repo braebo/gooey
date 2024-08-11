@@ -429,6 +429,7 @@ class PresetManager {
         if (!this._presetsInput) {
             throw new Error('No select input.');
         }
+        const initialPresetCount = this.presets.value.length;
         preset ??= this.gooey.save(this._resolveUnusedTitle('preset'), nanoid(), this.__version);
         const existing = this.presets.value.find(p => p.id === preset.id);
         if (!existing) {
@@ -445,7 +446,9 @@ class PresetManager {
         }
         this.set(preset);
         this._refresh();
-        this._enableRename();
+        if (initialPresetCount === 1) {
+            this._enableRename(false);
+        }
     }
     /**
      * Delete a preset.

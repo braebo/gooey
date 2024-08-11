@@ -4,6 +4,8 @@ export declare function createFolderConnector(folder: Folder, icon: HTMLDivEleme
     container: HTMLDivElement;
     svg: SVGSVGElement;
     path: SVGPathElement;
-    update: () => void;
+    update: (height?: number) => {
+        length: number;
+    };
 };
 export declare function animateConnector(folder: Folder, action: 'open' | 'close'): Promise<Animation | void>;

@@ -12,7 +12,7 @@ export type TextInputOptions = InputOptions<string> & {
 };
 export declare const TEXT_INPUT_DEFAULTS: {
     readonly __type: "TextInputOptions";
-    readonly value: "foo";
+    readonly value: "";
     readonly maxLength: 50;
 };
 export interface TextControllerElements extends ElementMap {

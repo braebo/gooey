@@ -1,3 +1,4 @@
+import { defer } from '../shared/defer.js';
 import { nanoid } from '../shared/nanoid.js';
 
 // import { create } from '../shared/create'
@@ -141,7 +142,7 @@ function createFolderSvg(folder) {
 function createFolderConnector(folder, icon) {
     const container = folder.element;
     const width = 20;
-    const height = folder.element.scrollHeight;
+    const height = folder.scrollHeight;
     const stroke = 1;
     const hash = nanoid();
     //? SVG
@@ -198,22 +199,24 @@ function createFolderConnector(folder, icon) {
     svg.style.top = iconOffset;
     const iconCenter = icon.scrollHeight / 2 + stroke + 2;
     svg.style.top = iconCenter + 'px';
-    const update = () => {
-        const height = folder.element.scrollHeight;
-        svg.style.height = `${height}px`;
+    const update = (height = folder.scrollHeight) => {
+        svg.style.setProperty('height', `${height}px`);
+        svg.style.setProperty('filter', `hue-rotate(${folder.hue}deg)`);
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         path.setAttribute('d', `M10,0 Q0,0 0,10 L0,${height}`);
         const length = path.getTotalLength();
-        path.style.strokeDashoffset = `${length}`;
-        path.style.strokeDasharray = `${length * 1.2}`;
+        path.style.setProperty('strokeDashoffset', `${length}`);
+        path.style.setProperty('strokeDasharray', `${length * 1.2}`);
+        return { length };
     };
+    defer(() => update());
     return { container, svg, path, update };
 }
 function animateConnector(folder, action) {
     if (!folder.graphics?.connector)
         return Promise.resolve();
-    const path = folder.graphics.connector.path;
-    const length = path.getTotalLength();
+    folder.graphics.connector.update();
+    const length = folder.scrollHeight;
     const config = action === 'open'
         ? {
             duration: 800,

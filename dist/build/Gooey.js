@@ -293,6 +293,12 @@ class Gooey {
     get theme() {
         return this._theme;
     }
+    /**
+     * Alias for the {@link container} element.
+     */
+    get element() {
+        return this.container;
+    }
     addFolder(title, options) {
         if (this._honeymoon && this._birthday - Date.now() < 1000) {
             this._honeymoon = false;
@@ -418,6 +424,7 @@ class Gooey {
         }
         const uiFolder = folder.addFolder('ui', Object.assign({}, GUI_DEFAULTS.settingsFolder.uiFolder, this.opts.settingsFolder?.uiFolder));
         // Fully desaturate the ui folder's header connector to svg.
+        // todo - this doesn't work anymore due to the changes in `connector.update` or `animateConnector` iirc
         uiFolder.on('mount', () => {
             uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)');
             uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)');
@@ -430,15 +437,18 @@ class Gooey {
             themeInput.on('change', v => {
                 finalThemer.theme.set(v.value);
             });
-            uiFolder.addButtonGrid('mode', [
+            const modeButtons = uiFolder.addButtonGrid('mode', [
                 ['light', 'dark', 'system'].map(m => ({
                     text: m,
                     onClick: () => finalThemer?.mode.set(m),
                     active: () => finalThemer?.mode.value === m,
                 })),
             ], {
-                activeOnClick: true,
+                applyActiveClass: true,
             });
+            uiFolder.evm.add(finalThemer.mode.subscribe(v => {
+                modeButtons.setActive(v);
+            }));
         }
         return finalThemer;
     }

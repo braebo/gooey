@@ -160,8 +160,20 @@ export type InputEvents<T extends ValidInputValue = ValidInputValue> = {
 export declare abstract class Input<TValueType extends ValidInputValue = ValidInputValue, TOptions extends ValidInputOptions = InputOptions, TElements extends ElementMap = ElementMap, TEvents extends InputEvents = InputEvents<TValueType>, TType extends InputType = InputType, T__TYPE = (typeof INPUT_TYPE_MAP)[TType]> {
     folder: Folder;
     abstract readonly __type: TType;
+    /**
+     * A {@link State} observable, the source of truth for the input's value.  It can be subscribed
+     * to with {@link State.subscribe} to listen for changes.
+     */
     abstract state: State<TValueType>;
+    /**
+     * The initial value of the input when it was created, used for things like dirty checking and
+     * the "reset to default" button.
+     */
     abstract initialValue: ValidInputValue;
+    /**
+     * The options object used to create this input.  More specifically, the input's default
+     * options merged with the options passed by the consumer.
+     */
     readonly opts: TOptions & {
         __type: T__TYPE;
     };

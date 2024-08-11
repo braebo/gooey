@@ -2,7 +2,7 @@ import type { TooltipOptions } from '../shared/Tooltip';
 import { type CreateOptions } from '../shared/create';
 export type ButtonClickFunction = () => void;
 export type ButtonEventPayload = {
-    e: MouseEvent & {
+    event: MouseEvent & {
         target: HTMLButtonElement;
     };
     button: ButtonController;
@@ -57,9 +57,8 @@ export type ButtonControllerOptions = {
      */
     tooltip?: Partial<TooltipOptions>;
     /**
-     * Optional function to determine if the button is active.  If the function returns `true`,
-     * the button will have the `active` class added to it, and removed if `false`.  This updates
-     * in the {@link InputButtonGrid.refresh|`refresh`} method.
+     * An arbitrary value used externally by {@link InputButtonGrid}.  If a function is passed, it
+     * will be called whenever the button is refreshed.
      * @defaultValue `false`
      */
     active?: boolean | (() => boolean);
@@ -96,11 +95,12 @@ export declare class ButtonController {
     private _active;
     private _disabled;
     element: HTMLButtonElement;
+    parent: HTMLElement | undefined;
     private _evm;
     on: <K extends keyof ButtonControllerEvents>(event: K, callback: import("../shared/EventManager").EventCallback<ButtonControllerEvents[K]>) => string;
     private _log;
-    parent: HTMLElement | undefined;
     constructor(options: Partial<ButtonControllerOptions>);
+    get id(): string;
     get text(): string;
     set text(value: string | (() => string));
     get active(): boolean;
@@ -115,11 +115,18 @@ export declare class ButtonController {
      * Update the button with new options.
      */
     set(options: Partial<ButtonControllerOptions>): void;
-    click: (e: MouseEvent & {
+    click: (event: MouseEvent & {
         target: HTMLButtonElement;
     }) => void;
     enable: () => false | this;
     disable: () => true | this;
     refresh: () => this;
+    toJSON(): {
+        __type: "ButtonController";
+        id: string;
+        text: string;
+        active: boolean;
+        disabled: boolean;
+    };
     dispose(): void;
 }

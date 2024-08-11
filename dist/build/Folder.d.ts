@@ -567,6 +567,7 @@ export declare class Folder {
     private _createGraphics;
     private _resolveHeaderHeight;
     get hue(): number;
+    get scrollHeight(): number;
     private _refreshIcon;
     disposed: boolean;
     dispose(): void;

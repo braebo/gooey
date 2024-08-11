@@ -1,6 +1,5 @@
 import { ButtonController } from '../controllers/ButtonController.js';
 import { getStyle } from '../shared/getStyle.js';
-import { nanoid } from '../shared/nanoid.js';
 import { Logger } from '../shared/logger.js';
 import { create } from '../shared/create.js';
 import { state } from '../shared/state.js';
@@ -9,19 +8,57 @@ import { Input } from './Input.js';
 
 const BUTTONGRID_INPUT_DEFAULTS = {
     __type: 'ButtonGridInputOptions',
-    value: [[{ text: '', onClick: () => { } }]],
+    value: [[{ id: '', text: '', onClick: () => { } }]],
     style: {
         gap: '0.5em',
     },
-    activeOnClick: false,
+    applyActiveClass: true,
     resettable: false,
 };
 class InputButtonGrid extends Input {
     __type = 'InputButtonGrid';
     initialValue = {};
-    state = state({});
+    // readonly state = state({} as ButtonController)
+    /**
+     * An array of active button ids.
+     * @see {@link Input.state}
+     */
+    state = state(new Set());
     buttons = new Map();
     buttonGrid;
+    /**
+     * A Set of active button ids.
+     */
+    get active() {
+        return this.state.value;
+    }
+    setActive(id) {
+        const button = this.buttons.get(id);
+        if (!button) {
+            console.warn(`Button id "${id}" not found`);
+            return;
+        }
+        const cls = this.opts.applyActiveClass;
+        if (!this.opts.multiple) {
+            for (const btn of this.buttons.values()) {
+                btn.active = false;
+                if (cls)
+                    btn.element.classList.remove('active');
+                this.state.value.delete(id);
+            }
+            button.active = true;
+            if (cls)
+                button.element.classList.add('active');
+            this.state.value.add(id);
+        }
+        else {
+            const newState = !button.active;
+            button.active = newState;
+            if (cls)
+                button.element.classList.toggle('active', newState);
+            newState ? this.state.value.add(id) : this.state.value.delete(id);
+        }
+    }
     _log;
     constructor(options, folder) {
         const opts = Object.assign({}, BUTTONGRID_INPUT_DEFAULTS, options);
@@ -42,7 +79,7 @@ class InputButtonGrid extends Input {
         this.refresh();
     }
     onClick(callback) {
-        this._evm.on('click', () => callback(this.state.value));
+        this._evm.on('click', ({ event, button }) => callback({ event, button }));
     }
     /**
      * Converts a {@link ButtonGridArrays} into a a grid of {@link HTMLButtonElement}
@@ -52,6 +89,7 @@ class InputButtonGrid extends Input {
      */
     toGrid(grid) {
         const instanceGrid = [];
+        const seen = new Set();
         const rows = grid.length;
         const cols = Math.max(...grid.map(row => row.length));
         // Remove all buttons.
@@ -69,16 +107,28 @@ class InputButtonGrid extends Input {
             for (let j = 0; j < cols; j++) {
                 const opts = grid[i]?.[j];
                 if (opts) {
-                    const button = this.addButton(opts, opts.id ?? nanoid(8), i, j);
+                    const id = this._resolveId(opts, seen);
+                    // console.warn(id)
+                    seen.add(id);
+                    const button = this.addButton(opts, id, i, j);
                     row.appendChild(button.element);
                     instanceGrid[i][j] = button;
                 }
             }
         }
-        this.elements.container.style.setProperty('height', 
-        // getComputedStyle(this.elements.controllers.container).height,
-        getStyle(this.elements.controllers.container, 'height'));
+        this.elements.container.style.setProperty('height', getStyle(this.elements.controllers.container, 'height'));
         return instanceGrid;
+    }
+    _resolveId(opts, seen) {
+        let id = opts.id ?? (typeof opts.text === 'function' ? opts.text() : opts.text);
+        let i = 0;
+        // const ids = new Set(this.buttons.keys())
+        // while (ids.has(id + (i ? i : ''))) i++
+        while (seen.has(id + (i ? i : '')))
+            i++;
+        if (i)
+            id += i;
+        return id;
     }
     addButton(opts, id, i, j) {
         const text = toFn(opts.text);
@@ -107,23 +157,37 @@ class InputButtonGrid extends Input {
             },
             tooltip,
         });
-        const btn = new ButtonController(opts);
         if (typeof opts.active !== 'function') {
-            if (this.opts.activeOnClick) {
-                btn.active = () => {
-                    return this.state.value === btn;
-                };
-            }
+            opts.active = () => {
+                // if (this.opts.multiple) {
+                // 	return this.state.value.includes(id)
+                // }
+                // return this.state.value === btn.id
+                return this.state.value.has(id);
+            };
         }
-        btn.on('click', ({ button }) => {
-            this.set(button);
+        const btn = new ButtonController(opts);
+        if (this.opts.applyActiveClass) {
+            btn.element.classList.toggle('active', btn.active);
+        }
+        btn.on('click', payload => {
+            this._set(payload);
+            // this.set()
+            // this._evm.emit('click', payload)
         });
-        this.buttons.set(text() ?? id, btn);
+        this.buttons.set(id, btn);
         return btn;
     }
-    set(button) {
-        this.state.set(button);
-        this._emit('click', button);
+    _set(payload) {
+        // const { button } = payload
+        // const cls = this.opts.applyActiveClass
+        // btn.element.classList.toggle('active', this.state.value === btn.id)
+        this.setActive(payload.button.id);
+        this._evm.emit('click', payload);
+    }
+    set() {
+        // this.state.add(id)
+        // this._emit('click')
         this.refresh();
     }
     refresh() {
