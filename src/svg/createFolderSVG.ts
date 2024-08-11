@@ -227,7 +227,7 @@ export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
 	const iconCenter = icon.scrollHeight / 2 + stroke + 2
 	svg.style.top = iconCenter + 'px'
 
-	const update = (height = folder.element.scrollHeight): { length: number } => {
+	const update = (height = folder.scrollHeight): { length: number } => {
 		svg.style.setProperty('height', `${height}px`)
 		svg.style.setProperty('filter', `hue-rotate(${folder.hue}deg)`)
 
