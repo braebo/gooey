@@ -153,6 +153,8 @@ export class Themer {
 	 */
 	mode: State<'light' | 'dark' | 'system'>
 
+	#prefersDark: MediaQueryList
+
 	/**
 	 * If provided, theme css vars will be added to the wrapper.
 	 */
@@ -238,6 +240,19 @@ export class Themer {
 		if (opts.autoInit) {
 			this.init()
 		}
+
+		this.#prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
+
+		this.#prefersDark.addEventListener('change', this.#handlePrefChange)
+		this._unsubs.push(() =>
+			this.#prefersDark.removeEventListener('change', this.#handlePrefChange),
+		)
+	}
+
+	#handlePrefChange = () => {
+		if (this.mode.value === 'system') {
+			this.applyTheme()
+		}
 	}
 
 	#addSub<
@@ -285,22 +300,14 @@ export class Themer {
 				: _mode
 
 		if (mode === 'system') {
-			return this.#systemPref
+			return this.#systemPreference
 		}
 
 		return mode as 'light' | 'dark'
 	}
 
-	get #systemPref() {
-		if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-			return 'light'
-		}
-
-		if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-			return 'dark'
-		}
-
-		return 'dark'
+	get #systemPreference() {
+		return this.#prefersDark.matches ? 'dark' : 'light'
 	}
 
 	/**
