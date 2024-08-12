@@ -283,8 +283,8 @@ export const GUI_DEFAULTS = {
 	loadDefaultFont: true,
 	settingsFolder: {
 		closed: true as boolean,
-		uiFolder: { closed: true },
-		presetsFolder: { closed: true },
+		uiFolder: { closed: true, presetId: 'gooey_settings__ui_folder' },
+		presetsFolder: { closed: true, presetId: 'gooey_settings__presets_folder' },
 	},
 } as const satisfies GooeyOptions
 
@@ -464,8 +464,7 @@ export class Gooey {
 		let settingsFolderClosed = GUI_DEFAULTS.settingsFolder.closed
 		// Use localstorage, if enabled.
 		if (typeof opts.storage === 'object' && opts.storage.closed !== false) {
-			settingsFolderClosed =
-				this._closedMap.value[`${this.title}__gooey_settings_folder`] ?? true
+			settingsFolderClosed = this._closedMap.value['gooey_settings'] ?? true
 		} else if (opts.settingsFolder?.closed) {
 			settingsFolderClosed = opts.settingsFolder.closed
 		}
@@ -476,6 +475,7 @@ export class Gooey {
 			...opts.settingsFolder,
 			closed: settingsFolderClosed,
 			saveable: false,
+			presetId: 'gooey_settings',
 		})
 		this.settingsFolder.element.classList.add('gooey-folder-alt')
 		updateIcon()
@@ -537,10 +537,11 @@ export class Gooey {
 		return this.folder.inputs
 	}
 	get allInputs() {
-		// todo - Don't love this..
+		// todo - Really don't love this.
 		return new Map(
 			[...this.folder.allInputs.entries()].filter(
-				([k]) => !k.startsWith('ui') && !k.startsWith('presets'),
+				// Filter out the global settings,
+				([k]) => !k.match(/gooey_settings/) && k !== 'theme' && k !== 'mode',
 			),
 		)
 	}
@@ -728,18 +729,20 @@ export class Gooey {
 				{},
 				GUI_DEFAULTS.settingsFolder.uiFolder,
 				this.opts.settingsFolder?.uiFolder,
+				{ presetId: 'gooey_settings__ui_folder' },
 			),
 		)
 
-		// Fully desaturate the ui folder's header connector to svg.
-		// todo - this doesn't work anymore due to the changes in `connector.update` or `animateConnector` iirc
-		uiFolder.on('mount', () => {
-			uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
-			uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
-		})
+		// // Fully desaturate the ui folder's header connector to svg.
+		// // todo - this doesn't work anymore due to the changes in `connector.update` or `animateConnector` iirc
+		// uiFolder.on('mount', () => {
+		// 	uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
+		// 	uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
+		// })
 
 		if (folder) {
 			const themeInput = uiFolder.addSelect('theme', finalThemer.themes.value, {
+				presetId: uiFolder.presetId + '__theme_select',
 				labelKey: 'title',
 				initialValue: finalThemer.theme.value,
 			})
@@ -757,6 +760,7 @@ export class Gooey {
 					})),
 				],
 				{
+					presetId: uiFolder.presetId + '__mode_buttons',
 					applyActiveClass: true,
 				},
 			)

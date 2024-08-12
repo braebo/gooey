@@ -472,6 +472,8 @@ export class PresetManager {
 				order: 1,
 				resettable: false,
 				applyActiveClass: false,
+				saveable: false,
+				presetId: presetsFolder.presetId + '__manager_grid',
 			},
 		)
 
@@ -481,6 +483,7 @@ export class PresetManager {
 			order: 0,
 			value: this.activePreset.value,
 			resettable: false,
+			presetId: presetsFolder.presetId + '__preset_select',
 		})
 
 		let first = true

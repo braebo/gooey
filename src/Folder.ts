@@ -1098,7 +1098,7 @@ export class Folder {
 	 */
 	private _registerInput<T extends ValidInput>(input: T, presetId: string): T {
 		let i = 0
-		let titleId = input.title
+		let titleId = input.title || input.id
 		while (this.inputs.has(titleId)) {
 			titleId = `${input.title}_${i}`
 			i++
@@ -1145,8 +1145,7 @@ export class Folder {
 	add(title: string, initialValue: ValidInputValue, options?: InputOptions): ValidInput {
 		const opts = this._resolveOpts(title, initialValue, options)
 		const input = this._createInput(opts)
-		this.inputs.set(opts.presetId, input)
-		this._refreshIcon()
+		this._registerInput(input, opts.presetId)
 		return input
 	}
 	//⌟
