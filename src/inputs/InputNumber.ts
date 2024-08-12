@@ -57,8 +57,8 @@ export class InputNumber extends Input<number, NumberInputOptions, NumberControl
 		// If the value is between [0..1], then it's nicer to keep the defaults.
 		// Otherwise, we can adjust them dynamically to be more useful.
 		if (v < 0 || v > 1) {
-			min ??= v <= 0 ? v * 2 : 0
-			max ??= v <= 0 ? v * -2 : v * 2
+			min = v <= 0 ? v * 2 : 0
+			max = v <= 0 ? v * -2 : v * 2
 			step = v / 100 <= 0.1 ? 0.001 : 0.1
 		}
 
