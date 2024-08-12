@@ -250,7 +250,6 @@ export declare class Folder {
      * All inputs added to this folder.
      */
     inputs: Map<string, ValidInput>;
-    inputIdMap: Map<string, string>;
     /**
      * The root folder.  All folders share a reference to the same root folder.
      */
@@ -339,7 +338,7 @@ export declare class Folder {
     private static _presetIdMap;
     /**
      * The duration of the open/close and hide/show animations in ms.
-     * @default 450
+     * @default 350
      *
      * @todo This needs to sync with the animation duration in the css.
      */
@@ -438,11 +437,6 @@ export declare class Folder {
     add(title: string, initialValue: ColorFormat, options?: ColorInputOptions): InputColor;
     add<T>(title: string, initialValue: Option<T>, options: SelectInputOptions<T>): InputSelect<T>;
     add(title: string, initialValue: ButtonGridArrays, options?: ButtonGridInputOptions): InputButtonGrid;
-    addMany<T extends Record<string, any>>(obj: T, options?: {
-        folder?: Folder;
-    }): Folder & {
-        inputs: Map<keyof T | (string & {}), InferInput<T[keyof T]>>;
-    };
     /**
      * Binds an input to a target object and key.  The input will automatically update the target
      * object's key when the input value changes.
@@ -467,10 +461,38 @@ export declare class Folder {
      */
     bind<TTarget extends Record<string, any>, TKey extends keyof TTarget, const TValue extends TTarget[TKey], TOptions extends InferOptions<TValue>, TInput extends InferInput<TValue>>(target: TTarget, key: TKey, options?: Partial<TOptions>): TInput;
     /**
-     * Used to store a ref to the top level folder of a nested generator like `bindMany`.
-     * @internal
+     * Takes an object and generates a set of inputs based on the object's keys and values.  Any
+     * nested objects will result in child folders being created.  Options can be passed to
+     * customize the inputs generated, and to exclude/include specific keys.
+     * @param target - The object to generate inputs from.
+     * @param options - Options to customize the inputs generated, as well as `include` and
+     * `exclude` arrays to omit certain keys.
+     * @example
+     * ```ts
+     * const gui = new Gooey()
+     *
+     * const params = {
+     *  myNumber: 5,
+     * 	myFolder: {
+     *    myOptions: 'foo',
+     * 	}
+     * }
+     *
+     * gui.addMany(params, {
+     *   myFolder: {
+     * folderOptions: title: 'My Folder' }}, // optional folder controls
+     * })
      */
-    private _transientRoot;
+    addMany<T extends object, TOptions extends InferTargetOptions<T> = InferTargetOptions<T>, TInputs extends InferTarget<T> = this & InferTarget<T>>(target: T, options?: TOptions & {
+        /**
+         * An array of keys to exclude from a target object when generating inputs.
+         */
+        exclude?: InferTargetKeys<T>[];
+        /**
+         * An array of keys to include in a target object when generating inputs.
+         */
+        include?: InferTargetKeys<T>[];
+    }): TInputs;
     bindMany<T extends object, TOptions extends InferTargetOptions<T> = InferTargetOptions<T>, TInputs extends InferTarget<T> = this & InferTarget<T>>(target: T, options?: TOptions & {
         /**
          * An array of keys to exclude from a target object when generating inputs.
@@ -481,6 +503,7 @@ export declare class Folder {
          */
         include?: InferTargetKeys<T>[];
     }): TInputs;
+    private _walk;
     /**
      * Adds a new {@link InputNumber} to the folder.
      * @example

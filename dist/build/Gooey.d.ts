@@ -221,9 +221,11 @@ export declare const GUI_DEFAULTS: {
         readonly closed: boolean;
         readonly uiFolder: {
             readonly closed: true;
+            readonly presetId: "gooey_settings__ui_folder";
         };
         readonly presetsFolder: {
             readonly closed: true;
+            readonly presetId: "gooey_settings__presets_folder";
         };
     };
 };

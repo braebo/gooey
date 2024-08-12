@@ -69,8 +69,8 @@ const GUI_DEFAULTS = {
     loadDefaultFont: true,
     settingsFolder: {
         closed: true,
-        uiFolder: { closed: true },
-        presetsFolder: { closed: true },
+        uiFolder: { closed: true, presetId: 'gooey_settings__ui_folder' },
+        presetsFolder: { closed: true, presetId: 'gooey_settings__presets_folder' },
     },
 };
 /**
@@ -217,8 +217,7 @@ class Gooey {
         let settingsFolderClosed = GUI_DEFAULTS.settingsFolder.closed;
         // Use localstorage, if enabled.
         if (typeof opts.storage === 'object' && opts.storage.closed !== false) {
-            settingsFolderClosed =
-                this._closedMap.value[`${this.title}__gooey_settings_folder`] ?? true;
+            settingsFolderClosed = this._closedMap.value['gooey_settings'] ?? true;
         }
         else if (opts.settingsFolder?.closed) {
             settingsFolderClosed = opts.settingsFolder.closed;
@@ -229,6 +228,7 @@ class Gooey {
             ...opts.settingsFolder,
             closed: settingsFolderClosed,
             saveable: false,
+            presetId: 'gooey_settings',
         });
         this.settingsFolder.element.classList.add('gooey-folder-alt');
         updateIcon();
@@ -279,8 +279,10 @@ class Gooey {
         return this.folder.inputs;
     }
     get allInputs() {
-        // todo - Don't love this..
-        return new Map([...this.folder.allInputs.entries()].filter(([k]) => !k.startsWith('ui') && !k.startsWith('presets')));
+        // todo - Really don't love this.
+        return new Map([...this.folder.allInputs.entries()].filter(
+        // Filter out the global settings,
+        ([k]) => !k.match(/gooey_settings/) && k !== 'theme' && k !== 'mode'));
     }
     get window() {
         return this.windowManager?.windows.get(this.folder.element.id);
@@ -422,15 +424,16 @@ class Gooey {
             themerOptions.wrapper = this.wrapper;
             finalThemer = new Themer(this.folder.element, themerOptions);
         }
-        const uiFolder = folder.addFolder('ui', Object.assign({}, GUI_DEFAULTS.settingsFolder.uiFolder, this.opts.settingsFolder?.uiFolder));
-        // Fully desaturate the ui folder's header connector to svg.
-        // todo - this doesn't work anymore due to the changes in `connector.update` or `animateConnector` iirc
-        uiFolder.on('mount', () => {
-            uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)');
-            uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)');
-        });
+        const uiFolder = folder.addFolder('ui', Object.assign({}, GUI_DEFAULTS.settingsFolder.uiFolder, this.opts.settingsFolder?.uiFolder, { presetId: 'gooey_settings__ui_folder' }));
+        // // Fully desaturate the ui folder's header connector to svg.
+        // // todo - this doesn't work anymore due to the changes in `connector.update` or `animateConnector` iirc
+        // uiFolder.on('mount', () => {
+        // 	uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
+        // 	uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
+        // })
         if (folder) {
             const themeInput = uiFolder.addSelect('theme', finalThemer.themes.value, {
+                presetId: uiFolder.presetId + '__theme_select',
                 labelKey: 'title',
                 initialValue: finalThemer.theme.value,
             });
@@ -444,6 +447,7 @@ class Gooey {
                     active: () => finalThemer?.mode.value === m,
                 })),
             ], {
+                presetId: uiFolder.presetId + '__mode_buttons',
                 applyActiveClass: true,
             });
             uiFolder.evm.add(finalThemer.mode.subscribe(v => {

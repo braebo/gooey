@@ -87,6 +87,12 @@ export interface TooltipOptions {
      * @defaultValue false
      */
     hideOnClick: boolean;
+    /**
+     * If `true`, the tooltip will not be shown automatically and must be controlled manually with
+     * the {@link Tooltip.show} and {@link Tooltip.hide} methods.
+     * @defaultValue false
+     */
+    manual?: boolean;
 }
 export declare const TOOLTIP_DEFAULTS: TooltipOptions;
 export declare class Tooltip {
@@ -127,8 +133,8 @@ export declare class Tooltip {
     set text(text: string | (() => string));
     get style(): StyleDefinition | undefined;
     set style(style: Partial<Record<JavascriptStyleProperty, string> | undefined> | (() => StyleDefinition | undefined));
-    get placement(): "bottom" | "left" | "right" | "top";
-    set placement(v: "bottom" | "left" | "right" | "top");
+    get placement(): "top" | "right" | "bottom" | "left";
+    set placement(v: "top" | "right" | "bottom" | "left");
     get offsetX(): string;
     set offsetX(v: string);
     get offsetY(): string;

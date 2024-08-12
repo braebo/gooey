@@ -97,7 +97,6 @@ class Folder {
      * All inputs added to this folder.
      */
     inputs = new Map();
-    inputIdMap = new Map();
     /**
      * The root folder.  All folders share a reference to the same root folder.
      */
@@ -167,11 +166,10 @@ class Folder {
     static _presetIdMap = new Map();
     /**
      * The duration of the open/close and hide/show animations in ms.
-     * @default 450
+     * @default 350
      *
      * @todo This needs to sync with the animation duration in the css.
      */
-    // private _animDuration = 450
     _animDuration = 350;
     //⌟
     constructor(options) {
@@ -204,7 +202,7 @@ class Folder {
         this.element.style.setProperty('order', opts.order?.toString() ??
             `${this.parentFolder.children.length + this.parentFolder.inputs.size + 1}`);
         this.elements = this._createElements(this.element);
-        this.presetId = this._resolvePresetId();
+        this.presetId = opts.presetId ?? this._resolvePresetId();
         opts.closed ??= false;
         if (typeof this.gooey.opts.storage === 'object' &&
             typeof this.gooey.opts.storage.closed === 'boolean') {
@@ -607,8 +605,6 @@ class Folder {
     load(preset) {
         this._log.fn('load').debug({ preset, this: this });
         // this.closed.set(preset.closed) // todo - global settings?
-        // this.hidden = preset.hidden
-        // preset.hidden !== this.hidden ? this.hide() : this.show(true)
         if (preset.hidden !== this.hidden) {
             preset.hidden ? this.hide() : this.show(true);
         }
@@ -676,9 +672,8 @@ class Folder {
      * the internal preset-id map, and and refreshing the folder icon (debounced slightly).
      */
     _registerInput(input, presetId) {
-        // this.inputs.set(presetId, input)
         let i = 0;
-        let titleId = input.title;
+        let titleId = input.title || input.id;
         while (this.inputs.has(titleId)) {
             titleId = `${input.title}_${i}`;
             i++;
@@ -707,34 +702,10 @@ class Folder {
     add(title, initialValue, options) {
         const opts = this._resolveOpts(title, initialValue, options);
         const input = this._createInput(opts);
-        this.inputs.set(opts.presetId, input);
-        this._refreshIcon();
+        this._registerInput(input, opts.presetId);
         return input;
     }
     //⌟
-    addMany(obj, options) {
-        const folder = options?.folder ?? this;
-        for (const [key, value] of Object.entries(obj)) {
-            if (typeof value === 'object') {
-                if (isColor(value)) {
-                    this.addColor(key, value);
-                    continue;
-                }
-                const subFolder = folder.addFolder(key);
-                subFolder.addMany(value, { folder: subFolder });
-            }
-            else {
-                const opts = {
-                    binding: {
-                        target: obj,
-                        key,
-                    },
-                };
-                this.add(key, value, opts);
-            }
-        }
-        return this;
-    }
     //·· Bind ···································································¬
     /**
      * Binds an input to a target object and key.  The input will automatically update the target
@@ -769,61 +740,102 @@ class Folder {
     }
     /**
      * Used to store a ref to the top level folder of a nested generator like `bindMany`.
-     * @internal
      */
-    _transientRoot = null;
-    bindMany(target, options) {
-        const walk = (target, options, folder, seen) => {
-            if (seen.has(target))
-                return;
-            seen.add(target);
-            for (let [key, value] of Object.entries(target)) {
-                if (Array.isArray(options['exclude']) && options['exclude'].includes(key))
-                    continue;
-                if (Array.isArray(options['include']) && !options['include'].includes(key))
-                    continue;
-                const inputOptions = options[key] || {};
-                let folderOptions = {};
-                if (value === null) {
-                    if (!('value' in inputOptions)) {
-                        console.error(`bindMany() error: target object's key "${key}" is \`null\`, and no valid "value" option was provided as a fallback.`, { key, value, inputOptions });
-                        throw new Error('Invalid binding.');
-                    }
-                    value = inputOptions['value'];
-                }
-                if (typeof value === 'object') {
-                    if (isColor(value)) {
-                        folder.bindColor(value, 'color', { title: key, ...inputOptions });
-                    }
-                    else {
-                        if ('folderOptions' in inputOptions) {
-                            folderOptions = inputOptions['folderOptions'];
-                        }
-                        else if ('folderOptions' in value) {
-                            folderOptions = value.folderOptions;
-                        }
-                        const subFolder = folder.addFolder(key, folderOptions);
-                        walk(value, inputOptions, subFolder, seen);
-                    }
-                }
-                else if ('options' in inputOptions) {
-                    folder.bindSelect(target, key, inputOptions);
-                }
-                else {
-                    folder.bind(target, key, inputOptions);
-                }
-            }
-        };
+    #transientRoot = null;
+    /**
+     * Takes an object and generates a set of inputs based on the object's keys and values.  Any
+     * nested objects will result in child folders being created.  Options can be passed to
+     * customize the inputs generated, and to exclude/include specific keys.
+     * @param target - The object to generate inputs from.
+     * @param options - Options to customize the inputs generated, as well as `include` and
+     * `exclude` arrays to omit certain keys.
+     * @example
+     * ```ts
+     * const gui = new Gooey()
+     *
+     * const params = {
+     *  myNumber: 5,
+     * 	myFolder: {
+     *    myOptions: 'foo',
+     * 	}
+     * }
+     *
+     * gui.addMany(params, {
+     *   myFolder: {
+     * folderOptions: title: 'My Folder' }}, // optional folder controls
+     * })
+     */
+    addMany(target, options) {
         let rootFolder = this;
-        if (!this._transientRoot) {
-            this._transientRoot = rootFolder;
+        if (!this.#transientRoot) {
+            this.#transientRoot = rootFolder;
         }
-        walk(target, (options || undefined) ?? {}, rootFolder, new Set());
-        const finalRoot = this._transientRoot;
-        this._transientRoot = null;
+        this._walk(target, (options || undefined) ?? {}, rootFolder, new Set(), 'add');
+        const finalRoot = this.#transientRoot;
+        this.#transientRoot = null;
+        return finalRoot;
+    }
+    bindMany(target, options) {
+        let rootFolder = this;
+        if (!this.#transientRoot) {
+            this.#transientRoot = rootFolder;
+        }
+        this._walk(target, (options || undefined) ?? {}, rootFolder, new Set(), 'bind');
+        const finalRoot = this.#transientRoot;
+        this.#transientRoot = null;
         return finalRoot;
     }
     //⌟
+    _walk(target, options, folder, seen, mode) {
+        if (seen.has(target))
+            return;
+        seen.add(target);
+        for (let [key, value] of Object.entries(target)) {
+            if (Array.isArray(options['exclude']) && options['exclude'].includes(key))
+                continue;
+            if (Array.isArray(options['include']) && !options['include'].includes(key))
+                continue;
+            const inputOptions = options[key] || {};
+            let folderOptions = {};
+            if (value === null) {
+                const hasValue = 'value' in inputOptions;
+                if (!hasValue && mode === 'bind') {
+                    console.error(`bindMany() error: target object's key "${key}" is \`null\`, and no valid "value" option was provided as a fallback.`, { key, value, inputOptions });
+                    throw new Error('Invalid binding.');
+                }
+                if (hasValue) {
+                    value = inputOptions['value'];
+                }
+            }
+            if (typeof value === 'object') {
+                if (isColor(value)) {
+                    mode === 'bind'
+                        ? folder.bindColor(value, 'color', { title: key, ...inputOptions })
+                        : folder.addColor(key, value, inputOptions);
+                }
+                else {
+                    if ('folderOptions' in inputOptions) {
+                        folderOptions = inputOptions['folderOptions'];
+                    }
+                    else if ('folderOptions' in value) {
+                        folderOptions = value.folderOptions;
+                    }
+                    const subFolder = folder.addFolder(key, folderOptions);
+                    this._walk(value, inputOptions, subFolder, seen, mode);
+                }
+            }
+            else if ('options' in inputOptions) {
+                mode === 'bind'
+                    ? folder.bindSelect(target, key, inputOptions)
+                    : folder.addSelect(key, inputOptions.options, inputOptions);
+            }
+            else {
+                mode === 'bind'
+                    ? folder.bind(target, key, inputOptions)
+                    : folder.add(key, value, inputOptions);
+            }
+        }
+    }
     //·· Adders ···································································¬
     /**
      * Adds a new {@link InputNumber} to the folder.
@@ -898,16 +910,13 @@ class Folder {
      * gui.addSelect('foobar', options, { initialValue: 'foo' })
      * ```
      */
-    addSelect(title, array, 
-    // options?: SelectInputOptions<T> & { initialValue?: T },
-    options) {
+    addSelect(title, array, options) {
         const opts = this._resolveOpts(title, array, options);
         opts.options = array;
         opts.value =
             options?.initialValue ?? fromState(array)?.at(0) ?? options?.binding?.initial;
         if (!opts.value) {
             console.warn('No value provided for select:', { title, array, options, opts });
-            // throw new Error('No value provided for select.')
         }
         return this._registerInput(new InputSelect(opts, this), opts.presetId);
     }
@@ -1143,7 +1152,6 @@ class Folder {
         }
     }
     _resolveHeaderHeight() {
-        // Get the _pixel_ value of the `--gooey-header_height` variable for SVG generation.
         let height = 16 * 1.75;
         const wrapper = this.root?.gooey?.wrapper;
         if (!wrapper) {
@@ -1156,12 +1164,6 @@ class Folder {
         else if (prop.endsWith('em')) {
             let fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
             height = parseFloat(prop) * fontSize;
-        }
-        else {
-            console.error('Invalid header height for', this.title);
-            console.error({
-                prop,
-            });
         }
         return height;
     }

@@ -21,6 +21,7 @@ const TOOLTIP_DEFAULTS = {
     },
     style: undefined,
     hideOnClick: false,
+    manual: false,
 };
 let Tooltip = class Tooltip {
     node;
@@ -69,22 +70,24 @@ let Tooltip = class Tooltip {
                 }
             });
         }
-        this._evm.listen(this.element, 'pointerenter', () => this._hoverIn());
-        this._evm.listen(node, 'pointerenter', () => {
-            this._hoveringNode = true;
-            this.show();
-        });
-        this._evm.listen(node, 'pointerleave', () => {
-            this._hoveringNode = false;
-            this.hide();
-        });
-        this._evm.listen(node, 'pointermove', e => this._updatePosition(e));
-        this._evm.listen(node, 'click', () => {
-            if (opts.hideOnClick)
+        if (!this.opts.manual) {
+            this._evm.listen(this.element, 'pointerenter', () => this._hoverIn());
+            this._evm.listen(node, 'pointerenter', () => {
+                this._hoveringNode = true;
+                this.show();
+            });
+            this._evm.listen(node, 'pointerleave', () => {
+                this._hoveringNode = false;
                 this.hide();
-            else
-                this.refresh();
-        });
+            });
+            this._evm.listen(node, 'pointermove', e => this._updatePosition(e));
+            this._evm.listen(node, 'click', () => {
+                if (opts.hideOnClick)
+                    this.hide();
+                else
+                    this.refresh();
+            });
+        }
         // this.show()
     }
     refresh() {
@@ -634,6 +637,7 @@ let Tooltip = class Tooltip {
 
 			z-index: 1000;
 			transition: opacity 0.1s;
+			pointer-events: none;
 
 			code {
 				font-size: var(--font-size, 0.8rem);
@@ -642,8 +646,6 @@ let Tooltip = class Tooltip {
 				border-radius: 2px;
 				height: fit-content;
 			}
-
-			pointer-events: none;
 
 			a {
 				color: var(--theme-a, #08f);

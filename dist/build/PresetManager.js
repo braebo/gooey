@@ -212,10 +212,29 @@ class PresetManager {
                 {
                     text: 'update',
                     id: 'update',
-                    onClick: () => {
+                    onClick: v => {
                         const { id, title } = this.activePreset.value;
                         const current = this.gooey.save(title, id, this.__version);
                         this.put(current);
+                        v.button.disabled = true;
+                        const tooltip = v.button.element.tooltip;
+                        tooltip.text = 'Updated!';
+                        tooltip.show();
+                        setTimeout(() => {
+                            tooltip.hide();
+                            v.button.disabled = false;
+                        }, 2000);
+                    },
+                    tooltip: {
+                        text: 'Updated!',
+                        delay: 0,
+                        placement: 'top',
+                        style: {
+                            // @ts-expect-error - @internal
+                            ...this.gooey?._getStyles(),
+                            color: 'lightgreen',
+                        },
+                        manual: true,
                     },
                     disabled: () => this.defaultPresetIsActive,
                 },
@@ -343,6 +362,9 @@ class PresetManager {
         ], {
             order: 1,
             resettable: false,
+            applyActiveClass: false,
+            saveable: false,
+            presetId: presetsFolder.presetId + '__manager_grid',
         });
         //? Presets Select Input
         this._presetsInput = presetsFolder.addSelect('', this.presets.value, {
@@ -350,6 +372,7 @@ class PresetManager {
             order: 0,
             value: this.activePreset.value,
             resettable: false,
+            presetId: presetsFolder.presetId + '__preset_select',
         });
         let first = true;
         this._presetsInput.on('change', ({ value }) => {
