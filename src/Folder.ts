@@ -389,30 +389,34 @@ export class Folder {
 	 * All inputs added to this folder.
 	 */
 	inputs = new Map<string, ValidInput>()
-	inputIdMap = new Map<string, string>()
 
 	/**
 	 * The root folder.  All folders share a reference to the same root folder.
 	 */
 	root: Folder
+
 	/**
 	 * The parent folder of this folder (or a circular reference if this is the root folder).
 	 */
 	parentFolder: Folder
+
 	/**
 	 * The folder containing Gooey instance settings, like the `ui` and `presets` sections.
 	 */
 	settingsFolder!: Folder
+
 	/**
 	 * An observable responsible for the folder's open/closed state.  Setting this value will
 	 * open/close the folder, and subscribing to this value will allow you to listen for
 	 * open/close events.
 	 */
 	closed: State<boolean>
+
 	/**
 	 * The folder's root container element, containing all other related folder {@link elements}.
 	 */
 	element: HTMLDivElement
+
 	/**
 	 * All HTMLElements that make up the folder's UI.
 	 */
@@ -426,6 +430,7 @@ export class Folder {
 			settingsButton?: HTMLButtonElement & { tooltip?: Tooltip }
 		}
 	}
+
 	/**
 	 * The animated svg graphics belonging to the folder.
 	 */
@@ -445,6 +450,7 @@ export class Folder {
 	 * @internal
 	 */
 	evm = new EventManager<FolderEvents>(['change', 'refresh', 'toggle', 'mount'])
+
 	/**
 	 * Equivalent to `addEventListener`.
 	 */
@@ -480,11 +486,10 @@ export class Folder {
 	private static _presetIdMap = new Map<string, string>()
 	/**
 	 * The duration of the open/close and hide/show animations in ms.
-	 * @default 450
+	 * @default 350
 	 *
 	 * @todo This needs to sync with the animation duration in the css.
 	 */
-	// private _animDuration = 450
 	private _animDuration = 350
 	//⌟
 	constructor(options: FolderOptions) {
@@ -1092,7 +1097,6 @@ export class Folder {
 	 * the internal preset-id map, and and refreshing the folder icon (debounced slightly).
 	 */
 	private _registerInput<T extends ValidInput>(input: T, presetId: string): T {
-		// this.inputs.set(presetId, input)
 		let i = 0
 		let titleId = input.title
 		while (this.inputs.has(titleId)) {
