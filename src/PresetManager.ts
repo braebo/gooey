@@ -302,10 +302,32 @@ export class PresetManager {
 					{
 						text: 'update',
 						id: 'update',
-						onClick: () => {
+						onClick: v => {
 							const { id, title } = this.activePreset.value
 							const current = this.gooey.save(title, id, this.__version)
 							this.put(current)
+
+							v.button.disabled = true
+							const tooltip = (
+								v.button.element as HTMLButtonElement & { tooltip: Tooltip }
+							).tooltip
+							tooltip.text = 'Updated!'
+							tooltip.show()
+							setTimeout(() => {
+								tooltip.hide()
+								v.button.disabled = false
+							}, 2000)
+						},
+						tooltip: {
+							text: 'Updated!',
+							delay: 0,
+							placement: 'top',
+							style: {
+								// @ts-expect-error - @internal
+								...this.gooey?._getStyles(),
+								color: 'lightgreen',
+							},
+							manual: true,
 						},
 						disabled: () => this.defaultPresetIsActive,
 					},
@@ -449,6 +471,7 @@ export class PresetManager {
 			{
 				order: 1,
 				resettable: false,
+				applyActiveClass: false,
 			},
 		)
 

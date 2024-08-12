@@ -509,26 +509,25 @@
 		height: 100%;
 	}
 
-	&:hover,
-	&:active {
-		&:not(:disabled),
-		&:not(.disabled) {
+	&:not(:disabled),
+	&:not(.disabled) {
+		&:hover {
 			background: var(--gooey-controller_background);
 			color: var(--gooey-controller_color);
 		}
-	}
 
-	&:active {
-		transform: scale(0.975);
-		color: var(--gooey-theme-a);
+		&:active {
+			transform: scale(0.975);
+			color: var(--gooey-theme-a);
 
-		// prettier-ignore
-		box-shadow:
-			0px 0px 3px var(--gooey-shadow-color),
-			0px 0px 5px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 3), calc(var(--gooey-shadow-opacity) / 1)) inset,
-			0px 0px 10px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 2), calc(var(--gooey-shadow-opacity) / 2)) inset,
-			0px 0px 20px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 1), calc(var(--gooey-shadow-opacity) / 2)) inset
-		;
+			// prettier-ignore
+			box-shadow:
+				0px 0px 3px var(--gooey-shadow-color),
+				0px 0px 5px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 3), calc(var(--gooey-shadow-opacity) / 1)) inset,
+				0px 0px 10px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 2), calc(var(--gooey-shadow-opacity) / 2)) inset,
+				0px 0px 20px hsla(250, 10%, calc(var(--gooey-shadow-lightness) / 1), calc(var(--gooey-shadow-opacity) / 2)) inset
+			;
+		}
 	}
 
 	// Disabled
@@ -552,7 +551,7 @@
 		cursor: text;
 		outline: 1px solid var(--gooey-theme-a);
 	}
-	
+
 	& *::selection {
 		background-color: var(--gooey-theme-a);
 		color: var(--gooey-bg-b);
