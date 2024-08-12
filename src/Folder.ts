@@ -537,7 +537,7 @@ export class Folder {
 		)
 		this.elements = this._createElements(this.element)
 
-		this.presetId = this._resolvePresetId()
+		this.presetId = opts.presetId ?? this._resolvePresetId()
 
 		opts.closed ??= false
 		if (
