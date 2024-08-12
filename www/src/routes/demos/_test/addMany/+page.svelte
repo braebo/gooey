@@ -27,13 +27,13 @@
 
 		ready = true
 
-		const test = gooey.addMany(params.value)
+		const test = gooey.bindMany(params.value)
 
 		// Map keys are inferred correctly... sweet!  But the input types aren't T_T
 		const b = test.inputs.get('height') // should be InputNumber
 		const c = test.inputs.get('drift') // should be InputSwitch
 
-		gooey.on('change', () => {
+		gooey.on('change', (v) => {
 			showCode.set(true)
 			code.set(stringify($params, 2))
 		})
@@ -73,7 +73,6 @@
 	{/if}
 
 	<div class="buttons">
-		<button on:click={() => console.log(gooey)}>Log Gooey</button>
 		<button on:click={() => localStorage.clear()}>Clear localStorage</button>
 	</div>
 
@@ -126,15 +125,31 @@
 
 	.debug {
 		position: absolute;
-		top: 5rem;
-		left: 1rem;
+		top: 12rem;
+		left: 1.1rem;
 
 		z-index: 0;
 	}
 
 	.buttons {
 		position: absolute;
-		top: 1rem;
-		left: 10rem;
+		top: 0.9rem;
+		right: 6rem;
+		scale: 0.9;
+		button {
+			border: none;
+			padding: 0.25rem 0.5rem;
+			border-radius: 4px;
+			font-family: var(--font-a);
+			background: var(--bg-c);
+			color: var(--fg-c);
+			cursor: pointer;
+			transition: 0.15s;
+
+			&:hover {
+				background: var(--bg-d);
+				color: var(--fg-a);
+			}
+		}
 	}
 </style>

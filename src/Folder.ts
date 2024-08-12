@@ -1150,66 +1150,6 @@ export class Folder {
 	}
 	//⌟
 
-	// addMany<T extends Record<string, any>>(
-	// 	obj: T,
-	// 	options?: { folder?: Folder },
-	// ): Folder & { inputs: Map<keyof T | (string & {}), InferInput<T[keyof T]>> } {
-	// addMany<
-	// 	T extends object,
-	// 	TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
-	// 	TInputs extends InferTarget<T> = this & InferTarget<T>,
-	// >(
-	// 	obj: T,
-	// 	options?: TOptions & {
-	// 		/**
-	// 		 * An array of keys to exclude from a target object when generating inputs.
-	// 		 */
-	// 		exclude?: InferTargetKeys<T>[]
-	// 		/**
-	// 		 * An array of keys to include in a target object when generating inputs.
-	// 		 */
-	// 		include?: InferTargetKeys<T>[]
-	// 	},
-	// ): Folder & { inputs: Map<keyof T | (string & {}), InferInput<T[keyof T]>> } {
-	// 	const walk = (
-	// 		obj: T,
-	// 		options: TOptions & {
-	// 			/**
-	// 			 * An array of keys to exclude from a target object when generating inputs.
-	// 			 */
-	// 			exclude?: InferTargetKeys<T>[]
-	// 			/**
-	// 			 * An array of keys to include in a target object when generating inputs.
-	// 			 */
-	// 			include?: InferTargetKeys<T>[]
-	// 		},
-	// 		folder: Folder,
-	// 		seen: Set<any>,
-	// 	) => {
-	// 		for (const [key, value] of Object.entries(obj)) {
-	// 			if (typeof value === 'object') {
-	// 				if (isColor(value)) {
-	// 					this.addColor(key, value)
-	// 					continue
-	// 				}
-
-	// 				const subFolder = folder.addFolder(key)
-	// 				subFolder.addMany(value, options, subFolder, seen)
-	// 			} else {
-	// 				const opts = {
-	// 					binding: {
-	// 						target: obj,
-	// 						key,
-	// 					},
-	// 				}
-	// 				this.add(key, value, opts)
-	// 			}
-	// 		}
-	// 	}
-
-	// 	return this as any
-	// }
-
 	//·· Bind ···································································¬
 
 	/**
@@ -1255,10 +1195,32 @@ export class Folder {
 
 	/**
 	 * Used to store a ref to the top level folder of a nested generator like `bindMany`.
-	 * @internal
 	 */
-	private _transientRoot: Folder | null = null
+	#transientRoot: Folder | null = null
 
+	/**
+	 * Takes an object and generates a set of inputs based on the object's keys and values.  Any
+	 * nested objects will result in child folders being created.  Options can be passed to
+	 * customize the inputs generated, and to exclude/include specific keys.
+	 * @param target - The object to generate inputs from.
+	 * @param options - Options to customize the inputs generated, as well as `include` and
+	 * `exclude` arrays to omit certain keys.
+	 * @example
+	 * ```ts
+	 * const gui = new Gooey()
+	 *
+	 * const params = {
+	 *  myNumber: 5,
+	 * 	myFolder: {
+	 *    myOptions: 'foo',
+	 * 	}
+	 * }
+	 *
+	 * gui.addMany(params, {
+	 *   myFolder: {
+	 * folderOptions: title: 'My Folder' }}, // optional folder controls
+	 * })
+	 */
 	addMany<
 		T extends object,
 		TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
@@ -1278,14 +1240,14 @@ export class Folder {
 	): TInputs {
 		let rootFolder: Folder = this
 
-		if (!this._transientRoot) {
-			this._transientRoot = rootFolder
+		if (!this.#transientRoot) {
+			this.#transientRoot = rootFolder
 		}
 
 		this._walk(target, ((options as any) || undefined) ?? {}, rootFolder, new Set(), 'add')
 
-		const finalRoot = this._transientRoot
-		this._transientRoot = null
+		const finalRoot = this.#transientRoot
+		this.#transientRoot = null
 		return finalRoot as this & TInputs
 	}
 
@@ -1308,14 +1270,14 @@ export class Folder {
 	): TInputs {
 		let rootFolder: Folder = this
 
-		if (!this._transientRoot) {
-			this._transientRoot = rootFolder
+		if (!this.#transientRoot) {
+			this.#transientRoot = rootFolder
 		}
 
 		this._walk(target, ((options as any) || undefined) ?? {}, rootFolder, new Set(), 'bind')
 
-		const finalRoot = this._transientRoot
-		this._transientRoot = null
+		const finalRoot = this.#transientRoot
+		this.#transientRoot = null
 		return finalRoot as this & TInputs
 	}
 	//⌟
@@ -1506,7 +1468,6 @@ export class Folder {
 	addSelect<T>(
 		title: string,
 		array: T[],
-		// options?: SelectInputOptions<T> & { initialValue?: T },
 		options?: SelectInputOptions<NoInfer<T>> & {
 			initialValue?: NoInfer<T>
 		},
@@ -1518,7 +1479,6 @@ export class Folder {
 
 		if (!opts.value) {
 			console.warn('No value provided for select:', { title, array, options, opts })
-			// throw new Error('No value provided for select.')
 		}
 		return this._registerInput(new InputSelect(opts, this), opts.presetId) as InputSelect<T>
 	}
@@ -1828,7 +1788,6 @@ export class Folder {
 	}
 
 	private _resolveHeaderHeight(): number {
-		// Get the _pixel_ value of the `--gooey-header_height` variable for SVG generation.
 		let height = 16 * 1.75
 		const wrapper = this.root?.gooey?.wrapper
 		if (!wrapper) {
@@ -1840,11 +1799,6 @@ export class Folder {
 		} else if (prop.endsWith('em')) {
 			let fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
 			height = parseFloat(prop) * fontSize
-		} else {
-			console.error('Invalid header height for', this.title)
-			console.error({
-				prop,
-			})
 		}
 		return height
 	}
