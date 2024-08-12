@@ -11,7 +11,7 @@ export const VAR_PREFIX = 'gooey' as const
 const GUI_VARS_UTILITY = {
 	base: {
 		'font-family': "'fredoka', sans-serif",
-		'font-size': 'clamp(0.75rem, 3vw, 1rem)',
+		'font-size': 'clamp(0.88rem, 3vw, 1rem)',
 		'shadow-lightness': '0%',
 		'shadow-opacity': '0.2',
 		'shadow-color': `hsla(250, 10%, var(--${VAR_PREFIX}-shadow-lightness), var(--${VAR_PREFIX}-shadow-opacity))`,
