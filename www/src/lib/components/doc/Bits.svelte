@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Bit, SlotBit } from '$scripts/extractinator/src/types'
+	import type { Bit, SlotBit } from 'extractinator'
 
 	export let bits: (Bit | SlotBit)[]
 </script>

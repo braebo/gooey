@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { HighlightedBlock } from 'docinator'
-	import type { ParsedFile } from 'extractinator'
+	import type { ParsedExample } from 'extractinator'
 
 	import Code from '../Code.svelte'
 
-	export let examples: ParsedFile[]
+	export let examples: ParsedExample[]
 
 	const hasHTMLBlocks = (comment: any) => {
 		return comment as { name: string; content: string; blocks: HighlightedBlock[] }
