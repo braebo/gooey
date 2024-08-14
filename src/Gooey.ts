@@ -382,13 +382,15 @@ export class Gooey {
 		}
 
 		let reposition = false
+		let storageKey = ''
 		const storageOpts = resolveOpts(opts.storage, GUI_STORAGE_DEFAULTS)
 		if (!storageOpts) {
 			reposition = true
 		} else {
+			storageKey = `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`
 			opts.storage = {
 				...storageOpts,
-				key: `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`,
+				key: storageKey,
 			}
 			// When storage is on, repositioning after animating-in is disabled unless this is the
 			// _very_ first page load.
