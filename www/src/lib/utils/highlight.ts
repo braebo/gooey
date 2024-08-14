@@ -53,7 +53,7 @@ const LANGUAGES = [
 	'coffeescript',
 	'jade',
 	'md',
-]
+] as const
 
 // The default theme.
 themes.add('serendipity' as ThemeInput)
