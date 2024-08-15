@@ -35,7 +35,7 @@ $mobile: 900px;
 	--radius-md: 0.4375rem;
 	--radius-lg: 0.625rem;
 
-	--page-width: min(70rem, 100vw);
+	--page-width: clamp(400px, 100%, min(900px, 100vw));
 
 	--padding: 1.5rem;
 
