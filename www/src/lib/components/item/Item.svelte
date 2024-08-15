@@ -1,28 +1,24 @@
 <script>
-	import { mobile } from '$lib'
+	import { mobile } from '$lib/mobile.svelte'
 
 	export let title = 'title'
 	export let type = 'type'
 	export let path = ''
 </script>
 
-<div class="item" class:mobile={$mobile}>
+<div class="item" class:mobile>
 	<header>
 		<a href="#{title}"><h1 id={title}>{title}</h1></a>
 		<p class="code">{type}</p>
 	</header>
 
-	<div class="description" class:mobile={$mobile}>
+	<div class="description" class:mobile>
 		<slot name="description" />
 	</div>
 
 	<slot />
 
-	<a
-		class="link"
-		target="_blank"
-		href="https://github.com/FractalHQ/fractils/blob/main/src/lib/{path}">{'</>'}</a
-	>
+	<a class="link" target="_blank" href="https://github.com/FractalHQ/fractils/blob/main/src/lib/{path}">{'</>'}</a>
 </div>
 
 <style lang="scss">
@@ -85,7 +81,7 @@
 		justify-content: space-between;
 	}
 
-	:global(html[theme="light"]) header p.code {
+	:global(html[theme='light']) header p.code {
 		background: var(--fg-d);
 	}
 
