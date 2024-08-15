@@ -2,7 +2,6 @@
 	import HomeIcon from '$lib/components/Header/HomeIcon.svelte'
 	import ThemeSwitch from '../ThemeSwitch.svelte'
 	import { page } from '$app/stores'
-	import Nav from './Nav/Nav.svelte'
 	import { mobile } from 'fractils'
 </script>
 
@@ -20,12 +19,12 @@
 	{/if}
 </header>
 
-<Nav />
-
 <style lang="scss">
 	$padding: 1rem;
 	header {
 		position: relative;
+		// position: sticky;
+		top: 0;
 		height: 3rem;
 
 		display: flex;
@@ -59,8 +58,8 @@
 
 	#theme {
 		position: absolute;
-		top: $padding;
-		right: $padding;
+		top: 0.75rem;
+		right: 0.75rem;
 		z-index: 30;
 	}
 </style>

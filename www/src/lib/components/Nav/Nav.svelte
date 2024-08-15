@@ -1,14 +1,50 @@
 <script lang="ts">
+	import type { Branch } from '$lib/utils/tree'
+
 	import { clickOutside } from '$lib/utils/clickOutside'
 	import { isActive } from '$lib/utils/isActive'
-	import { type Branch } from '$lib/utils/tree'
 	import Burger from './Mobile/Burger.svelte'
 	import { fly } from 'svelte/transition'
+	import { Tree } from '$lib/utils/tree'
 	import { page } from '$app/stores'
 	import { mobile } from 'fractils'
 
-	const { links }: { links: Branch[] } = $props()
+	const { absolute = true } = $props()
+
+	const tree = new Tree($page.data.routes)
+	const links = tree.root.children!
+
 	let showMenu = $state(false)
+
+	// import { Gooey } from '../../../../../../src'
+	// import { goto } from '$app/navigation'
+	// import { onMount } from 'svelte'
+
+	// onMount(() => {
+	// 	const gooey = new Gooey({ title: 'nav' })
+
+	// 	function walk(node: Branch, depth = 0) {
+	// 		if (!node.name.startsWith('_')) {
+	// 			gooey.addButton(
+	// 				'',
+	// 				() => {
+	// 					goto(node.path)
+	// 				},
+	// 				{ text: node.name },
+	// 			)
+	// 		}
+
+	// 		for (const child of node.children ?? []) {
+	// 			walk(child, depth + 1)
+	// 		}
+	// 	}
+
+	// 	for (const link of links) {
+	// 		walk(link)
+	// 	}
+
+	// 	return gooey.dispose
+	// })
 </script>
 
 {#if $mobile}
@@ -21,17 +57,15 @@
 	{#snippet subnav(link: Branch, i = 0, depth = 1)}
 		<ul>
 			{#each link.children?.filter((c) => !c.name.startsWith('_')) ?? [] as child, j (child.name)}
-				<!-- <div class="li depth-{depth}" class:active={isActive(child.name)}> -->
 				<div
-					class="li depth-{depth}"
+					class="li"
 					class:active={isActive(child.name, $page.url.pathname)}
 					in:fly={{ y: -10 - 5 * i - j * 2.5 }}
 					style:view-transition-name="li-{child.name}"
-					style="margin-left: 1.5rem;"
+					style="margin-left: 1rem;"
 				>
-					<!-- <a style:view-transition-name="li-{child.name}" data-sveltekit-prefetch href={child.path}> -->
-					<a data-sveltekit-prefetch href={child.path}>
-						{child.name}
+					<a class="depth-{depth}" data-sveltekit-prefetch href={child.path}>
+						{child.name.replaceAll('-', ' ')}
 					</a>
 					{#if $page.url.pathname.includes(child.path)}
 						{@render subnav(child, i, depth + 1)}
@@ -41,12 +75,17 @@
 		</ul>
 	{/snippet}
 
-	<nav class="showMenu">
+	<nav class:absolute>
 		<ul>
 			{#each links ?? [] as link, i (link.name)}
-				<div class="li depth-0" in:fly={{ y: -10 - 5 * i }} style:view-transition-name="li-{link.name}">
-					<a data-sveltekit-prefetch href={link.path} class:active={isActive(link.name, $page.url.pathname)}>
-						{link.name}
+				<div class="li" in:fly={{ y: -10 - 5 * i }} style:view-transition-name="li-{link.name}">
+					<a
+						class="depth-0"
+						data-sveltekit-prefetch
+						href={link.path}
+						class:active={isActive(link.name, $page.url.pathname)}
+					>
+						{link.name.replaceAll('-', ' ')}
 					</a>
 
 					{#if $page.url.pathname.includes(link.path)}
@@ -70,22 +109,27 @@
 	}
 
 	nav {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 1rem;
 		display: flex;
 		align-items: center;
+		gap: 1rem;
 
 		width: 100%;
+		height: 100vh;
 		max-width: 50rem;
 		margin: 0 auto;
-		gap: 1rem;
+		padding-left: 1rem;
 
 		pointer-events: none;
 		contain: strict;
 
 		z-index: 1;
+	}
+
+	nav.absolute {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
 	}
 
 	ul {
@@ -111,9 +155,12 @@
 
 		font-size: var(--font-xs);
 		letter-spacing: 1.5px;
+
+		text-transform: capitalize;
 	}
 
 	.depth-0 {
+		text-transform: uppercase;
 		font-size: var(--font-sm);
 	}
 
@@ -131,7 +178,7 @@
 		font-variation-settings:
 			'wght' 300,
 			'wdth' 97;
-		text-transform: uppercase;
+
 		text-decoration: none;
 		letter-spacing: 2.75px;
 

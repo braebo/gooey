@@ -1,6 +1,8 @@
 <script lang="ts">
-	// import GooeyAnim from '$lib/components/graphics/GooeyAnim.svelte'
+	import { Nav } from '$lib/components/Nav'
 </script>
+
+<Nav />
 
 <div class="anim">
 	<div class="slant" />
