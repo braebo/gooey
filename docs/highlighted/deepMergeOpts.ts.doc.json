@@ -1,0 +1,22 @@
+{
+  "type": "ts",
+  "fileName": "deepMergeOpts.ts",
+  "filePath": "src/shared/deepMergeOpts.ts",
+  "exports": [
+    {
+      "name": "deepMergeOpts",
+      "type": "typeof deepMergeOpts",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Deep merges objects together, with some special rules: - Arrays are concatenated and de-duplicated unless {@link concatArrays | `concatArrays`} is `false`. - Objects are recursively merged. - `false` is only replaced with `true` - An object is never replaced with `true`, `false`, or `undefined`. - The original objects are not mutated. - `undefined` is always overwritten. - `0` is accepted.  @todo More options would be nice.\n */",
+        "links": [
+          {
+            "target": "concatArrays",
+            "text": "`concatArrays`"
+          }
+        ],
+        "summary": "<p>Deep merges objects together, with some special rules:</p>\n<ul>\n<li>Arrays are concatenated and de-duplicated unless <a href=\"#concatArrays%7C%60concatArrays%60\">concatArrays|<code>concatArrays</code></a> is <code>false</code>.</li>\n<li>Objects are recursively merged.</li>\n<li><code>false</code> is only replaced with <code>true</code></li>\n<li>An object is never replaced with <code>true</code>, <code>false</code>, or <code>undefined</code>.</li>\n<li>The original objects are not mutated.</li>\n<li><code>undefined</code> is always overwritten.</li>\n<li><code>0</code> is accepted.\n@todo More options would be nice.</li>\n</ul>\n"
+      }
+    }
+  ]
+}

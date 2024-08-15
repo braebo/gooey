@@ -1,0 +1,37 @@
+{
+  "type": "ts",
+  "fileName": "InputColor.ts",
+  "filePath": "src/inputs/InputColor.ts",
+  "exports": [
+    {
+      "name": "ColorMode",
+      "type": "\"rgba\" | \"rgbaString\" | \"hsla\" | \"hslaString\" | \"hsva\" | \"hsvaString\" | \"hex\" | \"hex8\" | \"array\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "COLOR_MODES",
+      "type": "readonly [\"rgba\", \"rgbaString\", \"hsla\", \"hslaString\", \"hsva\", \"hsvaString\", \"hex\", \"hex8\", \"array\"]",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorControllerElements",
+      "type": "ColorControllerElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorInputOptions",
+      "type": "ColorInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "COLOR_INPUT_DEFAULTS",
+      "type": "{ readonly __type: \"ColorInputOptions\"; readonly value: \"#FF0000FF\"; readonly mode: \"hex\"; readonly expanded: false; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputColor",
+      "type": "InputColor",
+      "isDefaultExport": false
+    }
+  ]
+}

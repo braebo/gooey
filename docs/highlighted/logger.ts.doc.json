@@ -1,0 +1,27 @@
+{
+  "type": "ts",
+  "fileName": "logger.ts",
+  "filePath": "src/shared/logger.ts",
+  "exports": [
+    {
+      "name": "LoggerOptions",
+      "type": "LoggerOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "LogLevel",
+      "type": "LogLevel",
+      "isDefaultExport": false
+    },
+    {
+      "name": "Logger",
+      "type": "Logger",
+      "isDefaultExport": false
+    },
+    {
+      "name": "logger",
+      "type": "(title?: string, options?: LoggerOptions) => (...args: any[]) => void",
+      "isDefaultExport": false
+    }
+  ]
+}

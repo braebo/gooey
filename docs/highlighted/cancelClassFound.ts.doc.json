@@ -1,0 +1,16 @@
+{
+  "type": "ts",
+  "fileName": "cancelClassFound.ts",
+  "filePath": "src/shared/cancelClassFound.ts",
+  "exports": [
+    {
+      "name": "composedPathContains",
+      "type": "typeof composedPathContains",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Checks if an event's composed path contains an element with the provided classname.\n */",
+        "summary": "<p>Checks if an event&#39;s composed path contains an element with the provided classname.</p>\n"
+      }
+    }
+  ]
+}

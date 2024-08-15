@@ -1,0 +1,22 @@
+{
+  "type": "ts",
+  "fileName": "GOOEY_VARS.ts",
+  "filePath": "src/styles/GOOEY_VARS.ts",
+  "exports": [
+    {
+      "name": "GooeyCoreVars",
+      "type": "GooeyCoreVars",
+      "isDefaultExport": false
+    },
+    {
+      "name": "VAR_PREFIX",
+      "type": "\"gooey\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "GUI_VARS",
+      "type": "ExtendedVars",
+      "isDefaultExport": false
+    }
+  ]
+}

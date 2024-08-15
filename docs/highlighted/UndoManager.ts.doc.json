@@ -1,0 +1,21 @@
+{
+  "type": "ts",
+  "fileName": "UndoManager.ts",
+  "filePath": "src/UndoManager.ts",
+  "exports": [
+    {
+      "name": "Commit",
+      "type": "Commit<V>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A recorded \"action\" callback that can be re-played forwards or backwards.\n */",
+        "summary": "<p>A recorded &quot;action&quot; callback that can be re-played forwards or backwards.</p>\n"
+      }
+    },
+    {
+      "name": "UndoManager",
+      "type": "UndoManager",
+      "isDefaultExport": false
+    }
+  ]
+}

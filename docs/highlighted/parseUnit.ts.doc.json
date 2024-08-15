@@ -1,0 +1,26 @@
+{
+  "type": "ts",
+  "fileName": "parseUnit.ts",
+  "filePath": "src/shared/color/conversions/parseUnit.ts",
+  "exports": [
+    {
+      "name": "parseUnit",
+      "type": "typeof parseUnit",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Parse a css unit string - either regular int or a percentage number\n *\n * @param str - css unit string\n *\n * @param max - max unit value, used for calculating percentages\n */",
+        "summary": "<p>Parse a css unit string - either regular int or a percentage number</p>\n",
+        "params": [
+          {
+            "name": "str",
+            "description": "css unit string"
+          },
+          {
+            "name": "max",
+            "description": "max unit value, used for calculating percentages"
+          }
+        ]
+      }
+    }
+  ]
+}

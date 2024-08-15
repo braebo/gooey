@@ -1,0 +1,44 @@
+{
+  "type": "ts",
+  "fileName": "stringify.ts",
+  "filePath": "src/shared/stringify.ts",
+  "exports": [
+    {
+      "name": "serialize",
+      "type": "typeof serialize",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A replacer function for `JSON.stringify` that handles circular references, undefined values, and functions with strings.\n *\n * @see\n *\n * {@link stringify}\n */",
+        "links": [
+          {
+            "target": "stringify",
+            "text": "stringify"
+          }
+        ],
+        "summary": "<p>A replacer function for <code>JSON.stringify</code> that handles circular references,\nundefined values, and functions with strings.</p>\n",
+        "seeBlocks": [
+          "{@linkstringify}"
+        ]
+      }
+    },
+    {
+      "name": "stringify",
+      "type": "(input: unknown, indentation?: number) => string",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A stringify replacer that handles circular references, undefined values, and functions. - Circular references are replaced with the string `[Circular ~<path>]` where `<path>` is the path to the circular reference relative to the root object, i.e. `[Circular ~.b.c]`. - Functions are replaced with the string `\"[Function]\"`. - `undefined` values are replaced with the string `\"undefined\"`.\n *\n * @param obj - The object to stringify.\n *\n * @param indentation - Number of spaces for indentation. Optional.\n */",
+        "summary": "<p>A stringify replacer that handles circular references, undefined values, and functions.</p>\n<ul>\n<li>Circular references are replaced with the string <code>[Circular ~&lt;path&gt;]</code>\nwhere <code>&lt;path&gt;</code> is the path to the circular reference relative to the\nroot object, i.e. <code>[Circular ~.b.c]</code>.</li>\n<li>Functions are replaced with the string <code>&quot;[Function]&quot;</code>.</li>\n<li><code>undefined</code> values are replaced with the string <code>&quot;undefined&quot;</code>.</li>\n</ul>\n",
+        "params": [
+          {
+            "name": "obj",
+            "description": "The object to stringify."
+          },
+          {
+            "name": "indentation",
+            "description": "Number of spaces for indentation. Optional."
+          }
+        ]
+      }
+    }
+  ]
+}

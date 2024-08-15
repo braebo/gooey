@@ -1,0 +1,52 @@
+{
+  "type": "ts",
+  "fileName": "objects.ts",
+  "filePath": "src/shared/color/types/objects.ts",
+  "exports": [
+    {
+      "name": "ColorObject",
+      "type": "ColorObject",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorChanges",
+      "type": "ColorChanges",
+      "isDefaultExport": false
+    },
+    {
+      "name": "HsvColor",
+      "type": "HsvColor",
+      "isDefaultExport": false
+    },
+    {
+      "name": "HsvaColor",
+      "type": "HsvaColor",
+      "isDefaultExport": false
+    },
+    {
+      "name": "RgbColor",
+      "type": "RgbColor",
+      "isDefaultExport": false
+    },
+    {
+      "name": "RgbaColor",
+      "type": "RgbaColor",
+      "isDefaultExport": false
+    },
+    {
+      "name": "HslColor",
+      "type": "HslColor",
+      "isDefaultExport": false
+    },
+    {
+      "name": "HslaColor",
+      "type": "HslaColor",
+      "isDefaultExport": false
+    },
+    {
+      "name": "KelvinColor",
+      "type": "KelvinColor",
+      "isDefaultExport": false
+    }
+  ]
+}

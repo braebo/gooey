@@ -1,0 +1,27 @@
+{
+  "type": "ts",
+  "fileName": "InputText.ts",
+  "filePath": "src/inputs/InputText.ts",
+  "exports": [
+    {
+      "name": "TextInputOptions",
+      "type": "TextInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "TEXT_INPUT_DEFAULTS",
+      "type": "{ readonly __type: \"TextInputOptions\"; readonly value: \"foo\"; readonly maxLength: 50; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "TextControllerElements",
+      "type": "TextControllerElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputText",
+      "type": "InputText",
+      "isDefaultExport": false
+    }
+  ]
+}

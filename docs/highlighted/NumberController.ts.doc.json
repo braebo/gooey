@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "NumberController.ts",
+  "filePath": "src/controllers/NumberController.ts",
+  "exports": [
+    {
+      "name": "NumberController",
+      "type": "NumberController<TInput, TOptions>",
+      "isDefaultExport": false
+    }
+  ]
+}

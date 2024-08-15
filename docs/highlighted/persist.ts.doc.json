@@ -1,0 +1,36 @@
+{
+  "type": "ts",
+  "fileName": "persist.ts",
+  "filePath": "src/shared/persist.ts",
+  "exports": [
+    {
+      "name": "persist",
+      "type": "typeof persist",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Persists a value in localStorage.\n *\n * @returns An object with a `get` and `set` method that syncs with localStorage.\n *\n * @example\n * ```ts\n * // Let's say 'foo' is already \"42\" in localStorage:\n *\n * const foo = persist('foo', 5) // initial value won't be used\n *\n * foo.value // 42\n * // or\n * foo.get() // 42\n *\n * foo.value = 123\n * // or\n * foo.set(123)\n *\n * localStorage.getItem('foo') // \"123\"\n * ```\n *\n */",
+        "summary": "<p>Persists a value in localStorage.</p>\n",
+        "returns": "An object with a`get`and`set`method that syncs with localStorage.",
+        "examples": [
+          {
+            "content": "```ts\n// Let's say 'foo' is already \"42\" in localStorage:\n\nconst foo = persist('foo', 5) // initial value won't be used\n\nfoo.value // 42\n// or\nfoo.get() // 42\n\nfoo.value = 123\n// or\nfoo.set(123)\n\nlocalStorage.getItem('foo') // \"123\"\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> Let's say 'foo' is already \"42\" in localStorage:</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">const</span><span style=\"color:#DEE0EF\"> foo</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#F8D2C9\"> persist</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#A78BFA\">'foo'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#F8D2C9\"> 5</span><span style=\"color:#DEE0EF\">)</span><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> initial value won't be used</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">foo</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#DEE0EF\">value</span><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> 42</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> or</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">foo</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">get</span><span style=\"color:#DEE0EF\">()</span><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> 42</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">foo</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#DEE0EF\">value</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#F8D2C9\"> 123</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> or</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">foo</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">set</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#F8D2C9\">123</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">localStorage</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">getItem</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#A78BFA\">'foo'</span><span style=\"color:#DEE0EF\">)</span><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> \"123\"</span></span></code></pre>",
+                "lang": "ts",
+                "raw": "// Let's say 'foo' is already \"42\" in localStorage:\n\nconst foo = persist('foo', 5) // initial value won't be used\n\nfoo.value // 42\n// or\nfoo.get() // 42\n\nfoo.value = 123\n// or\nfoo.set(123)\n\nlocalStorage.getItem('foo') // \"123\"",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "PersistedValue",
+      "type": "PersistedValue<T>",
+      "isDefaultExport": false
+    }
+  ]
+}

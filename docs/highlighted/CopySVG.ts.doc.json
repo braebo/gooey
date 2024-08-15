@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "CopySVG.ts",
+  "filePath": "src/svg/CopySVG.ts",
+  "exports": [
+    {
+      "name": "CopySVG",
+      "type": "CopySVG",
+      "isDefaultExport": false
+    }
+  ]
+}

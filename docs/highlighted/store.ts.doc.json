@@ -1,0 +1,65 @@
+{
+  "type": "ts",
+  "fileName": "store.ts",
+  "filePath": "src/shared/store.ts",
+  "exports": [
+    {
+      "name": "readable",
+      "type": "typeof readable",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Creates a `Readable` store that allows reading by subscription.\n *\n * https://svelte.dev/docs/svelte-store#readable\n */",
+        "summary": "<p>Creates a <code>Readable</code> store that allows reading by subscription.</p>\n<p><a href=\"https://svelte.dev/docs/svelte-store#readable\">https://svelte.dev/docs/svelte-store#readable</a></p>\n"
+      }
+    },
+    {
+      "name": "writable",
+      "type": "typeof writable",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Create a `Writable` store that allows both updating and reading by subscription.\n *\n * https://svelte.dev/docs/svelte-store#writable\n *\n * @param value - initial value\n */",
+        "summary": "<p>Create a <code>Writable</code> store that allows both updating and reading by subscription.</p>\n<p><a href=\"https://svelte.dev/docs/svelte-store#writable\">https://svelte.dev/docs/svelte-store#writable</a></p>\n",
+        "params": [
+          {
+            "name": "value",
+            "description": "initial value"
+          }
+        ]
+      }
+    },
+    {
+      "name": "get",
+      "type": "typeof get",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Get the current value from a store by subscribing and immediately unsubscribing.\n *\n * https://svelte.dev/docs/svelte-store#get  @template T\n *\n * @param store - \n *\n * @returns {T}\n */",
+        "summary": "<p>Get the current value from a store by subscribing and immediately unsubscribing.</p>\n<p><a href=\"https://svelte.dev/docs/svelte-store#get\">https://svelte.dev/docs/svelte-store#get</a>\n@template T</p>\n",
+        "params": [
+          {
+            "name": "store",
+            "description": ""
+          }
+        ],
+        "returns": "{T}"
+      }
+    },
+    {
+      "name": "Readable",
+      "type": "Readable<T>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Readable interface for subscribing.\n */",
+        "summary": "<p>Readable interface for subscribing.</p>\n"
+      }
+    },
+    {
+      "name": "Writable",
+      "type": "Writable<T>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Writable interface for both updating and subscribing.\n */",
+        "summary": "<p>Writable interface for both updating and subscribing.</p>\n"
+      }
+    }
+  ]
+}

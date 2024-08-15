@@ -1,0 +1,32 @@
+{
+  "type": "ts",
+  "fileName": "InputSelect.ts",
+  "filePath": "src/inputs/InputSelect.ts",
+  "exports": [
+    {
+      "name": "SelectInputOptions",
+      "type": "SelectInputOptions<T>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "SELECT_INPUT_DEFAULTS",
+      "type": "SelectInputOptions<any>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "SelectControllerElements",
+      "type": "SelectControllerElements<T>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "SelectInputEvents",
+      "type": "SelectInputEvents<T>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputSelect",
+      "type": "InputSelect<TValueType>",
+      "isDefaultExport": false
+    }
+  ]
+}

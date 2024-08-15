@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "colorFormat.ts",
+  "filePath": "src/shared/color/types/colorFormat.ts",
+  "exports": [
+    {
+      "name": "ColorFormat",
+      "type": "ColorFormat",
+      "isDefaultExport": false
+    }
+  ]
+}

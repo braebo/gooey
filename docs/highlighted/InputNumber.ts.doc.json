@@ -1,0 +1,27 @@
+{
+  "type": "ts",
+  "fileName": "InputNumber.ts",
+  "filePath": "src/inputs/InputNumber.ts",
+  "exports": [
+    {
+      "name": "NumberControllerElements",
+      "type": "NumberControllerElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "NumberInputOptions",
+      "type": "NumberInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "NUMBER_INPUT_DEFAULTS",
+      "type": "NumberInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputNumber",
+      "type": "InputNumber",
+      "isDefaultExport": false
+    }
+  ]
+}

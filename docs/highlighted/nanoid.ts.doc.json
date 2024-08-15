@@ -1,0 +1,22 @@
+{
+  "type": "ts",
+  "fileName": "nanoid.ts",
+  "filePath": "src/shared/nanoid.ts",
+  "exports": [
+    {
+      "name": "nanoid",
+      "type": "typeof nanoid",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Generate a random ID.\n *\n * @param length - The length of the ID to generate. Default: `21`\n */",
+        "summary": "<p>Generate a random ID.</p>\n",
+        "params": [
+          {
+            "name": "length",
+            "description": "The length of the ID to generate. Default:`21`"
+          }
+        ]
+      }
+    }
+  ]
+}

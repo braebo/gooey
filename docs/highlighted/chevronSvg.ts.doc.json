@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "chevronSvg.ts",
+  "filePath": "src/svg/chevronSvg.ts",
+  "exports": [
+    {
+      "name": "svgChevron",
+      "type": "() => SVGSVGElement",
+      "isDefaultExport": false
+    }
+  ]
+}

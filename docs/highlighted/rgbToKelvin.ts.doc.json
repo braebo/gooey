@@ -1,0 +1,28 @@
+{
+  "type": "ts",
+  "fileName": "rgbToKelvin.ts",
+  "filePath": "src/shared/color/conversions/rgbToKelvin.ts",
+  "exports": [
+    {
+      "name": "rgbToKelvin",
+      "type": "typeof rgbToKelvin",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Convert an {@link RgbColor} object to an approximate {@link KelvinColor['kelvin'] | kelvin} temperature.\n *\n * @param kelvin - {@link KelvinColor['kelvin'] | kelvin} temperature to convert.\n */",
+        "links": [
+          {
+            "target": "RgbColor",
+            "text": "RgbColor"
+          }
+        ],
+        "summary": "<p>Convert an <a href=\"#RgbColor\">RgbColor</a> object to an approximate [KelvinColor[&#39;kelvin&#39;] | kelvin](#KelvinColor[&#39;kelvin&#39;] | kelvin) temperature.</p>\n",
+        "params": [
+          {
+            "name": "kelvin",
+            "description": "{@linkKelvinColor['kelvin'] | kelvin}temperature to convert."
+          }
+        ]
+      }
+    }
+  ]
+}

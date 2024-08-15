@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "NumberButtonsController.ts",
+  "filePath": "src/controllers/NumberButtonsController.ts",
+  "exports": [
+    {
+      "name": "NumberButtonsController",
+      "type": "NumberButtonsController",
+      "isDefaultExport": false
+    }
+  ]
+}

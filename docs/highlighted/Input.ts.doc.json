@@ -1,0 +1,109 @@
+{
+  "type": "ts",
+  "fileName": "Input.ts",
+  "filePath": "src/inputs/Input.ts",
+  "exports": [
+    {
+      "name": "InputType",
+      "type": "\"InputText\" | \"InputTextArea\" | \"InputNumber\" | \"InputColor\" | \"InputSelect\" | \"InputButton\" | \"InputButtonGrid\" | \"InputSwitch\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputOptionType",
+      "type": "\"NumberInputOptions\" | \"SwitchInputOptions\" | \"ColorInputOptions\" | \"TextInputOptions\" | \"TextAreaInputOptions\" | \"SelectInputOptions\" | \"ButtonInputOptions\" | \"ButtonGridInputOptions\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "INPUT_TYPE_MAP",
+      "type": "Readonly<{ InputText: \"TextInputOptions\"; InputTextArea: \"TextAreaInputOptions\"; InputNumber: \"NumberInputOptions\"; InputColor: \"ColorInputOptions\"; InputSelect: \"SelectInputOptions\"; InputButton: \"ButtonInputOptions\"; InputButtonGrid: \"ButtonGridInputOptions\"; InputSwitch: \"SwitchInputOptions\"; }>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "INPUT_TYPES",
+      "type": "readonly (\"InputText\" | \"InputTextArea\" | \"InputNumber\" | \"InputColor\" | \"InputSelect\" | \"InputButton\" | \"InputButtonGrid\" | \"InputSwitch\")[]",
+      "isDefaultExport": false
+    },
+    {
+      "name": "INPUT_OPTION_TYPES",
+      "type": "readonly (\"NumberInputOptions\" | \"SwitchInputOptions\" | \"ColorInputOptions\" | \"TextInputOptions\" | \"TextAreaInputOptions\" | \"SelectInputOptions\" | \"ButtonInputOptions\" | \"ButtonGridInputOptions\")[]",
+      "isDefaultExport": false
+    },
+    {
+      "name": "BindTarget",
+      "type": "BindTarget",
+      "isDefaultExport": false
+    },
+    {
+      "name": "BindableObject",
+      "type": "BindableObject<T, K>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ValueOrBinding",
+      "type": "ValueOrBinding<TValue, TBindTarget>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * The initial value of an input can be either a raw value, or a \"binding\"\n */",
+        "summary": "<p>The initial value of an input can be either a raw value, or a &quot;binding&quot;</p>\n"
+      }
+    },
+    {
+      "name": "InputOptions",
+      "type": "InputOptions<TValue, TBindTarget>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputPreset",
+      "type": "InputPreset<T>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ElementMap",
+      "type": "ElementMap<T>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ValidInputValue",
+      "type": "any",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ValidInputOptions",
+      "type": "ValidInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ValidInput",
+      "type": "ValidInput",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputEvents",
+      "type": "InputEvents<T>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "Input",
+      "type": "Input<TValueType, TOptions, TElements, TEvents, TType, T__TYPE>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An input that can be added to a {@link Folder}. This class is extended by all {@link ValidInput} classes. Inputs occupy a single row in a folder, and are in charge of managing a single state value. Inputs often combine multiple controllers to provide a rich user interface for interacting with the input's value.\n *\n * @template TValueType - The type of value this input manages.  @template TOptions - The options object for this input, determined by the input class responsible for the {@link TValueType}.  @template TElements - A map of all HTMLElement's created by this input.  @template TEvents - A map of all events emitted by this input.  @template TType - A string-literal type brand. Identical to the input class name.\n */",
+        "links": [
+          {
+            "target": "Folder",
+            "text": "Folder"
+          },
+          {
+            "target": "ValidInput",
+            "text": "ValidInput"
+          },
+          {
+            "target": "TValueType",
+            "text": "TValueType"
+          }
+        ],
+        "summary": "<p>An input that can be added to a <a href=\"#Folder\">Folder</a>. This class is extended by all\n<a href=\"#ValidInput\">ValidInput</a> classes. Inputs occupy a single row in a folder, and are in charge of\nmanaging a single state value. Inputs often combine multiple controllers to provide a rich\nuser interface for interacting with the input&#39;s value.</p>\n<p>@template TValueType - The type of value this input manages.\n@template TOptions - The options object for this input, determined by the input class\nresponsible for the <a href=\"#TValueType\">TValueType</a>.\n@template TElements - A map of all HTMLElement&#39;s created by this input.\n@template TEvents - A map of all events emitted by this input.\n@template TType - A string-literal type brand. Identical to the input class name.</p>\n"
+      }
+    }
+  ]
+}

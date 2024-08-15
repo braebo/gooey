@@ -1,0 +1,94 @@
+{
+  "type": "ts",
+  "fileName": "types.ts",
+  "filePath": "src/styles/themer/types.ts",
+  "exports": [
+    {
+      "name": "ThemeTitle",
+      "type": "string",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ThemeVariant",
+      "type": "ThemeVariant",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ThemeMode",
+      "type": "ThemeMode",
+      "isDefaultExport": false
+    },
+    {
+      "name": "VariableDefinition",
+      "type": "VariableDefinition",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A collection of css custom properties that can be added to {@link ThemeDefinition.vars | theme vars}.\n *\n * @remarks\n *\n * Defining `base`, then adding mode-specific overrides, is the intended pattern for defining themes, as `dark` and `light` are typically an optional `Partial` of `base`.\n */",
+        "links": [
+          {
+            "target": "ThemeDefinition",
+            "text": "theme vars"
+          }
+        ],
+        "summary": "<p>A collection of css custom properties that can be added to [ThemeDefinition.vars | theme vars](#ThemeDefinition.vars | theme vars).</p>\n",
+        "remarks": "Defining`base`, then adding mode-specific overrides, is the intendedpattern for defining themes, as`dark`and`light`are typically anoptional`Partial`of`base`."
+      }
+    },
+    {
+      "name": "ColorDefinition",
+      "type": "ColorDefinition",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * All themes come with a default color definition that can be overridden with partials.\n *\n * All shades have light and dark variants, allowing all other colors to adapt to the mode.\n *\n * The `light` and `dark` variables are automatically generated from the `base` colors if not overridden manually.\n */",
+        "summary": "<p>All themes come with a default color definition that can be overridden with partials.</p>\n<p>All shades have light and dark variants, allowing all other colors to adapt to the mode.</p>\n<p>The <code>light</code> and <code>dark</code> variables are automatically generated from the <code>base</code> colors\nif not overridden manually.</p>\n"
+      }
+    },
+    {
+      "name": "ColorTheme",
+      "type": "ColorTheme",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ExtendedVars",
+      "type": "ExtendedVars",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Arbitrary variables that can be added to a theme.\n */",
+        "summary": "<p>Arbitrary variables that can be added to a theme.</p>\n"
+      }
+    },
+    {
+      "name": "ThemeDefinition",
+      "type": "ThemeDefinition<T>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * The minimum required definition for a theme.\n */",
+        "summary": "<p>The minimum required definition for a theme.</p>\n"
+      }
+    },
+    {
+      "name": "Theme",
+      "type": "Theme<T>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A fully resolved theme with all variables applied.\n */",
+        "summary": "<p>A fully resolved theme with all variables applied.</p>\n"
+      }
+    },
+    {
+      "name": "ThemeColors",
+      "type": "ThemeColors",
+      "isDefaultExport": false
+    },
+    {
+      "name": "BaseColors",
+      "type": "BaseColors",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ModeColors",
+      "type": "ModeColors",
+      "isDefaultExport": false
+    }
+  ]
+}

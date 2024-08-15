@@ -1,0 +1,22 @@
+{
+  "type": "ts",
+  "fileName": "createFolderSVG.ts",
+  "filePath": "src/svg/createFolderSVG.ts",
+  "exports": [
+    {
+      "name": "createFolderSvg",
+      "type": "typeof createFolderSvg",
+      "isDefaultExport": false
+    },
+    {
+      "name": "createFolderConnector",
+      "type": "typeof createFolderConnector",
+      "isDefaultExport": false
+    },
+    {
+      "name": "animateConnector",
+      "type": "typeof animateConnector",
+      "isDefaultExport": false
+    }
+  ]
+}

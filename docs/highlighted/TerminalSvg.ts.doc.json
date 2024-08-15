@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "TerminalSvg.ts",
+  "filePath": "src/svg/TerminalSvg.ts",
+  "exports": [
+    {
+      "name": "TerminalSvg",
+      "type": "TerminalSvg",
+      "isDefaultExport": false
+    }
+  ]
+}

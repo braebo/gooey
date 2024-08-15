@@ -1,0 +1,17 @@
+{
+  "type": "ts",
+  "fileName": "number.ts",
+  "filePath": "src/controllers/number.ts",
+  "exports": [
+    {
+      "name": "rangeController",
+      "type": "ControllerFactory<HTMLInputElement>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "numberButtonsController",
+      "type": "ControllerFactory<{ container: HTMLDivElement; increment: HTMLDivElement; decrement: HTMLDivElement; }, InputNumber>",
+      "isDefaultExport": false
+    }
+  ]
+}

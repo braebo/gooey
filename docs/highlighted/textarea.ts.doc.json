@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "textarea.ts",
+  "filePath": "src/controllers/textarea.ts",
+  "exports": [
+    {
+      "name": "textareaController",
+      "type": "ControllerFactory<HTMLInputElement>",
+      "isDefaultExport": false
+    }
+  ]
+}

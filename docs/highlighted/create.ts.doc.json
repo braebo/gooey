@@ -1,0 +1,17 @@
+{
+  "type": "ts",
+  "fileName": "create.ts",
+  "filePath": "src/shared/create.ts",
+  "exports": [
+    {
+      "name": "create",
+      "type": "typeof create",
+      "isDefaultExport": false
+    },
+    {
+      "name": "CreateOptions",
+      "type": "CreateOptions<T, K, TK>",
+      "isDefaultExport": false
+    }
+  ]
+}

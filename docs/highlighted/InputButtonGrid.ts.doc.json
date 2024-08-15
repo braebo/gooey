@@ -1,0 +1,84 @@
+{
+  "type": "ts",
+  "fileName": "InputButtonGrid.ts",
+  "filePath": "src/inputs/InputButtonGrid.ts",
+  "exports": [
+    {
+      "name": "ButtonGridArrays",
+      "type": "ButtonGridArrays",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A 2D array of {@link ButtonControllerOptions} objects, representing a grid of buttons. The inner arrays represent rows, and the outer array represents columns.\n *\n * @example\n * ```ts\n * [\n *   // First row columns\n *   [\n *     { text: 'top-left', onClick: () => {} },\n *     { text: 'top-right', onClick: () => {} }\n *   ],\n *   // Second row columns\n *   [\n *     { text: 'bottom-left', onClick: () => {} },\n *     { text: 'bottom-right', onClick: () => {} }\n *   ]\n * ]\n * ```\n *\n */",
+        "links": [
+          {
+            "target": "ButtonControllerOptions",
+            "text": "ButtonControllerOptions"
+          }
+        ],
+        "summary": "<p>A 2D array of <a href=\"#ButtonControllerOptions\">ButtonControllerOptions</a> objects, representing a grid of buttons. The inner\narrays represent rows, and the outer array represents columns.</p>\n",
+        "examples": [
+          {
+            "content": "```ts\n[\n // First row columns\n [\n  { text: 'top-left', onClick: () => {} },\n  { text: 'top-right', onClick: () => {} }\n ],\n // Second row columns\n [\n  { text: 'bottom-left', onClick: () => {} },\n  { text: 'bottom-right', onClick: () => {} }\n ]\n]\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#DEE0EF\">[</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> First row columns</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\"> [</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">  {</span><span style=\"color:#777D8F\"> text</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'top-left'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#F8D2C9\"> onClick</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> ()</span><span style=\"color:#5BA2D0\"> =></span><span style=\"color:#8D8F9E\"> {}</span><span style=\"color:#8D8F9E\"> },</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">  {</span><span style=\"color:#777D8F\"> text</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'top-right'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#F8D2C9\"> onClick</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> ()</span><span style=\"color:#5BA2D0\"> =></span><span style=\"color:#8D8F9E\"> {}</span><span style=\"color:#8D8F9E\"> }</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\"> ]</span><span style=\"color:#8D8F9E\">,</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> Second row columns</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\"> [</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">  {</span><span style=\"color:#777D8F\"> text</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'bottom-left'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#F8D2C9\"> onClick</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> ()</span><span style=\"color:#5BA2D0\"> =></span><span style=\"color:#8D8F9E\"> {}</span><span style=\"color:#8D8F9E\"> },</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">  {</span><span style=\"color:#777D8F\"> text</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'bottom-right'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#F8D2C9\"> onClick</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> ()</span><span style=\"color:#5BA2D0\"> =></span><span style=\"color:#8D8F9E\"> {}</span><span style=\"color:#8D8F9E\"> }</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\"> ]</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">]</span></span></code></pre>",
+                "lang": "ts",
+                "raw": "[\n // First row columns\n [\n  { text: 'top-left', onClick: () => {} },\n  { text: 'top-right', onClick: () => {} }\n ],\n // Second row columns\n [\n  { text: 'bottom-left', onClick: () => {} },\n  { text: 'bottom-right', onClick: () => {} }\n ]\n]",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "ButtonGrid",
+      "type": "ButtonGrid",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A fully processed {@link ButtonGridArrays} entry with the generated {@link ButtonController}s. Stored in the input's {@link InputButtonGrid.buttonGrid | `buttonGrid`} property.\n */",
+        "links": [
+          {
+            "target": "ButtonGridArrays",
+            "text": "ButtonGridArrays"
+          },
+          {
+            "target": "ButtonController",
+            "text": "ButtonController"
+          },
+          {
+            "target": "InputButtonGrid",
+            "text": "`buttonGrid`"
+          }
+        ],
+        "summary": "<p>A fully processed <a href=\"#ButtonGridArrays\">ButtonGridArrays</a> entry with the generated <a href=\"#ButtonController\">ButtonController</a>s.\nStored in the input&#39;s <a href=\"#InputButtonGrid.buttonGrid%7C%60buttonGrid%60\">InputButtonGrid.buttonGrid|<code>buttonGrid</code></a> property.</p>\n"
+      }
+    },
+    {
+      "name": "ButtonGridInputOptions",
+      "type": "ButtonGridInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "BUTTONGRID_INPUT_DEFAULTS",
+      "type": "{ readonly __type: \"ButtonGridInputOptions\"; readonly value: [[{ readonly text: \"\"; readonly onClick: () => void; }]]; readonly style: { readonly gap: \"0.5em\"; }; readonly activeOnClick: false; readonly resettable: false; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ButtonGridControllerElements",
+      "type": "ButtonGridControllerElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ButtonId",
+      "type": "string",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputButtonGrid",
+      "type": "InputButtonGrid",
+      "isDefaultExport": false
+    }
+  ]
+}

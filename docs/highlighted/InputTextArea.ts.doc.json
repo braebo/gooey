@@ -1,0 +1,27 @@
+{
+  "type": "ts",
+  "fileName": "InputTextArea.ts",
+  "filePath": "src/inputs/InputTextArea.ts",
+  "exports": [
+    {
+      "name": "TextAreaInputOptions",
+      "type": "TextAreaInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "TEXTAREA_INPUT_DEFAULTS",
+      "type": "TextAreaInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "TextAreaControllerElements",
+      "type": "TextAreaControllerElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputTextArea",
+      "type": "InputTextArea",
+      "isDefaultExport": false
+    }
+  ]
+}

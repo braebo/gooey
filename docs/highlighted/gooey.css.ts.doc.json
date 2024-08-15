@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "gooey.css.ts",
+  "filePath": "src/styles/gooey.css.ts",
+  "exports": [
+    {
+      "name": "default",
+      "type": "string",
+      "isDefaultExport": true
+    }
+  ]
+}

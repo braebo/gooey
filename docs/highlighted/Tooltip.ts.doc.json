@@ -1,0 +1,78 @@
+{
+  "type": "ts",
+  "fileName": "Tooltip.ts",
+  "filePath": "src/shared/Tooltip.ts",
+  "exports": [
+    {
+      "name": "tickLoop",
+      "type": "typeof tickLoop",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A simple animation loop. Return `true` to cancel.\n */",
+        "summary": "<p>A simple animation loop. Return <code>true</code> to cancel.</p>\n"
+      }
+    },
+    {
+      "name": "TooltipOptions",
+      "type": "TooltipOptions",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Options for the tooltip.\n */",
+        "summary": "<p>Options for the tooltip.</p>\n"
+      }
+    },
+    {
+      "name": "TOOLTIP_DEFAULTS",
+      "type": "TooltipOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "Tooltip",
+      "type": "Tooltip",
+      "isDefaultExport": false
+    },
+    {
+      "name": "tooltip",
+      "type": "(node: HTMLElement, options?: Partial<TooltipOptions>) => { update(opts: TooltipOptions): void; destroy(): void; }",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A wrapper function that creates a new {@link Tooltip} instance and returns an object with `update` and `destroy` methods, compatible with Svelte actions.\n *\n * @example\n *\n * Vanilla\n * ```js\n * import { tooltip } from 'lib/actions/tooltip'\n *\n * const el = document.querySelector('div')\n * const tip = tooltip(el, { text: 'Hello, world!', placement: 'top' })\n * ```\n *\n * @example\n *\n * Svelte\n * ```svelte\n * <script>\n * \timport { tooltip } from 'lib/actions/tooltip'\n * </script>\n *\n * <div use:tooltip={{ text: 'Hello, world!', placement: 'top' }}>\n * \tHover me!\n * </div>\n * ```\n *\n */",
+        "links": [
+          {
+            "target": "Tooltip",
+            "text": "Tooltip"
+          }
+        ],
+        "summary": "<p>A wrapper function that creates a new <a href=\"#Tooltip\">Tooltip</a> instance and returns\nan object with <code>update</code> and <code>destroy</code> methods, compatible with Svelte actions.</p>\n",
+        "examples": [
+          {
+            "name": "Vanilla",
+            "content": "\n```js\nimport { tooltip } from 'lib/actions/tooltip'\n\nconst el = document.querySelector('div')\nconst tip = tooltip(el, { text: 'Hello, world!', placement: 'top' })\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#5BA2D0\">import </span><span style=\"color:#8D8F9E\">{</span><span style=\"color:#DEE0EF\"> tooltip</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#5BA2D0\"> from </span><span style=\"color:#A78BFA\">'lib/actions/tooltip'</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">const</span><span style=\"color:#DEE0EF\"> el</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#DEE0EF\"> document</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">querySelector</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#A78BFA\">'div'</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">const</span><span style=\"color:#DEE0EF\"> tip</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#F8D2C9\"> tooltip</span><span style=\"color:#DEE0EF\">(el</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#777D8F\"> text</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'Hello, world!'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#777D8F\"> placement</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'top'</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#DEE0EF\">)</span></span></code></pre>",
+                "lang": "js",
+                "raw": "import { tooltip } from 'lib/actions/tooltip'\n\nconst el = document.querySelector('div')\nconst tip = tooltip(el, { text: 'Hello, world!', placement: 'top' })",
+                "title": ""
+              }
+            ]
+          },
+          {
+            "name": "Svelte",
+            "content": "\n```svelte\n<script>\n\timport { tooltip } from 'lib/actions/tooltip'\n</script>\n\n<div use:tooltip={{ text: 'Hello, world!', placement: 'top' }}>\n\tHover me!\n</div>\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#777D8F\">&#x3C;script></span></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">    import </span><span style=\"color:#8D8F9E\">{</span><span style=\"color:#DEE0EF\"> tooltip</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#5BA2D0\"> from </span><span style=\"color:#A78BFA\">'lib/actions/tooltip'</span></span>\n<span class=\"line\"><span style=\"color:#777D8F\">&#x3C;/script></span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#777D8F\">&#x3C;div</span><span style=\"color:#5BA2D0\"> use</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#DEE0EF\">tooltip</span><span style=\"color:#777D8F\">=</span><span style=\"color:#8D8F9E\">{{</span><span style=\"color:#DEE0EF\"> text</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'Hello, world!'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#DEE0EF\"> placement</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'top'</span><span style=\"color:#8D8F9E\"> }}</span><span style=\"color:#777D8F\">></span></span>\n<span class=\"line\"><span style=\"color:#777D8F\">    Hover me!</span></span>\n<span class=\"line\"><span style=\"color:#777D8F\">&#x3C;/div></span></span></code></pre>",
+                "lang": "svelte",
+                "raw": "<script>\n    import { tooltip } from 'lib/actions/tooltip'\n</script>\n\n<div use:tooltip={{ text: 'Hello, world!', placement: 'top' }}>\n    Hover me!\n</div>",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

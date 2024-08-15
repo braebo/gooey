@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "track.ts",
+  "filePath": "src/shared/track.ts",
+  "exports": [
+    {
+      "name": "track",
+      "type": "typeof track",
+      "isDefaultExport": false
+    }
+  ]
+}

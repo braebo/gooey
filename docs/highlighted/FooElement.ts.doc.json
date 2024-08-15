@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "FooElement.ts",
+  "filePath": "src/shared/FooElement.ts",
+  "exports": [
+    {
+      "name": "TerminalSvg",
+      "type": "TerminalSvg",
+      "isDefaultExport": false
+    }
+  ]
+}

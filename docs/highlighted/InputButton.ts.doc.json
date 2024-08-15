@@ -1,0 +1,32 @@
+{
+  "type": "ts",
+  "fileName": "InputButton.ts",
+  "filePath": "src/inputs/InputButton.ts",
+  "exports": [
+    {
+      "name": "ButtonClickFunction",
+      "type": "ButtonClickFunction",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ButtonInputOptions",
+      "type": "ButtonInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "BUTTON_INPUT_DEFAULTS",
+      "type": "ButtonInputOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ButtonControllerElements",
+      "type": "ButtonControllerElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputButton",
+      "type": "InputButton",
+      "isDefaultExport": false
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "type": "ts",
+  "fileName": "hslToHsv.ts",
+  "filePath": "src/shared/color/conversions/hslToHsv.ts",
+  "exports": [
+    {
+      "name": "hslToHsv",
+      "type": "typeof hslToHsv",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Converts {@link HslColor} object to an {@link HsvColor} object.\n *\n * @param hsl - {@link HslColor} object to convert.\n */",
+        "links": [
+          {
+            "target": "HslColor",
+            "text": "HslColor"
+          },
+          {
+            "target": "HsvColor",
+            "text": "HsvColor"
+          },
+          {
+            "target": "HslColor",
+            "text": "HslColor"
+          }
+        ],
+        "summary": "<p>Converts <a href=\"#HslColor\">HslColor</a> object to an <a href=\"#HsvColor\">HsvColor</a> object.</p>\n",
+        "params": [
+          {
+            "name": "hsl",
+            "description": "{@linkHslColor}object to convert."
+          }
+        ]
+      }
+    }
+  ]
+}

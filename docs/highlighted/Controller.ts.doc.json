@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "Controller.ts",
+  "filePath": "src/controllers/Controller.ts",
+  "exports": [
+    {
+      "name": "Controller",
+      "type": "Controller<TValue, TElements, TEvents>",
+      "isDefaultExport": false
+    }
+  ]
+}

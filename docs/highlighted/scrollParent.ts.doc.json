@@ -1,0 +1,25 @@
+{
+  "type": "ts",
+  "fileName": "scrollParent.ts",
+  "filePath": "src/shared/scrollParent.ts",
+  "exports": [
+    {
+      "name": "isScrollable",
+      "type": "(node: Element) => boolean",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Checks if a node is scrollable.\n */",
+        "summary": "<p>Checks if a node is scrollable.</p>\n"
+      }
+    },
+    {
+      "name": "getScrollParent",
+      "type": "(node: Element) => Element",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Resolves the nearest scroll parent of a node.\n */",
+        "summary": "<p>Resolves the nearest scroll parent of a node.</p>\n"
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "type": "ts",
+  "fileName": "mount.ts",
+  "filePath": "src/shared/mount.ts",
+  "exports": [
+    {
+      "name": "append",
+      "type": "typeof append",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Appends a list of elements to one another in the order they are passed.\n *\n * @example\n * ```typescript\n * append(foo, bar, baz, qux)\n * // is equivalent to:\n * foo.appendChild(bar)\n * bar.appendChild(baz)\n * baz.appendChild(qux)\n * ```\n *\n */",
+        "summary": "<p>Appends a list of elements to one another in the order they are passed.</p>\n",
+        "examples": [
+          {
+            "content": "```typescript\nappend(foo, bar, baz, qux)\n// is equivalent to:\nfoo.appendChild(bar)\nbar.appendChild(baz)\nbaz.appendChild(qux)\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#F8D2C9\">append</span><span style=\"color:#DEE0EF\">(foo</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#DEE0EF\"> bar</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#DEE0EF\"> baz</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#DEE0EF\"> qux)</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> is equivalent to:</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">foo</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">appendChild</span><span style=\"color:#DEE0EF\">(bar)</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">bar</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">appendChild</span><span style=\"color:#DEE0EF\">(baz)</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">baz</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">appendChild</span><span style=\"color:#DEE0EF\">(qux)</span></span></code></pre>",
+                "lang": "typescript",
+                "raw": "append(foo, bar, baz, qux)\n// is equivalent to:\nfoo.appendChild(bar)\nbar.appendChild(baz)\nbaz.appendChild(qux)",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

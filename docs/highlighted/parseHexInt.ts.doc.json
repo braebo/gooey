@@ -1,0 +1,22 @@
+{
+  "type": "ts",
+  "fileName": "parseHexInt.ts",
+  "filePath": "src/shared/color/conversions/parseHexInt.ts",
+  "exports": [
+    {
+      "name": "parseHexInt",
+      "type": "typeof parseHexInt",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Parse hex str to an int\n *\n * @param str - hex string to parse\n */",
+        "summary": "<p>Parse hex str to an int</p>\n",
+        "params": [
+          {
+            "name": "str",
+            "description": "hex string to parse"
+          }
+        ]
+      }
+    }
+  ]
+}

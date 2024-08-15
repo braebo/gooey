@@ -1,0 +1,36 @@
+{
+  "type": "ts",
+  "fileName": "hsvToRgb.ts",
+  "filePath": "src/shared/color/conversions/hsvToRgb.ts",
+  "exports": [
+    {
+      "name": "hsvToRgb",
+      "type": "typeof hsvToRgb",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Converts an {@link HsvColor} object to an {@link RgbColor} object.\n *\n * @param hsv - {@link HsvColor} object to convert.\n */",
+        "links": [
+          {
+            "target": "HsvColor",
+            "text": "HsvColor"
+          },
+          {
+            "target": "RgbColor",
+            "text": "RgbColor"
+          },
+          {
+            "target": "HsvColor",
+            "text": "HsvColor"
+          }
+        ],
+        "summary": "<p>Converts an <a href=\"#HsvColor\">HsvColor</a> object to an <a href=\"#RgbColor\">RgbColor</a> object.</p>\n",
+        "params": [
+          {
+            "name": "hsv",
+            "description": "{@linkHsvColor}object to convert."
+          }
+        ]
+      }
+    }
+  ]
+}

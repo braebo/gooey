@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "CopyButton.ts",
+  "filePath": "src/shared/CopyButton.ts",
+  "exports": [
+    {
+      "name": "CopyButton",
+      "type": "CopyButton",
+      "isDefaultExport": false
+    }
+  ]
+}

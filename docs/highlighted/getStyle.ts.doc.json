@@ -1,0 +1,30 @@
+{
+  "type": "ts",
+  "fileName": "getStyle.ts",
+  "filePath": "src/shared/getStyle.ts",
+  "exports": [
+    {
+      "name": "getStyleMap",
+      "type": "(element: Element) => Map<any, any> | StylePropertyMapReadOnly",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A polyfill for `element.computeStyleMap()` that falls back to `getComputedStyle()` until firefox catches up.\n *\n * @see\n *\n * {@link https://bugzilla.mozilla.org/show_bug.cgi?id=1857849 | Bugzilla}\n */",
+        "links": [
+          {
+            "target": "https://bugzilla.mozilla.org/show_bug.cgi?id=1857849",
+            "text": "Bugzilla"
+          }
+        ],
+        "summary": "<p>A polyfill for <code>element.computeStyleMap()</code> that falls back to <code>getComputedStyle()</code> until\nfirefox catches up.</p>\n",
+        "seeBlocks": [
+          "{@linkhttps://bugzilla.mozilla.org/show_bug.cgi?id=1857849|Bugzilla}"
+        ]
+      }
+    },
+    {
+      "name": "getStyle",
+      "type": "(element: Element, property: JavascriptStyleProperty) => any",
+      "isDefaultExport": false
+    }
+  ]
+}

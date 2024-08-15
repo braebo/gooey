@@ -1,0 +1,21 @@
+{
+  "type": "ts",
+  "fileName": "disableable-class-decorator.ts",
+  "filePath": "src/shared/decorators/disableable-class-decorator.ts",
+  "exports": [
+    {
+      "name": "disableable",
+      "type": "typeof disableable",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A class decorator that adds a `disabled` property to a class that implements an `enable` and disable` method. The `disabled` property can be set to either a static boolean, or a function that returns a boolean value. The `disabled` state can be refreshed by assigning it to itself, which is particularly useful when passing a function that depends on some external state.\n *\n * A private property, a getter, and a setter are added to the class: - `private _disabled: () => boolean` - The internal function that determines the disabled state. - `get disabled(): boolean` - The current disabled state. - `set disabled(boolean | (() => boolean))` - Set the disabled state to either a static boolean or a function that returns a boolean.\n */",
+        "summary": "<p>A class decorator that adds a <code>disabled</code> property to a class that implements an <code>enable</code> and\ndisable<code>method. The</code>disabled<code>property can be set to either a static boolean, or a function that returns a boolean value. The</code>disabled` state can be refreshed by assigning it to itself,\nwhich is particularly useful when passing a function that depends on some external state.</p>\n<p>A private property, a getter, and a setter are added to the class:</p>\n<ul>\n<li><code>private _disabled: () =&gt; boolean</code> - The internal function that determines the disabled state.</li>\n<li><code>get disabled(): boolean</code> - The current disabled state.</li>\n<li><code>set disabled(boolean | (() =&gt; boolean))</code> - Set the disabled state to either a static boolean or a\nfunction that returns a boolean.</li>\n</ul>\n"
+      }
+    },
+    {
+      "name": "Disableable",
+      "type": "Disableable",
+      "isDefaultExport": false
+    }
+  ]
+}

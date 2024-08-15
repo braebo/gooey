@@ -1,0 +1,47 @@
+{
+  "type": "ts",
+  "fileName": "InputSwitch.ts",
+  "filePath": "src/inputs/InputSwitch.ts",
+  "exports": [
+    {
+      "name": "SwitchInputOptions",
+      "type": "SwitchInputOptions",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Options for the {@link InputSwitch} class.\n */",
+        "links": [
+          {
+            "target": "InputSwitch",
+            "text": "InputSwitch"
+          }
+        ],
+        "summary": "<p>Options for the <a href=\"#InputSwitch\">InputSwitch</a> class.</p>\n"
+      }
+    },
+    {
+      "name": "SWITCH_INPUT_DEFAULTS",
+      "type": "{ readonly __type: \"SwitchInputOptions\"; readonly value: true; readonly labels: { readonly true: { readonly state: \"on\"; readonly verb: \"Enable\"; }; readonly false: { readonly state: \"off\"; readonly verb: \"Disable\"; }; }; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "SwitchInputElements",
+      "type": "SwitchInputElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "InputSwitch",
+      "type": "InputSwitch",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A switch {@link Input} for booleans.\n */",
+        "links": [
+          {
+            "target": "Input",
+            "text": "Input"
+          }
+        ],
+        "summary": "<p>A switch <a href=\"#Input\">Input</a> for booleans.</p>\n"
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "type": "ts",
+  "fileName": "resolveOpts.ts",
+  "filePath": "src/shared/resolveOpts.ts",
+  "exports": [
+    {
+      "name": "resolveOpts",
+      "type": "typeof resolveOpts",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * - If {@link maybeT} is `undefined`, returns {@link tDefaults}. - If {@link maybeT} is `true`, returns {@link tDefaults}. - If {@link maybeT} is `false`, returns `false`. - If {@link maybeT} is an object, it's returned merged with {@link tDefaults}.\n *\n * @param maybeT - The provided options or a boolean value.\n *\n * @param tDefaults - The fallback options to use if {@link maybeT} is `true`. If {@link maybeT} is an object, it will be merged with these defaults.\n */",
+        "links": [
+          {
+            "target": "maybeT",
+            "text": "maybeT"
+          },
+          {
+            "target": "tDefaults",
+            "text": "tDefaults"
+          },
+          {
+            "target": "maybeT",
+            "text": "maybeT"
+          },
+          {
+            "target": "tDefaults",
+            "text": "tDefaults"
+          },
+          {
+            "target": "maybeT",
+            "text": "maybeT"
+          },
+          {
+            "target": "maybeT",
+            "text": "maybeT"
+          },
+          {
+            "target": "tDefaults",
+            "text": "tDefaults"
+          },
+          {
+            "target": "maybeT",
+            "text": "maybeT"
+          },
+          {
+            "target": "maybeT",
+            "text": "maybeT"
+          }
+        ],
+        "summary": "<ul>\n<li>If <a href=\"#maybeT\">maybeT</a> is <code>undefined</code>, returns <a href=\"#tDefaults\">tDefaults</a>.</li>\n<li>If <a href=\"#maybeT\">maybeT</a> is <code>true</code>, returns <a href=\"#tDefaults\">tDefaults</a>.</li>\n<li>If <a href=\"#maybeT\">maybeT</a> is <code>false</code>, returns <code>false</code>.</li>\n<li>If <a href=\"#maybeT\">maybeT</a> is an object, it&#39;s returned merged with <a href=\"#tDefaults\">tDefaults</a>.</li>\n</ul>\n",
+        "params": [
+          {
+            "name": "maybeT",
+            "description": "The provided options or a boolean value."
+          },
+          {
+            "name": "tDefaults",
+            "description": "The fallback options to use if{@linkmaybeT}is`true`.  If{@linkmaybeT}is an object, it will be merged with these defaults."
+          }
+        ]
+      }
+    },
+    {
+      "name": "MaybeBooleanOrT",
+      "type": "MaybeBooleanOrT<T>",
+      "isDefaultExport": false
+    }
+  ]
+}

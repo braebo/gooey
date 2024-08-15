@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "Search.ts",
+  "filePath": "src/toolbar/Search.ts",
+  "exports": [
+    {
+      "name": "Search",
+      "type": "Search",
+      "isDefaultExport": false
+    }
+  ]
+}

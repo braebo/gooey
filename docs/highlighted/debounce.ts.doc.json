@@ -1,0 +1,45 @@
+{
+  "type": "ts",
+  "fileName": "debounce.ts",
+  "filePath": "src/shared/debounce.ts",
+  "exports": [
+    {
+      "name": "debounce",
+      "type": "typeof debounce",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Creates a debounced version of a function. The debounced function delays invoking `func` until after `duration` milliseconds have elapsed since the last time the debounced function was invoked.\n */",
+        "summary": "<p>Creates a debounced version of a function. The debounced function delays\ninvoking <code>func</code> until after <code>duration</code> milliseconds have elapsed since the\nlast time the debounced function was invoked.</p>\n"
+      }
+    },
+    {
+      "name": "debounceAsync",
+      "type": "typeof debounceAsync",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Creates a debounced version of a function. Unlike {@link debounce}, `debounceAsync` accepts a sync _or_ async callback, and returns a promise that resolves when the callback fires.\n *\n * @example\n * ```ts\n * async function log() {\n * \tconsole.log('FIRST')\n * \tawait wait(1000)\n * \tconsole.log('LAST')\n * }\n *\n * const logDebounce = debounceAsync(log, 500)\n *\n * for (let i = 0; i < 3; i++) {\n * \tconsole.log(i)\n * \tlogDebounce().then(() => {\n * \t\tconsole.log('DONE')\n * \t})\n * }\n *\n * // Output:\n *\n * // 0\n * // 1\n * // 2\n * // FIRST\n * // DONE\n * // LAST\n * ```\n *\n */",
+        "links": [
+          {
+            "target": "debounce",
+            "text": "debounce"
+          }
+        ],
+        "summary": "<p>Creates a debounced version of a function. Unlike <a href=\"#debounce\">debounce</a>,\n<code>debounceAsync</code> accepts a sync <em>or</em> async callback, and returns a\npromise that resolves when the callback fires.</p>\n",
+        "examples": [
+          {
+            "content": "```ts\nasync function log() {\n\tconsole.log('FIRST')\n\tawait wait(1000)\n\tconsole.log('LAST')\n}\n\nconst logDebounce = debounceAsync(log, 500)\n\nfor (let i = 0; i < 3; i++) {\n\tconsole.log(i)\n\tlogDebounce().then(() => {\n\t\tconsole.log('DONE')\n\t})\n}\n\n// Output:\n\n// 0\n// 1\n// 2\n// FIRST\n// DONE\n// LAST\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#5BA2D0\">async</span><span style=\"color:#5BA2D0\"> function</span><span style=\"color:#F8D2C9\"> log</span><span style=\"color:#8D8F9E\">()</span><span style=\"color:#8D8F9E\"> {</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">    console</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">log</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#A78BFA\">'FIRST'</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">    await</span><span style=\"color:#F8D2C9\"> wait</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#F8D2C9\">1000</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">    console</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">log</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#A78BFA\">'LAST'</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">}</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">const</span><span style=\"color:#DEE0EF\"> logDebounce</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#F8D2C9\"> debounceAsync</span><span style=\"color:#DEE0EF\">(log</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#F8D2C9\"> 500</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">for</span><span style=\"color:#DEE0EF\"> (</span><span style=\"color:#5BA2D0\">let</span><span style=\"color:#DEE0EF\"> i</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#F8D2C9\"> 0</span><span style=\"color:#777D8F\">; </span><span style=\"color:#DEE0EF\">i</span><span style=\"color:#5BA2D0\"> &#x3C;</span><span style=\"color:#F8D2C9\"> 3</span><span style=\"color:#777D8F\">; </span><span style=\"color:#DEE0EF\">i</span><span style=\"color:#5BA2D0\">++</span><span style=\"color:#DEE0EF\">)</span><span style=\"color:#8D8F9E\"> {</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">    console</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">log</span><span style=\"color:#DEE0EF\">(i)</span></span>\n<span class=\"line\"><span style=\"color:#F8D2C9\">    logDebounce</span><span style=\"color:#DEE0EF\">()</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">then</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#8D8F9E\">()</span><span style=\"color:#5BA2D0\"> =></span><span style=\"color:#8D8F9E\"> {</span></span>\n<span class=\"line\"><span style=\"color:#DEE0EF\">        console</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">log</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#A78BFA\">'DONE'</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">    }</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">}</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> Output:</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> 0</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> 1</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> 2</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> FIRST</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> DONE</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> LAST</span></span></code></pre>",
+                "lang": "ts",
+                "raw": "async function log() {\n    console.log('FIRST')\n    await wait(1000)\n    console.log('LAST')\n}\n\nconst logDebounce = debounceAsync(log, 500)\n\nfor (let i = 0; i < 3; i++) {\n    console.log(i)\n    logDebounce().then(() => {\n        console.log('DONE')\n    })\n}\n\n// Output:\n\n// 0\n// 1\n// 2\n// FIRST\n// DONE\n// LAST",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

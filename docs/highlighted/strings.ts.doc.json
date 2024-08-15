@@ -1,0 +1,160 @@
+{
+  "type": "ts",
+  "fileName": "strings.ts",
+  "filePath": "src/shared/color/types/strings.ts",
+  "exports": [
+    {
+      "name": "ColorString",
+      "type": "ColorString",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * All valid color objects and strings.\n */",
+        "summary": "<p>All valid color objects and strings.</p>\n"
+      }
+    },
+    {
+      "name": "HexString",
+      "type": "`#${string}${string}${string}${string}${string}${string}`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A 6-character hex color string: `'#5500ee'`\n */",
+        "summary": "<p>A 6-character hex color string: <code>&#39;#5500ee&#39;</code></p>\n"
+      }
+    },
+    {
+      "name": "HexAlphaString",
+      "type": "`#${string}${string}${string}${string}${string}${string}${string}${string}`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An 8-character hex color string with alpha: `'#5500eeff'`\n */",
+        "summary": "<p>An 8-character hex color string with alpha: <code>&#39;#5500eeff&#39;</code></p>\n"
+      }
+    },
+    {
+      "name": "HexStringShorthand",
+      "type": "`#${string}${string}${string}`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A 3-character hex color string: `'#50e'`\n */",
+        "summary": "<p>A 3-character hex color string: <code>&#39;#50e&#39;</code></p>\n"
+      }
+    },
+    {
+      "name": "HexAlphaStringShorthand",
+      "type": "`#${string}${string}${string}${string}`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A 4-character hex color string with alpha: `'#50ef'`\n */",
+        "summary": "<p>A 4-character hex color string with alpha: <code>&#39;#50ef&#39;</code></p>\n"
+      }
+    },
+    {
+      "name": "RgbString",
+      "type": "`rgb(${number}, ${number}, ${number})`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An rgb color string: `rgb(85, 0, 238)`\n */",
+        "summary": "<p>An rgb color string: <code>rgb(85, 0, 238)</code></p>\n"
+      }
+    },
+    {
+      "name": "RgbaString",
+      "type": "`rgba(${number}, ${number}, ${number}, ${number})`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An rgba color string: `rgba(85, 0, 238, 1)`\n */",
+        "summary": "<p>An rgba color string: <code>rgba(85, 0, 238, 1)</code></p>\n"
+      }
+    },
+    {
+      "name": "PercentageRgbString",
+      "type": "`rgb(${number}%, ${number}%, ${number}%)`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A percentage rgb color string: `rgb(33%, 0%, 93%)`\n */",
+        "summary": "<p>A percentage rgb color string: <code>rgb(33%, 0%, 93%)</code></p>\n"
+      }
+    },
+    {
+      "name": "PercentageRgbaString",
+      "type": "`rgba(${number}%, ${number}%, ${number}%, ${number}%)`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A percentage rgba color string: `rgba(33%, 0%, 93%, 1)`\n */",
+        "summary": "<p>A percentage rgba color string: <code>rgba(33%, 0%, 93%, 1)</code></p>\n"
+      }
+    },
+    {
+      "name": "RgbObject",
+      "type": "RgbObject",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An object representing an rgb color: `{ r: 85, g: 0, b: 238 }`\n */",
+        "summary": "<p>An object representing an rgb color: <code>{ r: 85, g: 0, b: 238 }</code></p>\n"
+      }
+    },
+    {
+      "name": "RgbaObject",
+      "type": "RgbaObject",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An object representing an rgba color: `{ r: 85, g: 0, b: 238, a: 1 }`\n */",
+        "summary": "<p>An object representing an rgba color: <code>{ r: 85, g: 0, b: 238, a: 1 }</code></p>\n"
+      }
+    },
+    {
+      "name": "HslString",
+      "type": "`hsl(${number}, ${number}%, ${number}%)`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An hsl color string: `hsl(261, 100%, 47%)`\n */",
+        "summary": "<p>An hsl color string: <code>hsl(261, 100%, 47%)</code></p>\n"
+      }
+    },
+    {
+      "name": "HslaString",
+      "type": "`hsla(${number}, ${number}%, ${number}%, ${number})`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An hsla color string: `hsla(261, 100%, 47%, 1)`\n */",
+        "summary": "<p>An hsla color string: <code>hsla(261, 100%, 47%, 1)</code></p>\n"
+      }
+    },
+    {
+      "name": "HslObject",
+      "type": "HslObject",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An object representing an hsl color: `{ h: 261, s: 100, l: 47 }`\n */",
+        "summary": "<p>An object representing an hsl color: <code>{ h: 261, s: 100, l: 47 }</code></p>\n"
+      }
+    },
+    {
+      "name": "HslaObject",
+      "type": "HslaObject",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An object representing an hsla color: `{ h: 261, s: 100, l: 47, a: 1 }`\n */",
+        "summary": "<p>An object representing an hsla color: <code>{ h: 261, s: 100, l: 47, a: 1 }</code></p>\n"
+      }
+    },
+    {
+      "name": "HsvObject",
+      "type": "HsvObject",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An object representing an hsv color: `{ h: 261, s: 100, v: 47 }`\n */",
+        "summary": "<p>An object representing an hsv color: <code>{ h: 261, s: 100, v: 47 }</code></p>\n"
+      }
+    },
+    {
+      "name": "HsvaObject",
+      "type": "HsvaObject",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An object representing an hsva color: `{ h: 261, s: 100, v: 47, a: 1 }`\n */",
+        "summary": "<p>An object representing an hsva color: <code>{ h: 261, s: 100, v: 47, a: 1 }</code></p>\n"
+      }
+    }
+  ]
+}

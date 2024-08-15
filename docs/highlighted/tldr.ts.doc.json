@@ -1,0 +1,31 @@
+{
+  "type": "ts",
+  "fileName": "tldr.ts",
+  "filePath": "src/shared/tldr.ts",
+  "exports": [
+    {
+      "name": "tldr",
+      "type": "typeof tldr",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Truncate objects by depth, sibling count, and string/number length.\n */",
+        "summary": "<p>Truncate objects by depth, sibling count, and string/number length.</p>\n"
+      }
+    },
+    {
+      "name": "TldrOptions",
+      "type": "TldrOptions",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Options for {@link tldr}.\n */",
+        "links": [
+          {
+            "target": "tldr",
+            "text": "tldr"
+          }
+        ],
+        "summary": "<p>Options for <a href=\"#tldr\">tldr</a>.</p>\n"
+      }
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "type": "ts",
+  "fileName": "ua.ts",
+  "filePath": "src/shared/ua.ts",
+  "exports": [
+    {
+      "name": "getOS",
+      "type": "typeof getOS",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Detects the current operating system. On the server, the request object must be provided.\n *\n * @param request - The request object. If not provided, the global `navigator` object is used.\n *\n * @returns The operating system. Note: `ipados` is separate from `ios`.\n */",
+        "summary": "<p>Detects the current operating system. On the server, the request object must be provided.</p>\n",
+        "params": [
+          {
+            "name": "request",
+            "description": "The request object. If not provided, the global`navigator`object is used."
+          }
+        ],
+        "returns": "The operating system.  Note:`ipados`is separate from`ios`."
+      }
+    },
+    {
+      "name": "getBrowser",
+      "type": "typeof getBrowser",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Detects the current browser.\n */",
+        "summary": "<p>Detects the current browser.</p>\n"
+      }
+    },
+    {
+      "name": "getUserAgent",
+      "type": "typeof getUserAgent",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Resolves the user agent string. On the server, the request object must be provided.\n *\n * @param request - The request object. If not provided, the global `navigator` object is returned.\n */",
+        "summary": "<p>Resolves the user agent string. On the server, the request object must be provided.</p>\n",
+        "params": [
+          {
+            "name": "request",
+            "description": "The request object. If not provided, the global`navigator`object is returned."
+          }
+        ]
+      }
+    },
+    {
+      "name": "isPlatform",
+      "type": "typeof isPlatform",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Detects if the current browser matches the provided platform.\n */",
+        "summary": "<p>Detects if the current browser matches the provided platform.</p>\n"
+      }
+    },
+    {
+      "name": "isWebview",
+      "type": "typeof isWebview",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Detects if the current browser is a webview. The request parameter is required on the server.\n *\n * @param request - The request object. If not provided, the global `navigator` object is used.\n */",
+        "summary": "<p>Detects if the current browser is a webview. The request parameter is required on the server.</p>\n",
+        "params": [
+          {
+            "name": "request",
+            "description": "The request object. If not provided, the global`navigator`object is used."
+          }
+        ]
+      }
+    },
+    {
+      "name": "isDesktop",
+      "type": "typeof isDesktop",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on a desktop.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on a desktop.</p>\n"
+      }
+    },
+    {
+      "name": "isMac",
+      "type": "typeof isMac",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on MacOS.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on MacOS.</p>\n"
+      }
+    },
+    {
+      "name": "isApple",
+      "type": "typeof isApple",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on MacOS.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on MacOS.</p>\n"
+      }
+    },
+    {
+      "name": "isWindows",
+      "type": "typeof isWindows",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on Windows.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on Windows.</p>\n"
+      }
+    },
+    {
+      "name": "isLinux",
+      "type": "typeof isLinux",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on Linux.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on Linux.</p>\n"
+      }
+    },
+    {
+      "name": "isBrowser",
+      "type": "typeof isBrowser",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` when running in a browser.\n */",
+        "summary": "<p><code>true</code> when running in a browser.</p>\n"
+      }
+    },
+    {
+      "name": "isServer",
+      "type": "typeof isServer",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` when running in a server environment.\n */",
+        "summary": "<p><code>true</code> when running in a server environment.</p>\n"
+      }
+    },
+    {
+      "name": "isMobile",
+      "type": "typeof isMobile",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on a mobile device.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on a mobile device.</p>\n"
+      }
+    },
+    {
+      "name": "isIOS",
+      "type": "typeof isIOS",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on iOS.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on iOS.</p>\n"
+      }
+    },
+    {
+      "name": "isIPadOS",
+      "type": "typeof isIPadOS",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on iPadOS.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on iPadOS.</p>\n"
+      }
+    },
+    {
+      "name": "isIPad",
+      "type": "typeof isIPad",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on an iPad.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on an iPad.</p>\n"
+      }
+    },
+    {
+      "name": "isAndroid",
+      "type": "typeof isAndroid",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on Android.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on Android.</p>\n"
+      }
+    },
+    {
+      "name": "isSafari",
+      "type": "typeof isSafari",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is running on Safari.\n */",
+        "summary": "<p><code>true</code> if the current browser is running on Safari.</p>\n"
+      }
+    },
+    {
+      "name": "isChrome",
+      "type": "typeof isChrome",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is Chrome.\n */",
+        "summary": "<p><code>true</code> if the current browser is Chrome.</p>\n"
+      }
+    },
+    {
+      "name": "isFirefox",
+      "type": "typeof isFirefox",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is Firefox.\n */",
+        "summary": "<p><code>true</code> if the current browser is Firefox.</p>\n"
+      }
+    },
+    {
+      "name": "isEdge",
+      "type": "typeof isEdge",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * `true` if the current browser is Edge.\n */",
+        "summary": "<p><code>true</code> if the current browser is Edge.</p>\n"
+      }
+    }
+  ]
+}

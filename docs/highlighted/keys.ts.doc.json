@@ -1,0 +1,80 @@
+{
+  "type": "ts",
+  "fileName": "keys.ts",
+  "filePath": "src/shared/keys.ts",
+  "exports": [
+    {
+      "name": "modKey",
+      "type": "typeof modKey",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Returns the `metaKey` on Mac, and `ctrlKey` on other platforms.\n */",
+        "summary": "<p>Returns the <code>metaKey</code> on Mac, and <code>ctrlKey</code> on other platforms.</p>\n"
+      }
+    },
+    {
+      "name": "modIcon",
+      "type": "typeof modIcon",
+      "isDefaultExport": false
+    },
+    {
+      "name": "getModifierKey",
+      "type": "typeof getModifierKey",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Returns the relevant keyboard modifier key data for the caller's OS.\n *\n * @param type - The type of modifier key to retrieve.\n *\n * @param request - The request object (only required on the server).\n *\n * @returns The modifier key data for the given type and OS. If the OS is not recognized, the key name is returned as-is.\n *\n * To get the modifier key data for a specific OS, see {@link MODIFIER_KEY_DATA}.\n */",
+        "links": [
+          {
+            "target": "MODIFIER_KEY_DATA",
+            "text": "MODIFIER_KEY_DATA"
+          }
+        ],
+        "summary": "<p>Returns the relevant keyboard modifier key data for the caller&#39;s OS.</p>\n",
+        "params": [
+          {
+            "name": "type",
+            "description": "The type of modifier key to retrieve."
+          },
+          {
+            "name": "request",
+            "description": "The request object (only required on the server)."
+          }
+        ],
+        "returns": "The modifier key data for the given type and OS.  If the OS is not recognized, the keyname is returned as-is.To get the modifier key data for a specific OS, see{@linkMODIFIER_KEY_DATA}."
+      }
+    },
+    {
+      "name": "ModifierMap",
+      "type": "ModifierMap",
+      "isDefaultExport": false
+    },
+    {
+      "name": "PlatformData",
+      "type": "PlatformData",
+      "isDefaultExport": false
+    },
+    {
+      "name": "KeyData",
+      "type": "KeyData",
+      "isDefaultExport": false
+    },
+    {
+      "name": "MODIFIER_KEY_DATA",
+      "type": "{ readonly metaKey: { readonly mac: { readonly icon: \"⌘\"; readonly name: \"command\"; readonly key: \"meta\"; }; readonly windows: { readonly icon: \"⊞ Win\"; readonly name: \"windows\"; readonly key: \"win\"; }; readonly linux: { readonly icon: \"Super\"; readonly name: \"super\"; readonly key: \"meta\"; }; }; readonly altKey: { readonly mac: { readonly icon: \"⌥\"; readonly name: \"option\"; readonly key: \"alt\"; }; readonly windows: { readonly icon: \"Alt\"; readonly name: \"alt\"; readonly key: \"alt\"; }; readonly linux: { readonly icon: \"Alt\"; readonly name: \"alt\"; readonly key: \"alt\"; }; }; readonly shiftKey: { readonly mac: { readonly icon: \"⇧\"; readonly name: \"shift\"; readonly key: \"shift\"; }; readonly windows: { readonly icon: \"Shift\"; readonly name: \"shift\"; readonly key: \"shift\"; }; readonly linux: { readonly icon: \"Shift\"; readonly name: \"shift\"; readonly key: \"shift\"; }; }; readonly ctrlKey: { readonly mac: { readonly icon: \"⌃\"; readonly name: \"control\"; readonly key: \"ctrl\"; }; readonly windows: { readonly icon: \"Ctrl\"; readonly name: \"control\"; readonly key: \"ctrl\"; }; readonly linux: { readonly icon: \"Ctrl\"; readonly name: \"control\"; readonly key: \"ctrl\"; }; }; }",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A map of the keyboard modifier icon, name, and keycode information for Mac, Windows, and Linux.\n *\n * @see\n *\n * {@link getModifierKey}\n */",
+        "links": [
+          {
+            "target": "getModifierKey",
+            "text": "getModifierKey"
+          }
+        ],
+        "summary": "<p>A map of the keyboard modifier icon, name, and keycode information for Mac, Windows, and Linux.</p>\n",
+        "seeBlocks": [
+          "{@linkgetModifierKey}"
+        ]
+      }
+    }
+  ]
+}

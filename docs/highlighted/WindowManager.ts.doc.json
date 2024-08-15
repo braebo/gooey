@@ -1,0 +1,55 @@
+{
+  "type": "ts",
+  "fileName": "WindowManager.ts",
+  "filePath": "src/shared/WindowManager.ts",
+  "exports": [
+    {
+      "name": "WindowManagerOptions",
+      "type": "WindowManagerOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "WINDOWMANGER_STORAGE_DEFAULTS",
+      "type": "{ readonly __type: \"WindowManagerStorageOptions\"; readonly key: \"window-manager\"; readonly size: true; readonly position: true; readonly debounce: 50; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "WINDOWMANAGER_DEFAULTS",
+      "type": "{ readonly __type: \"WindowManagerOptions\"; readonly resizable: ResizableOptions; readonly draggable: DraggableOptions; readonly zFloor: 10; readonly preserveZ: false; readonly bounds: undefined; readonly obstacles: undefined; readonly localStorage: undefined; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "WindowManager",
+      "type": "WindowManager",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Manages multiple draggable and/or resizable {@link WindowInstance}s.\n *\n * {@link WindowManager.windows | `windows`} can be added, removed, and their z-index values are managed to ensure the most recently selected element is on top.  @todo Add examples\n */",
+        "links": [
+          {
+            "target": "WindowInstance",
+            "text": "WindowInstance"
+          },
+          {
+            "target": "WindowManager",
+            "text": "`windows`"
+          }
+        ],
+        "summary": "<p>Manages multiple draggable and/or resizable <a href=\"#WindowInstance\">WindowInstance</a>s.</p>\n<p><a href=\"#WindowManager.windows%7C%60windows%60\">WindowManager.windows|<code>windows</code></a> can be added, removed, and their\nz-index values are managed to ensure the most recently selected element is on top.\n@todo Add examples</p>\n"
+      }
+    },
+    {
+      "name": "WindowInstanceOptions",
+      "type": "WindowInstanceOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "WindowInstance",
+      "type": "WindowInstance",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A single window in a window manager.\n */",
+        "summary": "<p>A single window in a window manager.</p>\n"
+      }
+    }
+  ]
+}

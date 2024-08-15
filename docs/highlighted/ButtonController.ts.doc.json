@@ -1,0 +1,37 @@
+{
+  "type": "ts",
+  "fileName": "ButtonController.ts",
+  "filePath": "src/controllers/ButtonController.ts",
+  "exports": [
+    {
+      "name": "ButtonClickFunction",
+      "type": "ButtonClickFunction",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ButtonEventPayload",
+      "type": "ButtonEventPayload",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ButtonControllerOptions",
+      "type": "ButtonControllerOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ButtonControllerEvents",
+      "type": "ButtonControllerEvents",
+      "isDefaultExport": false
+    },
+    {
+      "name": "BUTTON_INPUT_DEFAULTS",
+      "type": "ButtonControllerOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ButtonController",
+      "type": "ButtonController",
+      "isDefaultExport": false
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "type": "ts",
+  "fileName": "Gooey.ts",
+  "filePath": "src/Gooey.ts",
+  "exports": [
+    {
+      "name": "GooeyElements",
+      "type": "GooeyElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "GooeyOptions",
+      "type": "GooeyOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "GooeyOptionsInternal",
+      "type": "GooeyOptionsInternal",
+      "isDefaultExport": false
+    },
+    {
+      "name": "GooeyStorageOptions",
+      "type": "GooeyStorageOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "GooeyPreset",
+      "type": "GooeyPreset",
+      "isDefaultExport": false
+    },
+    {
+      "name": "GUI_STORAGE_DEFAULTS",
+      "type": "GooeyStorageOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "GUI_WINDOWMANAGER_DEFAULTS",
+      "type": "{ readonly __type: \"WindowManagerOptions\"; readonly preserveZ: false; readonly zFloor: 0; readonly bounds: undefined; readonly obstacles: undefined; readonly resizable: { readonly grabberSize: 9; readonly color: \"var(--bg-d)\"; readonly sides: [\"right\", \"left\"]; readonly corners: []; }; readonly draggable: { readonly bounds: undefined; readonly classes: { readonly default: \"gooey-draggable\"; readonly dragging: \"gooey-dragging\"; readonly cancel: \"gooey-cancel\"; readonly dragged: \"gooey-dragged\"; }; }; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "GUI_DEFAULTS",
+      "type": "{ readonly __type: \"GooeyOptions\"; readonly title: \"gooey\"; readonly storage: true; readonly closed: false; readonly position: \"top-right\"; readonly margin: 16; readonly container: \"body\"; readonly theme: \"vanilla\"; readonly themeMode: \"dark\"; readonly themes: [Theme, Theme, Theme]; readonly resizable: true; readonly draggable: true; readonly loadDefaultFont: true; readonly settingsFolder: { readonly closed: boolean; readonly uiFolder: { readonly closed: true; }; readonly presetsFolder: { readonly closed: true; }; }; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "Gooey",
+      "type": "Gooey",
+      "isDefaultExport": false
+    },
+    {
+      "name": "Gooey",
+      "type": "Gooey",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * The root Gooey instance. This is the entry point for creating a gooey. You can create multiple root gooeys, but each gooey can only have one root.\n */",
+        "summary": "<p>The root Gooey instance. This is the entry point for creating\na gooey. You can create multiple root gooeys, but each gooey\ncan only have one root.</p>\n"
+      }
+    }
+  ]
+}

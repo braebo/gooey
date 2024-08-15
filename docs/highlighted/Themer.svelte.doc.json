@@ -1,0 +1,15 @@
+{
+  "type": "svelte",
+  "fileName": "Themer.svelte",
+  "filePath": "src/styles/themer/Themer.svelte",
+  "componentName": "Themer",
+  "props": [
+    {
+      "name": "themer",
+      "type": "any"
+    }
+  ],
+  "events": [],
+  "slots": [],
+  "exports": []
+}

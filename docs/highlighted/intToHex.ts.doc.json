@@ -1,0 +1,22 @@
+{
+  "type": "ts",
+  "fileName": "intToHex.ts",
+  "filePath": "src/shared/color/conversions/intToHex.ts",
+  "exports": [
+    {
+      "name": "intToHex",
+      "type": "typeof intToHex",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Convert number into to 2-digit hex\n *\n * @param int - number to convert\n */",
+        "summary": "<p>Convert number into to 2-digit hex</p>\n",
+        "params": [
+          {
+            "name": "int",
+            "description": "number to convert"
+          }
+        ]
+      }
+    }
+  ]
+}

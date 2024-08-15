@@ -1,0 +1,87 @@
+{
+  "type": "ts",
+  "fileName": "regex.ts",
+  "filePath": "src/shared/color/regex.ts",
+  "exports": [
+    {
+      "name": "CSS_INTEGER",
+      "type": "\"[-\\\\+]?\\\\d+%?\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "CSS_NUMBER",
+      "type": "\"[-\\\\+]?\\\\d*\\\\.\\\\d+%?\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "CSS_UNIT",
+      "type": "string",
+      "isDefaultExport": false
+    },
+    {
+      "name": "PERMISSIVE_MATCH_3",
+      "type": "string",
+      "isDefaultExport": false
+    },
+    {
+      "name": "PERMISSIVE_MATCH_4",
+      "type": "string",
+      "isDefaultExport": false
+    },
+    {
+      "name": "REGEX_FUNCTIONAL_RGB",
+      "type": "RegExp",
+      "isDefaultExport": false
+    },
+    {
+      "name": "REGEX_FUNCTIONAL_RGBA",
+      "type": "RegExp",
+      "isDefaultExport": false
+    },
+    {
+      "name": "REGEX_FUNCTIONAL_HSL",
+      "type": "RegExp",
+      "isDefaultExport": false
+    },
+    {
+      "name": "REGEX_FUNCTIONAL_HSLA",
+      "type": "RegExp",
+      "isDefaultExport": false
+    },
+    {
+      "name": "HEX_START",
+      "type": "\"^(?:#?|0x?)\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "HEX_INT_SINGLE",
+      "type": "\"([0-9a-fA-F]{1})\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "HEX_INT_DOUBLE",
+      "type": "\"([0-9a-fA-F]{2})\"",
+      "isDefaultExport": false
+    },
+    {
+      "name": "REGEX_HEX_3",
+      "type": "RegExp",
+      "isDefaultExport": false
+    },
+    {
+      "name": "REGEX_HEX_4",
+      "type": "RegExp",
+      "isDefaultExport": false
+    },
+    {
+      "name": "REGEX_HEX_6",
+      "type": "RegExp",
+      "isDefaultExport": false
+    },
+    {
+      "name": "REGEX_HEX_8",
+      "type": "RegExp",
+      "isDefaultExport": false
+    }
+  ]
+}

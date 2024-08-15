@@ -1,0 +1,17 @@
+{
+  "type": "ts",
+  "fileName": "PresetManager.ts",
+  "filePath": "src/PresetManager.ts",
+  "exports": [
+    {
+      "name": "PresetManagerOptions",
+      "type": "PresetManagerOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "PresetManager",
+      "type": "PresetManager",
+      "isDefaultExport": false
+    }
+  ]
+}

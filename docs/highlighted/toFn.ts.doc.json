@@ -1,0 +1,16 @@
+{
+  "type": "ts",
+  "fileName": "toFn.ts",
+  "filePath": "src/shared/toFn.ts",
+  "exports": [
+    {
+      "name": "toFn",
+      "type": "typeof toFn",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Coerces a value to a function.\n */",
+        "summary": "<p>Coerces a value to a function.</p>\n"
+      }
+    }
+  ]
+}

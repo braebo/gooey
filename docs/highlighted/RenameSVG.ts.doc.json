@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "RenameSVG.ts",
+  "filePath": "src/svg/RenameSVG.ts",
+  "exports": [
+    {
+      "name": "RenameSVG",
+      "type": "RenameSVG",
+      "isDefaultExport": false
+    }
+  ]
+}

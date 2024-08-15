@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "SaveSVG.ts",
+  "filePath": "src/svg/SaveSVG.ts",
+  "exports": [
+    {
+      "name": "SaveSVG",
+      "type": "SaveSVG",
+      "isDefaultExport": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "vanilla.ts",
+  "filePath": "src/styles/themes/vanilla.ts",
+  "exports": [
+    {
+      "name": "default",
+      "type": "Theme<Record<string, any>>",
+      "isDefaultExport": true
+    }
+  ]
+}

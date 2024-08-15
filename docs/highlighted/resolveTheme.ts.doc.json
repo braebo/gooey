@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "resolveTheme.ts",
+  "filePath": "src/styles/themer/resolveTheme.ts",
+  "exports": [
+    {
+      "name": "resolveTheme",
+      "type": "typeof resolveTheme",
+      "isDefaultExport": false
+    }
+  ]
+}

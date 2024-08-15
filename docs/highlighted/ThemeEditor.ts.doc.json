@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "ThemeEditor.ts",
+  "filePath": "src/styles/ThemeEditor.ts",
+  "exports": [
+    {
+      "name": "ThemeEditor",
+      "type": "ThemeEditor",
+      "isDefaultExport": false
+    }
+  ]
+}

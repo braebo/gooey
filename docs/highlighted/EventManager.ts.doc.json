@@ -1,0 +1,21 @@
+{
+  "type": "ts",
+  "fileName": "EventManager.ts",
+  "filePath": "src/shared/EventManager.ts",
+  "exports": [
+    {
+      "name": "EventCallback",
+      "type": "EventCallback<T>",
+      "isDefaultExport": false
+    },
+    {
+      "name": "EventManager",
+      "type": "EventManager<EventMap>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Represents an event manager that provides methods for adding and removing event listeners.\n */",
+        "summary": "<p>Represents an event manager that provides methods for adding and removing event listeners.</p>\n"
+      }
+    }
+  ]
+}

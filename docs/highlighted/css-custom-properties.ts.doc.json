@@ -1,0 +1,137 @@
+{
+  "type": "ts",
+  "fileName": "css-custom-properties.ts",
+  "filePath": "src/shared/css-custom-properties.ts",
+  "exports": [
+    {
+      "name": "destructureVars",
+      "type": "typeof destructureVars",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Converts a {@link ThemeVars} object into a flat object of CSS variables.\n *\n * @example\n * ```ts\n * const vars = { root: { header: { width: '1rem' }, // etc... }\n *\n * destructureVars(vars) // { '--root-header_width': '1rem' }\n * ```\n *\n */",
+        "links": [
+          {
+            "target": "ThemeVars",
+            "text": "ThemeVars"
+          }
+        ],
+        "summary": "<p>Converts a <a href=\"#ThemeVars\">ThemeVars</a> object into a flat object of CSS variables.</p>\n",
+        "examples": [
+          {
+            "content": "```ts\nconst vars = { root: { header: { width: '1rem' }, // etc... }\n\ndestructureVars(vars) // { '--root-header_width': '1rem' }\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#5BA2D0\">const</span><span style=\"color:#DEE0EF\"> vars</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#777D8F\"> root</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#777D8F\"> header</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#777D8F\"> width</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> '1rem'</span><span style=\"color:#8D8F9E\"> },</span><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> etc... }</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#F8D2C9\">destructureVars</span><span style=\"color:#8D8F9E\">(</span><span style=\"color:#9CCFD8\">vars</span><span style=\"color:#8D8F9E\">)</span><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> { '--root-header_width': '1rem' }</span></span></code></pre>",
+                "lang": "ts",
+                "raw": "const vars = { root: { header: { width: '1rem' }, // etc... }\n\ndestructureVars(vars) // { '--root-header_width': '1rem' }",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "restructureVars",
+      "type": "typeof restructureVars",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Converts a flat object/map/entries of CSS variables into a {@link ThemeVars} object.\n *\n * @example\n * ```ts\n * // This array of entries:\n * restructure([[ '--root-folder_max-height', '1rem' ]])\n * // is structured into:\n * { root: { folder: { 'max-height': '1rem' } }\n * ```\n *\n */",
+        "links": [
+          {
+            "target": "ThemeVars",
+            "text": "ThemeVars"
+          }
+        ],
+        "summary": "<p>Converts a flat object/map/entries of CSS variables into a <a href=\"#ThemeVars\">ThemeVars</a> object.</p>\n",
+        "examples": [
+          {
+            "content": "```ts\n// This array of entries:\nrestructure([[ '--root-folder_max-height', '1rem' ]])\n// is structured into:\n{ root: { folder: { 'max-height': '1rem' } }\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> This array of entries:</span></span>\n<span class=\"line\"><span style=\"color:#F8D2C9\">restructure</span><span style=\"color:#DEE0EF\">([[</span><span style=\"color:#A78BFA\"> '--root-folder_max-height'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#A78BFA\"> '1rem'</span><span style=\"color:#DEE0EF\"> ]])</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E;font-style:italic\">//</span><span style=\"color:#6B6D7C;font-style:italic\"> is structured into:</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">{</span><span style=\"color:#F8D2C9\"> root</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#F8D2C9\"> folder</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#A78BFA\"> 'max-height'</span><span style=\"color:#777D8F\">: </span><span style=\"color:#A78BFA\">'1rem'</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#8D8F9E\"> }</span></span></code></pre>",
+                "lang": "ts",
+                "raw": "// This array of entries:\nrestructure([[ '--root-folder_max-height', '1rem' ]])\n// is structured into:\n{ root: { folder: { 'max-height': '1rem' } }",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "ThemeVars",
+      "type": "ThemeVars",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A structured object representing a theme's CSS custom properties.\n */",
+        "summary": "<p>A structured object representing a theme&#39;s CSS custom properties.</p>\n"
+      }
+    },
+    {
+      "name": "StructuredVars",
+      "type": "StructuredVars",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A structured object representing CSS custom properties using the following rules: - Each key represents a fragment of the CSS variable name. Fragments are concatenated with a hyphen `-`, except for the last fragment, which is concatenated with an underscore `_` to the preceding fragment(s). - The last key in each branch (each leaf node) must be a valid CSS property, such as `color`, `min-width`, etc. - The value assigned to the last fragment represents the CSS variable's value.\n *\n * For example, the following object:\n * ```ts\n * { button: { secondary: { color: 'red' } } }\n * ```\n *\n * Maps this CSS variable:\n * ```css\n * { --button-secondary_color: red; }\n * ```\n *\n * @remarks\n *\n * This interface is intended to be used in contexts where CSS variables are dynamically generated or managed in Typescript, such as the {@link Themer}.\n */",
+        "links": [
+          {
+            "target": "Themer",
+            "text": "Themer"
+          }
+        ],
+        "summary": "<p>A structured object representing CSS custom properties using the following rules:</p>\n<ul>\n<li>Each key represents a fragment of the CSS variable name. Fragments are\n concatenated with a hyphen <code>-</code>, except for the last fragment, which is\n concatenated with an underscore <code>_</code> to the preceding fragment(s).</li>\n<li>The last key in each branch (each leaf node) must be a valid CSS property,\n such as <code>color</code>, <code>min-width</code>, etc.</li>\n<li>The value assigned to the last fragment represents the CSS variable&#39;s value.</li>\n</ul>\n<p>For example, the following object:</p>\n<__DOCINATOREPLACE__><pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#8D8F9E\">{</span><span style=\"color:#F8D2C9\"> button</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#F8D2C9\"> secondary</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#F8D2C9\"> color</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'red'</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#8D8F9E\"> }</span></span></code></pre></__DOCINATOREPLACE__><p>Maps this CSS variable:</p>\n<__DOCINATOREPLACE__><pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#8D8F9E\">{</span><span style=\"color:#F8D2C9\"> --button-secondary_color</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> red</span><span style=\"color:#777D8F\">; </span><span style=\"color:#8D8F9E\">}</span></span></code></pre></__DOCINATOREPLACE__>",
+        "remarks": "This interface is intended to be used in contexts where CSS variables aredynamically generated or  managed in Typescript, such as the{@linkThemer}."
+      }
+    },
+    {
+      "name": "DestructuredVars",
+      "type": "DestructuredVars<Obj, Prefix>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Converts a {@link ThemeVars} object into a flat object of CSS variables.\n */",
+        "links": [
+          {
+            "target": "ThemeVars",
+            "text": "ThemeVars"
+          }
+        ],
+        "summary": "<p>Converts a <a href=\"#ThemeVars\">ThemeVars</a> object into a flat object of CSS variables.</p>\n"
+      }
+    },
+    {
+      "name": "CSS_VAR_INNER",
+      "type": "RegExp",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Regex to extract the inner variable name from a CSS variable.\n *\n * @example\n *\n * | `rgba(var(--my-color), 0.5)`.match(CSS_VAR_INNER)[0] > '--my-color'\n */",
+        "summary": "<p>Regex to extract the inner variable name from a CSS variable.</p>\n",
+        "examples": [
+          {
+            "name": "| `rgba(var(--my-color), 0.5)`.match(CSS_VAR_INNER)[0]",
+            "content": "\n> '--my-color'",
+            "blocks": "<blockquote>\n<p>&#39;--my-color&#39;</p>\n</blockquote>\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CSS_VAR_OUTER",
+      "type": "RegExp",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Regex to match a CSS variable.\n *\n * @example\n *\n * | `rgba(var(--my-color), 0.5)`.match(CSS_VAR)[0] > 'var(--my-color)'\n */",
+        "summary": "<p>Regex to match a CSS variable.</p>\n",
+        "examples": [
+          {
+            "name": "| `rgba(var(--my-color), 0.5)`.match(CSS_VAR)[0]",
+            "content": "\n> 'var(--my-color)'",
+            "blocks": "<blockquote>\n<p>&#39;var(--my-color)&#39;</p>\n</blockquote>\n"
+          }
+        ]
+      }
+    }
+  ]
+}

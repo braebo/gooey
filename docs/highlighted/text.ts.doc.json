@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "text.ts",
+  "filePath": "src/controllers/text.ts",
+  "exports": [
+    {
+      "name": "textController",
+      "type": "ControllerFactory<HTMLInputElement>",
+      "isDefaultExport": false
+    }
+  ]
+}

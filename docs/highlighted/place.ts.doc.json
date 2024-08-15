@@ -1,0 +1,80 @@
+{
+  "type": "ts",
+  "fileName": "place.ts",
+  "filePath": "src/shared/place.ts",
+  "exports": [
+    {
+      "name": "place",
+      "type": "typeof place",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Determines the x and y position of an element relative to a bounding box based on a given {@link Placement} string. Optional {@link PlacementOptions} can be provided to specify the bounding box and a margin.\n *\n * @param node - The element to place.\n *\n * @param placement - The {@link Placement} string.\n *\n * @param options - The {@link PlacementOptions}.\n *\n * @param  - options.bounds - The bounding box to place the element within.\n *\n * @param  - options.margin - The margin in pixels to apply to the placement.\n *\n * @example\n * ```ts\n * const { x, y } = place(node, 'top-right', { bounds: window, margin: 10 })\n * ```\n *\n */",
+        "links": [
+          {
+            "target": "Placement",
+            "text": "Placement"
+          },
+          {
+            "target": "PlacementOptions",
+            "text": "PlacementOptions"
+          },
+          {
+            "target": "Placement",
+            "text": "Placement"
+          },
+          {
+            "target": "PlacementOptions",
+            "text": "PlacementOptions"
+          }
+        ],
+        "summary": "<p>Determines the x and y position of an element relative to\na bounding box based on a given <a href=\"#Placement\">Placement</a> string.\nOptional <a href=\"#PlacementOptions\">PlacementOptions</a> can be provided to specify\nthe bounding box and a margin.</p>\n",
+        "params": [
+          {
+            "name": "node",
+            "description": "The element to place."
+          },
+          {
+            "name": "placement",
+            "description": "The{@linkPlacement}string."
+          },
+          {
+            "name": "options",
+            "description": "The{@linkPlacementOptions}."
+          },
+          {
+            "name": "",
+            "description": "options.bounds - The bounding box to place the element within."
+          },
+          {
+            "name": "",
+            "description": "options.margin - The margin in pixels to apply to the placement."
+          }
+        ],
+        "examples": [
+          {
+            "content": "```ts\nconst { x, y } = place(node, 'top-right', { bounds: window, margin: 10 })\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#5BA2D0\">const</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#DEE0EF\"> x</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#DEE0EF\"> y</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#F8D2C9\"> place</span><span style=\"color:#DEE0EF\">(node</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#A78BFA\"> 'top-right'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#8D8F9E\"> {</span><span style=\"color:#777D8F\"> bounds</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#DEE0EF\"> window</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#777D8F\"> margin</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#F8D2C9\"> 10</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#DEE0EF\">)</span></span></code></pre>",
+                "lang": "ts",
+                "raw": "const { x, y } = place(node, 'top-right', { bounds: window, margin: 10 })",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Placement",
+      "type": "Placement",
+      "isDefaultExport": false
+    },
+    {
+      "name": "PlacementOptions",
+      "type": "{ bounds?: DOMRect | VirtualRect | ElementOrSelector; margin?: number | Partial<{ x: number; y: number; }>; }",
+      "isDefaultExport": false
+    }
+  ]
+}

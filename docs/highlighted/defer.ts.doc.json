@@ -1,0 +1,17 @@
+{
+  "type": "ts",
+  "fileName": "defer.ts",
+  "filePath": "src/shared/defer.ts",
+  "exports": [
+    {
+      "name": "defer",
+      "type": "typeof requestIdleCallback | typeof requestAnimationFrame | ((fn: () => void) => NodeJS.Timeout)",
+      "isDefaultExport": false
+    },
+    {
+      "name": "cancelDefer",
+      "type": "typeof cancelIdleCallback",
+      "isDefaultExport": false
+    }
+  ]
+}

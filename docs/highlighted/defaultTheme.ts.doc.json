@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "defaultTheme.ts",
+  "filePath": "src/styles/themer/defaultTheme.ts",
+  "exports": [
+    {
+      "name": "default",
+      "type": "Theme<Record<string, any>>",
+      "isDefaultExport": true
+    }
+  ]
+}

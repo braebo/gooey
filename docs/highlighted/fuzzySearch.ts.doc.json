@@ -1,0 +1,44 @@
+{
+  "type": "ts",
+  "fileName": "fuzzySearch.ts",
+  "filePath": "src/shared/fuzzySearch.ts",
+  "exports": [
+    {
+      "name": "fuzzysearch",
+      "type": "typeof fuzzysearch",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Fast, fuzzy string search.\n *\n * @param needle - The query string to search for.\n *\n * @param haystack - The string to search in.\n *\n * @returns `true` if the needle is found in the haystack, `false` otherwise.\n *\n * @example\n * ```ts\n * fuzzysearch('needle', 'haystackneedlehaystack') // true\n * ```\n *\n * @see\n *\n * https://github.com/helyo-world/fuzzysearch-ts\n */",
+        "summary": "<p>Fast, fuzzy string search.</p>\n",
+        "params": [
+          {
+            "name": "needle",
+            "description": "The query string to search for."
+          },
+          {
+            "name": "haystack",
+            "description": "The string to search in."
+          }
+        ],
+        "returns": "`true`if the needle is found in the haystack,`false`otherwise.",
+        "seeBlocks": [
+          "https://github.com/helyo-world/fuzzysearch-ts"
+        ],
+        "examples": [
+          {
+            "content": "```ts\nfuzzysearch('needle', 'haystackneedlehaystack') // true\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#F8D2C9\">fuzzysearch</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#A78BFA\">'needle'</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#A78BFA\"> 'haystackneedlehaystack'</span><span style=\"color:#DEE0EF\">)</span><span style=\"color:#8D8F9E;font-style:italic\"> //</span><span style=\"color:#6B6D7C;font-style:italic\"> true</span></span></code></pre>",
+                "lang": "ts",
+                "raw": "fuzzysearch('needle', 'haystackneedlehaystack') // true",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

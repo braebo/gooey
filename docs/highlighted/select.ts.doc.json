@@ -1,0 +1,43 @@
+{
+  "type": "ts",
+  "fileName": "select.ts",
+  "filePath": "src/shared/select.ts",
+  "exports": [
+    {
+      "name": "select",
+      "type": "typeof select",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Takes in any combination of selectors and elements, and resolves them all into an array of HTMLElements.\n *\n * @param input - The elements or selectors to resolve.\n *\n * @param node - The node to search within. Default: `document.documentElement`\n *\n * @example\n *\n * select('div') // -> [HTMLDivElement, HTMLDivElement, ...] select(['div', 'span']) // -> [HTMLDivElement, HTMLSpanElement, ...] select('#my-id') // -> [HTMLElement] const el = document.getElementById('my-id') select(el) // -> [HTMLElement] select([el]) // -> [HTMLElement] select(undefined) // -> [] select('document') // -> [HTMLHtmlElement] select('window') // -> [HTMLHtmlElement]\n */",
+        "summary": "<p>Takes in any combination of selectors and elements, and\nresolves them all into an array of HTMLElements.</p>\n",
+        "params": [
+          {
+            "name": "input",
+            "description": "The elements or selectors to resolve."
+          },
+          {
+            "name": "node",
+            "description": "The node to search within. Default:`document.documentElement`"
+          }
+        ],
+        "examples": [
+          {
+            "name": "select('div') \t\t\t// -> [HTMLDivElement, HTMLDivElement, ...]",
+            "content": "\nselect(['div', 'span']) \t// -> [HTMLDivElement, HTMLSpanElement, ...]\nselect('#my-id') \t\t// -> [HTMLElement]\nconst el = document.getElementById('my-id')\nselect(el) \t\t\t\t// -> [HTMLElement]\nselect([el]) \t\t\t// -> [HTMLElement]\nselect(undefined)\t\t// -> []\nselect('document')\t\t// -> [HTMLHtmlElement]\nselect('window')\t\t\t// -> [HTMLHtmlElement]",
+            "blocks": "<p>select([&#39;div&#39;, &#39;span&#39;]) \t// -&gt; [HTMLDivElement, HTMLSpanElement, ...]\nselect(&#39;#my-id&#39;) \t\t// -&gt; [HTMLElement]\nconst el = document.getElementById(&#39;my-id&#39;)\nselect(el) \t\t\t\t// -&gt; [HTMLElement]\nselect([el]) \t\t\t// -&gt; [HTMLElement]\nselect(undefined)\t\t// -&gt; []\nselect(&#39;document&#39;)\t\t// -&gt; [HTMLHtmlElement]\nselect(&#39;window&#39;)\t\t\t// -&gt; [HTMLHtmlElement]</p>\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ElementOrSelector",
+      "type": "ElementOrSelector",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ElementsOrSelectors",
+      "type": "ElementsOrSelectors",
+      "isDefaultExport": false
+    }
+  ]
+}

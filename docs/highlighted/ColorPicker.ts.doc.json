@@ -1,0 +1,42 @@
+{
+  "type": "ts",
+  "fileName": "ColorPicker.ts",
+  "filePath": "src/controllers/color/ColorPicker.ts",
+  "exports": [
+    {
+      "name": "LayoutDirection",
+      "type": "LayoutDirection",
+      "isDefaultExport": false
+    },
+    {
+      "name": "WheelDirection",
+      "type": "WheelDirection",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorPickerOptions",
+      "type": "ColorPickerOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "COLOR_PICKER_DEFAULTS",
+      "type": "ColorPickerOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorPickerElements",
+      "type": "ColorPickerElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorPicker",
+      "type": "ColorPicker",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorPicker",
+      "type": "ColorPicker",
+      "isDefaultExport": false
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "type": "ts",
+  "fileName": "isType.ts",
+  "filePath": "src/shared/isType.ts",
+  "exports": [
+    {
+      "name": "isType",
+      "type": "typeof isType",
+      "isDefaultExport": false
+    },
+    {
+      "name": "isType",
+      "type": "typeof isType",
+      "isDefaultExport": false
+    },
+    {
+      "name": "isType",
+      "type": "typeof isType",
+      "isDefaultExport": false
+    },
+    {
+      "name": "isType",
+      "type": "typeof isType",
+      "isDefaultExport": false
+    },
+    {
+      "name": "isType",
+      "type": "typeof isType",
+      "isDefaultExport": false
+    }
+  ]
+}

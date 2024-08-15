@@ -1,0 +1,12 @@
+{
+  "type": "ts",
+  "fileName": "scout.ts",
+  "filePath": "src/styles/themes/scout.ts",
+  "exports": [
+    {
+      "name": "default",
+      "type": "Theme<Record<string, any>>",
+      "isDefaultExport": true
+    }
+  ]
+}

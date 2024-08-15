@@ -1,0 +1,46 @@
+{
+  "type": "ts",
+  "fileName": "LinkedListener.ts",
+  "filePath": "src/shared/LinkedListener.ts",
+  "exports": [
+    {
+      "name": "EventCallback",
+      "type": "EventCallback<T>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A callback that can be added to a ticker.\n */",
+        "summary": "<p>A callback that can be added to a ticker.</p>\n"
+      }
+    },
+    {
+      "name": "LinkedListenerOptions",
+      "type": "LinkedListenerOptions",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Options for {@link LinkedListener}.\n */",
+        "links": [
+          {
+            "target": "LinkedListener",
+            "text": "LinkedListener"
+          }
+        ],
+        "summary": "<p>Options for <a href=\"#LinkedListener\">LinkedListener</a>.</p>\n"
+      }
+    },
+    {
+      "name": "LinkedListener",
+      "type": "LinkedListener",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A linked-list node with a callback function.\n *\n * Original inspiration from {@link https://github.com/pixijs/pixijs/blob/dev/src/ticker/TickerListener.ts | pixijs}\n */",
+        "links": [
+          {
+            "target": "https://github.com/pixijs/pixijs/blob/dev/src/ticker/TickerListener.ts",
+            "text": "pixijs"
+          }
+        ],
+        "summary": "<p>A linked-list node with a callback function.</p>\n<p>Original inspiration from <a href=\"#https://github.com/pixijs/pixijs/blob/dev/src/ticker/TickerListener.ts%7Cpixijs\">https://github.com/pixijs/pixijs/blob/dev/src/ticker/TickerListener.ts|pixijs</a></p>\n"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "type": "ts",
+  "fileName": "color.ts",
+  "filePath": "src/shared/color/color.ts",
+  "exports": [
+    {
+      "name": "isColor",
+      "type": "typeof isColor",
+      "isDefaultExport": false
+    },
+    {
+      "name": "isColorFormat",
+      "type": "typeof isColorFormat",
+      "isDefaultExport": false
+    },
+    {
+      "name": "parseColorFormat",
+      "type": "typeof parseColorFormat",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorMode",
+      "type": "ColorMode",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorValue",
+      "type": "ColorValue",
+      "isDefaultExport": false
+    },
+    {
+      "name": "Color",
+      "type": "Color",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A color class with rgb, hsl, hsv, and kelvin color objects, strings, and conversion methods.\n */",
+        "summary": "<p>A color class with rgb, hsl, hsv, and kelvin color objects, strings, and conversion methods.</p>\n"
+      }
+    }
+  ]
+}

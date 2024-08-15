@@ -1,0 +1,32 @@
+{
+  "type": "ts",
+  "fileName": "ColorComponents.ts",
+  "filePath": "src/controllers/color/ColorComponents.ts",
+  "exports": [
+    {
+      "name": "ColorComponentsOptions",
+      "type": "ColorComponentsOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "COLOR_PICKER_DEFAULTS",
+      "type": "{ readonly disabled: false; }",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorComponentsElements",
+      "type": "ColorComponentsElements",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorComponents",
+      "type": "ColorComponents",
+      "isDefaultExport": false
+    },
+    {
+      "name": "ColorComponents",
+      "type": "ColorComponents",
+      "isDefaultExport": false
+    }
+  ]
+}

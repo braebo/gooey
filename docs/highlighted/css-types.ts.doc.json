@@ -1,0 +1,58 @@
+{
+  "type": "ts",
+  "fileName": "css-types.ts",
+  "filePath": "src/shared/css-types.ts",
+  "exports": [
+    {
+      "name": "CSSProperty",
+      "type": "keyof PropertiesHyphen<0 | (string & {}), string & {}>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * All valid CSS Property names (e.g. `background-color`).\n */",
+        "summary": "<p>All valid CSS Property names (e.g. <code>background-color</code>).</p>\n"
+      }
+    },
+    {
+      "name": "JavascriptStyleProperty",
+      "type": "JavascriptStyleProperty",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * All valid Javascript Style Properties names (e.g. `backgroundColor`).\n */",
+        "summary": "<p>All valid Javascript Style Properties names (e.g. <code>backgroundColor</code>).</p>\n"
+      }
+    },
+    {
+      "name": "StyleDefinition",
+      "type": "Partial<Record<keyof PropertiesHyphen<0 | (string & {}), string & {}> | `--${string}`, string>>",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * An object containing CSS property names and their values.\n */",
+        "summary": "<p>An object containing CSS property names and their values.</p>\n"
+      }
+    },
+    {
+      "name": "CSSCustomProperty",
+      "type": "CSSCustomProperty",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A CSS variable reference value, used to reference other CSS variables.\n *\n * @see\n *\n * [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)\n */",
+        "summary": "<p>A CSS variable reference value, used to reference other CSS variables.</p>\n",
+        "seeBlocks": [
+          "[MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/--*)"
+        ]
+      }
+    },
+    {
+      "name": "CSSVariableReferenceValue",
+      "type": "`var(${string})`",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A CSS variable reference value, used to reference other CSS variables.\n *\n * @see\n *\n * [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/var)\n */",
+        "summary": "<p>A CSS variable reference value, used to reference other CSS variables.</p>\n",
+        "seeBlocks": [
+          "[MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/var)"
+        ]
+      }
+    }
+  ]
+}

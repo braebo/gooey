@@ -1,0 +1,117 @@
+{
+  "type": "ts",
+  "fileName": "draggable.ts",
+  "filePath": "src/shared/draggable.ts",
+  "exports": [
+    {
+      "name": "draggable",
+      "type": "typeof draggable",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * A svelte action to make an element draggable.\n *\n * @example\n * ```svelte\n * <script>\n * \timport { draggable } from 'fractils'\n * </script>\n *\n * <div use:draggable> Drag Me </div>\n * ```\n *\n * @todo - Finish this -- I've never actually used or spent time on it..\n */",
+        "summary": "<p>A svelte action to make an element draggable.</p>\n",
+        "examples": [
+          {
+            "content": "```svelte\n<script>\n\timport { draggable } from 'fractils'\n</script>\n\n<div use:draggable> Drag Me </div>\n```\n@todo - Finish this -- I've never actually used or spent time on it..",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#777D8F\">&#x3C;script></span></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">    import </span><span style=\"color:#8D8F9E\">{</span><span style=\"color:#DEE0EF\"> draggable</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#5BA2D0\"> from </span><span style=\"color:#A78BFA\">'fractils'</span></span>\n<span class=\"line\"><span style=\"color:#777D8F\">&#x3C;/script></span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#777D8F\">&#x3C;div</span><span style=\"color:#5BA2D0\"> use</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#DEE0EF\">draggable</span><span style=\"color:#777D8F\">> Drag Me &#x3C;/div></span></span></code></pre>",
+                "lang": "svelte",
+                "raw": "<script>\n    import { draggable } from 'fractils'\n</script>\n\n<div use:draggable> Drag Me </div>",
+                "title": ""
+              },
+              {
+                "type": "other",
+                "content": "<p>@todo - Finish this -- I&#39;ve never actually used or spent time on it..</p>"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "VirtualRect",
+      "type": "VirtualRect",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Represents a dom element's bounding rectangle.\n */",
+        "summary": "<p>Represents a dom element&#39;s bounding rectangle.</p>\n"
+      }
+    },
+    {
+      "name": "DraggablePlacementOptions",
+      "type": "DraggablePlacementOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "DragEventData",
+      "type": "DragEventData",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Data passed to listeners of the {@link DraggableOptions.onDragStart | onDragStart}, {@link DraggableOptions.onDrag | onDrag}, {@link DraggableOptions.onDragEnd | onDragEnd}, and {@link DraggableOptions.onCollision | onCollision} events.\n */",
+        "links": [
+          {
+            "target": "DraggableOptions",
+            "text": "onDragStart"
+          },
+          {
+            "target": "DraggableOptions",
+            "text": "onDrag"
+          },
+          {
+            "target": "DraggableOptions",
+            "text": "onDragEnd"
+          },
+          {
+            "target": "DraggableOptions",
+            "text": "onCollision"
+          }
+        ],
+        "summary": "<p>Data passed to listeners of the <a href=\"#DraggableOptions.onDragStart%7ConDragStart\">DraggableOptions.onDragStart|onDragStart</a>,\n<a href=\"#DraggableOptions.onDrag%7ConDrag\">DraggableOptions.onDrag|onDrag</a>, <a href=\"#DraggableOptions.onDragEnd%7ConDragEnd\">DraggableOptions.onDragEnd|onDragEnd</a>, and\n<a href=\"#DraggableOptions.onCollision%7ConCollision\">DraggableOptions.onCollision|onCollision</a> events.</p>\n"
+      }
+    },
+    {
+      "name": "DraggableOptions",
+      "type": "DraggableOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "DRAGGABLE_DEFAULTS",
+      "type": "DraggableOptions",
+      "isDefaultExport": false
+    },
+    {
+      "name": "Draggable",
+      "type": "Draggable",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Make an element draggable. Supports touch, mouse, and pointer events, and has options for bounds / obstacle collision detection, programatic position control, custom transforms, and more.\n *\n * @example\n * ```js\n * import { Draggable } from 'fractils'\n *\n * const element = document.createElement('div')\n *\n * const draggable = new Draggable(element, {\n * \tbounds: 'body'\n * })\n * ```\n *\n */",
+        "summary": "<p>Make an element draggable. Supports touch, mouse, and pointer events,\nand has options for bounds / obstacle collision detection, programatic\nposition control, custom transforms, and more.</p>\n",
+        "examples": [
+          {
+            "content": "```js\nimport { Draggable } from 'fractils'\n\nconst element = document.createElement('div')\n\nconst draggable = new Draggable(element, {\n\tbounds: 'body'\n})\n```",
+            "blocks": [
+              {
+                "type": "code",
+                "content": "<pre class=\"shiki serendipity\" style=\"background-color:#0000;color:#d4d4d4\" tabindex=\"0\"><code><span class=\"line\"><span style=\"color:#5BA2D0\">import </span><span style=\"color:#8D8F9E\">{</span><span style=\"color:#DEE0EF\"> Draggable</span><span style=\"color:#8D8F9E\"> }</span><span style=\"color:#5BA2D0\"> from </span><span style=\"color:#A78BFA\">'fractils'</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">const</span><span style=\"color:#DEE0EF\"> element</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#DEE0EF\"> document</span><span style=\"color:#5BA2D0\">.</span><span style=\"color:#F8D2C9\">createElement</span><span style=\"color:#DEE0EF\">(</span><span style=\"color:#A78BFA\">'div'</span><span style=\"color:#DEE0EF\">)</span></span>\n<span class=\"line\"></span>\n<span class=\"line\"><span style=\"color:#5BA2D0\">const</span><span style=\"color:#DEE0EF\"> draggable</span><span style=\"color:#5BA2D0\"> =</span><span style=\"color:#5BA2D0\"> new</span><span style=\"color:#F8D2C9\"> Draggable</span><span style=\"color:#DEE0EF\">(element</span><span style=\"color:#8D8F9E\">,</span><span style=\"color:#8D8F9E\"> {</span></span>\n<span class=\"line\"><span style=\"color:#777D8F\">    bounds</span><span style=\"color:#8D8F9E\">:</span><span style=\"color:#A78BFA\"> 'body'</span></span>\n<span class=\"line\"><span style=\"color:#8D8F9E\">}</span><span style=\"color:#DEE0EF\">)</span></span></code></pre>",
+                "lang": "js",
+                "raw": "import { Draggable } from 'fractils'\n\nconst element = document.createElement('div')\n\nconst draggable = new Draggable(element, {\n    bounds: 'body'\n})",
+                "title": ""
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "DragEvents",
+      "type": "DragEvents",
+      "isDefaultExport": false,
+      "comment": {
+        "raw": "/**\n * Events fired by the draggable svelte action.\n */",
+        "summary": "<p>Events fired by the draggable svelte action.</p>\n"
+      }
+    }
+  ]
+}
