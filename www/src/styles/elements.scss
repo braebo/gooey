@@ -1,17 +1,22 @@
 h1 {
 	font-size: var(--font-xl);
+	text-align: center;
+	font-weight: 500;
+	letter-spacing: 1.2px;
 }
 
 h2 {
 	font-size: var(--font-lg);
+	font-variation-settings:
+		'wght' 200,
+		'wdth' 105;
+	letter-spacing: 3px;
 }
 
 h1,
 h2 {
 	color: var(--fg-a);
 
-	font-weight: 500;
-	letter-spacing: 1.2px;
 	word-spacing: 8px;
 }
 
@@ -92,7 +97,7 @@ button:focus:not(:focus-visible) {
 section {
 	display: flex;
 	flex-direction: column;
-	gap: var(--padding);
+	gap: var(--padding-lg);
 
 	width: 100%;
 	max-width: min(var(--page-width), 90vw);
@@ -101,4 +106,28 @@ section {
 
 hr {
 	width: 100%;
+}
+
+code {
+	width: fit-content;
+	padding: var(--padding-sm) var(--padding-md);
+
+	color: var(--light-b);
+	background: color-mix(in lch, var(--dark-b), var(--dark-c) 75%);
+	border-radius: var(--radius);
+
+	font-family: var(--font-mono);
+	font-size: var(--font);
+	font-variation-settings:
+		'wght' 600,
+		'wdth' 97;
+
+	box-shadow: var(--shadow-sm);
+}
+
+p code {
+	padding: 0.1rem 0.5rem;
+	font-variation-settings:
+		'wght' 500,
+		'wdth' 110;
 }

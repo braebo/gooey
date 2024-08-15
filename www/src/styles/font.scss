@@ -53,12 +53,18 @@
 a,
 p,
 li,
-h1,
-h2,
 h3,
 h4,
 h5,
 section {
+	font-family: var(--font-b, --font-a, system-ui, Inter, Avenir, Helvetica, Arial, sans-serif);
+	font-variation-settings: 'wght' 300, 'wdth' 100;
+	letter-spacing: 0.01em;
+	word-spacing: 0.05em;
+}
+
+h1,
+h2 {
 	font-family: var(--font-a, system-ui, Inter, Avenir, Helvetica, Arial, sans-serif);
 }
 
