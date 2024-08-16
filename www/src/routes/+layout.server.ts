@@ -4,9 +4,15 @@ import { redirect } from '@sveltejs/kit'
 export function load({ locals, depends, url }) {
 	depends('routes')
 
-	// todo - remove these once we have a proper homepage
-	if (['/', '/demos'].includes(url.pathname)) {
-		redirect(307, '/demos/goo')
+	switch (url.pathname) {
+		case '/':
+		case '/demos': {
+			redirect(307, '/demos/goo')
+		}
+		case '/docs': {
+			redirect(307, '/docs/getting-started')
+		}
 	}
+
 	return { theme: locals.theme, routes: Object.keys(routes) as Array<keyof typeof routes> }
 }
