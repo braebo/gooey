@@ -11,8 +11,8 @@ import type {
 	ValidInputValue,
 } from './inputs/Input'
 import type { ColorFormat } from './shared/color/types/colorFormat'
+import type { LabeledOption, Option } from './controllers/Select'
 import type { GooeyOptions, GooeyPreset } from './Gooey'
-import type { Option } from './controllers/Select'
 import type { Tooltip } from './shared/Tooltip'
 
 import { InputSwitch, type SwitchInputOptions } from './inputs/InputSwitch'

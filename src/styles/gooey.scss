@@ -2063,7 +2063,7 @@ input.gooey-search-input {
 					-1px 1px 1px 0px hsla(250, 10%, var(--gooey-shadow-lightness), 0.5) inset;
 
 				background: var(--gooey-input-number-range_background);
-				background-image: radial-gradient(
+				--background-dark: radial-gradient(
 					circle at 25% 50% in lab,
 					var(--gooey-theme-a) 0%,
 					color-mix(in sRGB, var(--gooey-theme-a) 50%, transparent) 3%,
@@ -2072,8 +2072,18 @@ input.gooey-search-input {
 					color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 30%,
 					color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 50%,
 					var(--gooey-input-number-range_background) 100%
-						// var(--gooey-controller-dim_background) 100%
 				);
+				--background-light: radial-gradient(
+					circle at 25% 50% in lab,
+					var(--gooey-theme-a) 3%,
+					color-mix(in sRGB, var(--gooey-theme-a) 40%, transparent) 3%,
+					color-mix(in sRGB, var(--gooey-theme-a) 30%, transparent) 10%,
+					color-mix(in sRGB, var(--gooey-theme-a) 20%, transparent) 20%,
+					color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 30%,
+					color-mix(in sRGB, var(--gooey-theme-a) 5%, transparent) 50%,
+					var(--gooey-input-number-range_background) 100%
+				);
+				background-image: light-dark(var(--background-light), var(--background-dark));
 
 				opacity: 0.7;
 
@@ -2098,13 +2108,16 @@ input.gooey-search-input {
 					background: var(--gooey-controller_background);
 					border: 1px solid var(--gooey-input-dim_color);
 					border-radius: var(--gooey-radius-xs);
-					box-shadow:
-						0px 0px #a6a7ad69,
-						1px -1px 0px #0002 inset;
 
 					box-sizing: border-box;
 					overflow: hidden;
 					z-index: 2;
+				}
+
+				@at-root .gooey-root[mode='light'] & {
+					box-shadow:
+						-1px 1px 7px 0px #0002 inset,
+						-1px 1px 1px 0px #0002 inset;
 				}
 
 				//- Positioning
@@ -2149,40 +2162,22 @@ input.gooey-search-input {
 					height: 100%;
 
 					background: var(--gooey-input-number-range_background);
-					box-shadow:
-						-1px 1px 7px 0px #000c inset,
-						-1px 1px 1px 0px #000c inset;
+					--shadow-light: -1px 1px 7px 0px #0002 inset, -1px 1px 1px 0px #0002 inset;
+					--shadow-dark: -1px 1px 7px 0px #000c inset, -1px 1px 1px 0px #000c inset;
+					box-shadow: light-dark(var(--shadow-light), var(--shadow-dark));
 
 					opacity: 1;
 					transition: 0.33s;
 
-					@at-root .gooey-root[mode='light'] & {
-						box-shadow:
-							-1px 1px 7px 0px #0002 inset,
-							-1px 1px 1px 0px #0002 inset;
-					}
+					// @at-root .gooey-root[mode='light'] & {
+					// 	box-shadow:
+					// 		-1px 1px 7px 0px #0002 inset,
+					// 		-1px 1px 1px 0px #0002 inset;
+					// }
 				}
 
 				&.active:after {
 					opacity: 0;
-				}
-
-				@at-root .gooey-root[mode='light'] & {
-					box-shadow:
-						-1px 1px 7px 0px #0002 inset,
-						-1px 1px 1px 0px #0002 inset;
-
-					background-image: radial-gradient(
-						circle at 25% 50% in lab,
-						var(--gooey-theme-a) 3%,
-						color-mix(in sRGB, var(--gooey-theme-a) 40%, transparent) 3%,
-						color-mix(in sRGB, var(--gooey-theme-a) 30%, transparent) 10%,
-						color-mix(in sRGB, var(--gooey-theme-a) 20%, transparent) 20%,
-						color-mix(in sRGB, var(--gooey-theme-a) 10%, transparent) 30%,
-						color-mix(in sRGB, var(--gooey-theme-a) 5%, transparent) 50%,
-						var(--gooey-input-number-range_background) 100%
-							// var(--gooey-controller-dim_background) 100%
-					);
 				}
 			}
 		}
