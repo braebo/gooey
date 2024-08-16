@@ -1,4 +1,5 @@
 import type { Handle } from '@sveltejs/kit'
+
 import { parse } from 'cookie'
 
 export const handle: Handle = ({ event, resolve }) => {
@@ -10,6 +11,6 @@ export const handle: Handle = ({ event, resolve }) => {
 		transformPageChunk: ({ html, done }) => {
 			page += html
 			if (done) return page.replace('%gooey.theme%', event.locals.theme)
-		}
+		},
 	})
 }
