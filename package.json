@@ -2,6 +2,7 @@
 	"name": "gooey",
 	"version": "0.2.12",
 	"description": "A modern gui library for the web.",
+	"homepage": "https://gooey.braebo.dev",
 	"keywords": [
 		"gui",
 		"typescript",
