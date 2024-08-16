@@ -1041,7 +1041,7 @@ export class Folder {
 
 			const folderPreset = preset.children?.find(f => f.id === child.presetId)
 			if (!folderPreset) {
-				console.warn(`Missing folder for preset: ${preset.title}`, {
+				console.warn(`No folder found with presetId: ${preset.id}`, {
 					child,
 					preset,
 					this: this,
