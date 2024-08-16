@@ -46,7 +46,7 @@
 	<GooeyThemeSync {gooey} />
 {/if}
 
-<div class="page">
+<div class="orbs-page">
 	{#if $showCode}
 		<div class="debug" transition:fly={{ y: 5, duration: 250, easing: quintOut }}>
 			{#key $code}
@@ -69,10 +69,11 @@
 </div>
 
 <style>
-	.page {
+	.orbs-page {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		height: 100%;
 
 		opacity: 0;
 
