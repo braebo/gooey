@@ -418,7 +418,7 @@ export class Gooey {
 			parent: this.container,
 		})
 
-		this._closedMap = persist('gooey::closed-map', {})
+		this._closedMap = persist(`${storageKey || `gooey::${this.title}`}::closed-map`, {})
 		this._closedMap
 
 		this.folder = new Folder({
@@ -427,6 +427,7 @@ export class Gooey {
 			container: this.wrapper,
 			// @ts-expect-error @internal
 			gooey: this,
+			presetId: this.opts.title,
 		})
 
 		// Poor-mans inheritance...
