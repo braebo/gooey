@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { themer } from '$lib/themer.svelte'
+	import { themer } from '$lib/themer/themer.svelte'
 
 	let state = $derived(themer.preference)
 
 	const toggle = () => {
 		switch (state) {
 			case 'light':
-				themer.theme = 'dark'
+				themer.preference = 'dark'
 				break
 			case 'dark':
-				themer.theme = 'system'
+				themer.preference = 'system'
 				break
 			case 'system':
-				themer.theme = 'light'
+				themer.preference = 'light'
 				break
 		}
 	}

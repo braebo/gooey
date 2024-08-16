@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { themer } from '$lib/themer/themer.svelte'
 	import { Gooey } from '../../../../src/index'
-	import { themer } from '$lib/themer.svelte'
 	import { onMount } from 'svelte'
 
 	const props: {
@@ -9,51 +9,31 @@
 	} = $props()
 	const gooey = props.gooey
 
-	const subs = [] as (() => any)[]
-
 	let locked = false
-	let lockTimer: ReturnType<typeof setTimeout>
-	function lock() {
-		locked = true
-		clearTimeout(lockTimer)
-		lockTimer = setTimeout(() => {
-			locked = false
-		})
-	}
 
 	onMount(() => {
 		/* gooey mode change -> update page theme (aka mode) */
-		subs.push(
-			gooey.themer.mode.subscribe((m) => {
-				if (locked) return
-				themer.theme = m
-			}),
-		)
+		const unsub = gooey.themer.mode.subscribe((m) => {
+			if (locked) return
+			themer.preference = m
+		})
 
 		/* page theme (aka mode) change -> update gooey mode */
 		$effect(() => {
-			lock()
 			gooey.themer.mode.set(themer.preference)
-			applyTheme()
 		})
 
 		/* gooey theme change -> apply theme */
-		subs.push(
-			gooey.themer.theme.subscribe(() => {
-				applyTheme()
-			}),
-		)
 
-		function applyTheme() {
-			for (const [k, v] of Object.entries(gooey.themer.modeColors)) {
-				document.documentElement.style.setProperty(`--${k}`, v)
+		gooey.themer.theme.subscribe((t) => {
+			const newTheme = themer.themes[t.title as keyof typeof themer.themes]
+			if (newTheme) {
+				themer.activeTheme = newTheme
 			}
-		}
+		})
 
 		return () => {
-			for (const unsubscribe of subs) {
-				unsubscribe()
-			}
+			unsub()
 			gooey?.dispose()
 		}
 	})

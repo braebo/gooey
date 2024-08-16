@@ -1,26 +1,28 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 
-	export let text: string
-	export let style = ''
+	const { text, style = '' }: { text: string; style: string } = $props()
 
 	/**
 	 * True for 1.25s after the button is clicked.
 	 */
-	let active = false
+	let active = $state(false)
+
 	/**
 	 * True, after `copied` becomes false again, for a duration approximately
 	 * equal to the length of any subsequent CSS transitions.
 	 */
-	let outro = false
+	let outro = $state(false)
 
 	let cooldown: ReturnType<typeof setTimeout>
 	let outroCooldown: ReturnType<typeof setTimeout>
 	let btn: HTMLButtonElement
 
-	function copy() {
+	function copy(event: MouseEvent) {
 		if (typeof navigator === 'undefined') return
 		if (active) return
+
+		event.preventDefault()
 
 		navigator.clipboard?.writeText?.(text)
 
@@ -49,7 +51,7 @@
 	{style}
 	title="copy to clipboard"
 	transition:fly
-	on:click|preventDefault={copy}
+	onclick={copy}
 	bind:this={btn}
 >
 	<div class="svg-container">
@@ -58,8 +60,8 @@
 			class:active
 			class:outro
 			xmlns="http://www.w3.org/2000/svg"
-			width="100%"
-			height="100%"
+			width="20"
+			height="20"
 			viewBox="0 0 24 24"
 			fill="none"
 			stroke="currentColor"
@@ -110,13 +112,11 @@
 		transition: 0.25s;
 
 		&:hover {
-			color: var(--fg-c);
-			background: var(--bg-b);
+			color: var(--light-c);
 
 			@at-root {
 				:global(:root[theme='light']) & {
 					&:hover {
-						background: var(--bg-e);
 						color: var(--bg-a);
 					}
 					&.active,
@@ -129,8 +129,7 @@
 
 		&:active,
 		&:focus {
-			color: var(--fg-b);
-			background: var(--bg-c);
+			color: var(--light-b);
 		}
 	}
 
