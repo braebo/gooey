@@ -2,5 +2,11 @@
 	"svelte.plugin.svelte.compilerWarnings": {
 		"element_invalid_self_closing_tag": "ignore"
 	},
-	"editor.formatOnSave": false
+	"editor.formatOnSave": false,
+	"files.exclude": {
+		"**/.git": true,
+		"**/.DS_Store": true,
+		"**/node_modules": true,
+		"**/.svelte-kit": true,
+	}
 }
