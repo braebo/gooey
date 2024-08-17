@@ -12,7 +12,7 @@
 		gooey = beats.gooey
 
 		return () => {
-			beats.dispose()
+			beats?.dispose()
 		}
 	})
 </script>

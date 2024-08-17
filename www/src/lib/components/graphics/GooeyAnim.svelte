@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Gooey, type InputNumber } from '../../../../../src/index'
 	import GooeyThemeSync from '../GooeyThemeSync.svelte'
-	// import { themer } from '$lib/themer.svelte'
 	import { onMount } from 'svelte'
 	import presets from './presets'
 
@@ -56,6 +55,7 @@
 			position: 'top-center',
 			margin: { y: 100 },
 			presets,
+			storage: { position: false },
 		})
 
 		// Bind to the params and configure their options.

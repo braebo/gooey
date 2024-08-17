@@ -3,11 +3,7 @@
 	import { Gooey } from '../../../../src/index'
 	import { onMount } from 'svelte'
 
-	const props: {
-		gooey: Gooey
-		autoInit?: boolean
-	} = $props()
-	const gooey = props.gooey
+	const { gooey }: { gooey: Gooey } = $props()
 
 	let locked = false
 

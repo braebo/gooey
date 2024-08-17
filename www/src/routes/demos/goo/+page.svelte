@@ -31,7 +31,7 @@
 		background-image: linear-gradient(to right, var(--bw), color-mix(in lch, var(--bg-a), var(--bg-c)));
 		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
 	}
-	:global(:root[theme='light'] .slant) {
-		background-image: linear-gradient(to right, var(--bw), color-mix(in lch, var(--bg-a), var(--bg-e)));
+	:global(:root[theme='light']) .slant {
+		background-image: linear-gradient(to right, var(--bw), color-mix(in lab, var(--bg-a), var(--bg-e)));
 	}
 </style>
