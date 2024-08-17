@@ -39,7 +39,7 @@ $mobile: 900px;
 	--padding: 0.75rem;
 	--padding-sm: 0.5rem;
 
-	--shadow-lightness: light-dark(0.5, 1);
+	--shadow-lightness: 0.8;
 
 	--shadow-sm: 0rem 0.0313rem 0.0469rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
 		0rem 0.125rem 0.0938rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
@@ -61,6 +61,10 @@ $mobile: 900px;
 		0rem 0.3125rem 0.5rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
 		0rem 0.625rem 0.9375rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.12)),
 		0rem 1.25rem 1.875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.14));
+
+	&[theme='light'] {
+		--shadow-lightness: 0.3;
+	}
 }
 
 html {

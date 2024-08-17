@@ -22,20 +22,22 @@
 <style lang="scss">
 	$padding: 1rem;
 	header {
-		position: relative;
-		// position: sticky;
+		position: absolute;
 		top: 0;
-		height: 3rem;
 
 		display: flex;
 		justify-content: space-between;
 
+		width: 100%;
+		height: 3rem;
+
 		pointer-events: none;
-		z-index: 50;
+		z-index: 20;
 	}
 
 	.corner {
 		position: absolute;
+
 		display: flex;
 		position: relative;
 		align-items: center;
@@ -48,8 +50,11 @@
 		position: absolute;
 		top: 0.33rem;
 		bottom: 0;
-		margin: auto;
 		left: 0.66rem;
+
+		margin: auto;
+
+		z-index: 21;
 
 		&.active a {
 			color: var(--theme-a);

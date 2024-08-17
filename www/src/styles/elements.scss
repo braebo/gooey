@@ -97,7 +97,6 @@ button:focus:not(:focus-visible) {
 section {
 	display: flex;
 	flex-direction: column;
-	gap: var(--padding-lg);
 
 	width: 100%;
 	max-width: min(var(--page-width), 90vw);
