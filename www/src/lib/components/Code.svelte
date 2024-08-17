@@ -53,7 +53,7 @@
 	import type { LanguageRegistration, ThemeInput } from 'shiki'
 
 	import type { ValidLanguage } from '../utils/highlight'
-	import CopyButton from './CopyButton.svelte'
+	import Copy from './Copy.svelte'
 	import { DEV } from 'esm-env'
 	import './code.scss'
 
@@ -218,7 +218,7 @@
 		{#if text && copyButton}
 			<div class="copy-container">
 				<div class="sticky">
-					<CopyButton {text} />
+					<Copy {text} />
 				</div>
 			</div>
 		{/if}

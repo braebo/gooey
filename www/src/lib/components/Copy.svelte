@@ -1,51 +1,59 @@
+<script lang="ts" context="module">
+	export type Phase = 'idle' | 'active' | 'outro'
+</script>
+
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 
-	const { text, style = '' }: { text: string; style: string } = $props()
+	let {
+		text,
+		style = '',
+		phase = $bindable<Phase>('idle'),
+	}: {
+		text: string
+		style?: string
+		phase: Phase
+	} = $props()
 
-	/**
-	 * True for 1.25s after the button is clicked.
-	 */
-	let active = $state(false)
+	let btn: HTMLButtonElement
 
-	/**
-	 * True, after `copied` becomes false again, for a duration approximately
-	 * equal to the length of any subsequent CSS transitions.
-	 */
-	let outro = $state(false)
+	let active = $derived(phase === 'active')
+	let outro = $derived(phase === 'outro')
 
 	let cooldown: ReturnType<typeof setTimeout>
 	let outroCooldown: ReturnType<typeof setTimeout>
-	let btn: HTMLButtonElement
 
-	function copy(event: MouseEvent) {
+	export function copy(event: MouseEvent) {
 		if (typeof navigator === 'undefined') return
 		if (active) return
 
 		event.preventDefault()
 
-		navigator.clipboard?.writeText?.(text)
+		try {
+			navigator.clipboard?.writeText?.(text)
+		} catch (error) {
+			console.error('Failed to copy to clipboard:', error)
+		}
 
 		clearTimeout(cooldown)
 		clearTimeout(outroCooldown)
 
-		active = true
+		phase = 'active'
 
 		cooldown = setTimeout(() => {
 			btn.blur() // remove :active and :focus styles
-			active = false
-			outro = true
+			phase = 'outro'
 
 			clearTimeout(outroCooldown)
 			outroCooldown = setTimeout(() => {
-				outro = false
+				phase = 'idle'
 			}, 500)
 		}, 1250)
 	}
 </script>
 
 <button
-	class="copy"
+	class="copy {phase}"
 	class:active
 	class:outro
 	{style}
@@ -117,7 +125,7 @@
 			@at-root {
 				:global(:root[theme='light']) & {
 					&:hover {
-						color: var(--bg-a);
+						color: var(--fg-a);
 					}
 					&.active,
 					&.outro {
@@ -130,6 +138,11 @@
 		&:active,
 		&:focus {
 			color: var(--light-b);
+		}
+
+		&.active,
+		&.outro {
+			opacity: 1 !important;
 		}
 	}
 
