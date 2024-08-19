@@ -11,6 +11,7 @@ export interface StateOptions<T> extends Partial<Writable<T>> {
 	 * @default undefined
 	 */
 	debounce?: number
+
 	/**
 	 * If true, localStorage updates will be deferred using
 	 * {@link https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback | requestIdleCallback},
@@ -23,6 +24,7 @@ export interface StateOptions<T> extends Partial<Writable<T>> {
 	 * @default false
 	 */
 	defer?: boolean
+
 	/**
 	 * Optional callback function that runs after the store is
 	 * updated and all subscribers have been notified.
