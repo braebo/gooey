@@ -18,8 +18,6 @@
 
 	let showMenu = $state(false)
 
-	console.log(routes)
-
 	{
 		// import { Gooey } from '../../../../../src'
 		// import { goto } from '$app/navigation'
@@ -90,8 +88,9 @@
 					"
 				>
 					<a class="depth-{depth}" data-sveltekit-prefetch href={child.path}>
-						<!-- {child.name.replaceAll('-', ' ').split('#')[0]} -->
+						{child.name.replaceAll('-', ' ')}
 					</a>
+
 					{#if $page.url.pathname.includes(child.path)}
 						{@render subnav(child, i, depth + 1)}
 					{/if}

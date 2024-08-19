@@ -1,5 +1,7 @@
 import routes from '../../.svelte-kit/types/route_meta_data.json'
 import { redirect } from '@sveltejs/kit'
+import { readdirSync } from 'fs'
+import { resolve } from 'path'
 
 export function load({ locals, depends, url }) {
 	depends('routes')
@@ -9,10 +11,25 @@ export function load({ locals, depends, url }) {
 		case '/demos': {
 			redirect(307, '/demos/goo')
 		}
-		case '/docs': {
-			redirect(307, '/docs/getting-started')
-		}
 	}
 
-	return { theme: locals.theme, routes: Object.keys(routes) as Array<keyof typeof routes> }
+	const allRoutes = Object.keys(routes)
+	// const allRoutes = Object.keys(routes).filter((r) => !r.includes('/_'))
+
+	// `/docs` URI Fragments
+	const path = resolve('./src/lib/data/docs')
+
+	try {
+		const dir = readdirSync(path, { withFileTypes: true, encoding: 'utf-8' })
+		for (const file of dir) {
+			if (file.isDirectory() && !file.name.startsWith('_')) allRoutes.push(`/docs#${file.name}`)
+		}
+	} catch (e) {
+		console.error(e)
+	}
+
+	return {
+		theme: locals.theme,
+		routes: allRoutes,
+	}
 }

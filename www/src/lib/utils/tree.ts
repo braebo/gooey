@@ -1,6 +1,7 @@
 export interface Branch {
 	name: string
 	path: string
+	fragment?: string
 	children?: Branch[]
 }
 
@@ -16,7 +17,8 @@ export class Tree {
 		for (const route of routes) {
 			if (route === '/') continue
 
-			const parts = route.split('/').filter(Boolean)
+			const [pathPart, fragment] = route.split('#')
+			const parts = pathPart.split('/').filter(Boolean)
 			let currentNode = this.root
 
 			for (let i = 0; i < parts.length; i++) {
@@ -34,6 +36,19 @@ export class Tree {
 				}
 
 				currentNode = child
+			}
+
+			if (fragment) {
+				let fragmentNode = currentNode.children?.find((node) => node.fragment === fragment)
+				if (!fragmentNode) {
+					fragmentNode = {
+						name: fragment,
+						path: `${currentNode.path}#${fragment}`,
+						fragment: fragment,
+					}
+					currentNode.children = currentNode.children || []
+					currentNode.children.push(fragmentNode)
+				}
 			}
 		}
 	}
