@@ -29,7 +29,6 @@
 	<div class="br"></div>
 
 	<div class="installation-options">
-		<!-- {#if pm === 'npm'} -->
 		<div class="installer" transition:fly={{ opacity: 1 }}>
 			<p>NPM</p>
 			<code>
@@ -38,39 +37,18 @@
 				<span class="gooey">gooey</span>
 			</code>
 		</div>
-		<!-- {:else if pm === 'jsr'} -->
+
 		<div class="installer">
 			<p>JSR</p>
 			<code>
 				npx jsr add
-				<!-- prettier-ignore -->
 				<span>
-				<span
-                style="color:color-mix(in lch, var(--theme-a), var(--light-e) 25%)">@braebo</span><span
-                style="color:color-mix(in lch, var(--theme-a), var(--light-e) 75%)">/</span><span
-                class="gooey">gooey</span>
-			</span>
+					<span style="color:color-mix(in lch, var(--theme-a), var(--light-e) 25%)">@braebo</span><span
+						style="color:color-mix(in lch, var(--theme-a), var(--light-e) 75%)">/</span
+					><span class="gooey">gooey</span>
+				</span>
 			</code>
 		</div>
-		<!-- {:else if pm === 'pnpm'}
-			<div class="installer">
-				<p>PNPM</p>
-				<code>
-					pnpm i
-					<span style:color="var(--light-d)">-D</span>
-					<span class="gooey">gooey</span>
-				</code>
-			</div>
-		{:else if pm === 'yarn'}
-			<div class="installer">
-				<p>Yarn</p>
-				<code>
-					yarn add
-					<span style:color="var(--light-d)">-D</span>
-					<span class="gooey">gooey</span>
-				</code>
-			</div>
-		{/if} -->
 	</div>
 </section>
 

@@ -1,6 +1,6 @@
 <script>
-	import InstallHero from '$lib/data/docs/InstallHero.svelte'
-	import Install from './_sections/Install.svelte'
+	import Install from '$lib/data/docs/01_install/Install.svelte'
+	import InstallHero from '$lib/data/docs/Hero.svelte'
 </script>
 
 <InstallHero />
@@ -9,6 +9,4 @@
 
 <Install />
 
-<!-- <div class="br-lg"></div>
-
-<h2 id="usage">Usage</h2> -->
+<div class="br-lg"></div>

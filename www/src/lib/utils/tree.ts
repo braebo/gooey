@@ -1,6 +1,7 @@
 export interface Branch {
 	name: string
 	path: string
+	index?: number | string
 	fragment?: string
 	children?: Branch[]
 }
@@ -31,7 +32,7 @@ export class Tree {
 						path: path,
 						children: [],
 					}
-					currentNode.children = currentNode.children || []
+					currentNode.children ??= []
 					currentNode.children.push(child)
 				}
 
@@ -41,12 +42,16 @@ export class Tree {
 			if (fragment) {
 				let fragmentNode = currentNode.children?.find((node) => node.fragment === fragment)
 				if (!fragmentNode) {
+					let [index, name] = fragment.split('_') as Partial<[string | number, string]>
+
 					fragmentNode = {
-						name: fragment,
-						path: `${currentNode.path}#${fragment}`,
-						fragment: fragment,
+						name: name ?? fragment,
+						index: Number(index) || index,
+						path: `${currentNode.path}#${name}`,
+						fragment,
 					}
-					currentNode.children = currentNode.children || []
+
+					currentNode.children ??= []
 					currentNode.children.push(fragmentNode)
 				}
 			}
