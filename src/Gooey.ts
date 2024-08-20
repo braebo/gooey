@@ -185,12 +185,31 @@ export interface GooeyOptionsInternal extends GooeyOptions {
 	_themer?: Themer
 }
 
+/**
+ * Defines which properties to persist in localStorage, and under which
+ * key.
+ * @example
+ * // defaults:
+ * {
+ *   key: 'gooey',
+ *   closed: true,
+ *   theme: true,
+ *   presets: true,
+ *   position: false,
+ *   size: false,
+ * }
+ */
 export interface GooeyStorageOptions {
 	__type: 'GooeyStorageOptions'
 
 	/**
 	 * Prefix to use for localStorage keys.
-	 * @default `"fractils::gooey"`
+	 *
+	 * @remarks The provided string is prepended to the gooey's title, lowercased, and hyphens
+	 * are replaced with spaces.  For example, a gooey titled `"Foo Bar"` is stored as
+	 * `"foo-bar::gooey"`.
+	 *
+	 * @default "default"
 	 */
 	key: string
 
@@ -208,13 +227,13 @@ export interface GooeyStorageOptions {
 
 	/**
 	 * Whether to persist the gooey's position.
-	 * @default true
+	 * @default false
 	 */
 	position?: boolean
 
 	/**
 	 * Whether to persist the gooey's size.
-	 * @default true
+	 * @default false
 	 */
 	size?: boolean
 
@@ -238,12 +257,12 @@ export interface GooeyPreset {
 
 export const GUI_STORAGE_DEFAULTS: GooeyStorageOptions = {
 	__type: 'GooeyStorageOptions',
-	key: 'gooey',
+	key: 'default',
 	closed: true,
 	theme: true,
 	presets: true,
-	position: true,
-	size: true,
+	position: false,
+	size: false,
 } as const
 
 export const GUI_WINDOWMANAGER_DEFAULTS = {
