@@ -19,7 +19,6 @@ const config = {
 			style: {
 				css: {
 					postcss: join(__dirname, 'postcss.config.cjs'),
-					// postcss: postcssConfig,
 				},
 			},
 		}),
