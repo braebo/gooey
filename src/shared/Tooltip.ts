@@ -795,7 +795,7 @@ export class Tooltip {
 		el.addEventListener('transitionend', timeout)
 
 		if (!this._watchingFinished) {
-			this.node?.style.setProperty('transition-duration', '0s')
+			this.element?.style.setProperty('transition-duration', '0s')
 
 			tickLoop(() => {
 				if (!this._watchingFinished) {
