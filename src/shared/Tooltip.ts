@@ -206,7 +206,7 @@ export class Tooltip {
 			})
 			this._evm.listen(node!, 'pointermove', e => this._updatePosition(e))
 			this._evm.listen(node!, 'click', () => {
-				if (opts.hideOnClick) this.hide()
+				if (opts.hideOnClick) this.hide(true)
 				else this.refresh()
 			})
 		}
