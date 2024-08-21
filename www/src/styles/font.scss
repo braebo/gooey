@@ -1,10 +1,11 @@
+/* FREDONKA */
 @font-face {
-	font-family: 'fredoka';
+	font-family: 'Fredoka';
 	font-style: normal;
 	font-display: swap;
 	font-weight: 300 700;
 	font-stretch: 75% 125%;
-	src: url('/fonts/fredoka/fredoka.ttf') format('truetype');
+	src: url('/fonts/Fredoka/Fredoka.ttf') format('truetype');
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
 		U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
@@ -30,16 +31,19 @@
 	font-display: auto;
 }
 
-/* INCONSOLATA  -  Variable Font (wght, wdth) */
+/* INCONSOLATA - Variable Font (wght, wdth) */
 @font-face {
-	font-family: 'inconsolata';
+	font-family: 'Inconsolata';
 	font-weight: 100 900;
 	font-style: monospace;
-	src: url('/fonts/inconsolata/inconsolata.ttf') format('truetype');
+	src: url('/fonts/Inconsolata/Inconsolata.ttf') format('truetype');
 }
 
 :root {
+	--font-a: 'Fredoka', sans-serif;
 	--font-b: 'Mona Sans', system-ui, sans-serif;
+	--font-mono: 'Inconsolata', monospace;
+	--font-code: 'Monaspace', monospace;
 
 	--font-xxs: 0.75rem;
 	--font-xs: 0.9rem;
@@ -68,9 +72,16 @@ section {
 	font-family: var(--font-b, --font-a, system-ui, Inter, Avenir, Helvetica, Arial, sans-serif);
 	font-variation-settings:
 		'wght' 400,
-		'wdth' 98;
-	// letter-spacing: 0.03rem;
+		'wdth' 103;
+	letter-spacing: 0.02rem;
 	word-spacing: 0.1rem;
+
+	// prettier-ignore
+	// https://github.com/github/mona-sans?tab=readme-ov-file#stylistic-sets
+	font-feature-settings:
+		'ss05' on,
+		'ss06' on,
+		'ss07' on;
 }
 
 h1,
