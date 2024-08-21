@@ -467,10 +467,10 @@ export class Tooltip {
 				if (pos.y < 0) {
 					// prettier-ignore
 					const freeSpace =
-                anchor.y.top
-                    - BASE_OFFSET
-                    - PADDING
-                    * 2
+						anchor.y.top
+							- BASE_OFFSET
+							- PADDING
+							* 2
 
 					const overflow = Math.abs(tooltipRect.height - freeSpace)
 					if (overflow > 0) {

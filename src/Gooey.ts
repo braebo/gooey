@@ -314,15 +314,13 @@ export const GUI_DEFAULTS = {
  * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
  */
 // prettier-ignore
-const FORWARDED_METHODS = ['on','add','addMany','addButtonGrid','addSelect','addButton','addText','addNumber','addSwitch','addColor','bind','bindMany','bindButtonGrid','bindSelect','bindButton','bindText','bindNumber','bindSwitch','bindColor','open','close','show','hide','toggle','toggleHidden'] as const satisfies Array<keyof Folder>
+const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor', 'open', 'close', 'show', 'hide', 'toggle', 'toggleHidden'] as const satisfies Array<keyof Folder>;
 //⌟
 
 export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {}
 
 /**
- * The root Gooey instance.  This is the entry point for creating
- * a gooey.  You can create multiple root gooeys, but each gooey
- * can only have one root.
+ * A customizable GUI toolkit for quickly creating interactive controls panels.
  */
 export class Gooey {
 	__type = 'Gooey' as const
@@ -705,7 +703,7 @@ export class Gooey {
 		const fredoka = new FontFace(
 			'fredoka',
 			`url(${encodeURI?.(
-				'https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2',
+				'https://cdn.jsdelivr.net/fontsource/fonts/Fredoka:vf@latest/latin-wdth-normal.woff2',
 			)})`,
 			{
 				style: 'normal',
@@ -722,10 +720,10 @@ export class Gooey {
 			document.fonts.add(font)
 		})
 
-		const inconsolata = new FontFace(
-			'inconsolata',
+		const Inconsolata = new FontFace(
+			'Inconsolata',
 			`url(${encodeURI?.(
-				'https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2',
+				'https://cdn.jsdelivr.net/fontsource/fonts/Inconsolata:vf@latest/latin-wdth-normal.woff2',
 			)})`,
 			{
 				style: 'normal',
@@ -737,7 +735,7 @@ export class Gooey {
 			},
 		)
 
-		inconsolata.load().then(font => {
+		Inconsolata.load().then(font => {
 			// @ts-expect-error - ¯\_(ツ)_/¯
 			document.fonts.add(font)
 		})
@@ -774,13 +772,6 @@ export class Gooey {
 				{ presetId: 'gooey_settings__ui_folder' },
 			),
 		)
-
-		// // Fully desaturate the ui folder's header connector to svg.
-		// // todo - this doesn't work anymore due to the changes in `connector.update` or `animateConnector` iirc
-		// uiFolder.on('mount', () => {
-		// 	uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
-		// 	uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
-		// })
 
 		if (folder) {
 			const themeInput = uiFolder.addSelect('theme', finalThemer.themes.value, {
