@@ -98,7 +98,7 @@
 	.hero-title {
 		width: fit-content;
 		font-variation-settings: 'wght' 333;
-		font-family: 'fredoka', sans-serif;
+		font-family: 'Fredoka', sans-serif;
 		font-size: var(--font-xxl);
 		line-height: 2rem;
 	}
