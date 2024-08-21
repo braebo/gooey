@@ -9,11 +9,21 @@
 		U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* MONA SANS - Variable Font (wght, wdth) */
 @font-face {
-	font-family: 'mona';
+	font-family: 'Mona Sans';
 	src:
-		url('/fonts/mona_sans/mona_sans.woff2') format('woff2 supports variations'),
-		url('/fonts/mona_sans/mona_sans.woff2') format('woff2-variations');
+		url('/fonts/mona_sans/Mona-Sans.woff2') format('woff2 supports variations'),
+		url('/fonts/mona_sans/Mona-Sans.woff2') format('woff2-variations');
+	font-weight: 200 900;
+	font-stretch: 75% 125%;
+	font-display: auto;
+}
+
+/* MONASPACE - Variable Font (wght, wdth, slnt) */
+@font-face {
+	font-family: 'Monaspace';
+	src: url('/fonts/monaspace/MonaspaceNeon_wght-wdth-slnt.ttf') format('truetype');
 	font-weight: 200 900;
 	font-stretch: 75% 125%;
 	font-style: oblique 0deg 10deg;
@@ -29,9 +39,7 @@
 }
 
 :root {
-	--font-a: 'fredoka', sans-serif;
-	--font-b: 'mona', sans-serif;
-	--font-mono: 'inconsolata', monospace;
+	--font-b: 'Mona Sans', system-ui, sans-serif;
 
 	--font-xxs: 0.75rem;
 	--font-xs: 0.9rem;
