@@ -36,14 +36,16 @@
 		<meta property="twitter:description" content="A modern gui library for the web." />
 		<meta property="twitter:image" content="https://gooey.braebo.dev/meta.png" />
 
-		<!-- <style>
-			body {
-				background-color: var(--bg-a);
-			}
-		</style> -->
+		<!-- Fonts -->
+		<link rel="preload" href="%sveltekit.assets%/fonts/Fredoka/Fredoka.ttf" as="font" type="font/ttf" crossorigin />
+		<!-- prettier-ignore -->
+		<link rel="preload" href="%sveltekit.assets%/fonts/mona_sans/Mona-Sans.woff2" as="font" type="font/woff2"  crossorigin />
+		<!-- prettier-ignore -->
+		<link rel="preload" href="%sveltekit.assets%/fonts/monaspace/MonaspaceNeon_wght-wdth-slnt.ttf" as="font" type="font/ttf"  crossorigin />
 
 		%sveltekit.head%
 	</head>
+
 	<body>
 		<div id="gooey" style="display: contents">%sveltekit.body%</div>
 	</body>
