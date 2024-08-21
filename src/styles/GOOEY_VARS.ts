@@ -10,7 +10,7 @@ export const VAR_PREFIX = 'gooey' as const
 
 const GUI_VARS_UTILITY = {
 	base: {
-		'font-family': "'fredoka', sans-serif",
+		'font-family': "'Fredoka', sans-serif",
 		'font-size': 'clamp(0.88rem, 3vw, 1rem)',
 		'shadow-lightness': '0%',
 		'shadow-opacity': '0.2',
@@ -75,7 +75,7 @@ const GUI_VARS_STRUCTURED: ThemeVars = {
 			},
 		},
 		controller: {
-			'font-family': "'inconsolata', 'Comic Mono', 'Fira Code', monospace",
+			'font-family': "'Inconsolata', 'Comic Mono', 'Fira Code', monospace",
 			'font-size': 'clamp(0.75rem, 3vw, 0.9rem)',
 			'border-radius': `var(--${VAR_PREFIX}-radius-sm)`,
 			'box-shadow': `-1px 1px 2px hsla(250, 10%, var(--${VAR_PREFIX}-shadow-lightness), calc(0.7 * var(--${VAR_PREFIX}-shadow-opacity))), -1px 2px 5px hsla(250, 10%, var(--${VAR_PREFIX}-shadow-lightness), var(--${VAR_PREFIX}-shadow-opacity))`,
