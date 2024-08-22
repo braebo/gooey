@@ -628,8 +628,8 @@ export class Draggable {
 	}
 
 	resize = () => {
+		this._log.fn('resize').debug('current position:', this.position)
 		this._recomputeBounds()
-		// this.#updateBounds()
 
 		this.moveTo(this.position) // works but doesn't preserve original position
 	}
@@ -701,6 +701,10 @@ export class Draggable {
 		}
 
 		this._emitUpdate()
+
+		this._log
+			.fn('moveTo')
+			.debug('Moved to:', this.position, { rect: this.rect, bounds: this.bounds })
 	}
 
 	update(v = this.position) {
