@@ -23,6 +23,7 @@
 			p.width = Math.round(window.innerWidth / 7)
 			return p
 		})
+
 		gooey = demoGooey(params.value)
 		ready = true
 
@@ -73,7 +74,6 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
-		height: 100%;
 
 		opacity: 0;
 
