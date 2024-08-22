@@ -293,8 +293,10 @@ export class WindowInstance {
 	resizableInstance?: Resizable
 
 	id: string
-	position = state({ x: 0, y: 0 })
 	size = state({ width: 0, height: 0 })
+	get position() {
+		return this.draggableInstance?.position
+	}
 
 	constructor(
 		public manager: WindowManager,
