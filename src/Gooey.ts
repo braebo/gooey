@@ -382,7 +382,12 @@ export class Gooey {
 	private _closedMap: PersistedValue<Record<string, boolean>>
 	private static _initialized = false
 
-	constructor(options?: Partial<GooeyOptions>) {
+	constructor(title?: Partial<GooeyOptions>, options?: Partial<GooeyOptions>)
+	constructor(options?: Partial<GooeyOptions>, never?: never)
+	constructor(
+		titleOrOptions?: string | Partial<GooeyOptions>,
+		options = {} as Partial<GooeyOptions>,
+	) {
 		//· Setup ················································································¬
 
 		if (!Gooey._initialized && globalThis.document) {
@@ -392,7 +397,15 @@ export class Gooey {
 			globalThis.document.adoptedStyleSheets.push(sheet)
 		}
 
-		const opts = deepMergeOpts([GUI_DEFAULTS, options ?? {}], {
+		const initialOptions =
+			typeof titleOrOptions === 'string'
+				? {
+						...options,
+						title: titleOrOptions,
+					}
+				: titleOrOptions
+
+		const opts = deepMergeOpts([GUI_DEFAULTS, initialOptions], {
 			concatArrays: false,
 		}) as GooeyOptions
 
@@ -521,11 +534,9 @@ export class Gooey {
 
 		this._resolveInitialPosition(reposition)
 
-		if (!!!this.opts.hidden) {
+		if (!this.opts.hidden) {
 			this._reveal()
 		}
-
-		return this
 	}
 
 	private async _reveal(): Promise<void> {
@@ -870,6 +881,22 @@ export class Gooey {
 		})
 	}
 
+	private static _parseWidth(str?: string): number | undefined {
+		if (!str) return
+
+		if (!globalThis.window) {
+			console.warn('parseCss can only be used in the browser')
+			return
+		}
+
+		const dummy = document.createElement('div')
+		dummy.style.width = str
+		document.body.appendChild(dummy)
+		const width = dummy.getBoundingClientRect().width
+		dummy.remove()
+		return width
+	}
+
 	private _createWindowManager(
 		options: Partial<GooeyOptions>,
 		storageOpts: typeof this.opts.storage,
@@ -894,10 +921,23 @@ export class Gooey {
 		if (this.opts.resizable) {
 			resizeOpts = Object.assign({}, GUI_WINDOWMANAGER_DEFAULTS.resizable)
 			resizeOpts.bounds = this.container
+
 			resizeOpts.localStorageKey =
 				storageOpts && storageOpts.key ? storageOpts.key : undefined
 			if (storageOpts && storageOpts.size === false) {
 				resizeOpts.localStorageKey = undefined
+			}
+		}
+
+		if (resizeOpts && this.opts.width) {
+			resizeOpts.initialSize = { width: this.opts.width }
+
+			// Update the min-width variable if the provided width is smaller than the default.
+			const currentMinWidth = Gooey._parseWidth(
+				this.wrapper.style.getPropertyValue('--gooey-root_min-width'),
+			)
+			if (currentMinWidth && this.opts.width < currentMinWidth) {
+				this.wrapper.style.setProperty('--gooey-root_min-width', `${this.opts.width}px`)
 			}
 		}
 
@@ -949,14 +989,32 @@ export class Gooey {
 		const ghost = this.wrapper.cloneNode(true) as HTMLElement
 		ghost.style.visibility = 'hidden'
 		this.container.prepend(ghost)
+
+		// Remove the settings folder height from the rect if it's closed.
+		if (this.elements.settingsFolder.closed.value) {
+			ghost.querySelector('.gooey-settings-folder')?.remove()
+		}
+
 		const rect = ghost.children[0].getBoundingClientRect()
 		ghost.remove()
 
 		if (typeof this.opts.position === 'string') {
+			const bounds = this.container.getBoundingClientRect()
+			if (!bounds) {
+				console.error('Invalid bounds:', this.opts.container)
+				throw new Error('Invalid container.')
+			}
+
 			const placementPosition = place(rect, this.opts.position, {
-				bounds: this.opts.container,
+				bounds,
 				margin: this.opts.margin,
 			})
+
+			if (this.elements.settingsFolder.closed.value) {
+				const settingsFolderHeight =
+					this.elements.settingsFolder.element.getBoundingClientRect().height
+				placementPosition.y += settingsFolderHeight
+			}
 
 			// Use the rect to correct the window manager's positioning when storage is off.
 			if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
