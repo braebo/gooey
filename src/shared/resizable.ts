@@ -123,6 +123,12 @@ export interface ResizableOptions {
 	 * @default false
 	 */
 	disabled: boolean
+
+	/**
+	 * If provided, the element's initial size will be set to the provided width and/or height.
+	 * @default undefined
+	 */
+	initialSize?: { width?: number; height?: number }
 }
 
 export const RESIZABLE_DEFAULTS: ResizableOptions = {
@@ -144,6 +150,7 @@ export const RESIZABLE_DEFAULTS: ResizableOptions = {
 	},
 	bounds: 'document',
 	disabled: false,
+	initialSize: undefined,
 } as const
 
 /**
@@ -218,37 +225,46 @@ export class Resizable {
 
 		this.generateStyles()
 
-		this.size = state(
-			{ width: this.node.offsetWidth, height: this.node.offsetHeight },
-			{ key: this.opts.localStorageKey },
-		)
+		let { width, height } = options?.initialSize ?? {}
 
-		//? Apply size from local storage.
 		if (this.opts.localStorageKey) {
-			const { width, height } = this.size.value
+			try {
+				// const size = this.size.value
+				let size = JSON.parse(localStorage.getItem(this.opts.localStorageKey) ?? '{}')
 
-			if (width === 0 || height === 0) {
-				this.size.set({
-					width: this.node.offsetWidth,
-					height: this.node.offsetHeight,
-				})
-			} else {
-				if (this.opts.corners.length || this.opts.sides.some(s => s.match(/left|right/))) {
-					node.style.width = width + 'px'
+				if (size) {
+					if (size.width > 0) {
+						width = size.width
+					}
+
+					if (size.height > 0) {
+						height = size.height
+					}
 				}
-
-				if (this.opts.corners.length || this.opts.sides.some(s => s.match(/top|bottom/))) {
-					node.style.height = height + 'px'
+			} catch (e) {
+				this.#log.fn('constructor').error({ e, this: this })
+				try {
+					localStorage.removeItem(this.opts.localStorageKey)
+				} catch (e) {
+					this.#log.fn('constructor').error({ e, this: this })
 				}
 			}
-
-			node.dispatchEvent(new CustomEvent('resize'))
-		} else {
-			this.size.set({
-				width: this.node.offsetWidth,
-				height: this.node.offsetHeight,
-			})
 		}
+
+		if (width && width >= 0) {
+			node.style.width = width + 'px'
+		}
+
+		if (height && height >= 0) {
+			node.style.height = height + 'px'
+		}
+
+		width ??= this.node.offsetWidth
+		height ??= this.node.offsetHeight
+
+		this.size = state({ width, height }, { key: this.opts.localStorageKey })
+
+		node.dispatchEvent(new CustomEvent('resize'))
 
 		this.createGrabbers()
 
@@ -257,11 +273,7 @@ export class Resizable {
 			return
 		}
 
-		// todo - this seems unecessary
-		// this.size.set({
-		// 	width: this.node.offsetWidth,
-		// 	height: this.node.offsetHeight,
-		// })
+		this.#log.fn('constructor').debug({ width, height, this: this })
 	}
 
 	get boundsRect() {
