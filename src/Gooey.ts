@@ -26,7 +26,6 @@ import { nanoid } from './shared/nanoid'
 import { Logger } from './shared/logger'
 import { create } from './shared/create'
 import { place } from './shared/place'
-import { isSafari } from './shared/ua'
 import { Folder } from './Folder'
 import { o } from './shared/l'
 
@@ -521,14 +520,14 @@ export class Gooey {
 			duration: 400,
 		})
 
-		// Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
-		if (isSafari()) {
-			setTimeout(() => {
-				this.folder.element.style.display = 'table'
-				this.folder.element.offsetHeight
-				this.folder.element.style.display = 'flex'
-			}, 500)
-		}
+		// // Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
+		// if (isSafari()) {
+		// 	setTimeout(() => {
+		// 		this.folder.element.style.display = 'table'
+		// 		this.folder.element.offsetHeight
+		// 		this.folder.element.style.display = 'flex'
+		// 	}, 500)
+		// }
 	}
 
 	get title(): string {
