@@ -837,12 +837,12 @@ export class Tooltip {
 
 			text-align: center;
 			font-size: var(--font-size, 0.8rem);
-			font-family: var(--font-a, 'fredoka');
+			font-family: var(--font-a, 'Fredoka');
 			letter-spacing: 1px;
 
 			text-wrap: pretty;
 			white-space: pre-wrap;
-			font-synthesis: style; /* fredoka doesn't have italics */
+			font-synthesis: style; /* Fredoka doesn't have italics */
 
 			z-index: 1000;
 			transition: opacity 0.1s;
