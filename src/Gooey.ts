@@ -36,6 +36,9 @@ type GooeyTheme = 'default' | 'flat' | 'scout' | (string & {})
 
 export interface GooeyElements {
 	root: HTMLElement
+	container: HTMLElement
+	wrapper: HTMLElement
+	settingsFolder: Folder
 }
 
 export interface GooeyOptions {
@@ -309,7 +312,7 @@ export class Gooey {
 	id = nanoid()
 	folder: Folder
 
-	declare elements: GooeyElements
+	elements: GooeyElements
 
 	/**
 	 * The initial options passed to the gooey.
@@ -328,7 +331,6 @@ export class Gooey {
 
 	wrapper!: HTMLElement
 	container!: HTMLElement
-	settingsFolder: Folder
 
 	/**
 	 * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
@@ -408,7 +410,10 @@ export class Gooey {
 			this._loadFonts()
 		}
 
+		this.elements ??= {} as GooeyElements
+
 		this.container = select(this.opts.container)[0]
+		this.elements.container = this.container
 
 		this.wrapper = create('div', {
 			classes: ['gooey-wrapper'],
@@ -417,6 +422,7 @@ export class Gooey {
 			},
 			parent: this.container,
 		})
+		this.elements.wrapper = this.wrapper
 
 		this._closedMap = persist(`${storageKey || `gooey::${this.title}`}::closed-map`, {})
 		this._closedMap
@@ -472,7 +478,7 @@ export class Gooey {
 			settingsFolderClosed = opts.settingsFolder.closed
 		}
 
-		this.settingsFolder = this.addFolder('gooey_settings_folder', {
+		this.elements.settingsFolder = this.addFolder('gooey_settings_folder', {
 			// @ts-expect-error @internal
 			_headerless: true,
 			...opts.settingsFolder,
@@ -480,14 +486,18 @@ export class Gooey {
 			saveable: false,
 			presetId: 'gooey_settings',
 		})
-		this.settingsFolder.element.classList.add('gooey-folder-alt')
+		this.elements.settingsFolder.element.classList.add(
+			'gooey-settings-folder',
+			'gooey-folder-alt',
+		)
 		updateIcon()
-		this.settingsFolder.element.style.setProperty('order', '-99') // todo - sup with this?
+		this.elements.settingsFolder.element.style.setProperty('order', '-99') // todo - sup with this?
 
 		this.themer =
-			(this.opts as GooeyOptionsInternal)._themer ?? this._createThemer(this.settingsFolder)!
+			(this.opts as GooeyOptionsInternal)._themer ??
+			this._createThemer(this.elements.settingsFolder)!
 		this.theme = this.opts.theme
-		this.presetManager = this._createPresetManager(this.settingsFolder)
+		this.presetManager = this._createPresetManager(this.elements.settingsFolder)
 
 		this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage)
 
@@ -787,7 +797,9 @@ export class Gooey {
 			innerHTML: settingsIcon,
 			tooltip: {
 				text: () => {
-					return this.settingsFolder?.closed.value ? 'Open Settings' : 'Close Settings'
+					return this.elements.settingsFolder?.closed.value
+						? 'Open Settings'
+						: 'Close Settings'
 				},
 				placement: 'right',
 				offsetX: '.5rem',
@@ -801,12 +813,12 @@ export class Gooey {
 		const updateIcon = () => {
 			this.folder.elements.toolbar.settingsButton?.classList.toggle(
 				'open',
-				!this.settingsFolder.closed.value,
+				!this.elements.settingsFolder.closed.value,
 			)
 		}
 
 		button.addEventListener('click', () => {
-			this.settingsFolder.toggle()
+			this.elements.settingsFolder.toggle()
 
 			updateIcon()
 
@@ -848,11 +860,13 @@ export class Gooey {
 
 		let dragOpts = undefined as Partial<DraggableOptions> | undefined
 		if (this.opts.draggable) {
-			dragOpts = Object.assign({}, GUI_WINDOWMANAGER_DEFAULTS.draggable)
-			dragOpts.handle = this.folder.elements.header
-			dragOpts.position = this.opts.position
-			dragOpts.localStorageKey = storageOpts && storageOpts.key ? storageOpts.key : undefined
-			dragOpts.bounds = this.container
+			dragOpts = Object.assign({}, GUI_WINDOWMANAGER_DEFAULTS.draggable, {
+				handle: this.folder.elements.header,
+				position: this.opts.position,
+				localStorageKey: storageOpts && storageOpts.key ? storageOpts.key : undefined,
+				bounds: this.container,
+			} as DraggableOptions)
+
 			if (storageOpts && storageOpts.position === false) {
 				dragOpts.localStorageKey = undefined
 			}
@@ -958,7 +972,7 @@ export class Gooey {
 			this.windowManager?.dispose()
 		}
 		this.presetManager.folder.dispose()
-		this.settingsFolder?.dispose()
+		this.elements.settingsFolder?.dispose()
 		this.folder?.dispose()
 	}
 }
