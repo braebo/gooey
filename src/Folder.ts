@@ -1136,12 +1136,17 @@ export class Folder {
 	add(title: string, initialValue: string, options?: TextInputOptions): InputText
 	add(title: string, initialValue: () => void, options?: ButtonInputOptions): InputButton
 	add(title: string, initialValue: ColorFormat, options?: ColorInputOptions): InputColor
-	add<T>(title: string, initialValue: Option<T>, options: SelectInputOptions<T>): InputSelect<T>
-	add(
-		title: string,
-		initialValue: ButtonGridArrays,
-		options?: ButtonGridInputOptions,
-	): InputButtonGrid
+	// add<T>(title: string, initialValue: Option<T>, options: SelectInputOptions<T>): InputSelect<T>
+	// prettier-ignore
+	add<T>(title: string, initialValue: LabeledOption<T>, options: SelectInputOptions<T>): InputSelect<T>
+	// prettier-ignore
+	add(title: string, initialValue: ButtonGridArrays, options?: ButtonGridInputOptions ): InputButtonGrid
+	/**
+	 * Adds an input to the folder based on typoe of the `initialValue` parameter.
+	 * @param title - The title of the input to display in the label area of the input's "row".
+	 * @param initialValue - The initial value of the input.  The type of this value will determine
+	 * the type of input created.
+	 */
 	add(title: string, initialValue: ValidInputValue, options?: InputOptions): ValidInput {
 		const opts = this._resolveOpts(title, initialValue, options)
 		const input = this._createInput(opts)
