@@ -1,18 +1,18 @@
 <script>
-	import { mobile } from '$lib/mobile.svelte'
+	import { device } from '$lib/device.svelte'
 
 	export let title = 'title'
 	export let type = 'type'
 	export let path = ''
 </script>
 
-<div class="item" class:mobile>
+<div class="item" class:mobile={device.mobile}>
 	<header>
 		<a href="#{title}"><h1 id={title}>{title}</h1></a>
 		<p class="code">{type}</p>
 	</header>
 
-	<div class="description" class:mobile>
+	<div class="description" class:mobile={device.mobile}>
 		<slot name="description" />
 	</div>
 
