@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { OnMount, scrollY } from 'fractils'
 	import { fly } from 'svelte/transition'
+	import { OnMount } from 'fractils'
 
 	export let showMenu = false
 
@@ -10,15 +10,12 @@
 		intro = false
 		showMenu = !showMenu
 	}
-
-	$: scrolled = $scrollY > 100
 </script>
 
 <div
 	class="burger"
 	role="button"
 	tabindex="0"
-	class:scrolled
 	class:showMenu
 	on:keypress={handleClick}
 	out:fly|global={{ x: 75 }}
@@ -75,8 +72,8 @@
 	.burger {
 		position: fixed;
 		z-index: 30;
-		top: 0.5rem;
-		right: 1rem;
+		bottom: 0.5rem;
+		left: 1rem;
 
 		width: 50px;
 		height: 50px;
@@ -89,10 +86,6 @@
 
 		cursor: pointer;
 		transition: box-shadow 0.2s;
-
-		&.scrolled {
-			box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
-		}
 	}
 
 	.Patty {

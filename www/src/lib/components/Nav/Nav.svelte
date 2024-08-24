@@ -1,22 +1,33 @@
 <script lang="ts">
 	import type { Branch } from '$lib/utils/tree'
 
-	import { clickOutside } from '$lib/utils/clickOutside'
+	// import { clickOutside } from '$lib/utils/clickOutside'
 	import { isActive } from '$lib/utils/isActive'
-	import Burger from './Mobile/Burger.svelte'
+	// import Burger from './Mobile/Burger.svelte'
+	import { device } from '$lib/device.svelte'
 	import { fly } from 'svelte/transition'
 	import { Tree } from '$lib/utils/tree'
 	import { page } from '$app/stores'
-	import { mobile } from 'fractils'
+	// import { onMount } from 'svelte'
+	// import Mobile from './Mobile/Mobile.svelte'
 
 	const { absolute = true } = $props()
 
-	const routes = $page.data.routes as string[]
+	// let overlay = $state<HTMLDivElement>()
 
-	const tree = new Tree(routes)
-	const links = tree.root.children!
+	const links = new Tree($page.data.routes as string[]).root.children!
 
-	let showMenu = $state(false)
+	// let showMenu = $state(false)
+
+	//! todo - DELETE ME
+	// showMenu = true
+
+	// onMount(() => {
+	// 	onMount(() => {
+	// 		overlay?.remove()
+	// 		document.body.appendChild(overlay!)
+	// 	})
+	// })
 
 	{
 		// import { Gooey } from '../../../../../src'
@@ -46,14 +57,20 @@
 	}
 </script>
 
-{#if $mobile}
+<!-- {#if device.mobile}
 	<div class="burger" use:clickOutside={{ whitelist: ['wrapper'] }} onoutclick={() => (showMenu = false)}>
 		<Burger bind:showMenu />
 	</div>
-{/if}
+{/if} -->
 
-{#if !$mobile || showMenu}
-	<nav class:absolute>
+<!-- {#if !$mobile || showMenu} -->
+<!-- {#if !device.mobile || showMenu} -->
+<!-- {#if device.mobile}
+	<div class="overlay" bind:this={overlay}></div>
+	<Mobile {links} />
+{/if} -->
+{#if !device.mobile}
+	<nav class:absolute class:mobile={device.mobile}>
 		<ul>
 			{#each links ?? [] as link, i (link.name)}
 				<div class="li" in:fly={{ y: -10 - 5 * i }} style:view-transition-name="li-{link.name}">
@@ -135,6 +152,9 @@
 		top: 0;
 		bottom: 0;
 		left: 0;
+
+		// transform: translateX(0);
+		// transition: 0.5s cubic-bezier(0, 0.82, 0, 1.08);
 	}
 
 	ul {
@@ -174,11 +194,6 @@
 		}
 	}
 
-	.depth-0 {
-		text-transform: uppercase;
-		font-size: var(--font-sm);
-	}
-
 	a {
 		min-width: 5rem;
 		display: flex;
@@ -189,7 +204,7 @@
 
 		color: currentColor;
 
-		font-family: fredoka;
+		font-family: Fredoka;
 		text-decoration: none;
 		letter-spacing: 1px;
 		font-variation-settings:
@@ -202,6 +217,8 @@
 
 	a.depth-0 {
 		letter-spacing: 2.75px;
+		text-transform: uppercase;
+		font-size: var(--font-sm);
 	}
 
 	a:hover {
@@ -224,4 +241,33 @@
 				'wdth' 94.66;
 		}
 	}
+
+	// nav.absolute.mobile {
+	// 	// transform: translateX(-100%);
+	// 	position: fixed;
+	// 	top: 0;
+	// 	bottom: 0;
+	// 	left: 0;
+	// 	right: 0;
+	// 	margin: auto;
+	// 	width: 20rem;
+	// 	outline: 1px solid red;
+	// 	height: 20rem;
+	// 	// transform: translate(100%, 100%);
+	// 	z-index: 100;
+
+	// 	a {
+	// 		font-size: var(--font-lg);
+	// 	}
+	// }
+
+	// .overlay {
+	// 	position: fixed;
+	// 	inset: 0;
+	// 	background: var(--bg-a);
+	// 	opacity: 0.75;
+	// 	z-index: 99;
+	// 	backdrop-filter: blur(10px);
+	// 	-webkit-backdrop-filter: blur(10px);
+	// }
 </style>
