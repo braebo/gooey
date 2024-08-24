@@ -98,6 +98,11 @@
 		close?: () => void
 		minimize?: () => void
 		maximize?: () => void
+		/**
+		 * Hides the header element when `false`.
+		 * @default 'wow'
+		 */
+		headless?: boolean
 	} & (
 		| {
 				/**
@@ -133,9 +138,7 @@
 		copyButton = true,
 		collapsed: _collapsed = false,
 		pretty = false,
-		close = () => {},
-		minimize = () => {},
-		maximize = () => {},
+		headless = false,
 	}: Boilerplate = $props()
 
 	let text = $state(_text ?? '')
@@ -183,35 +186,7 @@
 <!-- invisible plain text version for screen readers -->
 <div class="sr-only" aria-label={`code snippet titled ${title}`}>{text}</div>
 
-<div aria-hidden="true" class="code-window">
-	<div class="nav" aria-hidden="true">
-		<div class="dots">
-			<button
-				class="dot red"
-				onclick={() => {
-					collapsed = true
-					close()
-				}}
-			/>
-			<button
-				class="dot yellow"
-				onclick={() => {
-					collapsed = true
-					minimize()
-				}}
-			/>
-			<button
-				class="dot green"
-				onclick={() => {
-					collapsed = false
-					maximize()
-				}}
-			/>
-		</div>
-
-		{#if title}
-			<div class="title">{title}</div>
-		{/if}
+	<div class="nav" class:headless>
 	</div>
 
 	<div class="codeblock" class:collapsed>
@@ -239,5 +214,9 @@
 		overflow: hidden;
 		width: 1px;
 		height: 1px;
+	}
+
+	.headless {
+		display: none;
 	}
 </style>
