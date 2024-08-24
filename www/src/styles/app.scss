@@ -4,8 +4,6 @@
 @import './inputs.scss';
 @import './elements.scss';
 
-$mobile: 900px;
-
 ::view-transition-new(*) {
 	animation-duration: 0.15s;
 }
@@ -25,14 +23,15 @@ $mobile: 900px;
 :root {
 	view-transition-name: none;
 
-	--mobile: #{$mobile};
+	--mobile: 1000px;
 
 	--radius-sm: 0.1875rem;
 	--radius: 0.3125rem;
 	--radius-md: 0.4375rem;
 	--radius-lg: 0.625rem;
 
-	--page-width: clamp(400px, 100%, min(900px, 100vw));
+	// --page-width: clamp(400px, 100%, min(1100px, 100vw));
+	--page-width: clamp(400px, 100%, min(1200px, 100vw));
 
 	--padding-lg: 1.5rem;
 	--padding-md: 1rem;

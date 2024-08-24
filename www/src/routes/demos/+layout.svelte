@@ -1,16 +1,37 @@
 <script>
 	import Nav from '$lib/components/Nav/Nav.svelte'
+
+	const { children } = $props()
 </script>
 
 <div class="sidebar-background"></div>
 
-<div class="demo-page">
-	<Nav absolute />
+<div class="sidebar">
+	<Nav />
+</div>
 
-	<slot />
+<div class="demo-page">
+	{@render children?.()}
 </div>
 
 <style>
+	.sidebar {
+		position: fixed;
+		left: 0;
+		width: 13rem;
+		z-index: 3;
+	}
+
+	.sidebar-background {
+		transition: 1s cubic-bezier(0, 0.82, 0, 1.08);
+	}
+
+	@media (width < 900px) {
+		.sidebar-background {
+			width: 0%;
+		}
+	}
+
 	.demo-page {
 		display: flex;
 		min-height: 100vh;
