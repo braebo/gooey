@@ -3,22 +3,30 @@
 </script>
 
 <script lang="ts">
+	import { onMount } from 'svelte'
+
+	import { Tooltip } from '../../../../src'
 	import { fly } from 'svelte/transition'
 
 	let {
 		text,
 		style = '',
-		phase = $bindable<Phase>('idle'),
+		phase = $bindable('idle'),
+		blur = $bindable(false),
 	}: {
 		text: string
 		style?: string
-		phase: Phase
+		phase?: Phase
+		blur?: boolean
 	} = $props()
 
 	let btn: HTMLButtonElement
 
 	let active = $derived(phase === 'active')
 	let outro = $derived(phase === 'outro')
+	let animating = $derived(active || outro)
+	let tooltipText = $derived(animating ? 'copied!' : 'copy')
+	let tooltip = $state<Tooltip>()
 
 	let cooldown: ReturnType<typeof setTimeout>
 	let outroCooldown: ReturnType<typeof setTimeout>
@@ -50,12 +58,19 @@
 			}, 500)
 		}, 1250)
 	}
+
+	onMount(() => {
+		tooltip = new Tooltip(btn, {
+			text: () => tooltipText,
+		})
+	})
 </script>
 
 <button
 	class="copy {phase}"
 	class:active
 	class:outro
+	class:blur
 	{style}
 	title="copy to clipboard"
 	transition:fly
@@ -110,7 +125,8 @@
 
 		border-radius: 0.2rem;
 		outline: 1px solid transparent;
-		color: var(--bg-d);
+		color: var(--bg-c);
+		color: color-mix(in lch, var(--bg-b), var(--bg-c) 20%);
 
 		line-height: 1;
 		height: 1rem;
@@ -164,7 +180,7 @@
 	$quintInOut: cubic-bezier(0.86, 0, 0.07, 1);
 	$quartInOut: cubic-bezier(0.77, 0, 0.175, 1);
 	button.copy {
-		&:not(.active, .outro) {
+		&.blur:not(.active, .outro) {
 			backdrop-filter: blur(0.35rem);
 		}
 
