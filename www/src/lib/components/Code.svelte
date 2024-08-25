@@ -51,8 +51,10 @@
 
 <script lang="ts">
 	import type { LanguageRegistration, ThemeInput } from 'shiki'
-
 	import type { ValidLanguage } from '../utils/highlight'
+
+	// import { ShikiMagicMove } from 'shiki-magic-move/svelte'
+	// import 'shiki-magic-move/dist/style.css'
 	import Copy from './Copy.svelte'
 	import { DEV } from 'esm-env'
 	import './code.scss'
@@ -103,6 +105,7 @@
 		 * @default 'wow'
 		 */
 		headless?: boolean
+		tabs?: { text: string; onclick?: (text: string) => void }[]
 	} & (
 		| {
 				/**
@@ -130,7 +133,7 @@
 
 	let {
 		ssr = false,
-		text: _text = '',
+		text = $bindable(''),
 		highlightedText: _highlightedText = '',
 		title = 'code',
 		lang = 'json',
@@ -139,13 +142,15 @@
 		collapsed: _collapsed = false,
 		pretty = false,
 		headless = false,
+		tabs = [],
 	}: Boilerplate = $props()
 
-	let text = $state(_text ?? '')
+	// let text = $state(_text ?? '')
 	let highlightedText = $state(_highlightedText ?? (ssr ? text : sanitize(text ?? '')))
 	const alreadyHighlighted = highlightedText === text
 	let collapsed = $state(_collapsed)
 	let highlight: typeof import('../utils/highlight').highlight | undefined = undefined
+	// $inspect('highlightedText', '\n', new DOMParser().parseFromString(highlightedText, 'text/html').documentElement)
 
 	$effect(() => {
 		if (alreadyHighlighted || ssr) return
@@ -186,7 +191,13 @@
 <!-- invisible plain text version for screen readers -->
 <div class="sr-only" aria-label={`code snippet titled ${title}`}>{text}</div>
 
+<div class="code-window">
 	<div class="nav" class:headless>
+		{#each tabs as t}
+			<button class="tab" onclick={() => t.onclick?.(t.text)}>
+				{t.text}
+			</button>
+		{/each}
 	</div>
 
 	<div class="codeblock" class:collapsed>
