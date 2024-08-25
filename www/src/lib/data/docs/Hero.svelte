@@ -13,16 +13,13 @@
 
 	<div class="br-sm"></div>
 
-	<p class="description">A modern gui library for the web.</p>
+	<p class="description">gui library for the web</p>
 
 	<br />
 
 	<div class="install-wrapper" onpointerover={() => (hovering = true)} onpointerout={() => (hovering = false)}>
 		<code class="install">
-			<span style:color="var(--fg-c)">npm i</span>
-			&nbsp;
-			<span style="color:var(--fg-e)">-D</span>
-			&nbsp;
+			npm install &NoBreak;
 			<div class="gooey">gooey</div>
 		</code>
 
@@ -68,6 +65,7 @@
 		letter-spacing: 0.3px;
 		word-spacing: 2px;
 		text-wrap: balance;
+		white-space: nowrap;
 	}
 
 	.install-wrapper {
@@ -138,6 +136,7 @@
 	.gooey {
 		display: inline-block;
 		color: var(--theme-a);
+		transform: translateY(-0.1rem);
 	}
 
 	.install-wrapper:hover .copy {

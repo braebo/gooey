@@ -9,7 +9,8 @@ $max-height: 80vh;
 
 :root[theme='light'] {
 	.code-window {
-		background: color-mix(in lch, var(--dark-d), transparent 10%);
+		// background: color-mix(in lch, color-mix(in lch, var(--dark-c), var(--dark-d)), transparent 10%);
+		background: color-mix(in lch, color-mix(in lch, var(--dark-c), var(--dark-d)), transparent 0%);
 	}
 }
 

@@ -1,0 +1,143 @@
+.docs-page {
+	container-type: inline-size;
+	container-name: docs-page;
+
+	display: flex;
+	flex-direction: column;
+
+	width: var(--page-width);
+	max-width: calc(100% - 2rem);
+	margin: 0 auto;
+
+	.row {
+		display: flex;
+		align-items: center;
+	}
+
+	.col {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	section.section {
+		box-sizing: border-box;
+		padding: 0.5rem 2rem 1rem;
+		width: 100%;
+
+		.card {
+			padding: 0 var(--padding-lg);
+			background: var(--primary);
+			border-radius: var(--radius);
+		}
+	}
+
+	code:not(p code) {
+		color: var(--fg-c);
+		contain: content;
+		font-size: var(--font-sm);
+		white-space: '';
+		height: fit-content;
+	}
+
+	p code {
+		padding: 0.1rem 0.5rem;
+		background: color-mix(in hsl, var(--bg-b), var(--bg-c));
+		color: var(--fg-a);
+	}
+
+	.gooey {
+		color: var(--theme-a);
+		font-family: var(--font-a);
+		font-variation-settings: 'wght' 500;
+	}
+
+	p .gooey {
+		position: relative;
+		display: inline-block;
+		transform: translateY(-0.1rem) rotate(-1deg) skew(-1deg) scale(1.1);
+		padding-right: 0.1rem;
+	}
+
+	.example {
+		border: 1px solid var(--bg-b);
+		contain: content;
+
+		display: flex;
+		align-items: center;
+		border-radius: var(--radius-md);
+		overflow: hidden;
+
+		min-height: 10rem;
+
+		.code-window {
+			--code-height: 100%;
+			--font-size: var(--font-sm);
+			--line-height: 1.5rem;
+		}
+		.code-window,
+		.code-window pre,
+		.code-window code {
+			border-radius: 0;
+			// font-family: var(--font-mono);
+			// font-family: 'Inconsolata', 'Monaspace Neon', monospace;
+			font-family: 'Monaspace', 'Inconsolata', monospace;
+			font-variation-settings: 'wght' 300;
+		}
+	}
+
+	@media screen and (width < 1000px) {
+		.example {
+			flex-direction: column;
+			min-height: 100%;
+		}
+	}
+
+	.description.em p {
+		font-size: var(--font-xs);
+		// font-style: italic;
+		// font-variation-settings: 'wght' 300, 'ital' 1, 'slnt' 23deg;
+		font-style: oblique 20deg;
+	}
+}
+
+.sidebar-background {
+	view-transition-name: sidebar-background;
+
+	position: relative;
+	left: 0;
+	top: 0;
+
+	min-height: 100%;
+	width: 13rem;
+
+	background: var(--bg-a);
+	z-index: 1;
+
+	transform: translateX(-100%);
+	animation: slide 0.3s cubic-bezier(0, 0.82, 0, 1.08) forwards;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 0.2rem;
+		height: 100%;
+		background: inherit;
+		background-image: linear-gradient(in lab to right, transparent, var(--bg-b) 200%);
+		z-index: 2;
+	}
+}
+
+// @media (width < 900px) {
+// 	.sidebar-background {
+// 		transform: translateX(-100%);
+// 	}
+// }
+
+@keyframes slide {
+	to {
+		transform: translateX(0);
+	}
+}
