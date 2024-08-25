@@ -39,7 +39,7 @@ $mobile: 900px;
 	--padding: 0.75rem;
 	--padding-sm: 0.5rem;
 
-	--shadow-lightness: 0.8;
+	--shadow-lightness: 0.5;
 
 	--shadow-sm: 0rem 0.0313rem 0.0469rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
 		0rem 0.125rem 0.0938rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
@@ -55,15 +55,15 @@ $mobile: 900px;
 		0rem 0.625rem 0.625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.09)),
 		0rem 0.625rem 1.25rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1));
 
-	--shadow-lg: 0rem 0.078rem 0.0625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.07)),
-		0rem 0.15rem 0.15rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.08)),
-		0rem 0.28rem 0.3125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.09)),
+	--shadow-lg: 0rem 0.078rem 0.0625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.06)),
+		0rem 0.15rem 0.15rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.07)),
+		0rem 0.28rem 0.3125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.08)),
 		0rem 0.3125rem 0.5rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
-		0rem 0.625rem 0.9375rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.12)),
-		0rem 1.25rem 1.875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.14));
+		0rem 0.625rem 0.9375rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
+		0rem 1.25rem 1.875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.01));
 
 	&[theme='light'] {
-		--shadow-lightness: 0.3;
+		--shadow-lightness: 0.33;
 	}
 }
 
