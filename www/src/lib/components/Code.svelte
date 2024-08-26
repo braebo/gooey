@@ -156,14 +156,14 @@
 		if (alreadyHighlighted || ssr) return
 
 		if (!highlight) {
-			import('../utils/highlight').then((m) => {
+			import('../utils/highlight').then(m => {
 				highlight = m.highlight
-				highlight(text ?? '', { lang, theme }).then((t) => {
+				highlight(text ?? '', { lang, theme }).then(t => {
 					highlightedText = pretty ? t.replaceAll(/"/g, '') : t
 				})
 			})
 		} else {
-			highlight(text ?? '', { lang, theme }).then((t) => {
+			highlight(text ?? '', { lang, theme }).then(t => {
 				highlightedText = pretty ? t.replaceAll(/"/g, '') : t
 			})
 		}
