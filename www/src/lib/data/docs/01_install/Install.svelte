@@ -20,8 +20,8 @@
 			or
 
 			<a bind:this={jsrEl} id="install_jsr" href="https://jsr.io/@braebo/gooey" target="_blank" rel="noopener">
-				<code>JSR</code>.
-			</a>
+				<code>JSR</code>
+			</a>.
 		</p>
 	</div>
 

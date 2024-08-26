@@ -60,7 +60,7 @@
 		} else {
 			top = targetRect.top - elRect.top
 			top -= iconRect.height / 4
-			top -= 2
+			top += 2
 
 			left = targetRect.left + targetRect.width - elRect.left
 			left += 10
