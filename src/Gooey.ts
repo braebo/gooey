@@ -455,7 +455,7 @@ export class Gooey {
 		})
 		this.elements.wrapper = this.wrapper
 
-		this._closedMap = persist(`${storageKey || `gooey::${this.title}`}::closed-map`, {})
+		this._closedMap = persist(`${storageKey || `gooey::${this.opts.title}`}::closed-map`, {})
 		this._closedMap
 
 		this.folder = new Folder({
@@ -602,10 +602,10 @@ export class Gooey {
 	}
 
 	/**
-	 * Alias for the {@link container} element.
+	 * The root {@link folder} {@link Folder.element|element}.
 	 */
 	get element(): HTMLElement {
-		return this.container
+		return this.folder.element
 	}
 
 	public addFolder(title: string, options?: Partial<FolderOptions>) {
