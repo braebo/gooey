@@ -144,46 +144,48 @@ class Input {
                 text: !this.opts.resettable
                     ? undefined
                     : () => {
-                        let initialValue = this.initialValue;
-                        if (typeof initialValue === 'object') {
+                        let text = this.initialValue;
+                        if (typeof text === 'object') {
                             switch (this.__type) {
                                 case 'InputSelect': {
                                     if ('labelKey' in this.opts) {
-                                        initialValue =
-                                            initialValue[this.opts.labelKey];
+                                        text = text[this.opts.labelKey];
+                                        break;
+                                    }
+                                    if ('label' in text) {
+                                        text = text.label;
                                         break;
                                     }
                                 }
                                 case 'InputColor': {
-                                    if ('hex' in initialValue) {
-                                        initialValue =
-                                            initialValue[this.mode];
-                                        if (CSS.supports('color', initialValue)) {
-                                            return `Reset · <em style="color:${initialValue}">${initialValue}</em>`;
+                                    if ('hex' in text) {
+                                        text = text[this.mode];
+                                        if (CSS.supports('color', text)) {
+                                            return `Reset · <em style="color:${text}">${text}</em>`;
                                         }
                                         break;
                                     }
                                 }
                                 default: {
                                     try {
-                                        initialValue = JSON.stringify(initialValue);
+                                        text = JSON.stringify(text);
                                     }
                                     catch (e) {
-                                        console.error(e, { initialValue, this: this });
+                                        console.error(e, { text, this: this });
                                         throw new Error(e);
                                     }
                                 }
                             }
                         }
-                        else if (typeof initialValue === 'boolean') {
+                        else if (typeof text === 'boolean') {
                             if (this.__type === 'InputSwitch') {
-                                let text = `${initialValue}`;
+                                text = `${text}`;
                                 text =
                                     this.opts.labels?.[text].state ?? text;
                                 return `Reset · <em>${text}</em>`;
                             }
                         }
-                        return `Reset · <em style="opacity:0.5;">${initialValue}</em>`;
+                        return `Reset · <em style="opacity:0.5;">${text}</em>`;
                     },
                 placement: 'left',
                 delay: 0,

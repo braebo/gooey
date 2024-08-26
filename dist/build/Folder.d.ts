@@ -1,6 +1,6 @@
 import type { InputOptions, InputPreset, ValidInput } from './inputs/Input';
 import type { ColorFormat } from './shared/color/types/colorFormat';
-import type { Option } from './controllers/Select';
+import type { LabeledOption, Option } from './controllers/Select';
 import type { Tooltip } from './shared/Tooltip';
 import { InputSwitch, type SwitchInputOptions } from './inputs/InputSwitch';
 import { InputButton, type ButtonInputOptions } from './inputs/InputButton';
@@ -435,7 +435,7 @@ export declare class Folder {
     add(title: string, initialValue: string, options?: TextInputOptions): InputText;
     add(title: string, initialValue: () => void, options?: ButtonInputOptions): InputButton;
     add(title: string, initialValue: ColorFormat, options?: ColorInputOptions): InputColor;
-    add<T>(title: string, initialValue: Option<T>, options: SelectInputOptions<T>): InputSelect<T>;
+    add<T>(title: string, initialValue: LabeledOption<T>, options: SelectInputOptions<T>): InputSelect<T>;
     add(title: string, initialValue: ButtonGridArrays, options?: ButtonGridInputOptions): InputButtonGrid;
     /**
      * Binds an input to a target object and key.  The input will automatically update the target

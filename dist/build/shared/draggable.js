@@ -135,7 +135,7 @@ class Draggable {
         this._log = new Logger('draggable ' + Array.from(this.node.classList).join('.'), {
             fg: 'SkyBlue',
         });
-        this._log.fn('constructor').debug({ opts: this.opts, this: this });
+        this._log.fn('constructor').info({ opts: this.opts, this: this });
         this._rect = this.node.getBoundingClientRect();
         this._recomputeBounds = this._resolveBounds(this.opts.bounds);
         this.opts.position = this.resolvePosition(this.opts.position);
@@ -350,6 +350,7 @@ class Draggable {
         this.updateLocalStorage();
     };
     resize = () => {
+        this._log.fn('resize').info('current position:', this.position);
         this._recomputeBounds();
         // this.#updateBounds()
         this.moveTo(this.position); // works but doesn't preserve original position
@@ -361,7 +362,12 @@ class Draggable {
     moveTo(target) {
         if (this.disabled || this.disposed)
             return;
-        this._log.fn('moveTo').debug('Moving to:', target, { rect: this.rect, bounds: this.bounds });
+        this._log.fn('moveTo').info('Moving to:', target, { rect: this.rect, bounds: this.bounds });
+        //! todo - DELETE
+        if (isNaN(target.x) || isNaN(target.y)) {
+            console.error('Invalid target position:', target);
+            console.trace(target);
+        }
         if (this.bounds) {
             target.x = clamp(target.x, this.bounds.left + this.boundsDiff.x, this.bounds.right + this.boundsDiff.x - (this.rect.right - this.rect.left));
             target.y = clamp(target.y, this.bounds.top + this.boundsDiff.y, this.bounds.bottom + this.boundsDiff.y - (this.rect.bottom - this.rect.top));
@@ -402,6 +408,11 @@ class Draggable {
             }
         }
         this._emitUpdate();
+        this._log.fn('moveTo').info('Moved to:', this.position, { rect: this.rect, bounds: this.bounds });
+        if (this.position.x <= 0 || this.position.y <= 0) {
+            console.error('Invalid position:', this.position);
+            console.trace(this.position);
+        }
     }
     update(v = this.position) {
         this._log.fn('update').debug('Updating position:', v, this);

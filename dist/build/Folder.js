@@ -202,7 +202,7 @@ class Folder {
         this.element.style.setProperty('order', opts.order?.toString() ??
             `${this.parentFolder.children.length + this.parentFolder.inputs.size + 1}`);
         this.elements = this._createElements(this.element);
-        this.presetId = opts.presetId ?? this._resolvePresetId();
+        this.presetId = opts.presetId || this._resolvePresetId();
         opts.closed ??= false;
         if (typeof this.gooey.opts.storage === 'object' &&
             typeof this.gooey.opts.storage.closed === 'boolean') {
@@ -625,7 +625,7 @@ class Folder {
                 continue;
             const folderPreset = preset.children?.find(f => f.id === child.presetId);
             if (!folderPreset) {
-                console.warn(`Missing folder for preset: ${preset.title}`, {
+                console.warn(`No folder found with presetId: ${preset.id}`, {
                     child,
                     preset,
                     this: this,
@@ -699,6 +699,12 @@ class Folder {
         o.presetId ??= this._resolvePresetId([t]);
         return o;
     }
+    /**
+     * Adds an input to the folder based on typoe of the `initialValue` parameter.
+     * @param title - The title of the input to display in the label area of the input's "row".
+     * @param initialValue - The initial value of the input.  The type of this value will determine
+     * the type of input created.
+     */
     add(title, initialValue, options) {
         const opts = this._resolveOpts(title, initialValue, options);
         const input = this._createInput(opts);

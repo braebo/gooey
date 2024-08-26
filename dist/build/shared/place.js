@@ -33,34 +33,41 @@ function place(node, placement = 'top-right', options) {
         ? { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }
         : typeof bounds === 'string'
             ? select(bounds)[0]?.getBoundingClientRect()
-            : bounds ?? { x: 0, y: 0, width: 100, height: 100 };
+            : (bounds ?? { x: 0, y: 0, width: 100, height: 100 });
     if (!b)
         throw new Error('Invalid bounds: ' + bounds);
     const m = typeof margin === 'number'
         ? { x: margin, y: margin }
         : Object.assign({ x: 0, y: 0 }, margin);
+    console.log({ placement, options, bounds: b, node: rect, margin: m });
+    console.trace();
     // prettier-ignore
-    switch (placement) {
-        case ('center'):
-        case ('center-center'): return { x: b.width / 2 - rect.width / 2, y: b.height / 2 - rect.height / 2 };
-        case ('top-left'):
-        case ('left-top'): return { x: m.x, y: m.y };
-        case ('top-center'):
-        case ('center-top'): return { x: b.width / 2 - rect.width / 2, y: m.y };
-        case ('top-right'):
-        case ('right-top'): return { x: b.width - rect.width - m.x, y: m.y };
-        case ('bottom-left'):
-        case ('left-bottom'): return { x: m.x, y: b.height - rect.height - m.y };
-        case ('bottom-center'):
-        case ('center-bottom'): return { x: b.width / 2 - rect.width / 2, y: b.height - rect.height - m.y };
-        case ('bottom-right'):
-        case ('right-bottom'): return { x: b.width - rect.width - m.x, y: b.height - rect.height - m.y };
-        case ('left-center'):
-        case ('center-left'): return { x: m.x, y: b.height / 2 - rect.height / 2 };
-        case ('right-center'):
-        case ('center-right'): return { x: b.width - rect.width - m.x, y: b.height / 2 - rect.height / 2 };
-        default: throw new Error('Invalid placement: ' + placement);
-    }
+    const resolvePlacement = (placement) => {
+        switch (placement) {
+            case ('center'):
+            case ('center-center'): return { x: b.width / 2 - rect.width / 2, y: b.height / 2 - rect.height / 2 };
+            case ('top-left'):
+            case ('left-top'): return { x: m.x, y: m.y };
+            case ('top-center'):
+            case ('center-top'): return { x: b.width / 2 - rect.width / 2, y: m.y };
+            case ('top-right'):
+            case ('right-top'): return { x: b.width - rect.width - m.x, y: m.y };
+            case ('bottom-left'):
+            case ('left-bottom'): return { x: m.x, y: b.height - rect.height - m.y };
+            case ('bottom-center'):
+            case ('center-bottom'): return { x: b.width / 2 - rect.width / 2, y: b.height - rect.height - m.y };
+            case ('bottom-right'):
+            case ('right-bottom'): return { x: b.width - rect.width - m.x, y: b.height - rect.height - m.y };
+            case ('left-center'):
+            case ('center-left'): return { x: m.x, y: b.height / 2 - rect.height / 2 };
+            case ('right-center'):
+            case ('center-right'): return { x: b.width - rect.width - m.x, y: b.height / 2 - rect.height / 2 };
+            default: throw new Error('Invalid placement: ' + placement);
+        }
+    };
+    const result = resolvePlacement(placement);
+    console.log({ result });
+    return result;
 }
 
 export { place };

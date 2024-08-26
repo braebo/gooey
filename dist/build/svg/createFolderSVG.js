@@ -1,5 +1,5 @@
-import { defer } from '../shared/defer.js';
 import { nanoid } from '../shared/nanoid.js';
+import { defer } from '../shared/defer.js';
 
 // import { create } from '../shared/create'
 function createFolderSvg(folder) {

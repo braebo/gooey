@@ -1,4 +1,5 @@
 import { type ElementOrSelector } from './select';
+export declare const PLACEMENTS: ["center", "center-center", "center-left", "center-right", "top-center", "top-left", "top-right", "bottom-center", "bottom-left", "bottom-right", "center-top", "center-bottom", "left-center", "left-top", "left-bottom", "right-center", "right-top", "right-bottom"];
 export type Placement = 'center' | `${TBC}-${LRC}` | `${LRC}-${TBC}`;
 type LeftRight = 'left' | 'right';
 type LRC = LeftRight | 'center';

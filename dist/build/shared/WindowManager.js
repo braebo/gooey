@@ -47,7 +47,7 @@ class WindowManager {
         options ??= WINDOWMANAGER_DEFAULTS;
         options.__type = 'WindowManagerOptions';
         this.opts = Object.freeze(this._resolveOptions(options));
-        this._log.fn('constructor').debug({ opts: this.opts, options, this: this });
+        this._log.fn('constructor').info({ opts: this.opts, options, this: this });
     }
     add = (node, options) => {
         const instance = new WindowInstance(this, node, options);
@@ -159,8 +159,11 @@ class WindowInstance {
     draggableInstance;
     resizableInstance;
     id;
-    position = state({ x: 0, y: 0 });
+    // position = state({ x: 0, y: 0 })
     size = state({ width: 0, height: 0 });
+    get position() {
+        return this.draggableInstance?.position;
+    }
     constructor(manager, node, options) {
         this.manager = manager;
         this.node = node;
@@ -170,6 +173,7 @@ class WindowInstance {
         const opts = manager._resolveOptions(options, manager.opts);
         const dragOpts = opts.draggable;
         const resizeOpts = opts.resizable;
+        // console.warn({ options, opts, dragOpts, resizeOpts })
         // Respect disabled localStorage for individual windows independently of the manager.
         if (options?.localStorage === false) {
             if (dragOpts)

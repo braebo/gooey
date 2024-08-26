@@ -140,11 +140,30 @@ export interface GooeyOptionsInternal extends GooeyOptions {
      */
     _themer?: Themer;
 }
+/**
+ * Defines which properties to persist in localStorage, and under which
+ * key.
+ * @example
+ * // defaults:
+ * {
+ *   key: 'gooey',
+ *   closed: true,
+ *   theme: true,
+ *   presets: true,
+ *   position: false,
+ *   size: false,
+ * }
+ */
 export interface GooeyStorageOptions {
     __type: 'GooeyStorageOptions';
     /**
      * Prefix to use for localStorage keys.
-     * @default `"fractils::gooey"`
+     *
+     * @remarks The provided string is prepended to the gooey's title, lowercased, and hyphens
+     * are replaced with spaces.  For example, a gooey titled `"Foo Bar"` is stored as
+     * `"foo-bar::gooey"`.
+     *
+     * @default "default"
      */
     key: string;
     /**
@@ -159,12 +178,12 @@ export interface GooeyStorageOptions {
     theme?: boolean;
     /**
      * Whether to persist the gooey's position.
-     * @default true
+     * @default false
      */
     position?: boolean;
     /**
      * Whether to persist the gooey's size.
-     * @default true
+     * @default false
      */
     size?: boolean;
     /**
@@ -237,9 +256,7 @@ declare const FORWARDED_METHODS: ["on", "add", "addMany", "addButtonGrid", "addS
 export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {
 }
 /**
- * The root Gooey instance.  This is the entry point for creating
- * a gooey.  You can create multiple root gooeys, but each gooey
- * can only have one root.
+ * A customizable GUI toolkit for quickly creating interactive controls panels.
  */
 export declare class Gooey {
     __type: "Gooey";
@@ -291,7 +308,8 @@ export declare class Gooey {
     private _log;
     private _closedMap;
     private static _initialized;
-    constructor(options?: Partial<GooeyOptions>);
+    constructor(title?: Partial<GooeyOptions>, options?: Partial<GooeyOptions>);
+    constructor(options?: Partial<GooeyOptions>, never?: never);
     private _reveal;
     get title(): string;
     set title(v: string);

@@ -83,7 +83,7 @@ let Tooltip = class Tooltip {
             this._evm.listen(node, 'pointermove', e => this._updatePosition(e));
             this._evm.listen(node, 'click', () => {
                 if (opts.hideOnClick)
-                    this.hide();
+                    this.hide(true);
                 else
                     this.refresh();
             });
@@ -416,20 +416,20 @@ let Tooltip = class Tooltip {
             // prettier-ignore
             switch (placement) {
                 case 'top':
-                    p.x = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
-                    p.y = anchor.y.top + window.scrollY - tooltipRect.height - BASE_OFFSET;
+                    p.x = anchor.x.left + anchor.x.width / 2 - tooltipRect.width / 2;
+                    p.y = anchor.y.top - tooltipRect.height - BASE_OFFSET;
                     break;
                 case 'bottom':
-                    p.x = anchor.x.left + window.scrollX + anchor.x.width / 2 - tooltipRect.width / 2;
-                    p.y = anchor.y.top + window.scrollY + anchor.y.height + BASE_OFFSET;
+                    p.x = anchor.x.left + anchor.x.width / 2 - tooltipRect.width / 2;
+                    p.y = anchor.y.top + anchor.y.height + BASE_OFFSET;
                     break;
                 case 'left':
-                    p.x = anchor.x.left + window.scrollX - tooltipRect.width - BASE_OFFSET;
-                    p.y = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
+                    p.x = anchor.x.left - tooltipRect.width - BASE_OFFSET;
+                    p.y = anchor.y.top + anchor.y.height / 2 - tooltipRect.height / 2;
                     break;
                 case 'right':
-                    p.x = anchor.x.left + window.scrollX + anchor.x.width + BASE_OFFSET;
-                    p.y = anchor.y.top + window.scrollY + anchor.y.height / 2 - tooltipRect.height / 2;
+                    p.x = anchor.x.left + anchor.x.width + BASE_OFFSET;
+                    p.y = anchor.y.top + anchor.y.height / 2 - tooltipRect.height / 2;
                     break;
             }
             return p;
@@ -589,7 +589,7 @@ let Tooltip = class Tooltip {
         el.removeEventListener('transitionend', timeout);
         el.addEventListener('transitionend', timeout);
         if (!this._watchingFinished) {
-            this.node?.style.setProperty('transition-duration', '0s');
+            this.element?.style.setProperty('transition-duration', '0s');
             tickLoop(() => {
                 if (!this._watchingFinished) {
                     this._updatePosition();

@@ -137,14 +137,14 @@ export declare class WindowInstance {
     draggableInstance?: Draggable;
     resizableInstance?: Resizable;
     id: string;
-    position: import("./state").PrimitiveState<{
-        x: number;
-        y: number;
-    }>;
     size: import("./state").PrimitiveState<{
         width: number;
         height: number;
     }>;
+    get position(): {
+        x: number;
+        y: number;
+    } | undefined;
     constructor(manager: WindowManager, node: HTMLElement, options?: WindowInstanceOptions);
     dispose(): void;
 }

@@ -18,7 +18,7 @@ const localStorageStore = (key, initial, options) => {
     let currentValue = initial;
     const verbose = !!options?.verbose;
     const { set: setStore, ...readableStore } = writable(initial, () => {
-        if (options?.browserOverride || typeof globalThis.window !== 'undefined') {
+        if (options?.browserOverride || !!globalThis.localStorage) {
             getAndSetFromLocalStorage();
             const updateFromStorageEvents = (event) => {
                 if (event.key === key)
@@ -63,7 +63,7 @@ const localStorageStore = (key, initial, options) => {
     let setItem = (value) => {
         try {
             value = serialize(value);
-            localStorage.setItem(key, value);
+            globalThis.localStorage?.setItem(key, value);
         }
         catch (error) {
             if (verbose)
@@ -93,7 +93,13 @@ const localStorageStore = (key, initial, options) => {
     }
     const getAndSetFromLocalStorage = () => {
         let localValue = null;
-        localValue = localStorage.getItem(key) ?? null;
+        try {
+            localValue = globalThis.localStorage?.getItem(key) ?? null;
+        }
+        catch (error) {
+            if (verbose)
+                console.error(`Failed to get localStorageStore value:`, { error, key });
+        }
         if (localValue === null) {
             set(initial);
         }

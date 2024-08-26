@@ -24,12 +24,12 @@ import { o } from './shared/l.js';
 //· Constants ····················································································¬
 const GUI_STORAGE_DEFAULTS = {
     __type: 'GooeyStorageOptions',
-    key: 'gooey',
+    key: 'default',
     closed: true,
     theme: true,
     presets: true,
-    position: true,
-    size: true,
+    position: false,
+    size: false,
 };
 const GUI_WINDOWMANAGER_DEFAULTS = {
     __type: 'WindowManagerOptions',
@@ -80,9 +80,7 @@ const GUI_DEFAULTS = {
 // prettier-ignore
 const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor', 'open', 'close', 'show', 'hide', 'toggle', 'toggleHidden'];
 /**
- * The root Gooey instance.  This is the entry point for creating
- * a gooey.  You can create multiple root gooeys, but each gooey
- * can only have one root.
+ * A customizable GUI toolkit for quickly creating interactive controls panels.
  */
 class Gooey {
     __type = 'Gooey';
@@ -132,7 +130,7 @@ class Gooey {
     _log;
     _closedMap;
     static _initialized = false;
-    constructor(options) {
+    constructor(titleOrOptions, options = {}) {
         //· Setup ················································································¬
         if (!Gooey._initialized && globalThis.document) {
             Gooey._initialized = true;
@@ -140,7 +138,13 @@ class Gooey {
             sheet.replaceSync(style);
             globalThis.document.adoptedStyleSheets.push(sheet);
         }
-        const opts = deepMergeOpts([GUI_DEFAULTS, options ?? {}], {
+        const initialOptions = typeof titleOrOptions === 'string'
+            ? {
+                ...options,
+                title: titleOrOptions,
+            }
+            : titleOrOptions;
+        const opts = deepMergeOpts([GUI_DEFAULTS, initialOptions], {
             concatArrays: false,
         });
         opts.container ??= document.body;
@@ -148,14 +152,16 @@ class Gooey {
             opts.storage = Object.assign({}, GUI_STORAGE_DEFAULTS, opts.storage);
         }
         let reposition = false;
+        let storageKey = '';
         const storageOpts = resolveOpts(opts.storage, GUI_STORAGE_DEFAULTS);
         if (!storageOpts) {
             reposition = true;
         }
         else {
+            storageKey = `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`;
             opts.storage = {
                 ...storageOpts,
-                key: `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`,
+                key: storageKey,
             };
             // When storage is on, repositioning after animating-in is disabled unless this is the
             // _very_ first page load.
@@ -165,7 +171,7 @@ class Gooey {
         }
         this.opts = opts;
         this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' });
-        this._log.fn('constructor').debug({ options, opts });
+        this._log.fn('constructor').info({ options, opts });
         if (this.opts.loadDefaultFont !== false) {
             this._loadFonts();
         }
@@ -177,7 +183,7 @@ class Gooey {
             },
             parent: this.container,
         });
-        this._closedMap = persist('gooey::closed-map', {});
+        this._closedMap = persist(`${storageKey || `gooey::${this.opts.title}`}::closed-map`, {});
         this._closedMap;
         this.folder = new Folder({
             ...this.opts,
@@ -185,6 +191,7 @@ class Gooey {
             container: this.wrapper,
             // @ts-expect-error @internal
             gooey: this,
+            presetId: this.opts.title,
         });
         // Poor-mans inheritance...
         for (const key of FORWARDED_METHODS) {
@@ -230,7 +237,7 @@ class Gooey {
             saveable: false,
             presetId: 'gooey_settings',
         });
-        this.settingsFolder.element.classList.add('gooey-folder-alt');
+        this.settingsFolder.element.classList.add('gooey-settings-folder', 'gooey-folder-alt');
         updateIcon();
         this.settingsFolder.element.style.setProperty('order', '-99'); // todo - sup with this?
         this.themer =
@@ -239,10 +246,9 @@ class Gooey {
         this.presetManager = this._createPresetManager(this.settingsFolder);
         this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage);
         this._resolveInitialPosition(reposition);
-        if (!!!this.opts.hidden) {
+        if (!this.opts.hidden) {
             this._reveal();
         }
-        return this;
     }
     async _reveal() {
         // In case dispose() was called before this resolved...
@@ -339,7 +345,7 @@ class Gooey {
      * Loads a given preset into the gooey, updating all inputs.
      */
     load(preset) {
-        this._log.fn('load').debug({ preset });
+        this._log.fn('load').info({ preset });
         // todo - this isn't working, it's being unset immediately somewhere...
         this.dirty = false;
         this._lockCommits(preset);
@@ -425,12 +431,6 @@ class Gooey {
             finalThemer = new Themer(this.folder.element, themerOptions);
         }
         const uiFolder = folder.addFolder('ui', Object.assign({}, GUI_DEFAULTS.settingsFolder.uiFolder, this.opts.settingsFolder?.uiFolder, { presetId: 'gooey_settings__ui_folder' }));
-        // // Fully desaturate the ui folder's header connector to svg.
-        // // todo - this doesn't work anymore due to the changes in `connector.update` or `animateConnector` iirc
-        // uiFolder.on('mount', () => {
-        // 	uiFolder.graphics?.connector?.svg.style.setProperty('filter', 'saturate(0.1)')
-        // 	uiFolder.graphics?.icon.style.setProperty('filter', 'saturate(0)')
-        // })
         if (folder) {
             const themeInput = uiFolder.addSelect('theme', finalThemer.themes.value, {
                 presetId: uiFolder.presetId + '__theme_select',
@@ -545,7 +545,7 @@ class Gooey {
         }, WINDOWMANAGER_DEFAULTS);
         this._log
             .fn('_createWindowManager')
-            .debug({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts });
+            .info({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts });
         const windowManager = new WindowManager({
             ...windowManagerOpts,
             draggable: dragOpts,
@@ -565,13 +565,33 @@ class Gooey {
         const ghost = this.wrapper.cloneNode(true);
         ghost.style.visibility = 'hidden';
         this.container.prepend(ghost);
+        // Remove the settings folder height from the rect if it's closed.
+        if (this.settingsFolder.closed.value) {
+            ghost.querySelector('.gooey-settings-folder')?.remove();
+            console.error('removed settings folder');
+        }
+        else {
+            console.error('settings folder is open');
+        }
         const rect = ghost.children[0].getBoundingClientRect();
         ghost.remove();
         if (typeof this.opts.position === 'string') {
+            const bounds = this.container.getBoundingClientRect();
+            if (!bounds) {
+                console.error('Invalid bounds:', this.opts.container);
+                throw new Error('Invalid container.');
+            }
             const placementPosition = place(rect, this.opts.position, {
-                bounds: this.opts.container,
+                bounds,
                 margin: this.opts.margin,
             });
+            if (this.settingsFolder.closed.value) {
+                const settingsFolderHeight = this.settingsFolder.element.getBoundingClientRect().height;
+                // console.error({ y: placementPosition.y, settingsFolderHeight })
+                placementPosition.y += settingsFolderHeight;
+                // console.error({ y: placementPosition.y, settingsFolderHeight })
+                // console.error(placementPosition)
+            }
             // Use the rect to correct the window manager's positioning when storage is off.
             if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
                 const win = this.window;
