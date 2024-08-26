@@ -645,12 +645,12 @@ export class Draggable {
 		if (this.bounds) {
 			target.x = clamp(
 				target.x,
-				this.bounds.left + this.boundsDiff.x,
+				Math.max(0, this.bounds.left + this.boundsDiff.x),
 				this.bounds.right + this.boundsDiff.x - (this.rect.right - this.rect.left),
 			)
 			target.y = clamp(
 				target.y,
-				this.bounds.top + this.boundsDiff.y,
+				Math.max(0, this.bounds.top + this.boundsDiff.y),
 				this.bounds.bottom + this.boundsDiff.y - (this.rect.bottom - this.rect.top),
 			)
 		}
