@@ -340,4 +340,13 @@
 			pointer-events: all;
 		}
 	}
+
+	@media screen and (width < 1000px) {
+		.info {
+			max-width: calc(100% - 2rem);
+			padding: 0;
+			margin: 0;
+			padding: 0.5rem;
+		}
+	}
 </style>
