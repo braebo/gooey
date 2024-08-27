@@ -689,6 +689,7 @@ export class Folder {
 		options ??= {}
 		options.title ??= title
 		this._log.fn('addFolder').debug({ options, this: this })
+
 		const defaults = Object.assign({}, INTERNAL_FOLDER_DEFAULTS, {
 			parentFolder: this,
 			depth: this._depth + 1,

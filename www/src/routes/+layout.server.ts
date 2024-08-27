@@ -14,7 +14,6 @@ export function load({ locals, depends, url }) {
 	}
 
 	const allRoutes = Object.keys(routes)
-	// const allRoutes = Object.keys(routes).filter((r) => !r.includes('/_'))
 
 	// `/docs` URI Fragments
 	const path = resolve('./src/lib/data/docs')

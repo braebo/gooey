@@ -65,7 +65,6 @@
 			height: 100%;
 			background: inherit;
 			background-image: linear-gradient(in lab to right, transparent, var(--bg-b) 200%);
-			/* background-image: linear-gradient(in lab to right, transparent, light-dark(var(--bg-d), var(--bg-b)) 200%); */
 			z-index: 2;
 		}
 	}
