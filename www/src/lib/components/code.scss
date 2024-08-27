@@ -207,8 +207,9 @@ pre.shiki code span.line {
 pre.shiki {
 	overflow-x: visible;
 	cursor: auto;
+	user-select: text;
 	::selection {
-		background: var(--fg-b);
+		background: color-mix(in lch, var(--dark-b), var(--dark-c) 20%);
 	}
 }
 
