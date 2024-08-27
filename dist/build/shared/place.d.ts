@@ -1,5 +1,4 @@
 import { type ElementOrSelector } from './select';
-export declare const PLACEMENTS: ["center", "center-center", "center-left", "center-right", "top-center", "top-left", "top-right", "bottom-center", "bottom-left", "bottom-right", "center-top", "center-bottom", "left-center", "left-top", "left-bottom", "right-center", "right-top", "right-bottom"];
 export type Placement = 'center' | `${TBC}-${LRC}` | `${LRC}-${TBC}`;
 type LeftRight = 'left' | 'right';
 type LRC = LeftRight | 'center';
@@ -11,6 +10,7 @@ type VirtualRect = Record<string, any> & {
     width: number;
     height: number;
 };
+export declare const PLACEMENTS: ["center", "center-center", "center-left", "center-right", "top-center", "top-left", "top-right", "bottom-center", "bottom-left", "bottom-right", "center-top", "center-bottom", "left-center", "left-top", "left-bottom", "right-center", "right-top", "right-bottom"];
 export type PlacementOptions = Parameters<typeof place>[2];
 /**
  * Determines the x and y position of an element relative to

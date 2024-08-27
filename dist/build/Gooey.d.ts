@@ -10,6 +10,9 @@ import { Folder } from './Folder';
 type GooeyTheme = 'default' | 'flat' | 'scout' | (string & {});
 export interface GooeyElements {
     root: HTMLElement;
+    container: HTMLElement;
+    wrapper: HTMLElement;
+    settingsFolder: Folder;
 }
 export interface GooeyOptions {
     __type: 'GooeyOptions';
@@ -200,6 +203,12 @@ export interface GooeyPreset {
     data: FolderPreset;
 }
 export declare const GUI_STORAGE_DEFAULTS: GooeyStorageOptions;
+/**
+ * The default {@link WindowManagerOptions} for a {@link Gooey}'s
+ * {@link Gooey.windowManager|window manager}.  These are handled internally via the private
+ * {@link GooeyOptionsInternal._windowManager|gooey options}.
+ * @internal
+ */
 export declare const GUI_WINDOWMANAGER_DEFAULTS: {
     readonly __type: "WindowManagerOptions";
     readonly preserveZ: false;
@@ -222,6 +231,9 @@ export declare const GUI_WINDOWMANAGER_DEFAULTS: {
         };
     };
 };
+/**
+ * The default values for {@link GooeyOptions}.
+ */
 export declare const GUI_DEFAULTS: {
     readonly __type: "GooeyOptions";
     readonly title: "gooey";
@@ -279,7 +291,6 @@ export declare class Gooey {
     dirty: boolean;
     wrapper: HTMLElement;
     container: HTMLElement;
-    settingsFolder: Folder;
     /**
      * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
      * @internal
@@ -321,7 +332,7 @@ export declare class Gooey {
     set theme(theme: GooeyTheme);
     get theme(): GooeyTheme;
     /**
-     * Alias for the {@link container} element.
+     * The root {@link folder} {@link Folder.element|element}.
      */
     get element(): HTMLElement;
     addFolder(title: string, options?: Partial<FolderOptions>): Folder;
@@ -361,6 +372,7 @@ export declare class Gooey {
     private _createThemer;
     private _createSettingsButton;
     private _createPresetManager;
+    private static _parseWidth;
     private _createWindowManager;
     private _resolveInitialPosition;
     /**

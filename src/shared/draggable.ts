@@ -642,6 +642,11 @@ export class Draggable {
 		if (this.disabled || this.disposed) return
 		this._log.fn('moveTo').debug('Moving to:', target, { rect: this.rect, bounds: this.bounds })
 
+		//! todo - Actually handle this..?
+		if (isNaN(target.x) || isNaN(target.y)) {
+			throw new Error('Invalid target position:', { cause: target })
+		}
+
 		if (this.bounds) {
 			target.x = clamp(
 				target.x,

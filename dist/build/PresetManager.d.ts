@@ -28,7 +28,7 @@ export interface PresetManagerOptions {
     autoInit?: boolean;
     /**
      * Options for the "presets" folder that is added to the
-     * {@link Gooey.settingsFolder|settings folder}.
+     * {@link Gooey.elements.settingsFolder|settings folder}.
      */
     folderOptions?: Partial<FolderOptions>;
 }

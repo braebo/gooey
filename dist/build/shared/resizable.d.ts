@@ -100,6 +100,14 @@ export interface ResizableOptions {
      * @default false
      */
     disabled: boolean;
+    /**
+     * If provided, the element's initial size will be set to the provided width and/or height.
+     * @default undefined
+     */
+    initialSize?: {
+        width?: number;
+        height?: number;
+    };
 }
 export declare const RESIZABLE_DEFAULTS: ResizableOptions;
 /**

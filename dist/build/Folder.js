@@ -589,7 +589,7 @@ class Folder {
             // closed: this.closed.value,
             hidden: toFn(this._hidden)(),
             children: this.children
-                .filter(c => c.title !== this.gooey.settingsFolder.title && c.saveable)
+                .filter(c => c.title !== this.gooey.elements.settingsFolder.title && c.saveable)
                 .map(child => child.save()),
             inputs: Array.from(this.inputs.values())
                 .filter(i => i.opts.saveable)

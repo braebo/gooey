@@ -25,6 +25,7 @@ const RESIZABLE_DEFAULTS = {
     },
     bounds: 'document',
     disabled: false,
+    initialSize: undefined,
 };
 /**
  * Makes an element resizable by dragging its edges.  For the
@@ -86,42 +87,46 @@ class Resizable {
         this.bounds = select(this.opts.bounds)[0] ?? globalThis.document?.documentElement;
         this.obstacleEls = select(this.opts.obstacles);
         this.generateStyles();
-        this.size = state({ width: this.node.offsetWidth, height: this.node.offsetHeight }, { key: this.opts.localStorageKey });
-        //? Apply size from local storage.
+        let { width, height } = options?.initialSize ?? {};
         if (this.opts.localStorageKey) {
-            const { width, height } = this.size.value;
-            if (width === 0 || height === 0) {
-                this.size.set({
-                    width: this.node.offsetWidth,
-                    height: this.node.offsetHeight,
-                });
-            }
-            else {
-                if (this.opts.corners.length || this.opts.sides.some(s => s.match(/left|right/))) {
-                    node.style.width = width + 'px';
-                }
-                if (this.opts.corners.length || this.opts.sides.some(s => s.match(/top|bottom/))) {
-                    node.style.height = height + 'px';
+            try {
+                // const size = this.size.value
+                let size = JSON.parse(localStorage.getItem(this.opts.localStorageKey) ?? '{}');
+                if (size) {
+                    if (size.width > 0) {
+                        width = size.width;
+                    }
+                    if (size.height > 0) {
+                        height = size.height;
+                    }
                 }
             }
-            node.dispatchEvent(new CustomEvent('resize'));
+            catch (e) {
+                this.#log.fn('constructor').error({ e, this: this });
+                try {
+                    localStorage.removeItem(this.opts.localStorageKey);
+                }
+                catch (e) {
+                    this.#log.fn('constructor').error({ e, this: this });
+                }
+            }
         }
-        else {
-            this.size.set({
-                width: this.node.offsetWidth,
-                height: this.node.offsetHeight,
-            });
+        if (width && width >= 0) {
+            node.style.width = width + 'px';
         }
+        if (height && height >= 0) {
+            node.style.height = height + 'px';
+        }
+        width ??= this.node.offsetWidth;
+        height ??= this.node.offsetHeight;
+        this.size = state({ width, height }, { key: this.opts.localStorageKey });
+        node.dispatchEvent(new CustomEvent('resize'));
         this.createGrabbers();
         if (+this.node.style.minWidth > this.boundsRect.width) {
             console.error('Min width is greater than bounds width.');
             return;
         }
-        // todo - this seems unecessary
-        // this.size.set({
-        // 	width: this.node.offsetWidth,
-        // 	height: this.node.offsetHeight,
-        // })
+        this.#log.fn('constructor').debug({ width, height, this: this });
     }
     get boundsRect() {
         return this.bounds.getBoundingClientRect();

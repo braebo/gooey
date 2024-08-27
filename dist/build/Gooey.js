@@ -16,7 +16,6 @@ import { nanoid } from './shared/nanoid.js';
 import { Logger } from './shared/logger.js';
 import { create } from './shared/create.js';
 import { place } from './shared/place.js';
-import { isSafari } from './shared/ua.js';
 import { Folder } from './Folder.js';
 import { o } from './shared/l.js';
 
@@ -31,6 +30,12 @@ const GUI_STORAGE_DEFAULTS = {
     position: false,
     size: false,
 };
+/**
+ * The default {@link WindowManagerOptions} for a {@link Gooey}'s
+ * {@link Gooey.windowManager|window manager}.  These are handled internally via the private
+ * {@link GooeyOptionsInternal._windowManager|gooey options}.
+ * @internal
+ */
 const GUI_WINDOWMANAGER_DEFAULTS = {
     __type: 'WindowManagerOptions',
     preserveZ: false,
@@ -53,6 +58,9 @@ const GUI_WINDOWMANAGER_DEFAULTS = {
         },
     },
 };
+/**
+ * The default values for {@link GooeyOptions}.
+ */
 const GUI_DEFAULTS = {
     __type: 'GooeyOptions',
     title: 'gooey',
@@ -86,6 +94,7 @@ class Gooey {
     __type = 'Gooey';
     id = nanoid();
     folder;
+    elements;
     /**
      * The initial options passed to the gooey.
      */
@@ -100,7 +109,6 @@ class Gooey {
     dirty = false;
     wrapper;
     container;
-    settingsFolder;
     /**
      * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
      * @internal
@@ -171,11 +179,13 @@ class Gooey {
         }
         this.opts = opts;
         this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' });
-        this._log.fn('constructor').info({ options, opts });
+        this._log.fn('constructor').debug({ options, opts });
         if (this.opts.loadDefaultFont !== false) {
             this._loadFonts();
         }
+        this.elements ??= {};
         this.container = select(this.opts.container)[0];
+        this.elements.container = this.container;
         this.wrapper = create('div', {
             classes: ['gooey-wrapper'],
             style: {
@@ -183,6 +193,7 @@ class Gooey {
             },
             parent: this.container,
         });
+        this.elements.wrapper = this.wrapper;
         this._closedMap = persist(`${storageKey || `gooey::${this.opts.title}`}::closed-map`, {});
         this._closedMap;
         this.folder = new Folder({
@@ -229,7 +240,7 @@ class Gooey {
         else if (opts.settingsFolder?.closed) {
             settingsFolderClosed = opts.settingsFolder.closed;
         }
-        this.settingsFolder = this.addFolder('gooey_settings_folder', {
+        this.elements.settingsFolder = this.addFolder('gooey_settings_folder', {
             // @ts-expect-error @internal
             _headerless: true,
             ...opts.settingsFolder,
@@ -237,13 +248,14 @@ class Gooey {
             saveable: false,
             presetId: 'gooey_settings',
         });
-        this.settingsFolder.element.classList.add('gooey-settings-folder', 'gooey-folder-alt');
+        this.elements.settingsFolder.element.classList.add('gooey-settings-folder', 'gooey-folder-alt');
         updateIcon();
-        this.settingsFolder.element.style.setProperty('order', '-99'); // todo - sup with this?
+        this.elements.settingsFolder.element.style.setProperty('order', '-99'); // todo - sup with this?
         this.themer =
-            this.opts._themer ?? this._createThemer(this.settingsFolder);
+            this.opts._themer ??
+                this._createThemer(this.elements.settingsFolder);
         this.theme = this.opts.theme;
-        this.presetManager = this._createPresetManager(this.settingsFolder);
+        this.presetManager = this._createPresetManager(this.elements.settingsFolder);
         this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage);
         this._resolveInitialPosition(reposition);
         if (!this.opts.hidden) {
@@ -260,14 +272,14 @@ class Gooey {
             fill: 'none',
             duration: 400,
         });
-        // Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
-        if (isSafari()) {
-            setTimeout(() => {
-                this.folder.element.style.display = 'table';
-                this.folder.element.offsetHeight;
-                this.folder.element.style.display = 'flex';
-            }, 500);
-        }
+        // // Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
+        // if (isSafari()) {
+        // 	setTimeout(() => {
+        // 		this.folder.element.style.display = 'table'
+        // 		this.folder.element.offsetHeight
+        // 		this.folder.element.style.display = 'flex'
+        // 	}, 500)
+        // }
     }
     get title() {
         return this.folder.title;
@@ -302,10 +314,10 @@ class Gooey {
         return this._theme;
     }
     /**
-     * Alias for the {@link container} element.
+     * The root {@link folder} {@link Folder.element|element}.
      */
     get element() {
-        return this.container;
+        return this.folder.element;
     }
     addFolder(title, options) {
         if (this._honeymoon && this._birthday - Date.now() < 1000) {
@@ -345,7 +357,7 @@ class Gooey {
      * Loads a given preset into the gooey, updating all inputs.
      */
     load(preset) {
-        this._log.fn('load').info({ preset });
+        this._log.fn('load').debug({ preset });
         // todo - this isn't working, it's being unset immediately somewhere...
         this.dirty = false;
         this._lockCommits(preset);
@@ -388,7 +400,7 @@ class Gooey {
     _loadFonts() {
         const fredoka = new FontFace('fredoka', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2')})`, {
             style: 'normal',
-            display: 'swap',
+            display: 'auto',
             weight: '300 700',
             stretch: '75% 125%',
             unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
@@ -397,14 +409,14 @@ class Gooey {
             // @ts-expect-error - ¯\_(ツ)_/¯
             document.fonts.add(font);
         });
-        const inconsolata = new FontFace('inconsolata', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2')})`, {
+        const Inconsolata = new FontFace('Inconsolata', `url(${encodeURI?.('https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2')})`, {
             style: 'normal',
-            display: 'swap',
+            display: 'auto',
             weight: '300 700',
             stretch: '75% 125%',
             unicodeRange: 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
         });
-        inconsolata.load().then(font => {
+        Inconsolata.load().then(font => {
             // @ts-expect-error - ¯\_(ツ)_/¯
             document.fonts.add(font);
         });
@@ -463,7 +475,9 @@ class Gooey {
             innerHTML: settingsIcon,
             tooltip: {
                 text: () => {
-                    return this.settingsFolder?.closed.value ? 'Open Settings' : 'Close Settings';
+                    return this.elements.settingsFolder?.closed.value
+                        ? 'Open Settings'
+                        : 'Close Settings';
                 },
                 placement: 'right',
                 offsetX: '.5rem',
@@ -474,10 +488,10 @@ class Gooey {
             },
         });
         const updateIcon = () => {
-            this.folder.elements.toolbar.settingsButton?.classList.toggle('open', !this.settingsFolder.closed.value);
+            this.folder.elements.toolbar.settingsButton?.classList.toggle('open', !this.elements.settingsFolder.closed.value);
         };
         button.addEventListener('click', () => {
-            this.settingsFolder.toggle();
+            this.elements.settingsFolder.toggle();
             updateIcon();
             if (this.folder.closed)
                 this.folder.open();
@@ -504,16 +518,31 @@ class Gooey {
             },
         });
     }
+    static _parseWidth(str) {
+        if (!str)
+            return;
+        if (!globalThis.window) {
+            console.warn('parseCss can only be used in the browser');
+            return;
+        }
+        const dummy = document.createElement('div');
+        dummy.style.width = str;
+        document.body.appendChild(dummy);
+        const width = dummy.getBoundingClientRect().width;
+        dummy.remove();
+        return width;
+    }
     _createWindowManager(options, storageOpts) {
         if (this.windowManager)
             return this.windowManager; // ??
         let dragOpts = undefined;
         if (this.opts.draggable) {
-            dragOpts = Object.assign({}, GUI_WINDOWMANAGER_DEFAULTS.draggable);
-            dragOpts.handle = this.folder.elements.header;
-            dragOpts.position = this.opts.position;
-            dragOpts.localStorageKey = storageOpts && storageOpts.key ? storageOpts.key : undefined;
-            dragOpts.bounds = this.container;
+            dragOpts = Object.assign({}, GUI_WINDOWMANAGER_DEFAULTS.draggable, {
+                handle: this.folder.elements.header,
+                position: this.opts.position,
+                localStorageKey: storageOpts && storageOpts.key ? storageOpts.key : undefined,
+                bounds: this.container,
+            });
             if (storageOpts && storageOpts.position === false) {
                 dragOpts.localStorageKey = undefined;
             }
@@ -526,6 +555,14 @@ class Gooey {
                 storageOpts && storageOpts.key ? storageOpts.key : undefined;
             if (storageOpts && storageOpts.size === false) {
                 resizeOpts.localStorageKey = undefined;
+            }
+        }
+        if (resizeOpts && this.opts.width) {
+            resizeOpts.initialSize = { width: this.opts.width };
+            // Update the min-width variable if the provided width is smaller than the default.
+            const currentMinWidth = Gooey._parseWidth(this.wrapper.style.getPropertyValue('--gooey-root_min-width'));
+            if (currentMinWidth && this.opts.width < currentMinWidth) {
+                this.wrapper.style.setProperty('--gooey-root_min-width', `${this.opts.width}px`);
             }
         }
         // Use the provided window manager if it's an instance.
@@ -545,7 +582,7 @@ class Gooey {
         }, WINDOWMANAGER_DEFAULTS);
         this._log
             .fn('_createWindowManager')
-            .info({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts });
+            .debug({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts });
         const windowManager = new WindowManager({
             ...windowManagerOpts,
             draggable: dragOpts,
@@ -566,12 +603,8 @@ class Gooey {
         ghost.style.visibility = 'hidden';
         this.container.prepend(ghost);
         // Remove the settings folder height from the rect if it's closed.
-        if (this.settingsFolder.closed.value) {
+        if (this.elements.settingsFolder.closed.value) {
             ghost.querySelector('.gooey-settings-folder')?.remove();
-            console.error('removed settings folder');
-        }
-        else {
-            console.error('settings folder is open');
         }
         const rect = ghost.children[0].getBoundingClientRect();
         ghost.remove();
@@ -585,12 +618,9 @@ class Gooey {
                 bounds,
                 margin: this.opts.margin,
             });
-            if (this.settingsFolder.closed.value) {
-                const settingsFolderHeight = this.settingsFolder.element.getBoundingClientRect().height;
-                // console.error({ y: placementPosition.y, settingsFolderHeight })
+            if (this.elements.settingsFolder.closed.value) {
+                const settingsFolderHeight = this.elements.settingsFolder.element.getBoundingClientRect().height;
                 placementPosition.y += settingsFolderHeight;
-                // console.error({ y: placementPosition.y, settingsFolderHeight })
-                // console.error(placementPosition)
             }
             // Use the rect to correct the window manager's positioning when storage is off.
             if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
@@ -622,7 +652,7 @@ class Gooey {
             this.windowManager?.dispose();
         }
         this.presetManager.folder.dispose();
-        this.settingsFolder?.dispose();
+        this.elements.settingsFolder?.dispose();
         this.folder?.dispose();
     };
 }
