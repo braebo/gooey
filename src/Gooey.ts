@@ -265,6 +265,12 @@ export const GUI_STORAGE_DEFAULTS: GooeyStorageOptions = {
 	size: false,
 } as const
 
+/**
+ * The default {@link WindowManagerOptions} for a {@link Gooey}'s
+ * {@link Gooey.windowManager|window manager}.  These are handled internally via the private
+ * {@link GooeyOptionsInternal._windowManager|gooey options}.
+ * @internal
+ */
 export const GUI_WINDOWMANAGER_DEFAULTS = {
 	__type: 'WindowManagerOptions',
 	preserveZ: false,
@@ -288,6 +294,9 @@ export const GUI_WINDOWMANAGER_DEFAULTS = {
 	},
 } as const satisfies WindowManagerOptions
 
+/**
+ * The default values for {@link GooeyOptions}.
+ */
 export const GUI_DEFAULTS = {
 	__type: 'GooeyOptions',
 	title: 'gooey',
