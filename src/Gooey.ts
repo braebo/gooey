@@ -716,7 +716,7 @@ export class Gooey {
 			)})`,
 			{
 				style: 'normal',
-				display: 'swap',
+				display: 'auto',
 				weight: '300 700',
 				stretch: '75% 125%',
 				unicodeRange:
@@ -736,7 +736,7 @@ export class Gooey {
 			)})`,
 			{
 				style: 'normal',
-				display: 'swap',
+				display: 'auto',
 				weight: '300 700',
 				stretch: '75% 125%',
 				unicodeRange:
