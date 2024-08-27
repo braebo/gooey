@@ -31,6 +31,19 @@
 			gooey.bindMany(params)
 		}
 
+		if (props.position === 'center') {
+			setTimeout(() => {
+				const boundsRect = el!.getBoundingClientRect()
+				const gooeyRect = gooey.folder.element!.getBoundingClientRect()
+
+				const centerX = boundsRect.width / 2 - gooeyRect.width / 2
+				const centerY = boundsRect.height / 2 - gooeyRect.height / 2
+
+				gooey.window!.draggableInstance!.position = { x: centerX, y: centerY }
+				console.log(gooey.element, gooeyRect)
+			}, 100)
+		}
+
 		return gooey.dispose
 	})
 </script>
@@ -39,8 +52,7 @@
 	<GooeyThemeSync {gooey} />
 {/if}
 
-
-	<div class="gooish" style={wrapperStyle} bind:this={el}></div>
+<div class="gooish" style={wrapperStyle} bind:this={el}></div>
 
 <style>
 	.gooish {
