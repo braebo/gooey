@@ -51,12 +51,13 @@
 
 		if (side === 'left') {
 			top = targetRect.top - elRect.top
-			top += iconRect.height / 2
-			top -= 2
+			top -= iconRect.height / 4
+			// top -= 2
 
 			left = targetRect.left - elRect.left
-			left += targetRect.width - iconEl!.offsetWidth
-			left -= 10
+			left -= iconEl!.offsetWidth
+			// left += targetRect.width - iconEl!.offsetWidth
+			left -= 8
 		} else {
 			top = targetRect.top - elRect.top
 			top -= iconRect.height / 4
@@ -140,7 +141,9 @@
 		</svg>
 	</button>
 
-	{@render children?.()}
+	<span class="children">
+		{@render children?.()}
+	</span>
 </div>
 
 <style lang="css">
@@ -151,13 +154,15 @@
 		--in-out-smooth: cubic-bezier(0.54, 0.08, 0.15, 0.88);
 		--out-dramatic: cubic-bezier(0.07, 0.54, 0.07, 0.95);
 
-		position: relative;
+		/* position: relative; */
+		position: absolute;
 
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: nowrap;
 		align-items: center;
 
+		width: fit-content;
 		padding: 0 var(--padding-lg);
 		margin-bottom: 1rem;
 
@@ -167,6 +172,9 @@
 
 		transition: 0.15s;
 		z-index: 5;
+		pointer-events: none;
+
+		transform: translateY(1rem);
 	}
 
 	.info {
@@ -186,9 +194,12 @@
 			--outline: color-mix(in hsl, var(--primary), var(--light-e));
 		}
 		&.show {
-			--off-theme: color-mix(in hsl, var(--theme-a) 10%, color-mix(in hsl, var(--bg-a), var(--bg-b)));
+			--off-theme: color-mix(in hsl, var(--theme-a) 2%, color-mix(in hsl, var(--bg-a), var(--bg-b)) 80%);
+			backdrop-filter: blur(6px);
 			--primary: var(--off-theme);
 			outline-color: var(--outline);
+
+			pointer-events: all;
 
 			svg {
 				scale: 1;
@@ -310,19 +321,19 @@
 			}
 		}
 
-		:global(p) {
+		.children {
+			width: 100%;
 			opacity: 0;
 			transform: translateY(0.2rem);
 			transition: 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 		}
 
-		:global(p),
-		:global(code) {
-			font-size: var(--font-xs);
+		.children {
+			/* font-size: var(--font-xs); */
 			pointer-events: none;
 		}
 
-		&.show :global(p) {
+		&.show .children {
 			/* animation: fadeIn 0.15s forwards; */
 			opacity: 1;
 			transform: translateY(0);
