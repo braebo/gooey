@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '@fontsource-variable/fredoka'
 	import '../styles/app.scss'
 
 	import { setupViewTransition } from 'sveltekit-view-transition'

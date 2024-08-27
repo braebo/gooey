@@ -703,7 +703,7 @@ export class Gooey {
 		const fredoka = new FontFace(
 			'fredoka',
 			`url(${encodeURI?.(
-				'https://cdn.jsdelivr.net/fontsource/fonts/Fredoka:vf@latest/latin-wdth-normal.woff2',
+				'https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2',
 			)})`,
 			{
 				style: 'normal',
@@ -723,7 +723,7 @@ export class Gooey {
 		const Inconsolata = new FontFace(
 			'Inconsolata',
 			`url(${encodeURI?.(
-				'https://cdn.jsdelivr.net/fontsource/fonts/Inconsolata:vf@latest/latin-wdth-normal.woff2',
+				'https://cdn.jsdelivr.net/fontsource/fonts/inconsolata:vf@latest/latin-wdth-normal.woff2',
 			)})`,
 			{
 				style: 'normal',

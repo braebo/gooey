@@ -47,6 +47,7 @@
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.27.7",
+		"@fontsource-variable/fredoka": "^5.0.14",
 		"@rollup/plugin-node-resolve": "15.2.3",
 		"@rollup/plugin-typescript": "11.1.6",
 		"@svitejs/changesets-changelog-github-compact": "1.1.0",
