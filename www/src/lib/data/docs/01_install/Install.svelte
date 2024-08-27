@@ -9,7 +9,7 @@
 <h2 id="installation" class="section-title">Install</h2>
 
 <section class="section">
-	<div class="description" bind:this={target}>
+	<!-- <div class="description" bind:this={target}>
 		<p>
 			Install
 			<span class="gooey">gooey</span>
@@ -23,9 +23,9 @@
 				<code>JSR</code>
 			</a>.
 		</p>
-	</div>
+	</div> -->
 
-	<div class="br"></div>
+	<!-- <div class="br"></div> -->
 
 	<div class="installation-options">
 		<div class="installers">
@@ -132,9 +132,20 @@
 	.installers code {
 		pointer-events: all;
 		user-select: text;
+
+		font-family: var(--font-mono);
 	}
 
 	code:not(p code) {
 		background: var(--bg-a);
+	}
+
+	@media screen and (width < 1000px) {
+		.installers {
+			flex-direction: column;
+			gap: 1rem;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 </style>
