@@ -15,6 +15,7 @@
 		margin-top: 50vh;
 		flex-grow: 1;
 		position: relative;
+		overflow: hidden;
 	}
 
 	.slant {
