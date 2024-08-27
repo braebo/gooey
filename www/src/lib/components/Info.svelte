@@ -214,6 +214,7 @@
 			border-radius: 1rem;
 
 			cursor: pointer;
+			pointer-events: all;
 
 			transition-property: background, color, outline-offset, top, left;
 			transition-timing-function: var(--in-out-smooth);

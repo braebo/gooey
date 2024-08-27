@@ -73,12 +73,17 @@
 		display: grid;
 		grid: 1/1;
 	}
-	.info,
-	.installers {
-		grid-area: 1/1;
+
+	.info {
 		pointer-events: none;
 		user-select: none;
 	}
+
+	.info,
+	.installers {
+		grid-area: 1/1;
+	}
+
 	.installers {
 		contain: content;
 		display: flex;
@@ -89,6 +94,9 @@
 		height: 100%;
 
 		border-radius: var(--radius);
+
+		pointer-events: none;
+		user-select: none;
 	}
 
 	.installer {
@@ -121,12 +129,7 @@
 		}
 	}
 
-	p {
-		pointer-events: none;
-		user-select: none;
-	}
-
-	code {
+	.installers code {
 		pointer-events: all;
 		user-select: text;
 	}
