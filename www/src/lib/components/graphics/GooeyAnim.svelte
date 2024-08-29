@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Gooey, type InputNumber } from '../../../../../src/index'
 	import GooeyThemeSync from '../GooeyThemeSync.svelte'
+	import { device } from '$lib/device.svelte'
 	import { onMount } from 'svelte'
 	import presets from './presets'
 
@@ -9,7 +10,7 @@
 		height: 190,
 	}
 
-	let gooey: Gooey
+	let gooey = $state<Gooey>()
 	let ready = $state(false)
 	let sliderEl = $state<SVGRectElement>()
 	let thumbEl = $state<SVGRectElement>()
@@ -53,9 +54,10 @@
 		// Create the gui.
 		gooey = new Gooey({
 			position: 'top-center',
-			margin: { y: 100 },
+			margin: { y: device.mobile ? 100 : 200 },
+			width: device.mobile ? 333 : 400,
 			presets,
-			storage: { position: false },
+			storage: false,
 		})
 
 		// Bind to the params and configure their options.
@@ -156,7 +158,7 @@
 
 <svelte:window {onblur} onpointerup={onblur} {onpointermove} />
 
-{#if ready}
+{#if gooey}
 	<GooeyThemeSync {gooey} />
 {/if}
 
