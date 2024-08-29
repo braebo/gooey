@@ -43,7 +43,8 @@
 		"format": "prettier --write src",
 		"lint": "publint && prettier --check src",
 		"sort": "pnpm dlx sort-package-json && cd www && pnpm dlx sort-package-json",
-		"sync-version": "changeset version && pnpx sync-version jsr.json"
+		"sync-version": "changeset version && pnpx sync-version jsr.json",
+		"test": "pnpm vitest"
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.27.7",
