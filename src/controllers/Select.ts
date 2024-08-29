@@ -415,7 +415,9 @@ export class Select<T> {
 		this.updatePosition()
 
 		// We need to monitor the selected element's scroll parent for scroll events to keep the dropdown position synced up.
-		this._scrollParent ??= getScrollParent(this.elements.selected)
+		// this._scrollParent ??= getScrollParent(this.elements.selected)
+		this._scrollParent ??= this._opts.input.folder.gooey?.container
+		this._scrollParent?.removeEventListener('scroll', this.updatePosition)
 		this._scrollParent?.addEventListener('scroll', this.updatePosition)
 
 		this._evm.listen(window, 'keydown', this._closeOnEscape, {}, 'dropdown')
@@ -431,7 +433,7 @@ export class Select<T> {
 				const select = () => {
 					this._log
 						.fn('on(mouseenter)')
-						.debug('currentSelection', { option, element, this: this })
+						.debug('currentSelection', { option, element }, this)
 					this.select(option)
 				}
 				this._evm.listen(element, 'mouseenter', select, {}, 'dropdown')
@@ -439,6 +441,8 @@ export class Select<T> {
 		}
 
 		this._evm.emit('open')
+
+		this._log.fn('open').debug({ element: this.elements.dropdown }, this)
 
 		setTimeout(() => {
 			this.elements.dropdown.style.pointerEvents = 'all'
@@ -454,31 +458,33 @@ export class Select<T> {
 		this.elements.dropdown.style.setProperty('width', 'unset')
 		this.elements.dropdown.style.setProperty('top', 'unset')
 
-		const { dropdown, selected } = this.elements
-		const gooeyScrollTop = this._opts.input.folder.root.elements.content.scrollTop
-		const selectedRect = selected.getBoundingClientRect()
+		const dropdown = this.elements.dropdown
 
-		this.elements.dropdown.style.setProperty(
-			'width',
-			`${Math.max(selected.offsetWidth, dropdown.offsetWidth)}px`,
-		)
-		this.elements.dropdown.style.setProperty(
-			'top',
-			`${selectedRect.top + selected.offsetHeight - gooeyScrollTop}px`,
-		)
-		this.elements.dropdown.style.setProperty(
-			'left',
-			`${selectedRect.left + selected.offsetWidth / 2 - dropdown.offsetWidth / 2}px`,
-		)
+		const selectedRect = this.elements.selected.getBoundingClientRect()
+		const containerRect = this._opts.input.folder.gooey!.container.getBoundingClientRect()
+
+		const top = selectedRect.top - containerRect.top + 22
+		const left = selectedRect.left - containerRect.left
+
+		dropdown.style.setProperty('top', `${top}px`)
+		dropdown.style.setProperty('left', `${left}px`)
+
+		const width = Math.max(selectedRect.width, dropdown.offsetWidth)
+		dropdown.style.setProperty('width', `${width}px`)
 
 		// Handle overflow.
 		const scrollHeight = dropdown.scrollHeight
-		const maxHeight = window.innerHeight - selectedRect.bottom - 10
+		const maxHeight = this.container.offsetHeight - selectedRect.height - top
+
 		if (scrollHeight > maxHeight) {
 			dropdown.style.setProperty('max-height', `${maxHeight}px`)
 		} else {
 			dropdown.style.setProperty('max-height', `${scrollHeight}px`)
 		}
+	}
+
+	get container() {
+		return this._opts.input.folder.gooey!.container
 	}
 
 	/**
