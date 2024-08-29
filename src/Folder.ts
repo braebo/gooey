@@ -125,9 +125,11 @@ export type InferTarget<TTarget> =
 export type InferTargetOptions<TTarget> = {
 	[K in keyof TTarget]?: TTarget[K] extends Array<infer U>
 		? Partial<SelectInputOptions<U>>
-		: TTarget[K] extends object
-			? InferTargetOptions<TTarget[K]> & { folderOptions?: Partial<FolderOptions> }
-			: Partial<InferOptions<TTarget[K]>>
+		: TTarget[K] extends Function
+			? Partial<ButtonInputOptions>
+			: TTarget[K] extends object
+				? InferTargetOptions<TTarget[K]> & { folderOptions?: Partial<FolderOptions> }
+				: Partial<InferOptions<TTarget[K]>>
 }
 
 /**
