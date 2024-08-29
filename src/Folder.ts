@@ -1315,10 +1315,12 @@ export class Folder {
 		seen.add(target)
 
 		for (let [key, value] of Object.entries(target)) {
-			if (Array.isArray(options['exclude']) && options['exclude'].includes(key as any))
+			if (
+				(Array.isArray(options['exclude']) && options['exclude'].includes(key as any)) ||
+				(Array.isArray(options['include']) && !options['include'].includes(key as any))
+			) {
 				continue
-			if (Array.isArray(options['include']) && !options['include'].includes(key as any))
-				continue
+			}
 
 			const inputOptions = (options[key as keyof T] as any as TOptions) || ({} as TOptions)
 
@@ -1341,11 +1343,26 @@ export class Folder {
 			}
 
 			if (typeof value === 'object') {
-				if (isColor(value)) {
+				if ('options' in inputOptions) {
+					//? InputSelect
+					mode === 'bind'
+						? folder.bindSelect(
+								target,
+								key as keyof T,
+								inputOptions as SelectInputOptions,
+							)
+						: folder.addSelect(
+								key,
+								(inputOptions as SelectInputOptions).options!,
+								inputOptions,
+							)
+				} else if (isColor(value)) {
+					//? InputColor
 					mode === 'bind'
 						? folder.bindColor(value, 'color', { title: key, ...inputOptions })
 						: folder.addColor(key, value, inputOptions)
 				} else {
+					//? Folder
 					if ('folderOptions' in inputOptions) {
 						folderOptions = inputOptions['folderOptions'] as FolderOptions
 					} else if ('folderOptions' in value) {
@@ -1354,15 +1371,8 @@ export class Folder {
 					const subFolder = folder.addFolder(key, folderOptions)
 					this._walk(value, inputOptions, subFolder, seen, mode)
 				}
-			} else if ('options' in inputOptions) {
-				mode === 'bind'
-					? folder.bindSelect(target, key as keyof T, inputOptions as SelectInputOptions)
-					: folder.addSelect(
-							key,
-							(inputOptions as SelectInputOptions).options!,
-							inputOptions,
-						)
 			} else {
+				//? InputNumber | InputText | InputButton | InputColor
 				mode === 'bind'
 					? folder.bind(target, key as keyof T, inputOptions as any)
 					: folder.add(key, value, inputOptions)
