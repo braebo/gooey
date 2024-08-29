@@ -718,6 +718,8 @@ export class Folder {
 			folder.elements.header.style.display = 'none'
 		}
 
+		this.gooey?.refreshPosition()
+
 		return folder
 	}
 
@@ -1109,6 +1111,7 @@ export class Folder {
 		this.inputs.set(titleId, input)
 		Folder._presetIdMap.set(input.id, presetId)
 		this._refreshIcon()
+		this.gooey?.refreshPosition()
 		return input
 	}
 
@@ -1256,6 +1259,8 @@ export class Folder {
 
 		const finalRoot = this.#transientRoot
 		this.#transientRoot = null
+
+
 		return finalRoot as this & TInputs
 	}
 

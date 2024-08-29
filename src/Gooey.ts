@@ -461,6 +461,7 @@ export class Gooey {
 			parent: this.container,
 		})
 		this.elements.wrapper = this.wrapper
+		this.wrapper.style.visibility = 'hidden'
 
 		this._closedMap = persist(`${storageKey || `gooey::${this.opts.title}`}::closed-map`, {})
 		this._closedMap
@@ -539,7 +540,7 @@ export class Gooey {
 
 		this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage)
 
-		this._resolveInitialPosition(reposition)
+		// this._resolveInitialPosition(reposition)
 
 		if (!this.opts.hidden) {
 			this._reveal()
@@ -550,12 +551,17 @@ export class Gooey {
 		// In case dispose() was called before this resolved...
 		if (!this.container) return
 
-		// Now that we're in position and inputs are loaded, we can animate-in.
-		this.container.appendChild(this.wrapper)
-		this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
-			fill: 'none',
-			duration: 400,
-		})
+		clearTimeout(this.revealTimeout)
+		this.revealTimeout = setTimeout(() => {
+			this.refreshPosition()
+			// this._resolveInitialPosition(true)
+			// Now that we're in position and inputs are loaded, we can animate-in.
+			this.wrapper.style.visibility = 'visible'
+			this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
+				fill: 'none',
+				duration: 400,
+			})
+		}, 100)
 
 		// // Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
 		// if (isSafari()) {
@@ -615,12 +621,10 @@ export class Gooey {
 		return this.folder.element
 	}
 
-	public addFolder(title: string, options?: Partial<FolderOptions>) {
-		if (this._honeymoon && this._birthday - Date.now() < 1000) {
-			this._honeymoon = false
-			this._reveal()
-		}
+	revealTimeout: ReturnType<typeof setTimeout> | undefined
+	revealIdle: ReturnType<typeof requestIdleCallback> | undefined
 
+	public addFolder(title: string, options?: Partial<FolderOptions>) {
 		return this.folder.addFolder(title, {
 			...options,
 			// @ts-expect-error @internal
@@ -939,6 +943,8 @@ export class Gooey {
 			if (currentMinWidth && this.opts.width < currentMinWidth) {
 				this.wrapper.style.setProperty('--gooey-root_min-width', `${this.opts.width}px`)
 			}
+
+			this.folder.element.style.width = `${this.opts.width}px`
 		}
 
 		// Use the provided window manager if it's an instance.
@@ -982,21 +988,24 @@ export class Gooey {
 		return windowManager
 	}
 
-	private _resolveInitialPosition(reposition: boolean): void {
+	positionTimeout: ReturnType<typeof setTimeout> | undefined
+	refreshPosition() {
+		this._log.fn('refreshPosition').info('SCHEDULED')
+		clearTimeout(this.positionTimeout)
+		this.positionTimeout = setTimeout(() => {
+			this._log.fn('refreshPosition').info('FIRED')
+			this._resolveInitialPosition(true)
+			// if (this._revealing) {
+			// 	this._reveal()
+			// 	this._revealing = false
+			// }
+		}, 20)
+	}
+
+	private _resolveInitialPosition(reposition: boolean) {
 		if (!this.container || !this.wrapper) return
 
-		// Append a non-animating, full-size clone to get the proper rect.
-		const ghost = this.wrapper.cloneNode(true) as HTMLElement
-		ghost.style.visibility = 'hidden'
-		this.container.prepend(ghost)
-
-		// Remove the settings folder height from the rect if it's closed.
-		if (this.elements.settingsFolder.closed.value) {
-			ghost.querySelector('.gooey-settings-folder')?.remove()
-		}
-
-		const rect = ghost.children[0].getBoundingClientRect()
-		ghost.remove()
+		const rect = this.element.getBoundingClientRect()
 
 		if (typeof this.opts.position === 'string') {
 			const bounds = this.container.getBoundingClientRect()
@@ -1010,14 +1019,12 @@ export class Gooey {
 				margin: this.opts.margin,
 			})
 
-			if (this.elements.settingsFolder.closed.value) {
-				const settingsFolderHeight =
-					this.elements.settingsFolder.element.getBoundingClientRect().height
-				placementPosition.y += settingsFolderHeight
-			}
-
 			// Use the rect to correct the window manager's positioning when storage is off.
-			if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
+			if (
+				reposition ||
+				this.opts.storage === false ||
+				(this.opts.storage && this.opts.storage.position === false)
+			) {
 				const win = this.window
 				if (win?.draggableInstance) {
 					win.draggableInstance.position = placementPosition
