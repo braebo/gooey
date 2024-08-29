@@ -29,7 +29,7 @@ import { place } from './shared/place'
 import { Folder } from './Folder'
 import { o } from './shared/l'
 
-//· Types ························································································¬
+//#region Types ························································································¬
 
 type GooeyTheme = 'default' | 'flat' | 'scout' | (string & {})
 
@@ -251,9 +251,9 @@ export interface GooeyPreset {
 	title: string
 	data: FolderPreset
 }
-//⌟
+//#endregion
 
-//· Constants ····················································································¬
+//#region Constants ····················································································¬
 
 export const GUI_STORAGE_DEFAULTS: GooeyStorageOptions = {
 	__type: 'GooeyStorageOptions',
@@ -324,7 +324,7 @@ export const GUI_DEFAULTS = {
  */
 // prettier-ignore
 const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor', 'open', 'close', 'show', 'hide', 'toggle', 'toggleHidden'] as const satisfies Array<keyof Folder>;
-//⌟
+//#endregion
 
 export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {}
 
@@ -395,7 +395,7 @@ export class Gooey {
 		titleOrOptions?: string | Partial<GooeyOptions>,
 		options = {} as Partial<GooeyOptions>,
 	) {
-		//· Setup ················································································¬
+		//#region Setup ················································································¬
 
 		if (!Gooey._initialized && globalThis.document) {
 			Gooey._initialized = true
@@ -502,7 +502,7 @@ export class Gooey {
 
 		removeEventListener('keydown', handleUndoRedo)
 		addEventListener('keydown', handleUndoRedo)
-		//⌟
+		//#endregion
 
 		const { button, updateIcon } = this._createSettingsButton(
 			this.folder.elements.toolbar.container,
