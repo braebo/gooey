@@ -108,29 +108,18 @@ hr {
 }
 
 code {
-// pre code:not(.shiki code) {
 	width: fit-content;
 	padding: var(--padding-sm) var(--padding-md);
 
-	// color: var(--light-b);
-	// background: color-mix(in lch, var(--dark-b), var(--dark-c) 75%);
-	// color: var(--fg-b);
-	// color: color-mix(in lch, var(--fg-a), var(--fg-b));
-	// background: color-mix(in lch, var(--bg-b), var(--bg-c) 40%);
 	border-radius: var(--radius);
 
 	font-family: var(--font-mono);
 	font-size: var(--font);
-	font-variation-settings:
-		'wght' 600,
-		'wdth' 97;
 
 	box-shadow: var(--shadow-sm);
 }
 
 .shiki code {
-	// box-shadow: none;
-	// background: none;
 	padding: none;
 }
 
@@ -142,7 +131,6 @@ p code {
 }
 
 a:has(code) {
-	// text-decoration: none;
 	transition: text-decoration-color 0.2s;
 
 	> code {
@@ -150,9 +138,6 @@ a:has(code) {
 		font-variation-settings:
 			'wght' 500,
 			'wdth' 120;
-
-		// border-bottom: 2px solid var(--bg-d);
-		// border-bottom: 2px solid color-mix(in hsl, var(--theme-a), transparent 66%);
 
 		// visited links:
 		&:hover,
@@ -162,7 +147,6 @@ a:has(code) {
 	}
 
 	&:hover {
-		// text-decoration: none;
 		text-decoration-color: var(--theme-a);
 	}
 }
