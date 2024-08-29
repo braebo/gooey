@@ -15,7 +15,7 @@
 		}
 	],
 	"theme_color": "#00d0ff",
-	"background_color": "#3d3d3d",
+	"background_color": "#0B0B11",
 	"display": "standalone",
 	"descripton": "A modern gui library for the web."
 }
