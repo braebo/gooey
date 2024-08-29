@@ -372,3 +372,14 @@ export class InputButtonGrid extends Input<
 		super.dispose()
 	}
 }
+
+export function isButtonGridArrays(value: any): value is ButtonGridArrays {
+	return (
+		Array.isArray(value) &&
+		value.every(
+			row =>
+				Array.isArray(row) &&
+				row.every(btn => typeof btn === 'object' && ('onClick' in btn || 'text' in btn)),
+		)
+	)
+}
