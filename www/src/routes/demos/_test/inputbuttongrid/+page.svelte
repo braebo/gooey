@@ -6,9 +6,9 @@
 	let _ = $state()
 
 	onMount(() => {
-		localStorage.clear()
+		// localStorage.clear()
 		const gooey = new Gooey({
-			title: 'test',
+			title: 'Input Button Grid',
 			themeMode: 'system',
 			position: 'top-center',
 		})
