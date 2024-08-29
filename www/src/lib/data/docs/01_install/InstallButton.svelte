@@ -1,73 +1,27 @@
 <script lang="ts">
-	import Copy from '../../components/Copy.svelte'
+	import Copy from '../../../components/Copy.svelte'
 
 	let hovering = $state(false)
 	let phase: 'idle' | 'active' | 'outro' = $state('idle')
 	let animating = $derived(phase !== 'idle')
 </script>
 
-<section>
-	<br />
+<div class="install-wrapper" onpointerover={() => (hovering = true)} onpointerout={() => (hovering = false)}>
+	<code class="install">
+		npm install &NoBreak;
+		<div class="gooey">gooey</div>
+	</code>
 
-	<h1 class="hero-text text-gradient-animated">gooey</h1>
-
-	<div class="br-sm"></div>
-
-	<p class="description">gui library for the web</p>
-
-	<br />
-
-	<div class="install-wrapper" onpointerover={() => (hovering = true)} onpointerout={() => (hovering = false)}>
-		<code class="install">
-			npm install &NoBreak;
-			<div class="gooey">gooey</div>
-		</code>
-
-		<div class="copy" class:animating>
-			<Copy
-				bind:phase
-				text="npm i -D gooey"
-				style="box-sizing:border-box;position:absolute;inset:0;margin:0;width:100%;height:100%;"
-			/>
-		</div>
+	<div class="copy" class:animating>
+		<Copy
+			bind:phase
+			text="npm i -D gooey"
+			style="box-sizing:border-box;position:absolute;inset:0;margin:0;width:100%;height:100%;"
+		/>
 	</div>
-</section>
+</div>
 
 <style lang="scss">
-	.hero-text {
-		contain: strict;
-
-		width: 16rem;
-		max-width: 100vw;
-		height: 7rem;
-
-		margin: 0 auto;
-		padding: 0;
-
-		font-size: clamp(4rem, 12vw, 5.5rem);
-		font-variation-settings: 'wght' 400;
-		white-space: nowrap;
-	}
-
-	.description {
-		contain: content;
-		box-sizing: border-box;
-		position: relative;
-
-		max-width: 27rem;
-		text-align: center;
-		margin: auto;
-
-		border-radius: var(--radius);
-
-		font-size: 1.15rem;
-		font-variation-settings: 'wght' 400;
-		letter-spacing: 0.3px;
-		word-spacing: 2px;
-		text-wrap: balance;
-		white-space: nowrap;
-	}
-
 	.install-wrapper {
 		contain: layout style;
 
@@ -108,7 +62,7 @@
 		@media (max-width: 700px) {
 			gap: 0.5rem;
 			white-space: nowrap;
-			font-size: min(1.1rem, 3.5vw);
+			font-variation-settings: 'wght' 500;
 		}
 
 		&::before {
@@ -120,10 +74,6 @@
 			width: 101%;
 			height: 105%;
 			background-image: linear-gradient(to right, #111, #111, #222, #292929, #111);
-			// box-shadow:
-			// 	0 3px 5px #0004,
-			// 	0 5px 10px #0002,
-			// 	0 10px 20px #0001;
 			box-shadow: var(--shadow-lg);
 
 			transition: background-image 0.4s ease-out;
@@ -145,7 +95,6 @@
 		opacity: 1;
 		backdrop-filter: blur(var(--blur));
 		transition-duration: 0.2s, 0.2s;
-		// transition-delay: 0s, 0s;
 	}
 
 	:global(:root[theme='light']) {
@@ -180,7 +129,6 @@
 		transition-property: opacity, backdrop-filter;
 		transition-timing-function: cubic-bezier(0.29, 0.99, 0.45, 1.01);
 		transition-duration: 0.5s, 0.5s;
-		// transition-delay: 0s, 0.5s;
 
 		z-index: 2;
 

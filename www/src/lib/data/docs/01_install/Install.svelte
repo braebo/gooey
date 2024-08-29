@@ -2,31 +2,12 @@
 	import Info from '$lib/components/Info.svelte'
 	import { fly } from 'svelte/transition'
 
-	let target = $state<HTMLElement>()
 	let jsrEl = $state<HTMLElement>()
 </script>
 
 <h2 id="installation" class="section-title">Install</h2>
 
 <section class="section">
-	<!-- <div class="description" bind:this={target}>
-		<p>
-			Install
-			<span class="gooey">gooey</span>
-			via
-			<a href="https://www.npmjs.com/package/gooey" target="_blank" rel="noopener">
-				<code>NPM</code>
-			</a>
-			or
-
-			<a bind:this={jsrEl} id="install_jsr" href="https://jsr.io/@braebo/gooey" target="_blank" rel="noopener">
-				<code>JSR</code>
-			</a>.
-		</p>
-	</div> -->
-
-	<!-- <div class="br"></div> -->
-
 	<div class="installation-options">
 		<div class="installers">
 			<div class="installer" transition:fly={{ opacity: 1 }}>
