@@ -16,9 +16,8 @@ describe('Gooey constructor', () => {
 
 		setTimeout(() => {
 			expect(gooey.folder.elements.header.innerText).toBe('testing 123')
-			console.log(gooey.folder.elements.header.innerText)
 			gooey.dispose()
-		}, 500)
+		}, 500) // gotta wait for the animation..
 	})
 
 	test('container', () => {

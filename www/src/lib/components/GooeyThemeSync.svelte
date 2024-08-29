@@ -9,7 +9,7 @@
 
 	onMount(() => {
 		/* gooey mode change -> update page theme (aka mode) */
-		const unsub = gooey.themer.mode.subscribe((m) => {
+		const unsub = gooey.themer.mode.subscribe(m => {
 			if (locked) return
 			themer.preference = m
 		})
@@ -20,8 +20,7 @@
 		})
 
 		/* gooey theme change -> apply theme */
-
-		gooey.themer.theme.subscribe((t) => {
+		gooey.themer.theme.subscribe(t => {
 			const newTheme = themer.themes[t.title as keyof typeof themer.themes]
 			if (newTheme) {
 				themer.activeTheme = newTheme

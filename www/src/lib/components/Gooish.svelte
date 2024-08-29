@@ -20,11 +20,11 @@
 		const width = window.innerWidth < 900 ? 320 : 380
 
 		gooey = new Gooey({
-			position: 'center',
+			// position: 'center',
 			storage: false,
+			width,
 			...props,
 			container: el,
-			width,
 		})
 
 		if (params) {
@@ -40,7 +40,6 @@
 				const centerY = boundsRect.height / 2 - gooeyRect.height / 2
 
 				gooey.window!.draggableInstance!.position = { x: centerX, y: centerY }
-				console.log(gooey.element, gooeyRect)
 			}, 100)
 		}
 
@@ -56,6 +55,7 @@
 
 <style>
 	.gooish {
+		/* position: relative; */
 		width: 100%;
 		height: 100%;
 	}
