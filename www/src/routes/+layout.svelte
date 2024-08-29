@@ -6,15 +6,24 @@
 	import NavMobile from '$lib/components/Nav/NavMobile.svelte'
 	import Header from '$lib/components/Header/Header.svelte'
 	import PageTitle from '$lib/components/PageTitle.svelte'
+	import { defer } from '../../../src/shared/defer'
+	import { preloadCode } from '$app/navigation'
 	import { device } from '$lib/device.svelte'
 	import { Tree } from '$lib/utils/tree'
 	import { page } from '$app/stores'
+	import { onMount } from 'svelte'
 
 	setupViewTransition()
 
 	const { children } = $props()
 
 	const links = new Tree($page.data.routes as string[]).root.children!
+
+	onMount(() => {
+		if ($page.url.pathname !== '/docs') {
+			defer(() => preloadCode('/docs'))
+		}
+	})
 </script>
 
 <PageTitle />
