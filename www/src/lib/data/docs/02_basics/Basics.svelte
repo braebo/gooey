@@ -1,39 +1,40 @@
-<script lang="ts">
-	import type { Gooey } from '../../../../../../src'
+<script lang="ts" module>
+	import { page } from '$app/stores'
 
-	import LiveExample from '$lib/components/LiveExample.svelte'
-	import Info from '$lib/components/Info.svelte'
-	import Code from '$lib/components/Code.svelte'
+	interface Data {
+		code: string
+		fn?: (gooey: Gooey) => void
+	}
 
-	let eventsEl = $state<HTMLElement>()
-
-	// First gooey: using the `add` method
-	let goo1 = $state<Gooey>()
-	const goo1Code = /*ts*/ `import { Gooey } from 'gooey'
+	export const data = {
+		// Basics
+		goo1: {
+			code: /*ts*/ `import { Gooey } from 'gooey'
 
 const gooey = new Gooey()
 
 gooey.add('hello', 'world')
-gooey.add('count', 1)`.trim()
-	$effect(() => {
-		goo1?.add('hello', 'world')
-		goo1?.add('count', 1)
-	})
-
-	// `on` method
-	let goo2 = $state<Gooey>()
-	const goo2Code = /*js*/ `
+gooey.add('count', 1)`.trim(),
+			fn: g => {
+				g.add('hello', 'world')
+				g.add('count', 1)
+			},
+		},
+		// Event handling
+		goo2: {
+			code: /*js*/ `
 const title = gooey.add('title', 'change me')
 
-title.on('change', (v) => gooey.title = v)`.trim()
-	$effect(() => {
-		goo2?.add('title', 'change me').on('change', v => {
-			if (goo2) goo2.title = v
-		})
-	})
-
-	let goo3 = $state<Gooey>()
-	const goo3Code = /*ts*/ `
+title.on('change', (v) => gooey.title = v)`.trim(),
+			fn: g => {
+				g.add('title', 'change me').on('change', v => {
+					if (g) g.title = v
+				})
+			},
+		},
+		// addMany
+		goo3: {
+			code: /*ts*/ `
 const stuff = {
   a: true,
   b: {
@@ -41,16 +42,63 @@ const stuff = {
     d: ['e', 'e', 'z']
   }
 }
+`.trim(),
+			fn: g => {
+				g.bindMany(
+					{
+						a: true,
+						b: {
+							c: '#ff0000',
+							d: 'a',
+						},
+					},
+					{
+						d: {
+							options: ['a', 'b', 'c'],
+						},
+					},
+				)
+			},
+		},
+		events1: {
+			code: `
+gooey.add('title', 'change me', {
+  onChange: (v) => gooey.title = v
+})`.trim(),
+		},
+		events2: {
+			code: `
+gooey
+  .add('title', 'change me')
+  .on('change', (v) => gooey.title = v)`.trim(),
+		},
+	} as const satisfies Record<string, Data>
+</script>
 
-gooey.addMany(stuff)`.trim()
+<script lang="ts">
+	import type { Gooey } from '../../../../../../src'
+
+	import LiveExample from '$lib/components/LiveExample.svelte'
+	import Info from '$lib/components/Info.svelte'
+	import Code from '$lib/components/Code.svelte'
+
+	const { highlighted } = $page.data
+
+	let eventsEl = $state<HTMLElement>()
+
+	let goo1 = $state<Gooey>()
 	$effect(() => {
-		goo3?.bindMany({
-			a: true,
-			b: {
-				c: '#ff0000',
-				d: ['e', 'e', 'z']
-			}
-		})
+		if (goo1) data.goo1.fn(goo1)
+	})
+
+	let goo2 = $state<Gooey>()
+	$effect(() => {
+		if (goo2) data.goo2.fn(goo2)
+	})
+
+	let goo3 = $state<Gooey>()
+	$effect(() => {
+		if (goo3) data.goo3.fn(goo3)
 	})
 </script>
 
@@ -64,7 +112,7 @@ gooey.addMany(stuff)`.trim()
 	<!--? `add` method -->
 
 	<div class="example">
-		<Code headless lang="ts" text={goo1Code} />
+		<Code headless lang="ts" highlightedText={highlighted.goo1} ssr />
 
 		<LiveExample bind:gooey={goo1} position="center" />
 	</div>
@@ -78,7 +126,7 @@ gooey.addMany(stuff)`.trim()
 	</div>
 
 	<div class="example">
-		<Code headless lang="ts" text={goo2Code} />
+		<Code headless lang="ts" highlightedText={highlighted.goo2} ssr />
 
 		<LiveExample bind:gooey={goo2} position="center" />
 	</div>
@@ -101,14 +149,7 @@ gooey.addMany(stuff)`.trim()
 						The <code>onChange</code> option can also be used
 					</div>
 
-					<Code
-						headless
-						lang="ts"
-						text={`
-gooey.add('title', 'change me', {
-  onChange: (v) => gooey.title = v
-})`.trim()}
-					/>
+					<Code headless lang="ts" highlightedText={highlighted.events1} ssr />
 				</div>
 				<div class="br"></div>
 
@@ -117,14 +158,7 @@ gooey.add('title', 'change me', {
 				<div class="example inline">
 					<div class="description">Or you can chain stuff</div>
 
-					<Code
-						headless
-						lang="ts"
-						text={`
-gooey
-  .add('title', 'change me')
-  .on('change', (v) => gooey.title = v)`.trim()}
-					/>
+					<Code headless lang="ts" highlightedText={highlighted.events2} ssr />
 				</div>
 				<div class="br-sm"></div>
 			</Info>
@@ -139,7 +173,7 @@ gooey
 	</div>
 
 	<div class="example">
-		<Code headless lang="ts" text={goo3Code} />
+		<Code headless lang="ts" highlightedText={highlighted.goo3} ssr />
 
 		<LiveExample bind:gooey={goo3} />
 	</div>
