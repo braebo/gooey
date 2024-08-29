@@ -374,16 +374,6 @@ export class Gooey {
 	 * @internal
 	 */
 	private _isWindowManagerOwner = false
-	/**
-	 * The time of the gooey's creation.
-	 * @internal
-	 */
-	private readonly _birthday = Date.now()
-	/**
-	 * The number of milliseconds post-instantiation to watch for adders for repositioning.
-	 * @internal
-	 */
-	private _honeymoon: false | 1000 = 1000
 	private _theme!: GooeyOptions['theme']
 	private _log: Logger
 	private _closedMap: PersistedValue<Record<string, boolean>>
@@ -421,21 +411,14 @@ export class Gooey {
 			opts.storage = Object.assign({}, GUI_STORAGE_DEFAULTS, opts.storage)
 		}
 
-		let reposition = false
 		let storageKey = ''
 		const storageOpts = resolveOpts(opts.storage, GUI_STORAGE_DEFAULTS)
 		if (!storageOpts) {
-			reposition = true
 		} else {
 			storageKey = `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`
 			opts.storage = {
 				...storageOpts,
 				key: storageKey,
-			}
-			// When storage is on, repositioning after animating-in is disabled unless this is the
-			// _very_ first page load.
-			if (!(`${opts.storage.key}::wm::0::position` in localStorage)) {
-				reposition = true
 			}
 		}
 
@@ -458,10 +441,10 @@ export class Gooey {
 			style: {
 				display: 'contents',
 			},
-			parent: this.container,
 		})
 		this.elements.wrapper = this.wrapper
 		this.wrapper.style.visibility = 'hidden'
+		this.container.append(this.wrapper)
 
 		this._closedMap = persist(`${storageKey || `gooey::${this.opts.title}`}::closed-map`, {})
 		this._closedMap
@@ -540,37 +523,9 @@ export class Gooey {
 
 		this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage)
 
-		// this._resolveInitialPosition(reposition)
-
 		if (!this.opts.hidden) {
-			this._reveal()
+			this._revealing = true
 		}
-	}
-
-	private async _reveal(): Promise<void> {
-		// In case dispose() was called before this resolved...
-		if (!this.container) return
-
-		clearTimeout(this.revealTimeout)
-		this.revealTimeout = setTimeout(() => {
-			this.refreshPosition()
-			// this._resolveInitialPosition(true)
-			// Now that we're in position and inputs are loaded, we can animate-in.
-			this.wrapper.style.visibility = 'visible'
-			this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
-				fill: 'none',
-				duration: 400,
-			})
-		}, 100)
-
-		// // Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
-		// if (isSafari()) {
-		// 	setTimeout(() => {
-		// 		this.folder.element.style.display = 'table'
-		// 		this.folder.element.offsetHeight
-		// 		this.folder.element.style.display = 'flex'
-		// 	}, 500)
-		// }
 	}
 
 	get title(): string {
@@ -988,21 +943,29 @@ export class Gooey {
 		return windowManager
 	}
 
-	positionTimeout: ReturnType<typeof setTimeout> | undefined
+	private _revealing: boolean = false
+	private _repositionTimeout: ReturnType<typeof setTimeout> | undefined
 	refreshPosition() {
-		this._log.fn('refreshPosition').info('SCHEDULED')
-		clearTimeout(this.positionTimeout)
-		this.positionTimeout = setTimeout(() => {
-			this._log.fn('refreshPosition').info('FIRED')
-			this._resolveInitialPosition(true)
-			// if (this._revealing) {
-			// 	this._reveal()
-			// 	this._revealing = false
-			// }
-		}, 20)
+		this._log.fn('refreshPosition')
+
+		clearTimeout(this._repositionTimeout)
+		this._repositionTimeout = setTimeout(() => {
+			this._log.fn('refreshPosition').debug('FIRED')
+			this._resolvePosition(true)
+
+			if (this._revealing) {
+				this._revealing = false
+				// Now that we're in position and inputs are loaded, we can animate-in.
+				this.wrapper.style.visibility = 'visible'
+				this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
+					fill: 'none',
+					duration: 400,
+				})
+			}
+		}, 10)
 	}
 
-	private _resolveInitialPosition(reposition: boolean) {
+	private _resolvePosition(reposition: boolean) {
 		if (!this.container || !this.wrapper) return
 
 		const rect = this.element.getBoundingClientRect()
@@ -1019,9 +982,9 @@ export class Gooey {
 				margin: this.opts.margin,
 			})
 
-			// Use the rect to correct the window manager's positioning when storage is off.
 			if (
 				reposition ||
+				// Need to correct the window manager's positioning when storage is off.
 				this.opts.storage === false ||
 				(this.opts.storage && this.opts.storage.position === false)
 			) {

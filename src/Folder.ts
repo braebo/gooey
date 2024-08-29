@@ -571,6 +571,10 @@ export class Folder {
 		this._disabled = toFn(opts.disabled ?? false)
 
 		this._createGraphics(opts._headerless).then(() => {
+			if (opts.closed) {
+				this.close({ updateState: true, instant: true })
+			}
+
 			this.evm.emit('mount')
 
 			// Open/close the folder when the closed state changes.
@@ -585,10 +589,6 @@ export class Folder {
 					})
 				}),
 			)
-
-			if (opts.closed) {
-				this.closed.set(opts.closed)
-			}
 
 			if (this._hidden) this.hide(true)
 		})
@@ -793,8 +793,22 @@ export class Folder {
 		return this
 	}
 
-	open(updateState = false): this {
-		this._log.fn('open').debug()
+	open(options?: {
+		/**
+		 * Whether to update the folder's {@link closed} state.  Defaults to `false` to avoid
+		 * getting caught in a feedback loop.
+		 * @default false
+		 */
+		updateState?: boolean
+		/**
+		 * Whether to open the folder instantly, bypassing the animation.
+		 * @default false
+		 */
+		instant?: boolean
+	}): this {
+		const { updateState = false, instant = false } = options ?? {}
+		this._log.fn('open').debug(updateState || instant ? { updateState, instant } : '')
+
 		this.element.classList.remove('closed')
 		this.evm.emit('toggle', false)
 		if (updateState) this.closed.set(false)
@@ -802,12 +816,25 @@ export class Folder {
 		this._clicksDisabled = false
 
 		this._toggleClass()
-		animateConnector(this, 'open')
+		animateConnector(this, 'open', { instant })
 		return this
 	}
 
-	close(updateState = false): this {
-		this._log.fn('close').debug()
+	close(options?: {
+		/**
+		 * Whether to update the folder's {@link closed} state.  Defaults to `false` to avoid
+		 * getting caught in a feedback loop.
+		 * @default false
+		 */
+		updateState?: boolean
+		/**
+		 * Whether to open the folder instantly, bypassing the animation.
+		 * @default false
+		 */
+		instant?: boolean
+	}): this {
+		const { updateState = false, instant = false } = options ?? {}
+		this._log.fn('close').debug(updateState || instant ? { updateState, instant } : '')
 
 		this.element.classList.add('closed')
 		if (updateState) this.closed.set(true)
@@ -815,7 +842,7 @@ export class Folder {
 		this._clicksDisabled = false
 
 		this._toggleClass()
-		animateConnector(this, 'close')
+		animateConnector(this, 'close', { instant })
 		return this
 	}
 
@@ -1157,6 +1184,7 @@ export class Folder {
 		const opts = this._resolveOpts(title, initialValue, options)
 		const input = this._createInput(opts)
 		this._registerInput(input, opts.presetId)
+		this._log.fn('add').debug({ input, opts })
 		return input
 	}
 	//⌟
@@ -1249,6 +1277,7 @@ export class Folder {
 			include?: InferTargetKeys<T>[]
 		},
 	): TInputs {
+		this._log.fn('addMany').debug({ target, options }, this)
 		let rootFolder: Folder = this
 
 		if (!this.#transientRoot) {
@@ -1259,7 +1288,6 @@ export class Folder {
 
 		const finalRoot = this.#transientRoot
 		this.#transientRoot = null
-
 
 		return finalRoot as this & TInputs
 	}
@@ -1281,6 +1309,7 @@ export class Folder {
 			include?: InferTargetKeys<T>[]
 		},
 	): TInputs {
+		this._log.fn('bindMany').debug({ target, options }, this)
 		let rootFolder: Folder = this
 
 		if (!this.#transientRoot) {
@@ -1777,10 +1806,7 @@ export class Folder {
 
 		return {
 			header,
-			toolbar: {
-				container: toolbar,
-				// settingsButton,
-			},
+			toolbar: { container: toolbar },
 			title,
 			contentWrapper,
 			content,
@@ -1826,13 +1852,16 @@ export class Folder {
 		return height
 	}
 
+	// todo - Add `hue` to the `Theme` interface and make it easily customizable.
 	get hue(): number {
 		const localIndex = this.parentFolder.children.indexOf(this)
-		// note: Color will be off if we ever add built-in folders other than "Settings Folder".
+
+		//- Breaks if another folder other than the Settings Folder is added as a built-in...!
 		const i = this.parentFolder.isRootFolder() ? localIndex - 1 : localIndex
+
 		// Don't count the root folder.
 		const depth = this._depth - 1
-		// return i * 20 + depth * 80
+
 		if (depth === 0) {
 			return i * 30
 		} else {
