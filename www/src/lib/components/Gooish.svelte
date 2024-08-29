@@ -7,11 +7,13 @@
 		params = {} as T,
 		wrapperStyle = '',
 		gooey = $bindable<Gooey>(),
+		autoCenter = true,
 		...props
 	}: Partial<GooeyOptions> & {
 		wrapperStyle?: string
 		params?: T
 		gooey?: Gooey
+		autoCenter?: boolean
 	} = $props()
 
 	let el = $state<HTMLElement>()
@@ -31,7 +33,7 @@
 			gooey.bindMany(params)
 		}
 
-		if (props.position === 'center') {
+		if (autoCenter && props.position === 'center') {
 			setTimeout(() => {
 				const boundsRect = el!.getBoundingClientRect()
 				const gooeyRect = gooey.folder.element!.getBoundingClientRect()

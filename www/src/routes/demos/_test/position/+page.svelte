@@ -35,6 +35,7 @@
 <section class="section">
 	{#each PLACEMENTS.slice(0, count) as position}
 		{@const params = getParams()}
+
 		<div class="container">
 			<Gooish {params} {position} storage={true} title={position} width={params.width} />
 		</div>
