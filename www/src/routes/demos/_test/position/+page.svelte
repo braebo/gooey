@@ -3,6 +3,9 @@
 	import Gooish from '$lib/components/Gooish.svelte'
 	import { page } from '$app/stores'
 
+	import { Gooey } from '../../../../../../src/Gooey'
+	import { onMount } from 'svelte'
+
 	// @ts-ignore
 	const count = +$page.url.searchParams.get('count') || -1
 	// @ts-ignore
@@ -28,18 +31,61 @@
 
 		params.width = 250 + Math.random() * 150
 
+		params.nested = {
+			a: 'fake_GooeyStorageOptions',
+			b: 'fake_default::local-storage',
+			c: true,
+			d: true,
+		}
+
 		return params
 	}
+
+	let gooey: Gooey | undefined
+
+	onMount(() => {
+		gooey = new Gooey({
+			container: document.body,
+			theme: 'flat',
+			position: 'top-center',
+			title: 'local storage',
+		})
+		gooey.add('enabled', false)
+		gooey.add('', [
+			[
+				{
+					text: 'clear',
+					onClick: () => localStorage.clear(),
+				},
+			],
+			[
+				{
+					text: 'log',
+					onClick: () => console.log(localStorage),
+				},
+			],
+		])
+		return gooey.dispose
+	})
 </script>
 
 <section class="section">
-	{#each PLACEMENTS.slice(0, count) as position}
-		{@const params = getParams()}
+	{#if gooey}
+		{#each PLACEMENTS.slice(0, count) as position}
+			{@const params = getParams()}
 
-		<div class="container">
-			<Gooish {params} {position} storage={true} title={position} width={params.width} />
-		</div>
-	{/each}
+			<div class="container">
+				<Gooish
+					{params}
+					{position}
+					storage={gooey?.opts.storage ?? false}
+					title={position}
+					width={params.width}
+					refreshPosition
+				/>
+			</div>
+		{/each}
+	{/if}
 </section>
 
 <style>
@@ -52,6 +98,8 @@
 		gap: 1rem;
 
 		min-width: calc(100vw - 8rem);
+
+		margin-top: 10rem;
 	}
 
 	.container {
