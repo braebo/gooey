@@ -250,6 +250,7 @@ export function createFolderConnector(folder: Folder, icon: HTMLDivElement) {
 export function animateConnector(
 	folder: Folder,
 	action: 'open' | 'close',
+	{ instant = false }: { instant?: boolean } | undefined = {},
 ): Promise<Animation | void> {
 	if (!folder.graphics?.connector) return Promise.resolve()
 	folder.graphics.connector.update()
@@ -291,8 +292,8 @@ export function animateConnector(
 	]
 
 	const timing = {
-		duration: config.duration,
-		delay: config.delay,
+		duration: instant ? 0 : config.duration,
+		delay: instant ? 0 : config.delay,
 		easing: config.easing,
 		fill: 'forwards',
 	} as const satisfies KeyframeAnimationOptions
