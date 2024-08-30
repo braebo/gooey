@@ -2,7 +2,6 @@ import type { State } from '../shared/state'
 import type { Input } from '../inputs/Input'
 
 import { disableable, type Disableable } from '../shared/decorators/disableable-class-decorator'
-import { getScrollParent } from '../shared/scrollParent'
 import { EventManager } from '../shared/EventManager'
 import { isState } from '../shared/state'
 import { values } from '../shared/object'
@@ -429,7 +428,7 @@ export class Select<T> {
 			for (const [, { option, element }] of this.optionMap) {
 				element.classList.toggle('selected', option.label === this.selected.label)
 
-				// todo - these listeners could be one listener on the dropdown that gets the option id from the target's dataset.
+				// todo - these listeners should be one listener on the dropdown that gets the option id from the target's dataset.
 				const select = () => {
 					this._log
 						.fn('on(mouseenter)')
@@ -474,7 +473,7 @@ export class Select<T> {
 
 		// Handle overflow.
 		const scrollHeight = dropdown.scrollHeight
-		const maxHeight = this.container.offsetHeight - selectedRect.height - top
+		const maxHeight = Math.max(200, this.container.offsetHeight - top)
 
 		if (scrollHeight > maxHeight) {
 			dropdown.style.setProperty('max-height', `${maxHeight}px`)

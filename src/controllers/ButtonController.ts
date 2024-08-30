@@ -15,7 +15,7 @@ export type ButtonEventPayload = {
 	button: ButtonController
 }
 
-export type ButtonControllerOptions = {
+export interface ButtonControllerOptions {
 	readonly __type?: 'ButtonControllerOptions'
 
 	/**
