@@ -40,7 +40,7 @@ export interface SelectInputEvents<T> extends InputEvents<LabeledOption<T>> {
 	cancel: void
 }
 
-export class InputSelect<TValueType = any> extends Input<
+export class InputSelect<TValueType extends ValidInputValue = any> extends Input<
 	LabeledOption<TValueType>,
 	SelectInputOptions<TValueType>,
 	SelectControllerElements<TValueType>,
