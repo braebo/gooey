@@ -1,4 +1,4 @@
-<script lang="ts" generics="V">
+<!-- <script lang="ts" generics="V">
 	import type { Writable } from 'svelte/store'
 
 	import Froggo from '../../components/Froggo.svelte'
@@ -88,4 +88,4 @@
 	{/each}
 </select>
 
-<Froggo />
+<Froggo /> -->

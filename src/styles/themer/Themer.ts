@@ -279,7 +279,11 @@ export class Themer {
 	 * The active theme's variables based on the current mode.
 	 */
 	get modeColors(): ModeColors {
-		return this.theme.value.vars.color[this.activeMode]
+		return Object.assign(
+			{},
+			this.theme.value.vars.color.base,
+			this.theme.value.vars.color[this.activeMode],
+		)
 	}
 
 	/**
