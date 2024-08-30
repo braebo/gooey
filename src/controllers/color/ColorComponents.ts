@@ -278,9 +278,12 @@ export class ColorComponents {
 	}
 
 	#refreshText = () => {
-		this.elements.text.value =
-			// @ts-ignore fuck off
+		this.elements.text.value = // @ts-expect-error
 			this.color[this.mode.startsWith('hex') ? this.mode + 'String' : this.mode]
+		this.select.elements.selected.innerText = this.select.elements.selected.innerHTML.replace(
+			'String',
+			'*',
+		)
 	}
 
 	#lastColor: string | undefined
