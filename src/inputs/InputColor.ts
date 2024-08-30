@@ -21,11 +21,11 @@ export const COLOR_MODES = [
 	'rgbaString',
 	'hsla',
 	'hslaString',
-	'hsva',
-	'hsvaString',
+	// 'hsva',
+	// 'hsvaString',
 	'hex',
 	'hex8',
-	'array',
+	// 'array',
 ] as const
 
 export interface ColorControllerElements extends ElementMap<ColorPicker> {
@@ -212,22 +212,6 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 		return this
 	}
-
-	//· Getters & Setters ········································································¬
-
-	get aTitle() {
-		return this.mode === 'rgba' ? 'r' : 'h'
-	}
-	get bTitle() {
-		return this.mode === 'rgba' ? 'g' : 's'
-	}
-	get cTitle() {
-		return this.mode === 'rgba' ? 'b' : this.mode === 'hsla' ? 'l' : 'v'
-	}
-	get dTitle() {
-		return 'a'
-	}
-	//⌟
 
 	private _createCurrentColor(parent: HTMLDivElement) {
 		const container = create('div', {
