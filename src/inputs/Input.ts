@@ -355,7 +355,7 @@ export abstract class Input<
 		this.elements.title = create('div', {
 			classes: ['gooey-input-title'],
 			parent: this.elements.container,
-			innerHTML: this.title,
+			innerHTML: this.title.replaceAll(/-|_/g, ' '),
 		})
 
 		this.elements.content = create('div', {
@@ -387,7 +387,7 @@ export abstract class Input<
 									}
 									case 'InputColor': {
 										if ('hex' in text) {
-											text = text[(this as any as InputColor).mode]
+											text = text[(this as any as InputColor).mode] as string
 
 											if (CSS.supports('color', text)) {
 												return `Reset · <em style="color:${text}">${text}</em>`
@@ -461,7 +461,7 @@ export abstract class Input<
 	}
 	set title(v: string) {
 		this._title = v
-		this.elements.title.innerHTML = v
+		this.elements.title.innerHTML = v.replaceAll(/-|_/g, ' ')
 	}
 
 	/**
