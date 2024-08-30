@@ -16,13 +16,11 @@ describe('tsdoc examples', () => {
 		}
 
 		it('should initialize successfully', () => {
-			const wtf = gooey.addMany(params, {
+			gooey.addMany(params, {
 				myFolder: {
 					folderOptions: { closed: true }, // optional folder controls
 				},
 			})
-			console.log('wtf', wtf)
-			console.log('gooey', gooey)
 		})
 
 		it('should find inputs by key', () => {
