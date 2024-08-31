@@ -1,5 +1,3 @@
-// The custom-regions extension is recommended for this file.
-
 import { DEV } from 'esm-env'
 
 import type {
@@ -21,9 +19,9 @@ import { InputSelect, type SelectInputOptions } from './inputs/InputSelect'
 import { InputNumber, type NumberInputOptions } from './inputs/InputNumber'
 import { InputColor, type ColorInputOptions } from './inputs/InputColor'
 import { InputText, type TextInputOptions } from './inputs/InputText'
-import { isLabeledOption } from './controllers/Select'
 import {
 	InputButtonGrid,
+	isButtonGridArrays,
 	type ButtonGridInputOptions,
 	type ButtonGridArrays,
 } from './inputs/InputButtonGrid'
@@ -32,6 +30,7 @@ import { animateConnector, createFolderConnector, createFolderSvg } from './svg/
 import { Color, isColor, isColorFormat } from './shared/color/color'
 import { composedPathContains } from './shared/cancelClassFound'
 import { fromState, state, type State } from './shared/state'
+import { isLabeledOption } from './controllers/Select'
 import { EventManager } from './shared/EventManager'
 import { TerminalSvg } from './svg/TerminalSvg'
 import { Search } from './toolbar/Search'
@@ -1191,28 +1190,38 @@ export class Folder {
 
 	//·· Add ···································································¬
 
-	add(title: string, initialValue: boolean, options?: SwitchInputOptions): InputSwitch
-	add(title: string, initialValue: number, options?: NumberInputOptions): InputNumber
-	add(title: string, initialValue: string, options?: TextInputOptions): InputText
-	add(title: string, initialValue: () => void, options?: ButtonInputOptions): InputButton
-	add(title: string, initialValue: ColorFormat, options?: ColorInputOptions): InputColor
-	// add<T>(title: string, initialValue: Option<T>, options: SelectInputOptions<T>): InputSelect<T>
 	// prettier-ignore
-	add<T>(title: string, initialValue: LabeledOption<T>, options: SelectInputOptions<T>): InputSelect<T>
+	add<T extends boolean>(title: string, initialValue: T, options?: SwitchInputOptions): InputSwitch
 	// prettier-ignore
-	add(title: string, initialValue: ButtonGridArrays, options?: ButtonGridInputOptions ): InputButtonGrid
+	add<T extends number>(title: string, initialValue: T, options?: NumberInputOptions): InputNumber
+	// prettier-ignore
+	add<T extends ColorFormat>(title: string, initialValue: T, options?: ColorInputOptions): InputColor
+	// prettier-ignore
+	add<T extends string>(title: string, initialValue: T, options?: TextInputOptions): InputText
+	// prettier-ignore
+	add<T extends any>(title: string, initialValue: T, options?: SelectInputOptions<T>): InputSelect<T>
+	// prettier-ignore
+	add<T extends (() => void)>(title: string, initialValue: T, options?: ButtonInputOptions): InputButton
+	//!^ This overload signature is not compatible with its implementation signature.ts(2394)
+	//!  Folder.ts(1198, 2): The implementation signature is declared here.
+	// prettier-ignore
+	add<T extends ButtonGridArrays>(title: string, initialValue: T, options?: ButtonGridInputOptions): InputButtonGrid
 	/**
-	 * Adds an input to the folder based on typoe of the `initialValue` parameter.
+	 * Adds an input to the folder based on the type of the `initialValue` parameter.
 	 * @param title - The title of the input to display in the label area of the input's "row".
 	 * @param initialValue - The initial value of the input.  The type of this value will determine
 	 * the type of input created.
 	 */
-	add(title: string, initialValue: ValidInputValue, options?: InputOptions): ValidInput {
+	add<const T extends ValidInputValue, const O extends InferOptions<T>>(
+		title: string,
+		initialValue: T,
+		options?: O,
+	): InferInput<T> {
 		const opts = this._resolveOpts(title, initialValue, options)
 		const input = this._createInput(opts)
 		this._registerInput(input, opts.presetId)
 		this._log.fn('add').debug({ input, opts })
-		return input
+		return input as InferInput<T>
 	}
 	//⌟
 
