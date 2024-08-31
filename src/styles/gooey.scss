@@ -1965,8 +1965,7 @@ input.gooey-search-input {
 					&:has(input.d.hovering) {
 						.gooey-input-color-components-select-container span.d {
 							color: var(--gooey-fg-a);
-						width: 100%;
-						max-width: 11rem;
+						}
 					}
 					&:has(input.d.dragging) {
 						.gooey-input-color-components-select-container span.d {
@@ -1986,15 +1985,11 @@ input.gooey-search-input {
 						&.visible {
 							opacity: 1;
 							transform: translateX(0);
-						width: 100%;
-						// max-width: 100%;
+							pointer-events: all;
 						}
 					}
 
-
-							min-width: unset;
-							max-width: 100%;
-							display: flex;
+					.gooey-input-color-components-numbers-container {
 						grid-area: 1/2;
 						display: flex;
 						align-items: center;
