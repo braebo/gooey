@@ -1,5 +1,5 @@
 function boilerplate() {
-	const breakpoint = Number(document.documentElement.style.getPropertyValue('--mobile')) || 1000
+	const breakpoint = Number(globalThis.document?.documentElement.style.getPropertyValue('--mobile')) || 1000
 
 	let state = $state({ mobile: globalThis.window?.innerWidth < breakpoint })
 
@@ -7,8 +7,8 @@ function boilerplate() {
 		state.mobile = globalThis.window?.innerWidth < breakpoint
 	}
 
-	window.removeEventListener('resize', onResize)
-	window.addEventListener('resize', onResize)
+	globalThis.removeEventListener?.('resize', onResize)
+	globalThis.addEventListener?.('resize', onResize)
 
 	return state
 }
