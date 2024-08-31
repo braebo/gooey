@@ -1887,20 +1887,26 @@ input.gooey-search-input {
 
 				//- RGB Components
 
-				$selectWidth: 2rem;
+				$selectWidth: 2.5rem;
 
 				.gooey-input-color-components-container {
 					display: grid;
 					grid-template-columns: $selectWidth 1fr;
 					align-items: center;
-					gap: 0.75rem;
+					gap: 0.25rem;
 
 					.gooey-input-color-components-select-container {
 						width: $selectWidth;
+						height: 100%;
 						grid-area: 1/1;
 
 						color: var(--gooey-fg-d);
 						font-size: var(--gooey-font-size);
+						line-height: 1.5;
+
+						transition: 0.15s;
+						border-radius: var(--gooey-radius-sm);
+						overflow: hidden;
 
 						@at-root .gooey-root[mode='light'] & {
 							color: var(--gooey-bg-e);
@@ -1913,6 +1919,10 @@ input.gooey-search-input {
 
 						.gooey-controller-select-selected {
 							font-size: calc(var(--gooey-font-size) * 0.8);
+						}
+
+						&:hover {
+							outline: 1px solid var(--gooey-bg-d);
 						}
 					}
 
@@ -1955,7 +1965,8 @@ input.gooey-search-input {
 					&:has(input.d.hovering) {
 						.gooey-input-color-components-select-container span.d {
 							color: var(--gooey-fg-a);
-						}
+						width: 100%;
+						max-width: 11rem;
 					}
 					&:has(input.d.dragging) {
 						.gooey-input-color-components-select-container span.d {
@@ -1965,7 +1976,8 @@ input.gooey-search-input {
 					}
 
 					.gooey-input-color-components-text {
-						max-width: 5rem;
+						width: 100%;
+						max-width: 11rem;
 						grid-area: 1/2;
 
 						opacity: 0;
@@ -1974,22 +1986,30 @@ input.gooey-search-input {
 						&.visible {
 							opacity: 1;
 							transform: translateX(0);
-							pointer-events: all;
+						width: 100%;
+						// max-width: 100%;
 						}
 					}
 
-					.gooey-input-color-components-numbers-container {
+
+							min-width: unset;
+							max-width: 100%;
+							display: flex;
 						grid-area: 1/2;
 						display: flex;
 						align-items: center;
 						justify-content: space-between;
 						gap: 0.25rem;
 
-						width: 90%;
+						width: 100%;
+						// max-width: 100%;
 
 						.gooey-controller-number {
 							height: 1.25rem;
-							max-width: unset;
+
+							min-width: unset;
+							max-width: 100%;
+							display: flex;
 
 							transition: 0.15s;
 
