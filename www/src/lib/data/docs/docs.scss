@@ -49,14 +49,12 @@
 
 	.example {
 		border: 1px solid var(--bg-b);
-		contain: content;
 
 		display: flex;
 		align-items: center;
 		border-radius: var(--radius-md);
-		overflow: hidden;
 
-		// min-height: 10rem;
+		min-height: 0;
 
 		.code-window {
 			--code-height: 100%;
@@ -95,6 +93,16 @@
 			&:hover .copy {
 				opacity: 1;
 			}
+
+			// scollbars
+			*::-webkit-scrollbar,
+			*::-webkit-scrollbar-track,
+			*::-webkit-scrollbar-thumb,
+			&::-webkit-scrollbar,
+			&::-webkit-scrollbar-track,
+			&::-webkit-scrollbar-thumb {
+				display: none;
+			}
 		}
 
 		.description {
@@ -113,15 +121,17 @@
 		code {
 			// code {
 			padding: 0.1rem 0.5rem;
-			background: color-mix(in hsl, var(--bg-b), var(--bg-c) 42%);
+			background: color-mix(in hsl, var(--dark-b), var(--dark-c) 42%);
 			color: var(--fg-a);
-
 			color: var(--fg-b);
 			color: color-mix(in hsl, var(--fg-b), var(--theme-a) 10%);
+			color: #f8d2c9;
+
 			contain: content;
-			font-size: var(--font-sm);
-			// white-space: '';
 			height: fit-content;
+			font-variation-settings:
+				'wght' 600,
+				'wdth' 100;
 		}
 	}
 
@@ -237,32 +247,25 @@
 			max-width: calc(100% - 1rem);
 		}
 
-		.description {
-			font-size: var(--font-xs);
-		}
-
 		.example {
-			width: 100%;
-			flex-direction: column;
-			height: 100%;
+			display: block;
 
-			&:not(.inline) {
-				min-height: 20rem;
+			.code-window {
+				height: fit-content;
+				width: 100%;
+				max-width: 100%;
+
+				color: var(--theme-b, red) !important;
+
+				pre {
+					--line-height: 1.25;
+					--font-size: var(--font-xxs);
+				}
 			}
 		}
 
-		.example.inline .description {
-			font-size: var(--font-xs);
-		}
-
-		.code-window {
-			--font-size: var(--font-xxs) !important;
-			--line-height: 1.25 !important;
-
-			width: 100%;
-			max-width: 100%;
-
-			overflow-x: auto;
+		.description {
+			font-size: var(--font-xxs);
 		}
 	}
 }

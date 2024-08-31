@@ -1,26 +1,34 @@
 <script lang="ts" generics="T extends Record<string, any> = Record<string, any>">
 	import { Gooey, type GooeyOptions } from '../../../../src/Gooey'
+	import { device } from '$lib/device.svelte'
 	import Gooish from './Gooish.svelte'
 
 	let {
 		gooey = $bindable<Gooey>(),
+		height = '100%',
+		heightSm = '8rem',
 		...props
 	}: Partial<GooeyOptions> & {
 		wrapperStyle?: string
 		params?: T
 		gooey?: Gooey
+		height?: string
+		heightSm?: string
 	} = $props()
+
+	let h = $derived(device.mobile ? heightSm : height)
 
 	let show = $state(false)
 </script>
 
 <div
 	role="button"
-	class="gooey-example"
+	class="live-example"
 	class:show
 	onclick={() => (show = true)}
 	onkeypress={() => (show = true)}
 	tabindex="0"
+	style:height={h}
 >
 	{#if show}
 		<Gooish bind:gooey {...props} />
@@ -30,7 +38,7 @@
 </div>
 
 <style>
-	.gooey-example {
+	.live-example {
 		position: relative;
 
 		display: flex;
@@ -67,12 +75,19 @@
 		}
 	}
 
+	@media (max-width: 1000px) {
+		.live-example {
+			height: auto;
+		}
+	}
+
 	.btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		position: absolute;
+		inset: 0;
+		margin: auto;
 
 		width: 4rem;
+		height: fit-content;
 		padding: 0.4rem 0;
 
 		background: var(--bg-a);
