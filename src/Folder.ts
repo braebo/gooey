@@ -42,7 +42,7 @@ import { defer } from './shared/defer'
 import { toFn } from './shared/toFn'
 import { Gooey } from './Gooey'
 
-//· Types ························································································¬
+//#region Types ··················································································¬
 
 type InvalidBinding = never
 
@@ -342,9 +342,9 @@ export interface FolderEvents {
 	 */
 	mount: void
 }
-//⌟
+//#endregion Types
 
-//· Contants ·····················································································¬
+//#region Constants ··············································································¬
 
 const FOLDER_DEFAULTS = Object.freeze({
 	presetId: '',
@@ -368,12 +368,13 @@ const INTERNAL_FOLDER_DEFAULTS = {
 	gooey: undefined,
 	_headerless: false,
 } as const satisfies InternalFolderOptions
-//⌟
+//#endregion
 
 /**
  * Folder is a container for organizing and grouping {@link Input|Inputs} and child Folders.
  *
- * This class should not be instantiated directly.  Instead, use the {@link Gooey.addFolder} method.
+ * This class should not be instantiated directly.  Instead, use the {@link Gooey.addFolder} and
+ * {@link Folder.addFolder} methods.
  *
  * @example
  * ```typescript
@@ -383,7 +384,7 @@ const INTERNAL_FOLDER_DEFAULTS = {
  * ```
  */
 export class Folder {
-	//· Props ····················································································¬
+	//#region Props ··············································································¬
 	__type = 'Folder' as const
 	isRoot = true
 	id = nanoid()
@@ -519,7 +520,7 @@ export class Folder {
 	 * @todo This needs to sync with the animation duration in the css.
 	 */
 	private _animDuration = 350
-	//⌟
+	//#endregion
 	constructor(options: FolderOptions) {
 		if (!('container' in options)) {
 			throw new Error('Folder must have a container.')
@@ -624,7 +625,7 @@ export class Folder {
 		}, 100)
 	}
 
-	//· Getters/Setters ··········································································¬
+	//#region Getters/Setters ····································································¬
 
 	/**
 	 * The folder's title.  Changing this will update the UI.
@@ -646,7 +647,7 @@ export class Folder {
 				fill: 'forwards',
 			},
 		).onfinish = () => {
-			this.elements.title.innerHTML = v
+			this.elements.title.innerHTML = v.replaceAll(/-|_/g, ' ')
 			this.elements.title.animate(
 				[
 					{
@@ -709,9 +710,9 @@ export class Folder {
 	isRootFolder(): this is Folder & { isRoot: true } {
 		return this.isRoot
 	}
-	//⌟
+	//#endregion Getters/Setters
 
-	//· Folders ··················································································¬
+	//#region Folders ············································································¬
 
 	addFolder(title?: string, options?: Partial<FolderOptions>): Folder {
 		options ??= {}
@@ -794,7 +795,7 @@ export class Folder {
 		this._clicksDisabled = false
 	}
 
-	//·· Open/Close ······································································¬
+	//#region Open/Close ······················································¬
 
 	toggle = (): this => {
 		this._log.fn('toggle').debug()
@@ -1011,9 +1012,9 @@ export class Folder {
 			this.element.classList.remove(...classes)
 		}, this._animDuration)
 	}
-	//⌟
+	//#endregion Open/Close
 
-	//·· Save/Load ···············································································¬
+	//#region Save/Load ·······················································¬
 
 	private _resolvePresetId = (identifiers: string[] = [], opts?: InputOptions): string => {
 		const parts = [] as string[]
@@ -1112,10 +1113,10 @@ export class Folder {
 
 		return this
 	}
-	//⌟
-	//⌟
+	//#endregion Save/Load
+	//#endregion Folders
 
-	//· Input Generators ·········································································¬
+	//#region Input Generators ···································································¬
 
 	/**
 	 * Updates the ui for all inputs belonging to this folder to reflect their current values.
@@ -1188,7 +1189,7 @@ export class Folder {
 		return o as TOptions & { title: string; value: TValue; presetId: string }
 	}
 
-	//·· Add ···································································¬
+	//#region Add ····························································¬
 
 	// prettier-ignore
 	add<T extends boolean>(title: string, initialValue: T, options?: SwitchInputOptions): InputSwitch
@@ -1223,9 +1224,9 @@ export class Folder {
 		this._log.fn('add').debug({ input, opts })
 		return input as InferInput<T>
 	}
-	//⌟
+	//#endregion Add
 
-	//·· Bind ···································································¬
+	//#region Bind ···························································¬
 
 	/**
 	 * Binds an input to a target object and key.  The input will automatically update the target
@@ -1267,11 +1268,6 @@ export class Folder {
 
 		return input as unknown as TInput
 	}
-
-	/**
-	 * Used to store a ref to the top level folder of a nested generator like `bindMany`.
-	 */
-	#transientRoot: Folder | null = null
 
 	/**
 	 * Takes an object and generates a set of inputs based on the object's keys and values.  Any
@@ -1337,6 +1333,7 @@ export class Folder {
 		this._log.fn('bindMany').debug({ target, options }, this)
 		return this._walk(target, ((options as any) || undefined) ?? {}, this, new Set(), 'bind')
 	}
+	//#endregion Bind
 
 	private _walk<
 		T extends Record<string, any>,
@@ -1460,6 +1457,7 @@ export class Folder {
 		return result
 	}
 
+	//#region Adders ·························································¬
 
 	/**
 	 * Adds a new {@link InputNumber} to the folder.
@@ -1601,7 +1599,6 @@ export class Folder {
 			initialValue?: V
 			targetKey?: keyof T
 		},
-		// >(target: T, key: K, options: Partial<O> = {}): InputSelect<V> {
 	>(target: T, key: K, options = {} as O): InputSelect<V> {
 		const opts = this._resolveBinding(target, key, options)
 		opts.value = target[key]
@@ -1637,9 +1634,9 @@ export class Folder {
 		const opts = this._resolveBinding(target, key, options)
 		return this.addSwitch(key as string, opts.value as V, opts)
 	}
-	//⌟
+	//#endregion Adders
 
-	//·· Helpers ···································································¬
+	//#region Helpers ························································¬
 
 	/**
 	 * Does validation / error handling.
@@ -1721,6 +1718,8 @@ export class Folder {
 				return new InputButton(options as ButtonInputOptions, this)
 			case 'InputSwitch':
 				return new InputSwitch(options as SwitchInputOptions, this)
+			case 'InputButtonGrid':
+				return new InputButtonGrid(options as ButtonGridInputOptions, this)
 		}
 
 		throw new Error('Invalid input type: ' + type + ' for options: ' + options)
@@ -1808,10 +1807,10 @@ export class Folder {
 			}
 		}
 	}
-	//⌟
-	//⌟
+	//#endregion Helpers
+	//#endregion Input Generators
 
-	//· Elements ·················································································¬
+	//#region Elements ···········································································¬
 
 	private _createElement(opts: FolderOptions | GooeyOptions): HTMLDivElement {
 		this._log.fn('#createElement').debug({ el: opts.container, this: this })
@@ -1843,7 +1842,7 @@ export class Folder {
 		const title = create('div', {
 			parent: header,
 			classes: ['gooey-title'],
-			innerHTML: this.title,
+			innerHTML: this.title.replaceAll(/-|_/g, ' '),
 		})
 
 		const toolbar = create('div', {
@@ -1868,9 +1867,9 @@ export class Folder {
 			content,
 		}
 	}
-	//⌟
+	//#endregion Elements
 
-	//· SVG's ····················································································¬
+	//#region Graphics ···········································································¬
 
 	private async _createGraphics(headerless = false): Promise<void> {
 		setTimeout(() => {
@@ -1958,7 +1957,7 @@ export class Folder {
 			})
 		}
 	}
-	//⌟
+	//#endregion Graphics
 
 	disposed = false
 	dispose(): void {
@@ -1989,7 +1988,7 @@ export class Folder {
 	}
 }
 
-//#region Type Tests ···································································¬
+//#region Type Tests ·············································································¬
 
 // const testTargetInferer = <T>(_target: T): InferTarget<T> => {
 // 	return {} as InferTarget<T>
