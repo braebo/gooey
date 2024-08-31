@@ -173,14 +173,27 @@ pre.shiki-wrapper {
 	height: var(--height, 100%);
 	max-height: $max-height;
 	padding: 0 1rem;
-	padding-top: 0rem;
 	margin: 0;
 
 	box-shadow: var(--shadow) inset;
 	overflow: auto;
 
+	--padding: clamp(0.5rem, 1.5vw, 1rem);
+
 	code {
 		box-shadow: none;
+	}
+
+	@media screen and (width < 1000px) {
+		// padding: 0 0.5rem;
+		padding: 0 var(--padding);
+
+		pre.shiki {
+			padding: 0;
+			// margin: 0.33rem 0;
+			margin: calc(var(--padding) * 0.85) 0;
+			margin-bottom: calc(var(--padding) * 1.85);
+		}
 	}
 }
 
