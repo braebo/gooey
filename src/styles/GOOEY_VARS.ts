@@ -80,8 +80,8 @@ const GUI_VARS_STRUCTURED: ThemeVars = {
 			'border-radius': `var(--${VAR_PREFIX}-radius-sm)`,
 			'box-shadow': `-1px 1px 2px hsla(250, 10%, var(--${VAR_PREFIX}-shadow-lightness), calc(0.7 * var(--${VAR_PREFIX}-shadow-opacity))), -1px 2px 5px hsla(250, 10%, var(--${VAR_PREFIX}-shadow-lightness), var(--${VAR_PREFIX}-shadow-opacity))`,
 			background: `var(--${VAR_PREFIX}-bg-c)`,
-			outline: `1px solid color-mix(in sRGB, var(--${VAR_PREFIX}-bg-d) 3%, transparent)`,
-			// outline: `1px solid color-mix(in sRGB, var(--${VAR_PREFIX}-bg-a), transparent 50%)`,
+			// outline: `1px solid color-mix(in sRGB, var(--${VAR_PREFIX}-bg-d) 3%, transparent)`,
+			outline: `1px solid color-mix(in sRGB, var(--${VAR_PREFIX}-bg-b), transparent 25%)`,
 			color: `var(--${VAR_PREFIX}-fg-b)`,
 			dim: {
 				color: `var(--${VAR_PREFIX}-fg-c)`,
