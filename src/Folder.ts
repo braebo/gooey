@@ -1742,6 +1742,9 @@ export class Folder {
 		return res as TResolvedOptions
 	}
 
+	/**
+	 * Attempts to determine the type of input to create based on the provided options.
+	 */
 	private _resolveType(options: any): InputType {
 		this._log.fn('resolveType').debug({ options, this: this })
 		let value = options.value ?? options.binding?.target[options.binding!.key]
@@ -1778,6 +1781,9 @@ export class Folder {
 			}
 			case 'object': {
 				if (Array.isArray(value)) {
+					if (isButtonGridArrays(value)) {
+						return 'InputButtonGrid'
+					}
 					return 'InputSelect'
 				}
 				if (isColor(value)) {
