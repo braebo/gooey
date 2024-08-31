@@ -2103,11 +2103,15 @@ input.gooey-search-input {
 					color-mix(in sRGB, var(--gooey-theme-a) 5%, transparent) 50%,
 					var(--gooey-input-number-range_background) 100%
 				);
-				background-image: light-dark(var(--background-light), var(--background-dark));
+				background-image: var(--background-dark);
 
-				opacity: 0.7;
+				opacity: 0.88;
 
 				cursor: pointer;
+
+				@at-root .gooey-root[mode='light'] & {
+					background-image: var(--background-light);
+				}
 
 				.gooey-controller-switch-thumb,
 				.gooey-controller-switch-left,
