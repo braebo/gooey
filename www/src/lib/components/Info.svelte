@@ -171,7 +171,7 @@
 		outline: 1px solid transparent;
 
 		transition: 0.15s;
-		z-index: 5;
+		z-index: 100;
 		pointer-events: none;
 
 		transform: translateY(1rem);
