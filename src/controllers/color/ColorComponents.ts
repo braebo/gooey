@@ -79,7 +79,7 @@ export class ColorComponents {
 			// disabled: this.opts.disabled,
 			disabled: this.disabled,
 			container: selectContainer,
-			options: ['hex', 'hex8', 'rgba', 'hsla', 'hsva'],
+			options: ['hex', 'hex8', 'rgba', 'rgbaString', 'hsla', 'hslaString'],
 		})
 		this.select.on('change', v => {
 			this.updateMode(v.value)
@@ -130,7 +130,7 @@ export class ColorComponents {
 
 			// We need to make the first character lowercase to match the format names.
 			format = format[0].toLowerCase() + format.slice(1)
-			// @ts-ignore fuck off
+			// @ts-expect-error
 			this.input.set(target.value)
 		})
 
@@ -243,7 +243,6 @@ export class ColorComponents {
 				return this.color.blue
 			case 'hsla':
 				return this.color.lightness
-			case 'hsva':
 			default:
 				return this.color.value
 		}
@@ -253,8 +252,6 @@ export class ColorComponents {
 			this.color.blue = v
 		} else if (this.mode === 'hsla') {
 			this.color.lightness = v
-		} else if (this.mode === 'hsva') {
-			this.color.value = v
 		}
 		this._locked = true
 		this.input.refresh()
@@ -270,7 +267,7 @@ export class ColorComponents {
 	}
 
 	#modeType(): 'text' | 'numbers' {
-		if (['rgba', 'hsla', 'hsva'].includes(this.mode)) {
+		if (['rgba', 'hsla'].includes(this.mode)) {
 			return 'numbers'
 		}
 
