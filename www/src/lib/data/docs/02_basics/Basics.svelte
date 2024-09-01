@@ -1,4 +1,6 @@
 <script lang="ts" module>
+	import type { LabeledOption } from '../../../../../../src/controllers/Select'
+
 	import { page } from '$app/stores'
 
 	interface Data {
@@ -9,7 +11,7 @@
 	export const data = {
 		// Basics
 		goo1: {
-			code: /*ts*/ `import { Gooey } from 'gooey'
+			code: `import { Gooey } from 'gooey'
 
 const gooey = new Gooey()
 
@@ -22,7 +24,7 @@ gooey.add('count', 1)`.trim(),
 		},
 		// Event handling
 		goo2: {
-			code: /*js*/ `
+			code: `
 const title = gooey.add('title', 'change me')
 
 title.on('change', (v) => gooey.title = v)`.trim(),
@@ -30,34 +32,6 @@ title.on('change', (v) => gooey.title = v)`.trim(),
 				g.add('title', 'change me').on('change', v => {
 					if (g) g.title = v
 				})
-			},
-		},
-		// addMany
-		goo3: {
-			code: /*ts*/ `
-const stuff = {
-  a: true,
-  b: {
-    c: '#ff0000',
-    d: ['e', 'e', 'z']
-  }
-}
-`.trim(),
-			fn: g => {
-				g.bindMany(
-					{
-						a: true,
-						b: {
-							c: '#ff0000',
-							d: 'a',
-						},
-					},
-					{
-						d: {
-							options: ['a', 'b', 'c'],
-						},
-					},
-				)
 			},
 		},
 		events1: {
@@ -71,6 +45,27 @@ gooey.add('title', 'change me', {
 gooey
   .add('title', 'change me')
   .on('change', (v) => gooey.title = v)`.trim(),
+		},
+		// addMany
+		goo3: {
+			code: `
+gooey.addMany({
+  stuff: true,
+  more_stuff: {
+    like_colors: '#ff0000',
+    or_buttons: () => alert('thanks!')
+  }
+})`.trim(),
+			fn: g => {
+				const { inputs } = g.addMany({
+					stuff: true,
+					more_stuff: {
+						like_colors: g.themer!.modeColors['theme-a'],
+						or_buttons: () => alert('thanks!'),
+					},
+				})
+				const btn = inputs.more_stuff.or_buttons
+			},
 		},
 	} as const satisfies Record<string, Data>
 </script>
@@ -175,6 +170,6 @@ gooey
 	<div class="example">
 		<Code headless lang="ts" highlightedText={highlighted.goo3} ssr />
 
-		<LiveExample bind:gooey={goo3} />
+		<LiveExample bind:gooey={goo3} position="top-center" heightSm="20rem" />
 	</div>
 </section>
