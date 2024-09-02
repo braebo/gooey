@@ -9,7 +9,14 @@
 
 	const { absolute = true } = $props()
 
-	const links = new Tree($page.data.routes as string[]).root.children!
+	// prettier-ignore
+	const routes = [
+		...$page.data.routes,
+		'/docs#install',
+		'/docs#basics',
+	]
+
+	const links = new Tree(routes as string[]).root.children!
 
 	{
 		// import { Gooey } from '../../../../../src'
@@ -64,7 +71,7 @@
 
 	{#snippet subnav(link: Branch, i = 0, depth = 1)}
 		<ul>
-			{#each link.children?.filter((c) => !c.name.startsWith('_')) ?? [] as child, j (child.name)}
+			{#each link.children?.filter(c => !c.name.startsWith('_')) ?? [] as child, j (child.name)}
 				<div
 					class="li"
 					class:active={isActive(child.name, $page.url.pathname)}
