@@ -112,11 +112,23 @@ gooey.addMany({
 		<LiveExample bind:gooey={goo1} position="center" />
 	</div>
 
+	<!--? addMany -->
+
+	<div class="br"></div>
+	<div class="description">
+		Use <code>addMany</code> to create multiple inputs at once
+	</div>
+
+	<div class="example">
+		<Code headless lang="ts" highlightedText={highlighted.goo3} ssr />
+
+		<LiveExample bind:gooey={goo3} position="top-center" heightSm="20rem" />
+	</div>
+
 	<!--? event handling -->
 
 	<div class="br"></div>
 	<div class="description">
-		<!-- <p>Handle <a href="#events">events</a> with <code>on</code></p> -->
 		Do stuff <code>on</code> change
 	</div>
 
@@ -158,18 +170,5 @@ gooey.addMany({
 				<div class="br-sm"></div>
 			</Info>
 		{/if}
-	</div>
-
-	<!--? addMany -->
-
-	<div class="br"></div>
-	<div class="description">
-		Use <code>addMany</code> to create multiple inputs at once
-	</div>
-
-	<div class="example">
-		<Code headless lang="ts" highlightedText={highlighted.goo3} ssr />
-
-		<LiveExample bind:gooey={goo3} position="top-center" heightSm="20rem" />
 	</div>
 </section>
