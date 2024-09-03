@@ -17,8 +17,5 @@ export async function load() {
 
 	const highlighted = Object.fromEntries(highlightedEntries)
 
-	// console.log(tldr(highlighted))
-	console.log(Object.keys(highlighted))
-
 	return { highlighted }
 }
