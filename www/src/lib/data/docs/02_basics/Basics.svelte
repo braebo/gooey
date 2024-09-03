@@ -1,12 +1,15 @@
 <script lang="ts" module>
-	import type { LabeledOption } from '../../../../../../src/controllers/Select'
-
 	import { page } from '$app/stores'
 
 	interface Data {
 		code: string
 		fn?: (gooey: Gooey) => void
 	}
+
+	const goo4Data = $state({
+		wght: 300,
+		wdth: 100,
+	})
 
 	export const data = {
 		// Basics
@@ -52,19 +55,88 @@ gooey
 gooey.addMany({
   stuff: true,
   more_stuff: {
-    like_colors: '#ff0000',
+    like_colors: '#4aa7ff',
     or_buttons: () => alert('thanks!')
   }
 })`.trim(),
+			// todo - Add this to addMany section:
+			// 			code: `
+			// const controls = {
+			//   foo: true,
+			//   bar: {
+			//     baz: '#ff0000',
+			//     qux: () => alert('thanks!')
+			//   }
+			// }
+
+			// gooey.addMany(controls, {
+			//   foo: { description: 'good stuff' },
+			//   bar: { folderOptions: { open: false }}
+			// })`.trim(),
 			fn: g => {
-				const { inputs } = g.addMany({
+				g.addMany({
 					stuff: true,
 					more_stuff: {
-						like_colors: g.themer!.modeColors['theme-a'],
+						like_colors: '#4aa7ff',
 						or_buttons: () => alert('thanks!'),
 					},
 				})
-				const btn = inputs.more_stuff.or_buttons
+			},
+		},
+		goo4: {
+			code: `
+const data = {
+  wght: 300,
+  wdth: 100,
+}
+
+gooey.bindMany(data)
+`.trim(),
+			fn: g => {
+				g.bindMany(goo4Data, { wght: { min: 100, max: 900 }, wdth: { min: 75, max: 125 } })
+			},
+		},
+		bindMany1: {
+			code: `
+const data = {
+  wght: 300,
+  wdth: 100,
+}
+
+gooey.bindMany(data, {
+  wght: { min: 100, max: 900 },
+  wdth: { min: 100, max: 130 }
+})`.trim(),
+		},
+		goo5: {
+			code: `
+const folder = gooey.addFolder('user')
+
+folder.add('name', 'Stewy Gooey')
+
+const subFolder = folder.addFolder('secret', {
+  closed: true,
+})
+
+secretFolder.add('password', '1234', {
+  disabled: true,
+})
+`.trim(),
+			fn: gooey => {
+				// Create a user folder
+				const user = gooey.addFolder('user')
+
+				// Add a name input
+				user.add('name', 'Stewy Gooey')
+
+				// Add a closed folder
+				const secretFolder = user.addFolder('secret', {
+					closed: true,
+				})
+
+				secretFolder.add('password', '1234', {
+					disabled: true,
+				})
 			},
 		},
 	} as const satisfies Record<string, Data>
@@ -80,21 +152,7 @@ gooey.addMany({
 	const { highlighted } = $page.data
 
 	let eventsEl = $state<HTMLElement>()
-
-	let goo1 = $state<Gooey>()
-	$effect(() => {
-		if (goo1) data.goo1.fn(goo1)
-	})
-
-	let goo2 = $state<Gooey>()
-	$effect(() => {
-		if (goo2) data.goo2.fn(goo2)
-	})
-
-	let goo3 = $state<Gooey>()
-	$effect(() => {
-		if (goo3) data.goo3.fn(goo3)
-	})
+	let bindManyEl = $state<HTMLElement>()
 </script>
 
 <h2 id="basics" class="section-title">Basics</h2>
@@ -104,15 +162,15 @@ gooey.addMany({
 		Create a <span class="gooey">gooey</span> with some <a href="#inputs">inputs </a>
 	</div>
 
-	<!--? `add` method -->
+	<!--? goo1 - `add` method -->
 
 	<div class="example">
-		<Code headless lang="ts" highlightedText={highlighted.goo1} ssr />
+		<Code ssr headless lang="ts" highlightedText={highlighted.goo1} />
 
-		<LiveExample bind:gooey={goo1} position="center" />
+		<LiveExample onMount={data.goo1.fn} position="center" />
 	</div>
 
-	<!--? addMany -->
+	<!--? goo3 - `addMany` method -->
 
 	<div class="br"></div>
 	<div class="description">
@@ -120,12 +178,12 @@ gooey.addMany({
 	</div>
 
 	<div class="example">
-		<Code headless lang="ts" highlightedText={highlighted.goo3} ssr />
+		<Code ssr headless lang="ts" highlightedText={highlighted.goo3} />
 
-		<LiveExample bind:gooey={goo3} position="top-center" heightSm="20rem" />
+		<LiveExample onMount={data.goo3.fn} position="top-center" heightSm="16rem" />
 	</div>
 
-	<!--? event handling -->
+	<!--? goo2 - `on` method -->
 
 	<div class="br"></div>
 	<div class="description">
@@ -133,9 +191,9 @@ gooey.addMany({
 	</div>
 
 	<div class="example">
-		<Code headless lang="ts" highlightedText={highlighted.goo2} ssr />
+		<Code ssr headless lang="ts" highlightedText={highlighted.goo2} />
 
-		<LiveExample bind:gooey={goo2} position="center" />
+		<LiveExample onMount={data.goo2.fn} position="center" />
 	</div>
 
 	<div class="info-wrapper">
@@ -146,8 +204,7 @@ gooey.addMany({
 		</div>
 
 		{#if eventsEl}
-			<!-- show={/*deleteme*/ true}  -->
-			<Info tooltipText={['more info', 'less info']} target={eventsEl} side="left">
+			<Info target={eventsEl} side="left">
 				<!--? `onChange` option -->
 
 				<div class="br-sm"></div>
@@ -171,4 +228,72 @@ gooey.addMany({
 			</Info>
 		{/if}
 	</div>
+
+	<!--? goo4 - `bindMany` method -->
+
+	<div class="br"></div>
+	<div class="description">Or just bind gooey to your own objects</div>
+
+	<div class="example">
+		<Code ssr headless lang="ts" highlightedText={highlighted.goo4} />
+
+		<LiveExample onMount={data.goo4.fn} title="font" position="top-center" heightSm="12rem">
+			<div class="display" style="font-variation-settings: 'wght' {goo4Data.wght}, 'wdth' {goo4Data.wdth}">
+				variable fonts are neat
+			</div>
+		</LiveExample>
+	</div>
+
+	<div class="info-wrapper">
+		<div class="description em">
+			<span bind:this={bindManyEl}>
+				See <a href="#bindmany">bindMany</a>
+			</span>
+		</div>
+
+		{#if bindManyEl}
+			<Info target={bindManyEl} side="left">
+				<!--? `onChange` option -->
+
+				<div class="br-sm"></div>
+				<div class="description">
+					You can also pass options to <code>bindMany</code>
+				</div>
+				<div class="br-sm"></div>
+				<div class="example">
+					<Code headless lang="ts" highlightedText={highlighted.bindMany1} ssr />
+				</div>
+				<div class="br"></div>
+			</Info>
+		{/if}
+	</div>
+
+	<!--? goo5 - Folders -->
+
+	<div class="br"></div>
+	<div class="description">
+		Create <a href="#folders">folders</a> with <code>addFolder</code>
+	</div>
+
+	<div class="example">
+		<Code ssr headless lang="ts" highlightedText={highlighted.goo5} />
+
+		<LiveExample onMount={data.goo5.fn} position="center" />
+	</div>
 </section>
+
+<style>
+	.display {
+		position: absolute;
+		inset: 0;
+
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
+		gap: var(--padding-lg);
+
+		padding: var(--padding);
+
+		font-size: var(--font-xl);
+	}
+</style>
