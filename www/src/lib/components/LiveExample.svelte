@@ -2,23 +2,36 @@
 	import { Gooey, type GooeyOptions } from '../../../../src/Gooey'
 	import { device } from '$lib/device.svelte'
 	import Gooish from './Gooish.svelte'
+	import type { Snippet } from 'svelte'
 
 	let {
+		children,
 		gooey = $bindable<Gooey>(),
 		height = '100%',
 		heightSm = '8rem',
+		onMount = () => {},
 		...props
 	}: Partial<GooeyOptions> & {
+		children?: Snippet
 		wrapperStyle?: string
 		params?: T
 		gooey?: Gooey
 		height?: string
 		heightSm?: string
+		onMount?: (gooey: Gooey) => void
 	} = $props()
 
 	let h = $derived(device.mobile ? heightSm : height)
 
 	let show = $state(false)
+	let mounted = false
+
+	$effect(() => {
+		if (gooey && !mounted) {
+			mounted = true
+			onMount(gooey)
+		}
+	})
 </script>
 
 <div
@@ -32,6 +45,8 @@
 >
 	{#if show}
 		<Gooish bind:gooey {...props} />
+
+		{@render children?.()}
 	{:else}
 		<button class="btn"> Run </button>
 	{/if}
