@@ -13,7 +13,7 @@
 		children: Snippet
 		target?: HTMLElement
 		show?: boolean
-		tooltipText: [string, string]
+		tooltipText?: [string, string]
 		side?: 'left' | 'right'
 	} = $props()
 
@@ -52,11 +52,9 @@
 		if (side === 'left') {
 			top = targetRect.top - elRect.top
 			top -= iconRect.height / 4
-			// top -= 2
 
 			left = targetRect.left - elRect.left
 			left -= iconEl!.offsetWidth
-			// left += targetRect.width - iconEl!.offsetWidth
 			left -= 8
 		} else {
 			top = targetRect.top - elRect.top
@@ -196,7 +194,7 @@
 		&.show {
 			--off-theme: color-mix(in hsl, var(--theme-a) 2%, color-mix(in hsl, var(--bg-a), var(--bg-b)) 80%);
 			backdrop-filter: blur(6px);
-			--primary: var(--off-theme);
+			--primary: color-mix(in hsl, var(--theme-a) 2%, color-mix(in hsl, var(--bg-a), var(--bg-b)) 80%);
 			outline-color: var(--outline);
 
 			pointer-events: all;
@@ -229,7 +227,6 @@
 
 			transition-property: background, color, outline-offset, top, left;
 			transition-timing-function: var(--in-out-smooth);
-			/* transition-delay: 0s, 0s, 0.1s, 0.1s, 0.1s, 0.1s; */
 			transition-duration: 0.2s, 0.3s, 0.05s, 0.4s, 0.4s;
 		}
 
@@ -246,7 +243,7 @@
 				top: -10.4px;
 				left: -11.2px;
 
-				background: var(--primary);
+				background: color-mix(in hsl, var(--theme-a) 2%, color-mix(in hsl, var(--bg-a), var(--bg-b) 43%) 100%);
 				transition-timing-function: var(--out-dramatic);
 			}
 
