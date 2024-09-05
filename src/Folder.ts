@@ -10,6 +10,8 @@ import type {
 } from './inputs/Input'
 import type { ColorFormat } from './shared/color/types/colorFormat'
 import type { LabeledOption, Option } from './controllers/Select'
+import type { ColorObject } from './shared/color/types/objects'
+import type { ColorString } from './shared/color/types/strings'
 import type { GooeyOptions, GooeyPreset } from './Gooey'
 import type { Tooltip } from './shared/Tooltip'
 
@@ -152,7 +154,7 @@ export type InferInputs<TTarget> =
 					? InputNumber
 					: TTarget[K] extends boolean
 						? InputSwitch
-						: TTarget[K] extends ColorFormat
+						: TTarget[K] extends ColorString | ColorObject
 							? InputColor
 							: TTarget[K] extends string
 								? InputText
