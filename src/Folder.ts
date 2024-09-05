@@ -341,6 +341,16 @@ export interface FolderEvents {
 	 * Fired after the folder and all of it's children/graphics have been mounted.
 	 */
 	mount: void
+
+	/**
+	 * Fires when the folder is opened.
+	 */
+	open: void
+
+	/**
+	 * Fires when the folder is closed.
+	 */
+	close: void
 }
 //#endregion Types
 
@@ -478,7 +488,7 @@ export class Folder {
 	 * subscribing to events can be done with a Folder's {@link on} method.
 	 * @internal
 	 */
-	evm = new EventManager<FolderEvents>(['change', 'refresh', 'toggle', 'mount'])
+	evm = new EventManager<FolderEvents>(['change', 'refresh', 'toggle', 'open', 'close', 'mount'])
 
 	/**
 	 * Equivalent to `addEventListener`.
@@ -608,7 +618,6 @@ export class Folder {
 			this.evm.add(
 				this.closed.subscribe(v => {
 					v ? this.close() : this.open()
-					this.evm.emit('toggle', v)
 					// @ts-expect-error @internal
 					this.gooey._closedMap.update(m => {
 						m[this.presetId] = v
@@ -822,9 +831,8 @@ export class Folder {
 
 	open(options?: {
 		/**
-		 * Whether to update the folder's {@link closed} state.  Defaults to `false` to avoid
-		 * getting caught in a feedback loop.
-		 * @default false
+		 * Whether to update the folder's {@link closed} state.  Used internally to avoid loops.
+		 * @default true
 		 */
 		updateState?: boolean
 		/**
@@ -833,11 +841,11 @@ export class Folder {
 		 */
 		instant?: boolean
 	}): this {
-		const { updateState = false, instant = false } = options ?? {}
+		const { updateState = true, instant = false } = options ?? {}
 		this._log.fn('open').debug(updateState || instant ? { updateState, instant } : '')
 
 		this.element.classList.remove('closed')
-		this.evm.emit('toggle', false)
+		this.evm.emit('open')
 		if (updateState) this.closed.set(false)
 
 		this._clicksDisabled = false
@@ -851,7 +859,7 @@ export class Folder {
 		/**
 		 * Whether to update the folder's {@link closed} state.  Defaults to `false` to avoid
 		 * getting caught in a feedback loop.
-		 * @default false
+		 * @default true
 		 */
 		updateState?: boolean
 		/**
@@ -860,12 +868,12 @@ export class Folder {
 		 */
 		instant?: boolean
 	}): this {
-		const { updateState = false, instant = false } = options ?? {}
+		const { updateState = true, instant = false } = options ?? {}
 		this._log.fn('close').debug(updateState || instant ? { updateState, instant } : '')
 
 		this.element.classList.add('closed')
 		if (updateState) this.closed.set(true)
-		this.evm.emit('toggle', true)
+		this.evm.emit('close')
 		this._clicksDisabled = false
 
 		this._toggleClass()
