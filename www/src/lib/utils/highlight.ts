@@ -75,8 +75,6 @@ export async function highlight(text: string, options?: Partial<HighlightOptions
 
 	const highlighter = await getHighlighterInstance()
 
-	const langs = highlighter.getLoadedLanguages()
-
 	try {
 		const highlighted = highlighter.codeToHtml(text, {
 			...opts,
