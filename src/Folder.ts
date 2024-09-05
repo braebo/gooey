@@ -95,12 +95,16 @@ export type InferInput<TValueType> = TValueType extends number
  * @template TTarget - The target object being used to generate inputs.
  * @example
  * ```typescript
- * const target = { foo: 5, bar: 'baz' }
- * // The inferred result:
+ * const target = {
+ *   foo: 5,
+ *   bar: 'baz',
+ * }
+ *
  * type TargetOptions = InferTargetOptions<typeof target>
- * // Generates:
- * 	foo: NumberInputOptions,
- * 	bar: TextInputOptions,
+ * //   ^?
+ * {
+ *   foo: NumberInputOptions,
+ *   bar: TextInputOptions,
  * }
  * ```
  */
