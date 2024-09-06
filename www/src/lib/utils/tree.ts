@@ -47,7 +47,7 @@ export class Tree {
 					fragmentNode = {
 						name: name ?? fragment,
 						index: Number(index) || index,
-						path: `${currentNode.path}#${name}`,
+						path: `${currentNode.path}#${name ?? fragment}`,
 						fragment,
 					}
 
