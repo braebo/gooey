@@ -109,26 +109,51 @@ export function place(
 			? { x: margin, y: margin }
 			: Object.assign({ x: 0, y: 0 }, margin)
 
-	// prettier-ignore
+	const LEFT = m.x
+	const RIGHT = b.width - rect.width - m.x
+	const TOP = m.y
+	const BOTTOM = b.height - rect.height - m.y
+	const CENTER_X = b.width / 2 - rect.width / 2
+	const CENTER_Y = b.height / 2 - rect.height / 2
+
 	switch (placement) {
-			case ('center'):
-			case ('center-center'): return { x: b.width / 2 - rect.width / 2, y: b.height / 2 - rect.height / 2 }
-			case ('top-left'):
-			case ('left-top'): return { x: m.x, y: m.y }
-			case ('top-center'):
-			case ('center-top'): return { x: b.width / 2 - rect.width / 2, y: m.y }
-			case ('top-right'):
-			case ('right-top'): return { x: b.width - rect.width - m.x, y: m.y }
-			case ('bottom-left'):
-			case ('left-bottom'): return { x: m.x, y: b.height - rect.height - m.y }
-			case ('bottom-center'):
-			case ('center-bottom'): return { x: b.width / 2 - rect.width / 2, y: b.height - rect.height - m.y }
-			case ('bottom-right'):
-			case ('right-bottom'): return { x: b.width - rect.width - m.x, y: b.height - rect.height - m.y }
-			case ('left-center'):
-			case ('center-left'): return { x: m.x, y: b.height / 2 - rect.height / 2 }
-			case ('right-center'):
-			case ('center-right'): return { x: b.width - rect.width - m.x, y: b.height / 2 - rect.height / 2 }
-			default: throw new Error('Invalid placement: ' + placement)
+		case 'center':
+		case 'center-center': {
+			return { x: CENTER_X, y: CENTER_Y }
 		}
+		case 'top-left':
+		case 'left-top': {
+			return { x: LEFT, y: TOP }
+		}
+		case 'top-center':
+		case 'center-top': {
+			return { x: CENTER_X, y: TOP }
+		}
+		case 'top-right':
+		case 'right-top': {
+			return { x: RIGHT, y: TOP }
+		}
+		case 'bottom-left':
+		case 'left-bottom': {
+			return { x: LEFT, y: BOTTOM }
+		}
+		case 'bottom-center':
+		case 'center-bottom': {
+			return { x: CENTER_X, y: BOTTOM }
+		}
+		case 'bottom-right':
+		case 'right-bottom': {
+			return { x: RIGHT, y: BOTTOM }
+		}
+		case 'left-center':
+		case 'center-left': {
+			return { x: LEFT, y: CENTER_Y }
+		}
+		case 'right-center':
+		case 'center-right': {
+			return { x: RIGHT, y: CENTER_Y }
+		}
+		default:
+			throw new Error('Invalid placement: ' + placement)
+	}
 }
