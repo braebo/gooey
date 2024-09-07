@@ -13,10 +13,42 @@
 	const routes = [
 		...$page.data.routes,
 		'/docs#install',
+		'/docs#import',
 		'/docs#basics',
 	]
 
 	const links = new Tree(routes as string[]).root.children!
+
+	function sort(links?: Branch[]): Branch[] | undefined {
+		return links?.toSorted((a, b) => {
+			return routes.indexOf(a.path) - routes.indexOf(b.path)
+		})
+	}
+
+	let activeHeading = $state('')
+
+	$effect(() => {
+		const root = document.body
+		const headings = root.querySelectorAll('h1, h2, h3, h4, h5, h6')
+
+		function callback(entries: IntersectionObserverEntry[]) {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue
+				activeHeading = entry.target.id
+			}
+		}
+
+		const observer = new IntersectionObserver(callback, {
+			threshold: 1,
+			rootMargin: '25px 0px -75% 0px',
+		})
+
+		for (const heading of Array.from(headings)) {
+			observer.observe(heading)
+		}
+
+		return () => observer.disconnect()
+	})
 
 	{
 		// import { Gooey } from '../../../../../src'
@@ -49,14 +81,17 @@
 {#if !device.mobile}
 	<nav class:absolute class:mobile={device.mobile}>
 		<ul>
-			{#each links ?? [] as link, i (link.name)}
+			{#each sort(links) ?? [] as link, i (link.name)}
 				<div class="li" in:fly={{ y: -10 - 5 * i }} style:view-transition-name="li-{link.name}">
 					<a
 						class="depth-0"
 						data-sveltekit-prefetch
 						href={link.path}
 						class:active={isActive(link.name, $page.url.pathname)}
-						style="animation-delay: {i * 0.1}s;"
+						style="
+							padding-left: 0.5rem;
+							animation-delay: {i * 0.1}s;
+						"
 					>
 						{link.name.replaceAll('-', ' ')}
 					</a>
@@ -71,42 +106,34 @@
 
 	{#snippet subnav(link: Branch, i = 0, depth = 1)}
 		<ul>
-			{#each link.children?.filter(c => !c.name.startsWith('_')) ?? [] as child, j (child.name)}
+			{#each sort(link.children?.filter(c => !c.name.startsWith('_'))) ?? [] as child, j (child.name)}
 				<div
 					class="li"
 					class:active={isActive(child.name, $page.url.pathname)}
 					style="
-						padding-left: {depth * 0.75}rem;
+						padding-left: {depth * 1.5}rem;
 						view-transition-name: li-{child.name};
 						animation-delay: {0.1 + i * 0.1 + j * 0.05 + (depth - 1) * 0.2}s;
 					"
 				>
-					<a class="depth-{depth}" data-sveltekit-prefetch href={child.path}>
+					<a
+						class="depth-{depth}"
+						data-sveltekit-prefetch
+						href={child.path}
+						class:active={child.name === activeHeading}
+					>
 						{child.name.replaceAll('-', ' ')}
 					</a>
-
-					{#if $page.url.pathname.includes(child.path)}
-						{@render subnav(child, i, depth + 1)}
-					{/if}
 				</div>
+				{#if $page.url.pathname.includes(child.path)}
+					{@render subnav(child, i, depth + 1)}
+				{/if}
 			{/each}
 		</ul>
 	{/snippet}
 {/if}
 
-<style lang="scss">
-	.code {
-		contain: strict;
-		box-sizing: border-box;
-		display: flex;
-
-		min-width: 10rem;
-		max-width: clamp(20rem, 50vw, 90vw);
-		height: fit-content;
-
-		z-index: 1;
-	}
-
+<style>
 	nav {
 		contain: strict;
 
@@ -132,23 +159,20 @@
 	}
 
 	ul {
-		all: unset;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: flex-start;
-
-		margin: 0;
+		padding: 0;
 
 		z-index: 1;
 	}
 
 	.li {
 		position: relative;
+		width: 100%;
+		min-width: 10rem;
 		height: 100%;
 
-		padding: 0.5rem 2px;
+		/* padding: 0.5rem 2px; */
 		margin: 0;
+		margin-top: 1rem;
 
 		opacity: 0;
 		color: var(--fg-a);
@@ -169,16 +193,17 @@
 	}
 
 	a {
-		min-width: 5rem;
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
 
+		width: 100%;
 		height: 100%;
 
-		color: currentColor;
+		color: var(--fg-c);
 
 		font-family: Fredoka;
+		font-size: var(--font-md);
 		text-decoration: none;
 		letter-spacing: 1px;
 		font-variation-settings:
@@ -192,27 +217,35 @@
 	a.depth-0 {
 		letter-spacing: 2.75px;
 		text-transform: uppercase;
-		font-size: var(--font-sm);
+		font-size: var(--font-lg);
+		font-variation-settings:
+			'wght' 200,
+			'wdth' 98;
+	}
+
+	.li:has(a.active) a:not(.active) {
+		color: var(--fg-a);
 	}
 
 	a:hover {
+		color: var(--fg-a);
 		text-decoration: none;
 
 		font-variation-settings:
-			'wght' 600,
+			'wght' 500,
 			'wdth' 98;
 	}
 
 	.active {
 		color: var(--theme-a);
+		/* font-variation-settings:
+			'wght' 500,
+			'wdth' 94.66; */
+	}
+
+	a.active {
 		font-variation-settings:
 			'wght' 500,
-			'wdth' 94.66;
-
-		a {
-			font-variation-settings:
-				'wght' 500,
-				'wdth' 94.66;
-		}
+			'wdth' 96.66;
 	}
 </style>
