@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { Gooey, type InputNumber } from '../../../../../src/index'
+	import type { InputNumber } from '../../../../../src/index'
+
 	import GooeyThemeSync from '../GooeyThemeSync.svelte'
+	import { Gooey } from '../../../../../src/index'
 	import { device } from '$lib/device.svelte'
 	import { onMount } from 'svelte'
 	import presets from './presets'
@@ -16,10 +18,11 @@
 	let thumbEl = $state<SVGRectElement>()
 
 	let hueInput: InputNumber
+	let hue = $state(210)
 
 	let p = $state({
 		speed: 0.66,
-		hue: 0.73,
+		hue: '#57abffff' as const,
 		size: 1.22,
 		goo: {
 			animate: true,
@@ -28,13 +31,12 @@
 			viscosity: 0.0123,
 			density: 1,
 		},
-	} satisfies Record<string, any>)
+	})
 
-	let hueShift = $derived(Math.floor(p.hue * 360))
-	const shift1 = 300
-	const shift2 = 275
-	const shift3 = 307
-	const shift4 = 321
+	const shift1 = -15
+	const shift2 = -40
+	const shift3 = -8
+	const shift4 = 6
 
 	const mapRange = (v: number, inMin: number, inMax: number, outMin: number, outMax: number): number => {
 		return ((v - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin
@@ -47,7 +49,7 @@
 		const x = +sliderEl.getAttribute('x')!
 		const width = +sliderEl.getAttribute('width')!
 		const thumbWidth = +thumbEl.getAttribute('width')!
-		return mapRange(p.hue, 0, 1, x, width + x - thumbWidth)
+		return mapRange(hue, 0, 1, x, width + x - thumbWidth)
 	})
 
 	onMount(() => {
@@ -61,7 +63,7 @@
 		})
 
 		// Bind to the params and configure their options.
-		gooey.bindMany(p, {
+		const { inputs } = gooey.bindMany(p, {
 			goo: {
 				folderOptions: { closed: true },
 				texture: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
@@ -73,7 +75,10 @@
 		})
 
 		// Store a ref to the slider input to sync it with the svg slider.
-		hueInput = gooey.allInputs.get('hue') as InputNumber
+		const hueInput = inputs.hue
+		hueInput.on('change', v => {
+			hue = v.hue
+		})
 
 		ready = true
 
@@ -108,7 +113,7 @@
 		const maxX = sliderLeft + sliderWidth - thumbWidth
 		const newX = Math.min(Math.max(clientX - mouseOffset, minX), maxX)
 
-		p.hue = mapRange(newX, minX, maxX, 0, 1).toFixed(2) as any as number
+		hue = mapRange(newX, minX, maxX, 0, 360)
 		hueInput.refresh()
 	}
 
@@ -187,12 +192,12 @@
 			/>
 
 			<rect bind:this={sliderEl} id="track" width="242" height="14.3" x="139" y="129.3" fill="currentColor" class="track" rx="8.2" />
-			
+
 			<rect
 				bind:this={thumbEl}
 				id="thumb"
 				filter="url(#gooey_anim_thumb_glow)"
-				fill="hsl({310 + hueShift % 360}, 100%, 67%)"
+				fill="hsl({310 + hue % 360}, 100%, 67%)"
 				width="15"
 				height="36"
 				x={progress}
@@ -204,7 +209,7 @@
 				tabindex="0"
 				aria-valuemin="0"
 				aria-valuemax="1"
-				aria-valuenow={p.hue}
+				aria-valuenow={hue}
 			/>
 		</g>
 
@@ -224,30 +229,30 @@
 			<!--//- Orb Gradients -->
 
 			<linearGradient id="gooey_anim_gradient_1" class="gooey_anim_gradient_1" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<stop stop-color="hsl({shift1 + hueShift % 360}, 100%, 67%)" />
-				<stop offset="1" stop-color="hsl({shift1 + 20 + hueShift % 360}, 42%, 50%)" />
+				<stop stop-color="hsl({shift1 + hue % 360}, 100%, 67%)" />
+				<stop offset="1" stop-color="hsl({shift1 + 20 + hue % 360}, 42%, 25%)" />
 			</linearGradient>
-			
+
 			<linearGradient id="gooey_anim_gradient_2" class="gooey_anim_gradient_2" gradientUnits="objectBoundingBox" x1 ="1" x2="1"y1="0"y2="1">
-				<stop stop-color="hsl({shift2 + hueShift % 360}, 100%, 67%)" />
-				<stop offset="1" stop-color="hsl({shift2 + 20 + hueShift % 360}, 42%, 50%)" />
+				<stop stop-color="hsl({shift2 + hue % 360}, 100%, 67%)" />
+				<stop offset="1" stop-color="hsl({shift2 + 20 + hue % 360}, 42%, 30%)" />
 			</linearGradient>
-			
+
 			<linearGradient id="gooey_anim_gradient_4" class="gooey_anim_gradient_4" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<stop stop-color="hsl({shift4 + hueShift % 360}, 100%, 67%)" />
-				<stop offset="1" stop-color="hsl({shift4 + 20 + hueShift % 360}, 42%, 50%)" />
+				<stop stop-color="hsl({shift4 + hue % 360}, 100%, 67%)" />
+				<stop offset="1" stop-color="hsl({shift4 + 20 + hue % 360}, 42%, 30%)" />
 			</linearGradient>
-			
+
 			<linearGradient id="gooey_anim_gradient_3" class="gooey_anim_gradient_3" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<stop stop-color="hsl({shift3 + hueShift % 360}, 100%, 67%)" />
-				<stop offset="1" stop-color="hsl({shift3 + 20 + hueShift % 360}, 42%, 50%)" />
+				<stop stop-color="hsl({shift3 + hue % 360}, 100%, 67%)" />
+				<stop offset="1" stop-color="hsl({shift3 + 20 + hue % 360}, 42%, 30%)" />
 			</linearGradient>
 
 			<!--//- Glow Filter -->
 
 			<filter id="gooey_anim_thumb_glow" x="-500%" y="-500%" width="1000%" height="1000%">
 				<feGaussianBlur stdDeviation="18" result="coloredBlur" />
-				
+
 				<feMerge>
 					<feMergeNode in="coloredBlur" />
 					<feMergeNode in="SourceGraphic" />
