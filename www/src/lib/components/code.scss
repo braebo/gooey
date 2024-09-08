@@ -27,7 +27,7 @@ $max-height: 80vh;
 	background: var(--bg, var(--dark-a, #15161d));
 	backdrop-filter: blur(0.5rem);
 	-webkit-backdrop-filter: blur(0.5rem);
-	border-radius: 0.25rem;
+	border-radius: var(--radius);
 	box-shadow: var(--shadow-sm);
 
 	font-size: 0.8rem;
@@ -67,9 +67,6 @@ $max-height: 80vh;
 	}
 
 	.nav {
-		position: sticky;
-		top: 0;
-
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -248,13 +245,18 @@ pre.shiki-wrapper::-webkit-scrollbar-corner {
 
 .shiki {
 	filter: brightness(0.9);
-}
-.shiki:focus {
-	filter: brightness(1.1);
 
-	border: none;
-	border-radius: 0.1px !important;
-	outline: none;
+	&:focus {
+		filter: brightness(1.1);
+
+		border: none;
+		border-radius: 0.1px !important;
+		outline: none;
+	}
+	&:focus-visible {
+		outline: 1px solid var(--focus-outline-color);
+		outline-offset: 7px;
+	}
 }
 html[theme='light'] .shiki {
 	filter: brightness(1.1);
