@@ -164,6 +164,10 @@
 				transition-duration: 0.2s, 0.2s;
 			}
 		}
+
+		&:focus-visible {
+			outline: 1px solid var(--focus-outline-color);
+		}
 	}
 
 	:global(.icon.copy:not(.active) .back) {

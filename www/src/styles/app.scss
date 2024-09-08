@@ -38,6 +38,8 @@
 	--padding: 0.75rem;
 	--padding-sm: 0.5rem;
 
+	--focus-outline-color: color-mix(in hsl, var(--fg-d), var(--theme-a) 50%);
+
 	--shadow-lightness: 0.5;
 
 	--shadow-sm: 0rem 0.0313rem 0.0469rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
@@ -95,5 +97,5 @@ body {
 }
 
 *:focus-visible {
-	outline-color: var(--fg-e);
+	outline-color: var(--focus-outline-color);
 }
