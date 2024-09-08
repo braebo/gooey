@@ -1,28 +1,49 @@
 <script lang="ts">
+	import type { TooltipOptions } from '../../../../../../src/shared/Tooltip'
+
 	import Copy from '../../../components/Copy.svelte'
 
-	let hovering = $state(false)
 	let phase: 'idle' | 'active' | 'outro' = $state('idle')
 	let animating = $derived(phase !== 'idle')
+
+	const {
+		text,
+		copyText,
+		active = false,
+		onclick = () => {},
+		style = '',
+		tooltipOptions = {},
+		tabindex = 0,
+	}: {
+		text: string
+		copyText?: string
+		active?: boolean
+		onclick?: () => void
+		style?: string
+		tooltipOptions?: Partial<TooltipOptions>
+		tabindex?: number
+	} = $props()
 </script>
 
-<div class="install-wrapper" onpointerover={() => (hovering = true)} onpointerout={() => (hovering = false)}>
-	<code class="install">
-		npm install &NoBreak;
-		<div class="gooey">gooey</div>
+<button class="install-wrapper" {onclick} class:active {tabindex}>
+	<code class="install" {style}>
+		{@html text}
 	</code>
 
 	<div class="copy" class:animating>
 		<Copy
+			text={copyText ?? text}
 			bind:phase
-			text="npm i -D gooey"
 			style="box-sizing:border-box;position:absolute;inset:0;margin:0;width:100%;height:100%;"
+			tooltipOptions={{ ...tooltipOptions, placement: 'bottom', offsetY: '5px' }}
+			tabindex={-1}
 		/>
 	</div>
-</div>
+</button>
 
 <style lang="scss">
 	.install-wrapper {
+		all: unset;
 		contain: layout style;
 
 		position: relative;
@@ -30,36 +51,43 @@
 		justify-content: center;
 		align-items: center;
 
-		height: 4rem;
 		max-width: 100%;
 		margin: auto;
 
 		border-radius: 0.2rem;
 
 		--blur: 4px;
+
+		&:focus-visible {
+			outline: 1px solid var(--focus-outline-color);
+		}
 	}
 
 	code.install {
-		contain: size style;
+		contain: content style;
 
 		position: relative;
 		display: flex;
+		flex-wrap: nowrap;
+		flex-direction: row;
 		justify-content: center;
 		align-items: center;
 
-		width: 16rem;
+		width: fit-content;
 		height: 1.5rem;
 		max-width: 100%;
+		padding: var(--padding-sm) 2rem;
 
-		background: var(--bg-a);
+		background: light-dark(color-mix(in hsl, var(--dark-b), var(--dark-c)), var(--dark-a));
 		outline: none;
 		border-radius: 0.5rem;
 
 		font-size: var(--font-md);
+		white-space: nowrap;
 
 		transition: opacity 0.2s;
 
-		@media (max-width: 700px) {
+		@media (max-width: 1000px) {
 			gap: 0.5rem;
 			white-space: nowrap;
 			font-variation-settings: 'wght' 500;
@@ -81,12 +109,6 @@
 			border-radius: inherit;
 			z-index: -1;
 		}
-	}
-
-	.gooey {
-		display: inline-block;
-		color: var(--theme-a);
-		transform: translateY(-0.1rem);
 	}
 
 	.install-wrapper:hover .copy {
