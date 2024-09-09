@@ -7,10 +7,18 @@
 
 	let locked = false
 
+	let first = true
 	onMount(() => {
 		/* gooey mode change -> update page theme (aka mode) */
 		const unsub = gooey.themer.mode.subscribe(m => {
 			if (locked) return
+			if (first) {
+				first = false
+				if (m !== themer.preference) {
+					gooey.themer.mode.set(themer.preference)
+				}
+				return
+			}
 			themer.preference = m
 		})
 
