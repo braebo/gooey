@@ -1,11 +1,11 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	export type Phase = 'idle' | 'active' | 'outro'
 </script>
 
 <script lang="ts">
 	import { onMount } from 'svelte'
 
-	import { Tooltip } from '../../../../src'
+	import { Tooltip, type TooltipOptions } from '../../../../src/shared/Tooltip'
 	import { fly } from 'svelte/transition'
 
 	let {
@@ -13,11 +13,15 @@
 		style = '',
 		phase = $bindable('idle'),
 		blur = $bindable(false),
+		tooltipOptions = {} as TooltipOptions,
+		tabindex = 0,
 	}: {
 		text: string
 		style?: string
 		phase?: Phase
 		blur?: boolean
+		tooltipOptions?: Partial<TooltipOptions>
+		tabindex?: number
 	} = $props()
 
 	let btn: HTMLButtonElement
@@ -31,9 +35,16 @@
 	let cooldown: ReturnType<typeof setTimeout>
 	let outroCooldown: ReturnType<typeof setTimeout>
 
-	export function copy(event: MouseEvent) {
+	export function copy(event: MouseEvent | KeyboardEvent) {
 		if (typeof navigator === 'undefined') return
 		if (active) return
+		if (
+			event.type === 'keydown' &&
+			(event as KeyboardEvent).key !== 'Enter' &&
+			(event as KeyboardEvent).key !== ' '
+		) {
+			return
+		}
 
 		event.preventDefault()
 
@@ -61,21 +72,24 @@
 
 	onMount(() => {
 		tooltip = new Tooltip(btn, {
+			...tooltipOptions,
 			text: () => tooltipText,
 		})
 	})
 </script>
 
+<!-- prettier-ignore -->
 <button
 	class="copy {phase}"
 	class:active
 	class:outro
 	class:blur
 	{style}
-	title="copy to clipboard"
 	transition:fly
 	onclick={copy}
+	onkeydown={(e) => {if (e.key === 'Enter' || e.key === ' ') copy(e)}}
 	bind:this={btn}
+	{tabindex}
 >
 	<div class="svg-container">
 		<svg
@@ -141,7 +155,7 @@
 			@at-root {
 				:global(:root[theme='light']) & {
 					&:hover {
-						color: var(--fg-a);
+						color: var(--light-a);
 					}
 					&.active,
 					&.outro {
