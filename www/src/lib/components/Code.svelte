@@ -49,12 +49,18 @@
 	```
 -->
 
+<script lang="ts" module>
+	export type Tab = {
+		text: string
+		onclick?: (payload: { text: string; el: HTMLElement }) => void
+		active?: boolean
+	}
+</script>
+
 <script lang="ts">
 	import type { LanguageRegistration, ThemeInput } from 'shiki'
 	import type { ValidLanguage } from '../utils/highlight'
 
-	// import { ShikiMagicMove } from 'shiki-magic-move/svelte'
-	// import 'shiki-magic-move/dist/style.css'
 	import Copy from './Copy.svelte'
 	import { DEV } from 'esm-env'
 	import './code.scss'
@@ -102,10 +108,10 @@
 		maximize?: () => void
 		/**
 		 * Hides the header element when `false`.
-		 * @default 'wow'
+		 * @default false
 		 */
 		headless?: boolean
-		tabs?: { text: string; onclick?: (text: string) => void }[]
+		tabs?: Tab[]
 	} & (
 		| {
 				/**
@@ -134,7 +140,7 @@
 	let {
 		ssr = false,
 		text = $bindable(''),
-		highlightedText: _highlightedText = '',
+		highlightedText: _highlightedText = $bindable(''),
 		title = 'code',
 		lang = 'json',
 		theme = 'serendipity',
@@ -142,17 +148,18 @@
 		collapsed: _collapsed = false,
 		pretty = false,
 		headless = false,
-		tabs = [],
+		tabs = $bindable([]),
 	}: Boilerplate = $props()
 
-	// let text = $state(_text ?? '')
 	let highlightedText = $state(_highlightedText ?? (ssr ? text : sanitize(text ?? '')))
 	const alreadyHighlighted = highlightedText === text
 	let collapsed = $state(_collapsed)
 	let highlight: typeof import('../utils/highlight').highlight | undefined = undefined
-	// $inspect('highlightedText', '\n', new DOMParser().parseFromString(highlightedText, 'text/html').documentElement)
+
+	let codeblock: HTMLElement | undefined = undefined
 
 	$effect(() => {
+		highlightedText = _highlightedText ?? (ssr ? text : sanitize(text ?? ''))
 		if (alreadyHighlighted || ssr) return
 
 		if (!highlight) {
@@ -194,13 +201,21 @@
 <div class="code-window">
 	<div class="nav" class:headless>
 		{#each tabs as t}
-			<button class="tab" onclick={() => t.onclick?.(t.text)}>
+			<button
+				class="btn tab"
+				class:active={t.active}
+				onclick={() =>
+					t.onclick?.({
+						text: t.text,
+						el: codeblock!,
+					})}
+			>
 				{t.text}
 			</button>
 		{/each}
 	</div>
 
-	<div class="codeblock" class:collapsed>
+	<div class="codeblock" class:collapsed bind:this={codeblock}>
 		{#if text && copyButton}
 			<div class="copy-container">
 				<div class="sticky">
