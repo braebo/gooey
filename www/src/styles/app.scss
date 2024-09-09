@@ -96,7 +96,9 @@ body {
 		background-color 0.1s;
 
 	touch-action: pan-y;
+
 	overflow-x: hidden;
+	overflow-y: scroll;
 }
 
 *:focus-visible {
