@@ -5,7 +5,7 @@
 <ellipse cx="8.85252" cy="8.39008" rx="8.85252" ry="8.39008" transform="matrix(0.949016 -0.315228 0.356458 0.934311 86.1467 102.917)" fill="url(#paint1_linear_454_35)"/>
 <ellipse cx="10.2549" cy="9.71923" rx="10.2549" ry="9.71923" transform="matrix(0.949016 -0.315228 0.356458 0.934311 461.25 46.4126)" fill="url(#paint2_linear_454_35)"/>
 <ellipse cx="8.85252" cy="8.39008" rx="8.85252" ry="8.39008" transform="matrix(0.949016 -0.315228 0.356458 0.934311 298.329 38.623)" fill="url(#paint3_linear_454_35)"/>
-<rect x="127.014" y="123.303" width="245.016" height="16.3344" rx="8.1672" fill="#15161D"/>
+<rect x="127.014" y="123.303" width="245.016" height="16.3344" rx="8.1672" fill="#ccc"/>
 <g filter="url(#filter0_d_454_35)">
 <rect x="295.804" y="112.413" width="16.3344" height="38.1136" rx="5.4448" fill="#57B1FF"/>
 </g>
