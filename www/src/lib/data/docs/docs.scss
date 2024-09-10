@@ -9,6 +9,8 @@
 	max-width: calc(100% - 2rem);
 	margin: 0 auto;
 
+	border-radius: var(--radius-md);
+
 	.row {
 		display: flex;
 		align-items: center;
@@ -60,6 +62,14 @@
 			--code-height: 100%;
 			--font-size: var(--font-sm);
 			--line-height: 1.5rem;
+
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+
+			&:has(pre:focus-visible) {
+				outline: var(--focus-outline-color);
+				outline-offset: -1px;
+			}
 		}
 
 		.code-window code {
@@ -256,6 +266,11 @@
 				max-width: 100%;
 
 				color: var(--theme-b, red) !important;
+
+				border-radius: var(--radius-md);
+				border-bottom-right-radius: 0;
+
+				overflow: hidden;
 
 				pre {
 					--line-height: 1.25;
