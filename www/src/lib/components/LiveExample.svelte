@@ -72,13 +72,6 @@
 		border-bottom: 1px solid var(--bg-b);
 		background: color-mix(in lch, var(--bg-a), var(--bg-b));
 
-		/* prettier-ignore */
-		box-shadow:
-			2px 2px 5px #0004 inset,
-			1px 1px 16px #0002 inset,
-			1px 4px 8px #0002 inset
-		;
-
 		transition: 0.15s;
 		cursor: pointer;
 
@@ -93,6 +86,26 @@
 		&.show {
 			cursor: default;
 		}
+	}
+
+	.live-example {
+		/* prettier-ignore */
+		box-shadow:
+			2px 2px 5px #0004 inset,
+			1px 1px 16px #0002 inset,
+			1px 4px 8px #0002 inset
+		;
+	}
+
+	:global(:root[theme='light']) .live-example {
+		/* prettier-ignore */
+		box-shadow:
+			/* 8px 8px 2rem hsla(0, 0%, 0%, 0.05) inset, */
+			1px 1px 8px hsla(0, 0%, 0%, 0.025) inset,
+			1px 2px 5px hsla(0, 0%, 0%, 0.125) inset,
+			1px 5px 10px hsla(0, 0%, 0%, 0.07) inset,
+			1px 1px 16px hsla(0, 0%, 0%, 0.05) inset
+		;
 	}
 
 	@media (max-width: 1000px) {
