@@ -32,6 +32,11 @@
 			onMount(gooey)
 		}
 	})
+
+	$effect(() => {
+		device.mobile
+		gooey?.refreshPosition()
+	})
 </script>
 
 <div
