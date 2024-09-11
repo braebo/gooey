@@ -1,126 +1,78 @@
 # gooey
 
-A modern gui library for typescript and javascript _(yet another web gui)_.
+### 🚧 _WIP_
+
+A gui library for typescript and javascript.
 
 [gooey.braebo.dev](https://gooey.braebo.dev)
 
-> Work in progress..
+<p align="center">
+    <img src="./www/static/assets/gooey-meta@600.png" alt="gooey" width="300"></img>
+</p>
+
+<p align="center">
+    <img src="./www/static/assets/goos-dark.png" alt="gooey" width="500"></img>
+</p>
 
 ## Features
 
-- [x] Flexible API
-- [x] Thoroughly Typed
-- [x] Zero Dependencies
-- [x] Preset Manager
-- [x] Theme Manager
-- [x] Undo History
-- [x] Draggable / Resizable
-- [x] `addMany` for Bulk Generation
-- [x] Strong Type Inference
-- [x] Reset to Default buttons
-- [ ] Monitors
-- [ ] LFO / Envelope manager
-- [ ] Curve Editor
-- [ ] Plugins
-- [ ] Svelte Components
-
+-   [x] Flexible API
+-   [x] Thoroughly Typed
+-   [x] Dependency Free
+-   [x] Preset Manager
+-   [x] Theme Manager
+-   [x] Draggable / Resizable
+-   [x] GUI Generator Methods
+-   [x] Reset Buttons
+-   [x] Undo History · _wip_
+-   [ ] Graphs / Monitors
+-   [ ] LFO / Envelope manager
+-   [ ] Bezier Curve Editor
+-   [ ] Plugins
+-   [ ] Svelte Components
 
 ## Inputs
 
-| Status  | Feature    | Primitive                      |
-| ------- | ---------- | ------------------------------ |
-| ✅      | Number     | `number`                       |
-| ✅      | Color      | `Color \| ColorRepresentation` |
-| ✅      | Select     | `Array<any>`                   |
-| ✅      | Switch     | `boolean`                      |
-| ✅      | Text       | `string`                       |
-| ✅      | Button     | `{ text, onClick, ... }`       |
-| ✅      | ButtonGrid | `{ text, onClick, ... }[][]`   |
-| 🚧      | Textarea   | `string`                       |
-| 🚧      | Range      | `{ min, max }`                 |
-| 🚧      | Vector3    | `{ x, y, z }`                  |
-| 🚧      | Vector2    | `{ x, y }`                     |
+| Status | Feature    | Primitive                      |
+| ------ | ---------- | ------------------------------ |
+| ✅     | Number     | `number`                       |
+| ✅     | Text       | `string`                       |
+| ✅     | Switch     | `boolean`                      |
+| ✅     | Select     | `Array<any>`                   |
+| ✅     | Button     | `{ text, onClick, ... }`       |
+| ✅     | ButtonGrid | `{ text, onClick, ... }[][]`   |
+| ✅     | Color      | `Color \| ColorRepresentation` |
+| 🚧     | Range      | `{ min, max }`                 |
+| 🚧     | Vector2    | `{ x, y }`                     |
+| 🚧     | Vector3    | `{ x, y, z }`                  |
 
+## Install
 
-## Installation
+| Source                                 | Install                     | Import                                         |
+| -------------------------------------- | --------------------------- | ---------------------------------------------- |
+| [NPM](https://npmjs.com/package/gooey) | `npm install gooey`         | `import { Gooey } from 'gooey'`                |
+| [JSR](https://jsr.io/@braebo/gooey)    | `npx jsr add @braebo/gooey` | `import { Gooey } from '@braebo/gooey'`        |
+| [CDN](https://esm.sh/gooey)            | `'https://esm.sh/gooey'`    | `import { Gooey } from 'https://esm.sh/gooey'` |
 
-NPM
-
-```bash
-pnpm install gooey
-```
-
-or, [JSR](https://jsr.io/)
-
-```bash
-jsr add @braebo/gooey
-```
-
-
-## Usage
+## Import
 
 Create a new `Gooey`.
 
-```typescript
+```ts
 import { Gooey } from 'gooey'
 
 const gui = new Gooey()
 ```
 
-### Inputs
-
-
-
-The `add` method takes a `title` string and an `options` object.  It will infer the type of the input from the `value` property
-and generate the appropriate input.
-```typescript
-const input = gui.add('count', 1)
-//    ^? InputNumber
-
-// Pass in options.
-const input = gui.add('count', 1, { min: 0, max: 10, step: 1 })
-```
-
-
-Add multiple inputs at once with `addMany`.
-
-```typescript
-gooey.addMany({
-  number: 0,
-  color: '#ff0000',
-  select: ['a', 'b', 'c'],
-  switch: true,
-  text: 'hello'
-})
-```
-
-You can use each individual adder methods directly to create a specific input:
-
-```typescript
-gui.addNumber('count', 1)
-gui.addText('name', 'John Doe')
-gui.addColor('fav color', '#00FFFF')
-gui.addSelect('type', ['a', 'b', 'c'])
-gui.addButton('log', () => console.log('clicked'))
-gui.addSwitch('enabled', true)
-gui.addButtonGrid('playback', TODO)
-
-numberInput.on('change', console.log)
-```
-
-### Folder
-
-
-
-### TODO - More docs...
+## TODO
 
 ## About
 
-[tweakpane](https://github.com/cocopon/tweakpane) was the main inspiration for this project.  I recommend it over `gooey` -- it's a more lightweight solution with more features and an awesome, highly active developer!
+I built this to scratch an itch, and to pave the way for more advanced features related to WebGL / WebAudio / audio-reactive 3D in the future.
 
-I started this to scratch an itch, and pave the way for more advanced features related to 3D / audio / audio-reactivity in the future.
+[tweakpane](https://github.com/cocopon/tweakpane) was the main inspiration for this project. I recommend it over `gooey` -- it's a more lightweight solution with more features and an awesome, highly active developer!
 
 Other, similar projects:
 
-- [lil-gui](https://github.com/georgealways/lil-gui)
-- [dat.gui](https://github.com/dataarts/dat.gui)
+-   [lil-gui](https://github.com/georgealways/lil-gui)
+-   [dat.gui](https://github.com/dataarts/dat.gui)
