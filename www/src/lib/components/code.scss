@@ -269,3 +269,50 @@ div.code-window > div.codeblock > * {
 	line-height: var(--line-height, 1.1rem);
 	font-variation-settings: 'wght' 500;
 }
+
+.btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 100%;
+	height: 100%;
+
+	font-size: var(--font-xs);
+	font-variation-settings:
+		'wght' 500,
+		'wdth' 100;
+
+	color: var(--fg-d);
+	background: color-mix(in hsl, var(--bg-b), var(--bg-c) 30%);
+	outline: 1px solid var(--bg-b);
+	border: none;
+
+	cursor: pointer;
+
+	transition: background 0.2s;
+
+	&:hover,
+	&.active {
+		color: var(--fg-b);
+		background: color-mix(in hsl, var(--bg-b), var(--bg-c) 80%);
+	}
+
+	&:focus-visible {
+		outline-color: var(--focus-outline-color) !important;
+	}
+}
+
+[theme='light'] {
+	.btn {
+		color: var(--fg-d);
+		background: color-mix(in lab, var(--bg-c), var(--bg-a) 20%);
+		&:hover {
+			outline-color: var(--bg-c);
+		}
+		&:hover,
+		&.active {
+			background: color-mix(in lab, var(--bg-c), var(--bg-a) 50%);
+		}
+	}
+}
