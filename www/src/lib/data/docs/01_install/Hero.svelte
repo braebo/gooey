@@ -1,30 +1,29 @@
 <script lang="ts">
-	// import InstallButton from '$lib/components/InstallButton.svelte'
 	import LogoFull from '$lib/components/graphics/LogoFull.svelte'
 </script>
 
 <section>
-	<div class="br-lg"></div>
+	<div class="br-md"></div>
 
 	<div class="logo">
 		<LogoFull />
 	</div>
 
-	<p class="description">gui library for the web</p>
+	<p class="description" id="hero-description">gui library for the web</p>
 
 	<!-- <InstallButton /> -->
 </section>
 
 <style lang="scss">
 	.logo {
-		width: clamp(10rem, 42rem, calc(100% - 1rem));
+		width: clamp(10rem, 31rem, calc(100% - 1rem));
 		margin: 0 auto;
 	}
 
 	.description {
 		contain: content;
 
-		margin: 0 auto;
+		margin: 0 auto !important;
 
 		border-radius: var(--radius);
 

@@ -1,39 +1,65 @@
 <script lang="ts">
+	import { IMPORT_MODES, importMode } from '../../importMode.svelte'
+	import InstallButton from './InstallButton.svelte'
 	import Info from '$lib/components/Info.svelte'
 	import { fly } from 'svelte/transition'
 
-	let jsrEl = $state<HTMLElement>()
+	let infoTarget = $state<HTMLElement>()
+
+	const tooltipOptions = { placement: 'bottom' as const, offsetY: '-5px', delay: 500 }
 </script>
 
-<h2 id="installation" class="section-title">Install</h2>
+<h2 id="install" class="section-title">Install</h2>
 
 <section class="section">
 	<div class="installation-options">
 		<div class="installers">
 			<div class="installer" transition:fly={{ opacity: 1 }}>
 				<p>NPM</p>
-				<code>
-					npm install
-					<span class="gooey">gooey</span>
-				</code>
+
+				<InstallButton
+					text={`
+					<span>npm install </span>
+					<span class="gooey">&nbsp;gooey</span>
+				`}
+					copyText={`npm install gooey`}
+					onclick={() => (importMode.value = 'NPM')}
+				/>
 			</div>
 
-			<div class="installer">
+			<div class="installer" transition:fly={{ opacity: 1 }}>
 				<p>JSR</p>
-				<code>
-					npx jsr add
-					<span>
-						<span style="color:color-mix(in lch, var(--theme-a), var(--light-e) 25%)">@braebo</span><span
-							style="color:color-mix(in lch, var(--theme-a), var(--light-e) 75%)">/</span
-						><span class="gooey">gooey</span>
-					</span>
-				</code>
+
+				<InstallButton
+					text={`
+						npx jsr add
+						<span>
+							&nbsp;<span style="color:color-mix(in lch, var(--theme-a), var(--light-e) 25%)">@braebo</span><span
+								style="color:color-mix(in lch, var(--theme-a), var(--light-e) 75%)"><div
+								style="display: inline-block; transform: translateX(2px);">/</span
+							><span class="gooey" style="transform: translateX(1px);">gooey</span></div>
+						</span>
+					`}
+					{tooltipOptions}
+					copyText={`npx jsr add @braebo/gooey`}
+					onclick={() => (importMode.value = 'JSR')}
+				/>
+			</div>
+
+			<div class="installer" transition:fly={{ opacity: 1 }}>
+				<p>CDN</p>
+
+				<InstallButton
+					text={`</div><span style="color: var(--fg-d);">${IMPORT_MODES.CDN}</span>`}
+					copyText={`${IMPORT_MODES.CDN}`}
+					onclick={() => (importMode.value = 'CDN')}
+				/>
 			</div>
 		</div>
 
 		<div class="info">
-			{#if jsrEl}
-				<Info tooltipText={['more info', 'less info']} target={jsrEl}>
+			{#if infoTarget}
+				<Info tooltipText={['more info', 'less info']} target={infoTarget}>
 					<p>
 						The <span class="gooey">gooey</span> package is available as an ES module (ESM), which is
 						compatible with modern bundlers like
@@ -66,55 +92,63 @@
 	}
 
 	.installers {
-		contain: content;
 		display: flex;
-		justify-content: center;
-		flex-wrap: wrap;
-		gap: 0 2rem;
+		gap: 1rem;
 
+		justify-content: center;
+		align-items: center;
+		flex-wrap: wrap;
+
+		width: fit-content;
 		height: 100%;
+		margin: auto;
 
 		border-radius: var(--radius);
 
-		pointer-events: none;
 		user-select: none;
 	}
 
 	.installer {
 		display: flex;
+		flex-wrap: nowrap;
 		align-items: center;
-		gap: 1rem;
 
 		width: fit-content;
 		height: fit-content;
-		padding: 0;
 		padding-left: 1rem;
-		margin: 0;
-		margin-top: 1px;
-
-		outline: 1px solid var(--bg-b);
+		gap: 1rem;
+		
+		color: var(--fg-c);
+		outline: 1px solid var(--bg-a);
+		outline-offset: -1px;
 		border-radius: var(--radius);
 
-		flex-wrap: nowrap;
-
-		* {
-			flex-wrap: nowrap;
-			white-space: nowrap;
-		}
+		white-space: nowrap;
 
 		p {
+			min-width: 2.5rem;
 			margin: 0;
+
+			color: var(--fg-a);
+
 			font-variation-settings:
-				'wght' 700,
+				'wght' 500,
 				'wdth' 120;
 		}
 	}
 
-	.installers code {
-		pointer-events: all;
-		user-select: text;
+	.installers :global(code) {
+		max-width: 100%;
+
+		padding: 0.5rem 1rem;
 
 		font-family: var(--font-mono);
+		font-variation-settings:
+			'wght' 600,
+			'wdth' 100;
+
+		pointer-events: all;
+		user-select: text;
 	}
 
 	code:not(p code) {
@@ -123,10 +157,27 @@
 
 	@media screen and (width < 1000px) {
 		.installers {
+			display: flex;
 			flex-direction: column;
-			gap: 1rem;
 			align-items: center;
 			justify-content: center;
+			gap: 1rem;
+
+			padding: 0;
+		}
+
+		.installer {
+			gap: 1rem;
+
+			width: fit-content;
+			padding: none;
+
+			:global(code) {
+				min-width: 18rem;
+				padding: 0.25rem 0;
+
+				font-size: var(--font-sm);
+			}
 		}
 	}
 </style>
