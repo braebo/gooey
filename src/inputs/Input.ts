@@ -461,6 +461,10 @@ export abstract class Input<
 	get value() {
 		return this.state.value as TValueType
 	}
+	set value(v: TValueType) {
+		// @ts-expect-error - grr
+		this.state.set(v)
+	}
 
 	/**
 	 * The title displayed on this Input's label.
