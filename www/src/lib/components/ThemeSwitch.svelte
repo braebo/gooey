@@ -142,7 +142,7 @@
 
 		display: flex;
 		align-items: center;
-
+		justify-content: center;
 		height: 100%;
 		max-width: 100%;
 		max-height: 100%;
@@ -166,13 +166,13 @@
 
 		&.dark {
 			animation: in-right var(--duration) cubic-bezier(0.05, 1, 0.56, 0.91) forwards;
-			right: 0.5rem;
+			right: 0rem;
 		}
 
 		&.system {
 			animation: in-center var(--duration) cubic-bezier(0.05, 1, 0.56, 0.91) forwards;
-			left: 0;
-			right: 0;
+			left: 0.5rem;
+			right: 0rem;
 			margin: auto;
 			width: fit-content;
 		}
