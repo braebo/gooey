@@ -1,7 +1,11 @@
-<script lang="ts">
-	import { onMount, type Snippet } from 'svelte'
+<!-- svelte-ignore non_reactive_update -->
+<script lang="ts" module>
+	let count = 0
+</script>
 
+<script lang="ts">
 	import { Tooltip } from '../../../../src/index'
+	import { onMount, type Snippet } from 'svelte'
 
 	let {
 		children,
@@ -80,6 +84,8 @@
 		}
 	}
 
+	count++
+
 	onMount(() => {
 		tooltip = new Tooltip(iconEl, {
 			text: () => text,
@@ -92,7 +98,7 @@
 	})
 </script>
 
-<div class="info row" class:show bind:this={el}>
+<div class="info row" class:show bind:this={el} style:z-index={99 - count}>
 	<button
 		bind:this={iconEl}
 		class="i"
@@ -139,9 +145,9 @@
 		</svg>
 	</button>
 
-	<span class="children">
+	<div class="children">
 		{@render children?.()}
-	</span>
+	</div>
 </div>
 
 <style lang="css">
@@ -160,7 +166,10 @@
 		flex-wrap: nowrap;
 		align-items: center;
 
+		gap: 1rem;
+
 		width: fit-content;
+		max-width: var(--max-width, 45rem);
 		padding: 0 var(--padding-lg);
 		margin-bottom: 1rem;
 
@@ -169,7 +178,7 @@
 		outline: 1px solid transparent;
 
 		transition: 0.15s;
-		z-index: 100;
+		z-index: 50;
 		pointer-events: none;
 
 		transform: translateY(1rem);
@@ -193,7 +202,7 @@
 		}
 		&.show {
 			--off-theme: color-mix(in hsl, var(--theme-a) 2%, color-mix(in hsl, var(--bg-a), var(--bg-b)) 80%);
-			backdrop-filter: blur(6px);
+			backdrop-filter: blur(11px);
 			--primary: color-mix(in hsl, var(--theme-a) 2%, color-mix(in hsl, var(--bg-a), var(--bg-b)) 80%);
 			outline-color: var(--outline);
 
@@ -319,10 +328,17 @@
 		}
 
 		.children {
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			margin: 1.5rem 0;
+
 			width: 100%;
 			opacity: 0;
 			transform: translateY(0.2rem);
 			transition: 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+			z-index: 100;
 		}
 
 		.children {
