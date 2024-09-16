@@ -83,7 +83,7 @@ import { Gooey } from '@braebo/gooey'
 
 <details><summary>PNPM</summary>
 
-<a href="https://pnpm.io">PNPM</a> is the recommended way to install `gooey` <em>(vite-based projects)</em>.
+<a href="https://pnpm.io">PNPM</a> is the recommended way to install `gooey`.
 
 ```elixir
 pnpm i -D gooey
