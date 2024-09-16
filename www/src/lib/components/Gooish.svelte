@@ -71,13 +71,4 @@
 		width: 100%;
 		height: 100%;
 	}
-
-	:global(:root[theme='light']) .gooish {
-		/* prettier-ignore */
-		box-shadow:
-			1px 2px 5px hsla(0, 0%, 0%, 0.063) inset,
-			1px 1px 16px hsla(0, 0%, 0%, 0.02) inset,
-			1px 4px 8px hsla(0, 0%, 0%, 0.063) inset
-		;
-	}
 </style>

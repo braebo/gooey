@@ -1,0 +1,21 @@
+<script lang="ts">
+	import Code from '$lib/components/Code.svelte'
+	import LiveExample from '$lib/components/LiveExample.svelte'
+</script>
+
+### Basics
+
+Create a <span class="gooey">gooey</span> with some [inputs](/docs#inputs)
+
+<Code ssr headless lang="ts" highlightedText="asd" />
+<div class="example">
+		<Code ssr headless lang="ts" highlightedText={String(`import { Gooey } from 'gooey'\nconst gooey = new Gooey()`)} />
+
+	<LiveExample
+		onMount={g => {
+			g.add('hello', 'world')
+			g.add('count', 1)
+		}}
+		position="center"
+	/>
+</div>

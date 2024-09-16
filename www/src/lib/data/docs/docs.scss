@@ -82,6 +82,7 @@
 
 	.example.inline {
 		display: flex;
+		justify-content: flex-start;
 		border: none;
 		gap: 2rem;
 		height: fit-content;
@@ -89,6 +90,9 @@
 		.code-window {
 			display: flex;
 			flex-shrink: 1;
+			border-radius: var(--radius-md);
+
+			.copy {
 				opacity: 0;
 				transition: opacity 0.2s ease-in-out;
 			}
@@ -123,8 +127,6 @@
 
 		line-height: 1.5;
 
-		line-height: 1.5;
-
 		code {
 			// code {
 			padding: 0.1rem 0.5rem;
@@ -138,6 +140,32 @@
 			height: fit-content;
 			font-variation-settings:
 				'wght' 600,
+				'wdth' 100;
+		}
+
+		em {
+			font-style: italic;
+			color: var(--fg-d);
+
+			code {
+				font-style: italic;
+				font-synthesis: style;
+				background: color-mix(in hsl, var(--dark-c), var(--dark-d) 42%);
+
+				border-top-left-radius: 1rem;
+				border-top-right-radius: 2px;
+				border-bottom-left-radius: 2px;
+				border-bottom-right-radius: 1rem;
+			}
+		}
+
+		mono {
+			font-family: var(--font-mono);
+		}
+
+		strong {
+			font-variation-settings:
+				'wght' 700,
 				'wdth' 100;
 		}
 	}

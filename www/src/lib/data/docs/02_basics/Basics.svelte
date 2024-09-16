@@ -1,101 +1,119 @@
 <script lang="ts" module>
+	import type { Example } from './types'
+
 	import { page } from '$app/stores'
 
-	interface Data {
-		code: string
-		fn?: (gooey: Gooey) => void
-	}
-
-	const goo4Data = $state({
-		wght: 300,
-		wdth: 100,
+	const bindManyData = $state({
+		wght: 100,
+		wdth: 75,
 	})
 
 	export const data = {
-		// Basics
-		goo1: {
-			code: `import { Gooey } from 'gooey'
-
-const gooey = new Gooey()
-
+		// Add
+		add: {
+			code: `
 gooey.add('hello', 'world')
-gooey.add('count', 1)`.trim(),
+
+gooey.add('count', 1, { min: -1 })`.trim(),
 			fn: g => {
 				g.add('hello', 'world')
-				g.add('count', 1)
+				g.add('count', 1, { min: -1 })
+			},
+		},
+		add1: {
+			code: `
+gooey.add('count', 1, {
+  min: -1,
+  max: 10,
+  step: 0.1
+})
+`.trim(),
+		},
+		// addMany
+		addMany: {
+			code: `
+gooey.addMany({
+  stuff: true,
+  more_stuff: {
+    like_colors: '#4aa7ff' as const,
+    or_buttons: () => alert('thanks!')
+  }
+})
+`.trim(),
+			fn: g => {
+				g.addMany({
+					stuff: true,
+					more_stuff: {
+						like_colors: '#4aa7ff' as const,
+						or_buttons: () => alert('thanks!'),
+					},
+				})
 			},
 		},
 		// Event handling
-		goo2: {
+		events: {
 			code: `
 const title = gooey.add('title', 'change me')
 
-title.on('change', (v) => gooey.title = v)`.trim(),
+title.on('change', (v) => gooey.title = v)
+`.trim(),
 			fn: g => {
 				g.add('title', 'change me').on('change', v => {
 					if (g) g.title = v
 				})
 			},
 		},
+		// Event handling info
 		events1: {
 			code: `
 gooey.add('title', 'change me', {
   onChange: (v) => gooey.title = v
-})`.trim(),
+})
+`.trim(),
 		},
 		events2: {
 			code: `
 gooey
   .add('title', 'change me')
-  .on('change', (v) => gooey.title = v)`.trim(),
+  .on('change', (v) => gooey.title = v)
+`.trim(),
 		},
-		// addMany
-		goo3: {
-			code: `
-gooey.addMany({
-  stuff: true,
-  more_stuff: {
-    like_colors: '#4aa7ff',
-    or_buttons: () => alert('thanks!')
-  }
-})`.trim(),
-			// todo - Add this to addMany section:
-			// 			code: `
-			// const controls = {
-			//   foo: true,
-			//   bar: {
-			//     baz: '#ff0000',
-			//     qux: () => alert('thanks!')
-			//   }
-			// }
-
-			// gooey.addMany(controls, {
-			//   foo: { description: 'good stuff' },
-			//   bar: { folderOptions: { open: false }}
-			// })`.trim(),
-			fn: g => {
-				g.addMany({
-					stuff: true,
-					more_stuff: {
-						like_colors: '#4aa7ff',
-						or_buttons: () => alert('thanks!'),
-					},
-				})
-			},
-		},
-		goo4: {
+		// bind
+		bind: {
 			code: `
 const data = {
-  wght: 300,
-  wdth: 100,
+  size: 12,
+  color: '#4aa7ff' as const
+}
+
+gooey.bind(data, 'size')
+gooey.bind(data, 'color')
+`.trim(),
+			fn: g => {
+				const data = {
+					size: 12,
+					color: '#4aa7ffff' as const,
+				}
+
+				g.bind(data, 'size')
+				g.bind(data, 'color')
+			},
+		},
+		// bindMany
+		bindMany: {
+			code: `
+const data = {
+  wght: 100,
+  wdth: 75,
 }
 
 gooey.bindMany(data)
 `.trim(),
 			fn: g => {
-				g.bindMany(goo4Data, { wght: { min: 100, max: 900 }, wdth: { min: 75, max: 125 } })
+				g.bindMany(bindManyData, { wght: { min: 100, max: 900 }, wdth: { min: 75, max: 125 } })
 			},
 		},
+		// bindMany info
 		bindMany1: {
 			code: `
 const data = {
@@ -108,69 +126,104 @@ gooey.bindMany(data, {
   wdth: { min: 100, max: 130 }
 })`.trim(),
 		},
-		goo5: {
+		// folders
+		folders: {
 			code: `
-const folder = gooey.addFolder('user')
+const outer = gooey.addFolder('outer')
 
-folder.add('name', 'Stewy Gooey')
+const inner = outer.addFolder('inner')
 
-const subFolder = folder.addFolder('secret', {
-  closed: true,
-})
-
-secretFolder.add('password', '1234', {
-  disabled: true,
+inner.add('say sike', () => outer.close(), {
+  text: 'sike',
 })
 `.trim(),
 			fn: gooey => {
-				// Create a user folder
-				const user = gooey.addFolder('user')
+				const outer = gooey.addFolder('outer')
 
-				// Add a name input
-				user.add('name', 'Stewy Gooey')
-
-				// Add a closed folder
-				const secretFolder = user.addFolder('secret', {
-					closed: true,
-				})
-
-				secretFolder.add('password', '1234', {
-					disabled: true,
+				const inner = outer.addFolder('inner')
+				inner.add('say sike', () => outer.close(), {
+					text: 'sike',
 				})
 			},
 		},
-	} as const satisfies Record<string, Data>
+		folders1: {
+			code: `
+// Persist all states
+const gooey = new Gooey({ storage: true })
+
+// Only \`closed\` state
+const gooey = new Gooey({
+  storage: {
+    closed: true
+  },
+})
+`.trim(),
+		},
+	} as const satisfies Example
 </script>
 
 <script lang="ts">
-	import type { Gooey } from '../../../../../../src'
+	import type { PageData } from '../../../../routes/docs/$types'
 
 	import LiveExample from '$lib/components/LiveExample.svelte'
 	import Info from '$lib/components/Info.svelte'
 	import Code from '$lib/components/Code.svelte'
 
-	const { highlighted } = $page.data
+	const { highlighted } = $page.data as PageData
 
+	let addEl = $state<HTMLElement>()
 	let eventsEl = $state<HTMLElement>()
 	let bindManyEl = $state<HTMLElement>()
+	let proTipEl = $state<HTMLElement>()
 </script>
 
 <h2 id="basics" class="section-title">Basics</h2>
 
 <section class="section">
-	<div class="description">
-		Create a <span class="gooey">gooey</span> with some <a href="#inputs">inputs </a>
-	</div>
+	<!--? basics - `add` method -->
 
-	<!--? goo1 - `add` method -->
+	<div class="description">
+		Use <code>add</code> to create a new <a href="#inputs">input</a>
+	</div>
 
 	<div class="example">
-		<Code ssr headless lang="ts" highlightedText={highlighted.goo1} />
+		<Code ssr headless lang="ts" highlightedText={highlighted.add} />
 
-		<LiveExample onMount={data.goo1.fn} position="center" />
+		<LiveExample title="add" onMount={data.add.fn}  position="center" />
 	</div>
 
-	<!--? goo3 - `addMany` method -->
+	<div class="info-wrapper">
+		<div class="description em">
+			<span bind:this={addEl}>
+				See <a href="#add">add</a>
+			</span>
+		</div>
+
+		{#if addEl}
+			<Info target={addEl} side="left" tooltipText={['tldr', 'k thx']} --max-width="33rem">
+				<div class="description">
+					The options available in the third argument will change depending on the type of input. For example:
+				</div>
+
+				<div class="example">
+					<Code headless lang="ts" highlightedText={highlighted.add1} ssr />
+				</div>
+
+				<div class="description">
+					Here, <span class="gooey">gooey</span> infers the options as <code>NumberInputOptions</code>
+					because the initial value of <code>1</code> is a <strong>number</strong>, which is why it accepts
+					<mono>min</mono>, <mono>max</mono>, and <mono>step</mono> options.
+				</div>
+
+				<div class="description em plain">
+					This should get you some nice, dynamic intellisense, but you can always fall back to the more
+					specific adders if need be, like <code>addNumber</code> , <code>addColor</code> , etc.
+				</div>
+			</Info>
+		{/if}
+	</div>
+
+	<!--? addMany - `addMany` method -->
 
 	<div class="br"></div>
 	<div class="description">
@@ -178,12 +231,12 @@ secretFolder.add('password', '1234', {
 	</div>
 
 	<div class="example">
-		<Code ssr headless lang="ts" highlightedText={highlighted.goo3} />
+		<Code ssr headless lang="ts" highlightedText={highlighted.addMany} />
 
-		<LiveExample onMount={data.goo3.fn} position="top-center" heightSm="16rem" />
+		<LiveExample title="addMany" onMount={data.addMany.fn}  position="top-center" heightSm="16rem" />
 	</div>
 
-	<!--? goo2 - `on` method -->
+	<!--? events - `on` method -->
 
 	<div class="br"></div>
 	<div class="description">
@@ -191,9 +244,9 @@ secretFolder.add('password', '1234', {
 	</div>
 
 	<div class="example">
-		<Code ssr headless lang="ts" highlightedText={highlighted.goo2} />
+		<Code ssr headless lang="ts" highlightedText={highlighted.events} />
 
-		<LiveExample onMount={data.goo2.fn} position="center" />
+		<LiveExample title="on" onMount={data.events.fn} position="center" />
 	</div>
 
 	<div class="info-wrapper">
@@ -207,7 +260,6 @@ secretFolder.add('password', '1234', {
 			<Info target={eventsEl} side="left">
 				<!--? `onChange` option -->
 
-				<div class="br-sm"></div>
 				<div class="example inline">
 					<div class="description">
 						The <code>onChange</code> option can also be used
@@ -215,7 +267,6 @@ secretFolder.add('password', '1234', {
 
 					<Code headless lang="ts" highlightedText={highlighted.events1} ssr />
 				</div>
-				<div class="br"></div>
 
 				<!--? Chaining `on` method -->
 
@@ -224,21 +275,39 @@ secretFolder.add('password', '1234', {
 
 					<Code headless lang="ts" highlightedText={highlighted.events2} ssr />
 				</div>
-				<div class="br-sm"></div>
 			</Info>
 		{/if}
 	</div>
 
-	<!--? goo4 - `bindMany` method -->
+	<!--? bind - `bind` method -->
 
 	<div class="br"></div>
-	<div class="description">Or just bind gooey to your own objects</div>
+	<div class="description">
+		Alternatively, <code>bind</code> to any object to keep its values in sync automatically
+		<em>(as opposed to using <code>add</code> with events)</em>
+	</div>
 
 	<div class="example">
-		<Code ssr headless lang="ts" highlightedText={highlighted.goo4} />
+		<Code ssr headless lang="ts" highlightedText={highlighted.bind} />
 
-		<LiveExample onMount={data.goo4.fn} title="font" position="top-center" heightSm="12rem">
-			<div class="display" style="font-variation-settings: 'wght' {goo4Data.wght}, 'wdth' {goo4Data.wdth}">
+		<LiveExample title="bind" onMount={data.bind.fn}  position="top-center" />
+	</div>
+
+	<!--? bindMany - `bindMany` method -->
+
+	<div class="br"></div>
+	<div class="description">
+		Bind to an entire object with <code>bindMany</code>
+	</div>
+
+	<div class="example">
+		<Code ssr headless lang="ts" highlightedText={highlighted.bindMany} />
+
+		<LiveExample title="font" onMount={data.bindMany.fn}  position="top-center" heightSm="12rem">
+			<div
+				class="variable-font-display"
+				style="font-variation-settings: 'wght' {bindManyData.wght}, 'wdth' {bindManyData.wdth}"
+			>
 				variable fonts are neat
 			</div>
 		</LiveExample>
@@ -253,22 +322,22 @@ secretFolder.add('password', '1234', {
 
 		{#if bindManyEl}
 			<Info target={bindManyEl} side="left">
-				<!--? `onChange` option -->
-
-				<div class="br-sm"></div>
 				<div class="description">
 					You can also pass options to <code>bindMany</code>
 				</div>
-				<div class="br-sm"></div>
+
 				<div class="example">
 					<Code headless lang="ts" highlightedText={highlighted.bindMany1} ssr />
 				</div>
-				<div class="br"></div>
+
+				<div class="description em plain">
+					The types here will be inferred for all that intellisense goodness
+				</div>
 			</Info>
 		{/if}
 	</div>
 
-	<!--? goo5 - Folders -->
+	<!--? folders - Folders -->
 
 	<div class="br"></div>
 	<div class="description">
@@ -276,14 +345,39 @@ secretFolder.add('password', '1234', {
 	</div>
 
 	<div class="example">
-		<Code ssr headless lang="ts" highlightedText={highlighted.goo5} />
+		<Code ssr headless lang="ts" highlightedText={highlighted.folders} />
 
-		<LiveExample onMount={data.goo5.fn} position="center" />
+		<LiveExample title="folders" onMount={data.folders.fn}  position="center" />
+	</div>
+
+	<!--? folders1 - Folders Info 1 -->
+
+	<div class="info-wrapper">
+		<div class="description em">
+			<span bind:this={proTipEl}>
+				<span style="color:var(--bg-e)">Pro tip &nbsp;·&nbsp; </span>
+				<span style="color:var(--fg-c)">click folder headers to open / close them</span>
+			</span>
+		</div>
+
+		{#if proTipEl}
+			<Info target={proTipEl} side="left" tooltipText={['more tips', 'less tips']}>
+				<div class="br-sm"></div>
+
+				<div class="description">
+					The <code>closed</code> state can be persisted in <code>localStorage</code>
+				</div>
+
+				<div class="example">
+					<Code headless lang="ts" highlightedText={highlighted.folders1} ssr />
+				</div>
+			</Info>
+		{/if}
 	</div>
 </section>
 
 <style>
-	.display {
+	.variable-font-display {
 		position: absolute;
 		inset: 0;
 
