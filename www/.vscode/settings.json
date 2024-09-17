@@ -120,7 +120,10 @@
 					"punctuation.definition.tag",
 					"entity.name.tag.svelte",
 					"punctuation.separator.key-value.svelte",
-					"constant.name.attribute.tag.pug"
+					"constant.name.attribute.tag.pug",
+					"entity.name.tag.html",
+					"meta.tag.structure.details.start.html",
+					"text.html.markdown"
 				],
 				"settings": {
 					"foreground": "#5a86ff36"

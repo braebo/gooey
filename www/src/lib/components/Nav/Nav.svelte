@@ -12,17 +12,35 @@
 	// prettier-ignore
 	const routes = [
 		...$page.data.routes,
-		'/docs#install',
-		'/docs#import',
 		'/docs#basics',
+		'/docs#import',
+		'/docs#install',
+		'/docs/control/binding',
+		'/docs/control/adding',
+		'/docs/inputs/number',
+		'/docs/inputs/text',
+		'/docs/inputs/switch',
+		'/docs/inputs/select',
+		'/docs/inputs/color',
+		'/docs/ui/folder',
+		'/docs/ui/button',
+		'/docs/persistence/storage',
+		'/docs/persistence/presets',
+		'/docs/persistence/history',
+		'/docs/theming/themes',
+		'/docs/theming/builder',
 	]
 
 	const links = new Tree(routes as string[]).root.children!
 
-	function sort(links?: Branch[]): Branch[] | undefined {
-		return links?.toSorted((a, b) => {
-			return routes.indexOf(a.path) - routes.indexOf(b.path)
-		})
+	function sort(links?: Branch[], skip = false): Branch[] | undefined {
+		return skip
+			? links
+			: links?.toSorted((a, b) => {
+					const _a = routes.find(r => r.includes(a.path))
+					const _b = routes.find(r => r.includes(b.path))
+					return routes.indexOf(_a!) - routes.indexOf(_b!)
+				})
 	}
 
 	let activeHeading = $state('')
@@ -49,6 +67,10 @@
 
 		return () => observer.disconnect()
 	})
+
+	function shouldBeVisible(url: URL, path: string) {
+		return url.pathname.startsWith(path.slice(0, path.slice(1).indexOf('/') + 1 || -1))
+	}
 
 	{
 		// import { Gooey } from '../../../../../src'
@@ -81,7 +103,7 @@
 {#if !device.mobile}
 	<nav class:absolute class:mobile={device.mobile}>
 		<ul>
-			{#each sort(links) ?? [] as link, i (link.name)}
+			{#each sort(links, true) ?? [] as link, i (link.name)}
 				<div class="li" in:fly={{ y: -10 - 5 * i }} style:view-transition-name="li-{link.name}">
 					<a
 						class="depth-0"
@@ -96,7 +118,7 @@
 						{link.name.replaceAll('-', ' ')}
 					</a>
 
-					{#if $page.url.pathname.includes(link.path)}
+					{#if shouldBeVisible($page.url, link.path)}
 						{@render subnav(link, i)}
 					{/if}
 				</div>
@@ -106,7 +128,7 @@
 
 	{#snippet subnav(link: Branch, i = 0, depth = 1)}
 		<ul>
-			{#each sort(link.children?.filter(c => !c.name.startsWith('_'))) ?? [] as child, j (child.name)}
+			{#each sort( link.children?.filter(c => !c.name.startsWith('_')), true, ) ?? [] as child, j (child.name)}
 				<div
 					class="li"
 					class:active={isActive(child.name, $page.url.pathname)}
@@ -125,7 +147,8 @@
 						{child.name.replaceAll('-', ' ')}
 					</a>
 				</div>
-				{#if $page.url.pathname.includes(child.path)}
+
+				{#if shouldBeVisible($page.url, child.path)}
 					{@render subnav(child, i, depth + 1)}
 				{/if}
 			{/each}
@@ -133,7 +156,7 @@
 	{/snippet}
 {/if}
 
-<style>
+<style lang="scss">
 	nav {
 		contain: strict;
 
@@ -149,6 +172,27 @@
 		pointer-events: none;
 
 		z-index: 1;
+	}
+
+	nav {
+		scrollbar-gutter: auto;
+	}
+
+	nav::-webkit-scrollbar {
+		height: 7px;
+		width: 7px;
+
+		border-radius: 0.25rem;
+		background: transparent; /* make scrollbar transparent */
+	}
+	nav::-webkit-scrollbar-thumb {
+		background: var(--bg-b);
+		border-radius: 0.125rem;
+
+		cursor: pointer;
+	}
+	nav::-webkit-scrollbar-corner {
+		background: transparent;
 	}
 
 	nav.absolute {
@@ -172,7 +216,7 @@
 
 		/* padding: 0.5rem 2px; */
 		margin: 0;
-		margin-top: 1rem;
+		// margin-top: 1rem;
 
 		opacity: 0;
 		color: var(--fg-a);
@@ -199,6 +243,7 @@
 
 		width: 100%;
 		height: 100%;
+		margin-top: 0.5rem;
 
 		color: var(--fg-c);
 
@@ -215,12 +260,28 @@
 	}
 
 	a.depth-0 {
+		margin-top: 1rem;
 		letter-spacing: 2.75px;
 		text-transform: uppercase;
 		font-size: var(--font-lg);
 		font-variation-settings:
 			'wght' 200,
 			'wdth' 98;
+	}
+
+	a.depth-1 {
+		margin-top: 0.75rem;
+		font-size: var(--font-sm);
+		font-variation-settings:
+			'wght' 500,
+			'wdth' 100;
+	}
+
+	a.depth-2 {
+		font-size: var(--font-xs);
+		font-variation-settings:
+			'wght' 350,
+			'wdth' 100;
 	}
 
 	.li:has(a.active) a:not(.active) {

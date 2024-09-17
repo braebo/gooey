@@ -28,6 +28,10 @@
 	--fg-c: light-dark(#1f202d, #babeca);
 	--fg-d: light-dark(#353746, #777d8f);
 	--fg-e: light-dark(#474a5b, #5f6377);
+
+	--bg-ab: color-mix(in lab, var(--bg-a), var(--bg-b) 20%);
+	--primary: light-dark(var(--bg-ab), var(--bg-a));
+	--secondary: color-mix(in hsl, var(--bg-a), var(--bg-b) 37%);
 }
 
 // :root[theme='light'] {

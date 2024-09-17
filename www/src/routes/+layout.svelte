@@ -40,35 +40,13 @@
 
 <style>
 	.page {
-		--bg-ab: color-mix(in lab, var(--bg-a), var(--bg-b) 20%);
-		--sidebar-bg: var(--bg-ab);
-
-		--bg-img: linear-gradient(
-			in hsl 24deg,
-			color-mix(in lab, var(--bw), var(--bg-a)) 0%,
-			color-mix(in lch, var(--bg-b) 20%, var(--bg-c) 45%)
-		);
-
-		--primary: light-dark(var(--bg-ab), var(--bg-a));
-		--secondary: light-dark(var(--bg-b), color-mix(in lch, var(--bg-a) 66%, var(--bg-b)));
-	}
-
-	:global(:root[theme='light']) .page {
-		--bg-img: linear-gradient(
-			in lab 24deg,
-			color-mix(in hsl, var(--bw), var(--bg-a)) 10%,
-			color-mix(in hsl, var(--bg-b) 20%, var(--bg-e) 45%)
-		);
-	}
-
-	.page {
 		display: flex;
 		gap: 1rem;
 
 		width: 100%;
 		min-height: 100vh;
 
-		background-image: var(--bg-img);
+		background-color: var(--secondary);
 
 		z-index: 0;
 	}
