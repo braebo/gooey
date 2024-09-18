@@ -50,7 +50,7 @@ export function select(
 		if (typeof el === 'string') {
 			if (el === 'document' || el === 'window') return [document.documentElement]
 			if (el.startsWith('#')) {
-				const foundEl = document.getElementById(JSON.stringify(el).slice(1))
+				const foundEl = document.getElementById(`${el}`.slice(1))
 				if (foundEl) {
 					return [foundEl]
 				} else {
