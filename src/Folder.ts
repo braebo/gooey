@@ -1465,12 +1465,12 @@ export class Folder {
 							? folder.bindColor(value, 'color', { title: key, ...inputOptions })
 							: folder.addColor(key, value, inputOptions)
 				} else if (Array.isArray(value)) {
-					this._log.info('value', {
-						value,
-						key,
-						inputOptions,
-						isButtonGridArrays: isButtonGridArrays(value),
-					})
+					// this._log.info('value', {
+					// 	value,
+					// 	key,
+					// 	inputOptions,
+					// 	isButtonGridArrays: isButtonGridArrays(value),
+					// })
 					//? InputButtonGrid
 					if (isButtonGridArrays(value)) {
 						input = folder.addButtonGrid(key, value, inputOptions)

@@ -21,13 +21,15 @@
 	let hue = $state(210)
 
 	let p = $state({
-		speed: 0.66,
-		hue: '#57abffff' as const,
-		size: 1.22,
+		orbs: {
+			hue: '#57abffff' as const,
+			size: 1.22,
+		},
 		goo: {
+			speed: 0.66,
 			animate: true,
-			texture: 'turbulence',
-			gooeyness: 11,
+			texture: 'fractalNoise',
+			gooeyness: 50,
 			viscosity: 0.0123,
 			density: 1,
 		},
@@ -42,7 +44,7 @@
 		return ((v - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin
 	}
 
-	let duration = $derived(p.speed ? mapRange(p.speed, 0, 1, 100, 5) : 0)
+	let duration = $derived(p.goo.speed ? mapRange(p.goo.speed, 0, 1, 100, 5) : 0)
 
 	let progress = $derived.by(() => {
 		if (sliderEl === undefined || thumbEl === undefined) return 1
@@ -75,7 +77,7 @@
 		})
 
 		// Store a ref to the slider input to sync it with the svg slider.
-		const hueInput = inputs.hue
+		const hueInput = inputs.orbs.hue
 		hueInput.on('change', v => {
 			hue = v.hue
 		})
@@ -179,7 +181,7 @@
 		overflow="visible"
 		style="overflow: visible"
 	>
-		<ellipse id="orb2" cx="247" cy="97" rx={14 * p.size} ry={14 * p.size} fill="url(#gooey_anim_gradient_2)">
+		<ellipse id="orb2" cx="247" cy="97" rx={14 * p.orbs.size} ry={14 * p.orbs.size} fill="url(#gooey_anim_gradient_2)">
 			<animateTransform {...randomPositions()} />
 		</ellipse>
 
@@ -213,15 +215,15 @@
 			/>
 		</g>
 
-		<ellipse id="orb1" cx="110" cy="120" rx={10 * p.size} ry={10 * p.size} fill="url(#gooey_anim_gradient_1)">
+		<ellipse id="orb1" cx="110" cy="120" rx={10 * p.orbs.size} ry={10 * p.orbs.size} fill="url(#gooey_anim_gradient_1)">
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
-		<ellipse id="orb4" cx="490" cy="75" rx={10 * p.size} ry={10 * p.size} fill="url(#gooey_anim_gradient_4)">
+		<ellipse id="orb4" cx="490" cy="75" rx={10 * p.orbs.size} ry={10 * p.orbs.size} fill="url(#gooey_anim_gradient_4)">
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
-		<ellipse id="orb3" cx="326" cy="55" rx={8.5 * p.size} ry={8.5 * p.size} fill="url(#gooey_anim_gradient_3)">
+		<ellipse id="orb3" cx="326" cy="55" rx={8.5 * p.orbs.size} ry={8.5 * p.orbs.size} fill="url(#gooey_anim_gradient_3)">
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
