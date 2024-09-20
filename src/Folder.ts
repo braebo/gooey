@@ -574,7 +574,52 @@ export class Folder {
 		this.gooey = opts.gooey
 		this._title = opts.title ?? ''
 
+		// const createStyleMutationTracker = (element: HTMLElement) => {
+		// 	const originalStyle = element.style
+
+		// 	const handler: ProxyHandler<CSSStyleDeclaration> = {
+		// 		set(target, property, value) {
+		// 			console.log(`Style property "${String(property)}" is being set to "${value}"`)
+		// 			if (property === 'height') {
+		// 				console.trace()
+		// 			}
+		// 			return Reflect.set(target, property, value)
+		// 		},
+		// 		get(target, property) {
+		// 			const value = Reflect.get(target, property)
+		// 			if (typeof value === 'function') {
+		// 				return function (...args: any[]) {
+		// 					console.log(
+		// 						`Style method "${String(property)}" called with arguments:`,
+		// 						args,
+		// 					)
+		// 					// console.trace()
+		// 					return value.apply(target, args)
+		// 				}
+		// 			}
+		// 			return value
+		// 		},
+		// 	}
+
+		// 	const proxyStyle = new Proxy(originalStyle, handler)
+
+		// 	Object.defineProperty(element, 'style', {
+		// 		get() {
+		// 			return proxyStyle
+		// 		},
+		// 		set(value) {
+		// 			// console.trace()
+		// 			console.log('Attempting to overwrite entire style object', originalStyle, value)
+		// 			Object.assign(originalStyle, value)
+		// 		},
+		// 	})
+
+		// 	return element
+		// }
+		// todo - there is a bug if `size.height` is found for the associated localstorage key -- setting a strict folder height breaks everything (vertical layout) -- we need a more difinitive way to disable height changes in `Resizable` other than the existence of the option or localstorage value
+		// this.element = createStyleMutationTracker(this._createElement(opts))
 		this.element = this._createElement(opts)
+
 		this.element.style.setProperty(
 			'order',
 			opts.order?.toString() ??
@@ -1420,7 +1465,12 @@ export class Folder {
 							? folder.bindColor(value, 'color', { title: key, ...inputOptions })
 							: folder.addColor(key, value, inputOptions)
 				} else if (Array.isArray(value)) {
-					this._log.info('value', { value, key, inputOptions, isButtonGridArrays: isButtonGridArrays(value) })
+					this._log.info('value', {
+						value,
+						key,
+						inputOptions,
+						isButtonGridArrays: isButtonGridArrays(value),
+					})
 					//? InputButtonGrid
 					if (isButtonGridArrays(value)) {
 						input = folder.addButtonGrid(key, value, inputOptions)
