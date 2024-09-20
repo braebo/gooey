@@ -15,7 +15,7 @@
 		margin-top: 30vh;
 		flex-grow: 1;
 		position: relative;
-		overflow: hidden;
+		// overflow: hidden;
 	}
 
 	.slant {

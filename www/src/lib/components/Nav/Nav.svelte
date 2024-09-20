@@ -158,16 +158,12 @@
 
 <style lang="scss">
 	nav {
-		contain: strict;
-
 		display: flex;
-		align-items: center;
-		gap: 1rem;
+		align-items: start;
 
 		width: 100%;
 		height: 100vh;
-		margin: 0 auto;
-		padding-left: 0.75rem;
+		min-height: auto;
 
 		pointer-events: none;
 
@@ -196,27 +192,24 @@
 	}
 
 	nav.absolute {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
+		position: fixed;
+		top: 2.5rem;
+		left: 1rem;
 	}
 
 	ul {
-		padding: 0;
-
+		padding-left: 0.5rem;
+		padding-right: 0.25rem;
 		z-index: 1;
 	}
 
 	.li {
+		box-sizing: border-box;
 		position: relative;
-		width: 100%;
+
 		min-width: 10rem;
 		height: 100%;
-
-		/* padding: 0.5rem 2px; */
 		margin: 0;
-		// margin-top: 1rem;
 
 		opacity: 0;
 		color: var(--fg-a);
@@ -237,15 +230,18 @@
 	}
 
 	a {
+		box-sizing: border-box;
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
 
 		width: 100%;
 		height: 100%;
-		margin-top: 0.5rem;
+		padding: 0.5rem 0.75rem;
 
 		color: var(--fg-c);
+		border-radius: var(--radius);
+		outline: 1px solid color-mix(in sRGB, var(--fg-b), transparent 100%);
 
 		font-family: Fredoka;
 		font-size: var(--font-md);
@@ -255,12 +251,24 @@
 			'wght' 400,
 			'wdth' 100;
 
-		transition: 0.2s;
+		transition:
+			outline 0.1s,
+			all 0.2s;
 		pointer-events: all;
 	}
 
+	@mixin hover {
+		outline: 1px solid color-mix(in sRGB, var(--fg-b), transparent 50%);
+
+		font-variation-settings:
+			'wght' 500,
+			'wdth' 98;
+	}
+
 	a.depth-0 {
-		margin-top: 1rem;
+		border-radius: var(--radius-md);
+		padding: 0.4rem 1rem;
+
 		letter-spacing: 2.75px;
 		text-transform: uppercase;
 		font-size: var(--font-lg);
@@ -270,7 +278,8 @@
 	}
 
 	a.depth-1 {
-		margin-top: 0.75rem;
+		border-radius: var(--radius-md);
+
 		font-size: var(--font-sm);
 		font-variation-settings:
 			'wght' 500,
@@ -282,6 +291,10 @@
 		font-variation-settings:
 			'wght' 350,
 			'wdth' 100;
+
+		&:hover {
+			@include hover;
+		}
 	}
 
 	.li:has(a.active) a:not(.active) {

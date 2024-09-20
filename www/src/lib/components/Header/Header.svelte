@@ -1,19 +1,20 @@
 <script lang="ts">
 	import HomeIcon from '$lib/components/Header/HomeIcon.svelte'
 	import ThemeSwitch from '../ThemeSwitch.svelte'
-	import { page } from '$app/stores'
-	import { mobile } from 'fractils'
+	import { device } from '$lib/device.svelte'
 </script>
 
 <header>
-	<div id="home" class="corner" class:active={$page.url.pathname === '/'}>
+	<img width="24" height="24" src="/assets/gooey-icon-gradient@512.png" alt="logo" />
+
+	<div id="home" class="corner">
 		<a href="/">
 			<HomeIcon />
 		</a>
 	</div>
 
-	{#if !$mobile}
-		<div id="theme" class="corner" class:mobile={$mobile}>
+	{#if !device.mobile}
+		<div id="theme" class="corner" class:mobile={device.mobile}>
 			<ThemeSwitch />
 		</div>
 	{/if}
@@ -46,25 +47,35 @@
 		pointer-events: auto;
 	}
 
+	img {
+		position: fixed;
+		top: 0.6rem;
+		left: 0.5rem;
+	}
+
 	#home {
-		position: absolute;
-		top: 0.33rem;
-		bottom: 0;
-		left: 0.66rem;
+		z-index: 21;
+
+		position: fixed;
+		top: 0.7rem;
+		left: 2.5rem;
 
 		margin: auto;
 
-		z-index: 21;
+		transition: 0.15s cubic-bezier(0.12, 0.69, 0.02, 1.98);
+	}
 
-		&.active a {
-			color: var(--theme-a);
-		}
+	.hidden {
+		transition: 0.15s cubic-bezier(0.12, 0.69, 0.02, 1.98);
+		opacity: 0;
+		transform: translateX(-0.5rem);
 	}
 
 	#theme {
+		z-index: 30;
+
 		position: absolute;
 		top: 0.75rem;
 		right: 0.75rem;
-		z-index: 30;
 	}
 </style>

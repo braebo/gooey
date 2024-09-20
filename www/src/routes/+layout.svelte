@@ -3,6 +3,7 @@
 	import '../styles/app.scss'
 
 	import { setupViewTransition } from 'sveltekit-view-transition'
+	import HeroGradient from '$lib/components/HeroGradient.svelte'
 	import NavMobile from '$lib/components/Nav/NavMobile.svelte'
 	import Header from '$lib/components/Header/Header.svelte'
 	import PageTitle from '$lib/components/PageTitle.svelte'
@@ -37,6 +38,8 @@
 <div class="page">
 	{@render children?.()}
 </div>
+
+<HeroGradient />
 
 <style>
 	.page {
