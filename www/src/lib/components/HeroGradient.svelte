@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { Gooey } from '../../../../../gooey/src/Gooey'
 	import { themer } from '$lib/themer/themer.svelte'
-	import { page } from '$app/stores'
-	import { onMount } from 'svelte'
-	import { DEV } from 'esm-env'
 	import { fade } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
+	import { page } from '$app/stores'
+	import { onMount } from 'svelte'
 
 	const gradients = [
 		{
@@ -79,7 +78,7 @@
 	}
 
 	onMount(() => {
-		if (!DEV) return
+		if (!$page.url.searchParams.has('gradient-gooey')) return
 
 		gooey = new Gooey({
 			title: 'page',
@@ -141,9 +140,6 @@
 		height: 45rem;
 		width: 100dvw;
 
-		// opacity: 0;
-		// animation: fadeIn 2s ease-out forwards;
-
 		filter: blur(20px);
 		backdrop-filter: blur(20px);
 
@@ -170,23 +166,7 @@
 			rgb(0 228 255) 10%,
 			color-mix(in oklab, var(--bg-b) 20%, var(--bg-c) 75%)
 		);
-
-		// opacity: 0;
-		// animation: fadeIn 2s ease-out forwards;
-
-		// transition: 1s ease-out;
-		// view-transition-name: hero-gradient;
-		// view-transition-property: opacity;
 	}
-
-	// @keyframes fadeIn {
-	// 	from {
-	// 		opacity: 0;
-	// 	}
-	// 	to {
-	// 		opacity: 1;
-	// 	}
-	// }
 
 	:global(:root[theme='light']) .hero-gradient-container {
 		position: absolute;

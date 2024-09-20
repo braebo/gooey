@@ -22,7 +22,13 @@
 
 :root {
 	view-transition-name: none;
+	
+	scroll-behavior: smooth;
+	scroll-padding-top: 2rem;
+	scroll-snap-align: start;
+}
 
+:root {
 	--mobile: 1000px;
 
 	--radius-sm: 0.1875rem;
@@ -65,10 +71,6 @@
 	&[theme='light'] {
 		--shadow-lightness: 0.33;
 	}
-
-	scroll-behavior: smooth;
-	scroll-padding-top: 2rem;
-	scroll-snap-align: start;
 }
 
 html {

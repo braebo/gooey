@@ -65,12 +65,6 @@
 		transition: 0.15s cubic-bezier(0.12, 0.69, 0.02, 1.98);
 	}
 
-	.hidden {
-		transition: 0.15s cubic-bezier(0.12, 0.69, 0.02, 1.98);
-		opacity: 0;
-		transform: translateX(-0.5rem);
-	}
-
 	#theme {
 		z-index: 30;
 

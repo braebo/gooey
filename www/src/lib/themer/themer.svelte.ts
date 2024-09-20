@@ -1,4 +1,4 @@
-import type { Theme, ThemeDefinition } from './themer.types'
+import type { Theme } from './themer.types'
 
 import vanilla from './themes/vanilla'
 import scout from './themes/scout'

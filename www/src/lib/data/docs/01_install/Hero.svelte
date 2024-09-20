@@ -10,8 +10,6 @@
 	</div>
 
 	<p class="description" id="hero-description">floating gui library for the web</p>
-
-	<!-- <InstallButton /> -->
 </section>
 
 <style lang="scss">
@@ -28,15 +26,14 @@
 		border-radius: var(--radius);
 
 		font-size: 1.5rem;
-		letter-spacing: 0.3px;
-		word-spacing: 2px;
-		text-wrap: balance;
-		white-space: nowrap;
-
 		font-family: var(--font-a);
 		font-variation-settings:
 			'wght' 300,
 			'wdth' 110;
+		letter-spacing: 0.3px;
+		word-spacing: 2px;
+		text-wrap: balance;
+		white-space: nowrap;
 	}
 
 	@media (width < 1000px) {

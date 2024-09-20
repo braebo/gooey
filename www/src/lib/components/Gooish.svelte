@@ -1,3 +1,4 @@
+<!-- svelte-ignore state_referenced_locally -->
 <script lang="ts" generics="T extends Record<string, any> = Record<string, any>">
 	import { Gooey, type GooeyOptions } from '../../../../src/Gooey'
 	import GooeyThemeSync from './GooeyThemeSync.svelte'
@@ -25,7 +26,6 @@
 			const width = window.innerWidth < 900 ? 320 : 380
 
 			gooey ??= new Gooey({
-				// position: 'center',
 				storage: false,
 				width,
 				...props,
@@ -67,7 +67,6 @@
 
 <style>
 	.gooish {
-		/* position: relative; */
 		width: 100%;
 		height: 100%;
 	}
