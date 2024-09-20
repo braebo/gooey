@@ -9,7 +9,7 @@
 		<LogoFull />
 	</div>
 
-	<p class="description" id="hero-description">gui library for the web</p>
+	<p class="description" id="hero-description">floating gui library for the web</p>
 
 	<!-- <InstallButton /> -->
 </section>
