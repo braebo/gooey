@@ -5,24 +5,28 @@ export class BinauralBeatsGooey extends Gooey {
 	constructor(public beats: BinauralBeats) {
 		super({ title: 'Binaural Beats', position: 'top-center', margin: { x: 0, y: 64 }, storage: false })
 
-		this.folder.addButtonGrid('Presets', [
-			Object.keys(WAVE_PRESETS).map((kind) => {
-				return {
-					text: kind,
-					onClick: () => {
-						let wave = this.beats.waves.get(kind)
+		this.folder.addButtonGrid(
+			'Presets',
+			[
+				Object.keys(WAVE_PRESETS).map(kind => {
+					return {
+						text: kind,
+						onClick: () => {
+							let wave = this.beats.waves.get(kind)
 
-						if (!wave) {
-							wave = this.beats.addWave(kind as keyof typeof WAVE_PRESETS)
-						} else {
-							this.beats.removeWave(kind as keyof typeof WAVE_PRESETS)
-						}
-					},
-				}
-			}),
-		], { multiple: true })
+							if (!wave) {
+								wave = this.beats.addWave(kind as keyof typeof WAVE_PRESETS)
+							} else {
+								this.beats.removeWave(kind as keyof typeof WAVE_PRESETS)
+							}
+						},
+					}
+				}),
+			],
+			{ multiple: true },
+		)
 
-		this.folder.addNumber('Volume', this.beats.volume).on('change', (v) => {
+		this.folder.addNumber('Volume', this.beats.volume).on('change', v => {
 			this.beats.volume = v
 		})
 
@@ -36,11 +40,11 @@ export class BinauralBeatsGooey extends Gooey {
 								if (waves.playing) return
 								waves.start()
 								waves.gooey?.folder.refresh()
-								this.folder.allInputs.forEach((c) => c.refresh())
+								this.folder.allInputs.forEach(c => c.refresh())
 							}
 						},
 						active: () => {
-							return this.beats.waves.values().some((w) => w.playing && !w.stopping)
+							return [...this.beats.waves.values()].some(w => w.playing && !w.stopping)
 						},
 					},
 					{
@@ -65,7 +69,7 @@ export class BinauralBeatsGooey extends Gooey {
 							}
 						},
 						active: () => {
-							return this.beats.waves.values().some((w) => w.stopping)
+							return [...this.beats.waves.values()].some(w => w.stopping)
 						},
 					},
 				],

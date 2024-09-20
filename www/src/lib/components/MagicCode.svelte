@@ -1,4 +1,5 @@
-<script lang="ts">
+<!-- svelte-ignore state_referenced_locally -->
+<!-- <script lang="ts">
 	import type { LanguageRegistration, ThemeInput } from 'shiki'
 	import type { ValidLanguage } from '../utils/highlight'
 
@@ -135,10 +136,10 @@
 	function sanitize(text: string) {
 		return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 	}
-</script>
+</script> -->
 
 <!-- invisible plain text version for screen readers -->
-<div class="sr-only" aria-label={`code snippet titled ${title}`}>{text}</div>
+<!-- <div class="sr-only" aria-label={`code snippet titled ${title}`}>{text}</div>
 
 <div class="code-window">
 	<div class="nav" class:headless>
@@ -166,12 +167,13 @@
 	</div>
 </div>
 <ShikiMagicMove
-lang='ts'
-theme='nord'
-{highlighter}
-code={text}
-options={{ duration: 800, stagger: 0.3, lineNumbers: true }}
+	lang="ts"
+	theme="nord"
+	{highlighter}
+	code={text}
+	options={{ duration: 800, stagger: 0.3, lineNumbers: true }}
 />
+
 <style lang="scss">
 	.sr-only {
 		position: absolute;
@@ -185,4 +187,4 @@ options={{ duration: 800, stagger: 0.3, lineNumbers: true }}
 	.headless {
 		display: none;
 	}
-</style>
+</style> -->

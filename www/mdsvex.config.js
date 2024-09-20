@@ -237,7 +237,7 @@ const highlighter = await createHighlighter({
 
 const mdsvexConfig = {
 	extensions: ['.md', '.mdx'],
-	highlighter: async (code, lang = 'text') => {
+	highlight: async (code, lang = 'text') => {
 		const html = escapeSvelte(
 			highlighter.codeToHtml(code, {
 				lang,
