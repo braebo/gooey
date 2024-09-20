@@ -1328,9 +1328,9 @@ export class Folder {
 	}
 
 	bindMany<
-		T extends object,
-		TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
-		TInputs extends InferInputs<T> = InferInputs<T>,
+		const T extends object,
+		const TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
+		const TInputs extends InferInputs<T> = InferInputs<T>,
 	>(
 		target: T,
 		options?: TOptions & {
@@ -1420,6 +1420,7 @@ export class Folder {
 							? folder.bindColor(value, 'color', { title: key, ...inputOptions })
 							: folder.addColor(key, value, inputOptions)
 				} else if (Array.isArray(value)) {
+					this._log.info('value', { value, key, inputOptions, isButtonGridArrays: isButtonGridArrays(value) })
 					//? InputButtonGrid
 					if (isButtonGridArrays(value)) {
 						input = folder.addButtonGrid(key, value, inputOptions)
