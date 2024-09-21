@@ -12,7 +12,7 @@
 	<div class="installation-options">
 		<!-- prettier-ignore -->
 		<div class="selectors">
-			<div class="description em">Choose your weapon</div>
+			<div id="choose-your-weapon" class="description em">choose your weapon</div>
 			<button class="btn selector" class:active={importMode.value === 'JSR'} onclick={() => (importMode.value = 'JSR')}>JSR</button>
 			<button class="btn selector" class:active={importMode.value === 'NPM'} onclick={() => (importMode.value = 'NPM')}>NPM</button>
 			<button class="btn selector" class:active={importMode.value === 'CDN'} onclick={() => (importMode.value = 'CDN')}>CDN</button>
@@ -75,6 +75,15 @@
 </section>
 
 <style lang="scss">
+	#choose-your-weapon {
+		font-family: var(--font-a);
+		font-variation-settings:
+			'wght' 380,
+			'wdth' 105;
+		font-synthesis: style;
+		font-style: oblique 17deg;
+	}
+
 	.installation-options {
 		display: grid;
 		grid: 1/1;
