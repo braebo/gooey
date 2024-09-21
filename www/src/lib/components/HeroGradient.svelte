@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Gooey } from '../../../../../gooey/src/Gooey'
+	// import { Gooey } from '../../../../../gooey/src/Gooey'
 	import { themer } from '$lib/themer/themer.svelte'
 	import { fade } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
 	import { page } from '$app/stores'
-	import { onMount } from 'svelte'
+	// import { onMount } from 'svelte'
 
 	const gradients = [
 		{
@@ -49,7 +49,6 @@
 		},
 	]
 
-	let gooey = $state<Gooey>()
 	let index = $state(1)
 	let gradient = $derived(gradients[index])
 	// svelte-ignore state_referenced_locally
@@ -73,53 +72,47 @@
 		deg = gradients[index].deg
 	}
 
-	function chunk(size: number, arr: any[]) {
-		return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size))
-	}
+	// function chunk(size: number, arr: any[]) {
+	// 	return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size))
+	// }
 
-	onMount(() => {
-		if (!$page.url.searchParams.has('gradient-gooey')) {
-            alert('ok')
-            return
-        }
+	// let gooey = $state<Gooey>()
+	// onMount(() => {
+	// 	gooey = new Gooey({
+	// 		title: 'page',
+	// 		position: 'top-right',
+	// 		margin: { x: 16, y: 16 * 3.5 },
+	// 		storage: {
+	// 			key: 'docs-gradient',
+	// 			size: true,
+	// 			position: true,
+	// 		},
+	// 	})
 
-        alert('wow')
+	// 	const gradientFolder = gooey.addFolder('gradient')
 
-		// gooey = new Gooey({
-		// 	title: 'page',
-		// 	position: 'top-right',
-		// 	margin: { x: 16, y: 16 * 3.5 },
-		// 	storage: {
-		// 		key: 'docs-gradient',
-		// 		size: true,
-		// 		position: true,
-		// 	},
-		// })
+	// 	const angleInput = gradientFolder.add('angle', 46, {
+	// 		max: 360,
+	// 		onChange: v => (deg = v),
+	// 	})
 
-		// const gradientFolder = gooey.addFolder('gradient')
-
-		// const angleInput = gradientFolder.add('angle', 46, {
-		// 	max: 360,
-		// 	onChange: v => (deg = v),
-		// })
-
-		// gradientFolder.addButtonGrid(
-		// 	'variations',
-		// 	chunk(
-		// 		4,
-		// 		gradients.map((_, i) => {
-		// 			return {
-		// 				id: `#${i}`,
-		// 				text: i,
-		// 				onClick: () => {
-		// 					index = i
-		// 					angleInput.set(deg)
-		// 				},
-		// 			}
-		// 		}),
-		// 	),
-		// )
-	})
+	// 	gradientFolder.addButtonGrid(
+	// 		'variations',
+	// 		chunk(
+	// 			4,
+	// 			gradients.map((_, i) => {
+	// 				return {
+	// 					id: `#${i}`,
+	// 					text: i,
+	// 					onClick: () => {
+	// 						index = i
+	// 						angleInput.set(deg)
+	// 					},
+	// 				}
+	// 			}),
+	// 		),
+	// 	)
+	// })
 </script>
 
 <div class="hero-gradient-container">
@@ -135,7 +128,7 @@
 
 <style lang="scss">
 	.hero-gradient-container {
-		z-index: 0;
+		z-index: -1;
 
 		display: grid;
 
@@ -152,6 +145,7 @@
 		mix-blend-mode: hard-light;
 
 		pointer-events: none;
+		user-select: none;
 	}
 
 	.hero-gradient {

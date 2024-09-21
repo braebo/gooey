@@ -1,5 +1,4 @@
 <script lang="ts">
-	import GooeyThemeSync from '$lib/components/GooeyThemeSync.svelte'
 	import { Nav } from '$lib/components/Nav'
 	import '$lib/data/docs/docs.scss'
 
