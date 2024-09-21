@@ -12,8 +12,8 @@ export type ColorString =
 	| PercentageRgbaString
 	// | RgbObject
 	// | RgbaObject
-	// | HslString
-	// | HslaString
+	| HslString
+	| HslaString
 	// | HslObject
 	// | HslaObject
 	// | HsvObject
@@ -40,10 +40,10 @@ export type PercentageRgbaString = `rgba(${number}%, ${number}%, ${number}%, ${n
 // export type RgbObject = { r: number; g: number; b: number }
 // /** An object representing an rgba color: `{ r: 85, g: 0, b: 238, a: 1 }` */
 // export type RgbaObject = { r: number; g: number; b: number; a: number }
-// /** An hsl color string: `hsl(261, 100%, 47%)` */
-// export type HslString = `hsl(${number}, ${number}%, ${number}%)`
-// /** An hsla color string: `hsla(261, 100%, 47%, 1)` */
-// export type HslaString = `hsla(${number}, ${number}%, ${number}%, ${number})`
+/** An hsl color string: `hsl(261, 100%, 47%)` */
+export type HslString = `hsl(${number}, ${number}%, ${number}%)`
+/** An hsla color string: `hsla(261, 100%, 47%, 1)` */
+export type HslaString = `hsla(${number}, ${number}%, ${number}%, ${number})`
 // /** An object representing an hsl color: `{ h: 261, s: 100, l: 47 }` */
 // export type HslObject = { h: number; s: number; l: number }
 // /** An object representing an hsla color: `{ h: 261, s: 100, l: 47, a: 1 }` */
