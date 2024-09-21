@@ -5,12 +5,12 @@ import { InputSelect } from './inputs/InputSelect.js';
 import { InputNumber } from './inputs/InputNumber.js';
 import { InputColor } from './inputs/InputColor.js';
 import { InputText } from './inputs/InputText.js';
-import { isLabeledOption } from './controllers/Select.js';
-import { InputButtonGrid } from './inputs/InputButtonGrid.js';
+import { isButtonGridArrays, InputButtonGrid } from './inputs/InputButtonGrid.js';
 import { animateConnector, createFolderSvg, createFolderConnector } from './svg/createFolderSVG.js';
 import { isColor, isColorFormat } from './shared/color/color.js';
 import { composedPathContains } from './shared/cancelClassFound.js';
 import { state, fromState } from './shared/state.js';
+import { isLabeledOption } from './controllers/Select.js';
 import { EventManager } from './shared/EventManager.js';
 import { TerminalSvg } from './svg/TerminalSvg.js';
 import { Search } from './toolbar/Search.js';
@@ -29,9 +29,8 @@ import './svg/SaveSVG.js';
 import './styles/themer/defaultTheme.js';
 import './styles/GOOEY_VARS.js';
 
-// The custom-regions extension is recommended for this file.
-//⌟
-//· Contants ·····················································································¬
+//#endregion Types
+//#region Constants ··············································································¬
 const FOLDER_DEFAULTS = Object.freeze({
     presetId: '',
     title: '',
@@ -53,11 +52,12 @@ const INTERNAL_FOLDER_DEFAULTS = {
     gooey: undefined,
     _headerless: false,
 };
-//⌟
+//#endregion
 /**
  * Folder is a container for organizing and grouping {@link Input|Inputs} and child Folders.
  *
- * This class should not be instantiated directly.  Instead, use the {@link Gooey.addFolder} method.
+ * This class should not be instantiated directly.  Instead, use the {@link Gooey.addFolder} and
+ * {@link Folder.addFolder} methods.
  *
  * @example
  * ```typescript
@@ -67,7 +67,7 @@ const INTERNAL_FOLDER_DEFAULTS = {
  * ```
  */
 class Folder {
-    //· Props ····················································································¬
+    //#region Props ··············································································¬
     __type = 'Folder';
     isRoot = true;
     id = nanoid();
@@ -132,7 +132,7 @@ class Folder {
      * subscribing to events can be done with a Folder's {@link on} method.
      * @internal
      */
-    evm = new EventManager(['change', 'refresh', 'toggle', 'mount']);
+    evm = new EventManager(['change', 'refresh', 'toggle', 'open', 'close', 'mount']);
     /**
      * Equivalent to `addEventListener`.
      */
@@ -171,7 +171,7 @@ class Folder {
      * @todo This needs to sync with the animation duration in the css.
      */
     _animDuration = 350;
-    //⌟
+    //#endregion
     constructor(options) {
         if (!('container' in options)) {
             throw new Error('Folder must have a container.');
@@ -198,6 +198,46 @@ class Folder {
         }
         this.gooey = opts.gooey;
         this._title = opts.title ?? '';
+        // const createStyleMutationTracker = (element: HTMLElement) => {
+        // 	const originalStyle = element.style
+        // 	const handler: ProxyHandler<CSSStyleDeclaration> = {
+        // 		set(target, property, value) {
+        // 			console.log(`Style property "${String(property)}" is being set to "${value}"`)
+        // 			if (property === 'height') {
+        // 				console.trace()
+        // 			}
+        // 			return Reflect.set(target, property, value)
+        // 		},
+        // 		get(target, property) {
+        // 			const value = Reflect.get(target, property)
+        // 			if (typeof value === 'function') {
+        // 				return function (...args: any[]) {
+        // 					console.log(
+        // 						`Style method "${String(property)}" called with arguments:`,
+        // 						args,
+        // 					)
+        // 					// console.trace()
+        // 					return value.apply(target, args)
+        // 				}
+        // 			}
+        // 			return value
+        // 		},
+        // 	}
+        // 	const proxyStyle = new Proxy(originalStyle, handler)
+        // 	Object.defineProperty(element, 'style', {
+        // 		get() {
+        // 			return proxyStyle
+        // 		},
+        // 		set(value) {
+        // 			// console.trace()
+        // 			console.log('Attempting to overwrite entire style object', originalStyle, value)
+        // 			Object.assign(originalStyle, value)
+        // 		},
+        // 	})
+        // 	return element
+        // }
+        // todo - there is a bug if `size.height` is found for the associated localstorage key -- setting a strict folder height breaks everything (vertical layout) -- we need a more difinitive way to disable height changes in `Resizable` other than the existence of the option or localstorage value
+        // this.element = createStyleMutationTracker(this._createElement(opts))
         this.element = this._createElement(opts);
         this.element.style.setProperty('order', opts.order?.toString() ??
             `${this.parentFolder.children.length + this.parentFolder.inputs.size + 1}`);
@@ -227,20 +267,19 @@ class Folder {
         }
         this._disabled = toFn(opts.disabled ?? false);
         this._createGraphics(opts._headerless).then(() => {
+            if (opts.closed) {
+                this.close({ updateState: true, instant: true });
+            }
             this.evm.emit('mount');
             // Open/close the folder when the closed state changes.
             this.evm.add(this.closed.subscribe(v => {
                 v ? this.close() : this.open();
-                this.evm.emit('toggle', v);
                 // @ts-expect-error @internal
                 this.gooey._closedMap.update(m => {
                     m[this.presetId] = v;
                     return m;
                 });
             }));
-            if (opts.closed) {
-                this.closed.set(opts.closed);
-            }
             if (this._hidden)
                 this.hide(true);
         });
@@ -248,7 +287,7 @@ class Folder {
             this.element.classList.toggle('disabled', this._disabled());
         }, 100);
     }
-    //· Getters/Setters ··········································································¬
+    //#region Getters/Setters ····································································¬
     /**
      * The folder's title.  Changing this will update the UI.
      */
@@ -267,7 +306,7 @@ class Folder {
             easing: 'ease-out',
             fill: 'forwards',
         }).onfinish = () => {
-            this.elements.title.innerHTML = v;
+            this.elements.title.innerHTML = v.replaceAll(/-|_/g, ' ');
             this.elements.title.animate([
                 {
                     opacity: 0,
@@ -322,8 +361,8 @@ class Folder {
     isRootFolder() {
         return this.isRoot;
     }
-    //⌟
-    //· Folders ··················································································¬
+    //#endregion Getters/Setters
+    //#region Folders ············································································¬
     addFolder(title, options) {
         options ??= {};
         options.title ??= title;
@@ -347,6 +386,7 @@ class Folder {
             folder.initialHeaderHeight ??= folder.elements.header.scrollHeight;
             folder.elements.header.style.display = 'none';
         }
+        this.gooey?.refreshPosition();
         return folder;
     }
     _handleClick(event) {
@@ -390,7 +430,7 @@ class Folder {
         removeEventListener('pointerup', this.toggle);
         this._clicksDisabled = false;
     }
-    //·· Open/Close ······································································¬
+    //#region Open/Close ······················································¬
     toggle = () => {
         this._log.fn('toggle').debug();
         clearTimeout(this._disabledTimer);
@@ -408,26 +448,28 @@ class Folder {
         this.evm.emit('toggle', state);
         return this;
     };
-    open(updateState = false) {
-        this._log.fn('open').debug();
+    open(options) {
+        const { updateState = true, instant = false } = options ?? {};
+        this._log.fn('open').debug(updateState || instant ? { updateState, instant } : '');
         this.element.classList.remove('closed');
-        this.evm.emit('toggle', false);
+        this.evm.emit('open');
         if (updateState)
             this.closed.set(false);
         this._clicksDisabled = false;
         this._toggleClass();
-        animateConnector(this, 'open');
+        animateConnector(this, 'open', { instant });
         return this;
     }
-    close(updateState = false) {
-        this._log.fn('close').debug();
+    close(options) {
+        const { updateState = true, instant = false } = options ?? {};
+        this._log.fn('close').debug(updateState || instant ? { updateState, instant } : '');
         this.element.classList.add('closed');
         if (updateState)
             this.closed.set(true);
-        this.evm.emit('toggle', true);
+        this.evm.emit('close');
         this._clicksDisabled = false;
         this._toggleClass();
-        animateConnector(this, 'close');
+        animateConnector(this, 'close', { instant });
         return this;
     }
     static _EASE = {
@@ -555,8 +597,8 @@ class Folder {
             this.element.classList.remove(...classes);
         }, this._animDuration);
     };
-    //⌟
-    //·· Save/Load ···············································································¬
+    //#endregion Open/Close
+    //#region Save/Load ·······················································¬
     _resolvePresetId = (identifiers = [], opts) => {
         const parts = [];
         let id = opts?.presetId;
@@ -636,9 +678,9 @@ class Folder {
         }
         return this;
     }
-    //⌟
-    //⌟
-    //· Input Generators ·········································································¬
+    //#endregion Save/Load
+    //#endregion Folders
+    //#region Input Generators ···································································¬
     /**
      * Updates the ui for all inputs belonging to this folder to reflect their current values.
      */
@@ -681,6 +723,7 @@ class Folder {
         this.inputs.set(titleId, input);
         Folder._presetIdMap.set(input.id, presetId);
         this._refreshIcon();
+        this.gooey?.refreshPosition();
         return input;
     }
     /**
@@ -700,7 +743,7 @@ class Folder {
         return o;
     }
     /**
-     * Adds an input to the folder based on typoe of the `initialValue` parameter.
+     * Adds an input to the folder based on the type of the `initialValue` parameter.
      * @param title - The title of the input to display in the label area of the input's "row".
      * @param initialValue - The initial value of the input.  The type of this value will determine
      * the type of input created.
@@ -709,10 +752,11 @@ class Folder {
         const opts = this._resolveOpts(title, initialValue, options);
         const input = this._createInput(opts);
         this._registerInput(input, opts.presetId);
+        this._log.fn('add').debug({ input, opts });
         return input;
     }
-    //⌟
-    //·· Bind ···································································¬
+    //#endregion Add
+    //#region Bind ···························································¬
     /**
      * Binds an input to a target object and key.  The input will automatically update the target
      * object's key when the input value changes.
@@ -745,10 +789,6 @@ class Folder {
         return input;
     }
     /**
-     * Used to store a ref to the top level folder of a nested generator like `bindMany`.
-     */
-    #transientRoot = null;
-    /**
      * Takes an object and generates a set of inputs based on the object's keys and values.  Any
      * nested objects will result in child folders being created.  Options can be passed to
      * customize the inputs generated, and to exclude/include specific keys.
@@ -772,77 +812,105 @@ class Folder {
      * })
      */
     addMany(target, options) {
-        let rootFolder = this;
-        if (!this.#transientRoot) {
-            this.#transientRoot = rootFolder;
-        }
-        this._walk(target, (options || undefined) ?? {}, rootFolder, new Set(), 'add');
-        const finalRoot = this.#transientRoot;
-        this.#transientRoot = null;
-        return finalRoot;
+        this._log.fn('addMany').debug({ target, options }, this);
+        return this._walk(target, (options || undefined) ?? {}, this, new Set(), 'add');
     }
     bindMany(target, options) {
-        let rootFolder = this;
-        if (!this.#transientRoot) {
-            this.#transientRoot = rootFolder;
-        }
-        this._walk(target, (options || undefined) ?? {}, rootFolder, new Set(), 'bind');
-        const finalRoot = this.#transientRoot;
-        this.#transientRoot = null;
-        return finalRoot;
+        this._log.fn('bindMany').debug({ target, options }, this);
+        return this._walk(target, (options || undefined) ?? {}, this, new Set(), 'bind');
     }
-    //⌟
+    //#endregion Bind
     _walk(target, options, folder, seen, mode) {
+        const result = { inputs: {}, folders: {} };
         if (seen.has(target))
-            return;
+            return result;
         seen.add(target);
         for (let [key, value] of Object.entries(target)) {
-            if (Array.isArray(options['exclude']) && options['exclude'].includes(key))
+            if ((Array.isArray(options['exclude']) && options['exclude'].includes(key)) ||
+                (Array.isArray(options['include']) && !options['include'].includes(key))) {
                 continue;
-            if (Array.isArray(options['include']) && !options['include'].includes(key))
-                continue;
+            }
+            let input = undefined;
             const inputOptions = options[key] || {};
             let folderOptions = {};
             if (value === null) {
                 const hasValue = 'value' in inputOptions;
+                if (hasValue) {
+                    value = inputOptions['value'];
+                }
                 if (!hasValue && mode === 'bind') {
                     console.error(`bindMany() error: target object's key "${key}" is \`null\`, and no valid "value" option was provided as a fallback.`, { key, value, inputOptions });
                     throw new Error('Invalid binding.');
                 }
-                if (hasValue) {
-                    value = inputOptions['value'];
-                }
             }
             if (typeof value === 'object') {
-                if (isColor(value)) {
-                    mode === 'bind'
-                        ? folder.bindColor(value, 'color', { title: key, ...inputOptions })
-                        : folder.addColor(key, value, inputOptions);
+                if ('options' in inputOptions) {
+                    //? InputSelect
+                    input =
+                        mode === 'bind'
+                            ? folder.bindSelect(target, key, inputOptions)
+                            : folder.addSelect(key, inputOptions.options, inputOptions);
+                }
+                else if (isColor(value)) {
+                    //? InputColor
+                    input =
+                        mode === 'bind'
+                            ? folder.bindColor(value, 'color', { title: key, ...inputOptions })
+                            : folder.addColor(key, value, inputOptions);
+                }
+                else if (Array.isArray(value)) {
+                    // this._log.info('value', {
+                    // 	value,
+                    // 	key,
+                    // 	inputOptions,
+                    // 	isButtonGridArrays: isButtonGridArrays(value),
+                    // })
+                    //? InputButtonGrid
+                    if (isButtonGridArrays(value)) {
+                        input = folder.addButtonGrid(key, value, inputOptions);
+                    }
+                    else {
+                        //? InputSelect
+                        input =
+                            mode === 'bind'
+                                ? folder.bindSelect(target, key, inputOptions)
+                                : folder.addSelect(key, value, inputOptions);
+                    }
                 }
                 else {
+                    //? Folder
                     if ('folderOptions' in inputOptions) {
                         folderOptions = inputOptions['folderOptions'];
                     }
                     else if ('folderOptions' in value) {
                         folderOptions = value.folderOptions;
                     }
-                    const subFolder = folder.addFolder(key, folderOptions);
-                    this._walk(value, inputOptions, subFolder, seen, mode);
+                    const newFolder = folder.addFolder(key, folderOptions);
+                    const res = this._walk(value, inputOptions, newFolder, seen, mode);
+                    // @ts-expect-error
+                    input = res.inputs;
+                    // @ts-expect-error
+                    result.folders[key] = {
+                        folder: newFolder,
+                        subFolders: res.folders,
+                    };
                 }
             }
-            else if ('options' in inputOptions) {
-                mode === 'bind'
-                    ? folder.bindSelect(target, key, inputOptions)
-                    : folder.addSelect(key, inputOptions.options, inputOptions);
-            }
             else {
-                mode === 'bind'
-                    ? folder.bind(target, key, inputOptions)
-                    : folder.add(key, value, inputOptions);
+                //? InputNumber | InputText | InputButton | InputColor
+                input =
+                    mode === 'bind'
+                        ? folder.bind(target, key, inputOptions)
+                        : folder.add(key, value, inputOptions);
+            }
+            if (input) {
+                // @ts-expect-error
+                result.inputs[key] = input;
             }
         }
+        return result;
     }
-    //·· Adders ···································································¬
+    //#region Adders ·························································¬
     /**
      * Adds a new {@link InputNumber} to the folder.
      * @example
@@ -963,8 +1031,8 @@ class Folder {
         const opts = this._resolveBinding(target, key, options);
         return this.addSwitch(key, opts.value, opts);
     }
-    //⌟
-    //·· Helpers ···································································¬
+    //#endregion Adders
+    //#region Helpers ························································¬
     /**
      * Does validation / error handling.
      * If no title was provided, this method will also assign the binding key to the title.
@@ -1024,6 +1092,8 @@ class Folder {
                 return new InputButton(options, this);
             case 'InputSwitch':
                 return new InputSwitch(options, this);
+            case 'InputButtonGrid':
+                return new InputButtonGrid(options, this);
         }
         throw new Error('Invalid input type: ' + type + ' for options: ' + options);
     }
@@ -1034,6 +1104,9 @@ class Folder {
         const res = this._validateBinding(opts, true);
         return res;
     }
+    /**
+     * Attempts to determine the type of input to create based on the provided options.
+     */
     _resolveType(options) {
         this._log.fn('resolveType').debug({ options, this: this });
         let value = options.value ?? options.binding?.target[options.binding.key];
@@ -1068,6 +1141,9 @@ class Folder {
             }
             case 'object': {
                 if (Array.isArray(value)) {
+                    if (isButtonGridArrays(value)) {
+                        return 'InputButtonGrid';
+                    }
                     return 'InputSelect';
                 }
                 if (isColor(value)) {
@@ -1083,9 +1159,9 @@ class Folder {
             }
         }
     }
-    //⌟
-    //⌟
-    //· Elements ·················································································¬
+    //#endregion Helpers
+    //#endregion Input Generators
+    //#region Elements ···········································································¬
     _createElement(opts) {
         this._log.fn('#createElement').debug({ el: opts.container, this: this });
         if (this.isRoot) {
@@ -1113,7 +1189,7 @@ class Folder {
         const title = create('div', {
             parent: header,
             classes: ['gooey-title'],
-            innerHTML: this.title,
+            innerHTML: this.title.replaceAll(/-|_/g, ' '),
         });
         const toolbar = create('div', {
             parent: header,
@@ -1129,17 +1205,14 @@ class Folder {
         });
         return {
             header,
-            toolbar: {
-                container: toolbar,
-                // settingsButton,
-            },
+            toolbar: { container: toolbar },
             title,
             contentWrapper,
             content,
         };
     }
-    //⌟
-    //· SVG's ····················································································¬
+    //#endregion Elements
+    //#region Graphics ···········································································¬
     async _createGraphics(headerless = false) {
         setTimeout(() => {
             new TerminalSvg(this);
@@ -1173,13 +1246,13 @@ class Folder {
         }
         return height;
     }
+    // todo - Add `hue` to the `Theme` interface and make it easily customizable.
     get hue() {
         const localIndex = this.parentFolder.children.indexOf(this);
-        // note: Color will be off if we ever add built-in folders other than "Settings Folder".
+        //- Breaks if another folder other than the Settings Folder is added as a built-in...!
         const i = this.parentFolder.isRootFolder() ? localIndex - 1 : localIndex;
         // Don't count the root folder.
         const depth = this._depth - 1;
-        // return i * 20 + depth * 80
         if (depth === 0) {
             return i * 30;
         }
@@ -1220,7 +1293,7 @@ class Folder {
             });
         }
     }
-    //⌟
+    //#endregion Graphics
     disposed = false;
     dispose() {
         if (this.disposed && DEV) {
@@ -1245,7 +1318,7 @@ class Folder {
         this.disposed = true;
     }
 }
-//#region Type Tests ···································································¬
+//#region Type Tests ·············································································¬
 // const testTargetInferer = <T>(_target: T): InferTarget<T> => {
 // 	return {} as InferTarget<T>
 // }

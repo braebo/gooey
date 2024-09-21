@@ -220,6 +220,11 @@ class InputButtonGrid extends Input {
         super.dispose();
     }
 }
+function isButtonGridArrays(value) {
+    return (Array.isArray(value) &&
+        value.every(row => Array.isArray(row) &&
+            row.every(btn => typeof btn === 'object' && ('onClick' in btn || 'text' in btn))));
+}
 
-export { BUTTONGRID_INPUT_DEFAULTS, InputButtonGrid };
+export { BUTTONGRID_INPUT_DEFAULTS, InputButtonGrid, isButtonGridArrays };
 //# sourceMappingURL=InputButtonGrid.js.map

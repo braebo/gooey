@@ -37,10 +37,10 @@ export declare class ColorComponents {
     private _locked;
     private _log;
     constructor(input: InputColor, options?: Partial<ColorComponentsOptions>);
-    get color(): import("../../shared/color/color").Color;
+    get color(): import("../..").Color;
     get mode(): ColorMode;
     set mode(v: ColorMode);
-    updateMode: (v?: "rgba" | "hsla" | "hsva" | "rgbaString" | "hex" | "hex8" | "hslaString" | "hsvaString" | "array") => void;
+    updateMode: (v?: "rgba" | "hsla" | "rgbaString" | "hex" | "hex8" | "hslaString") => void;
     get a(): number;
     set a(v: number);
     get b(): number;

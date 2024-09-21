@@ -1,7 +1,7 @@
 /**
  * Checks if a node is scrollable.
  */
-const isScrollable = (node) => {
+export const isScrollable = (node) => {
     if (!(node instanceof HTMLElement || node instanceof SVGElement)) {
         return false;
     }
@@ -14,7 +14,7 @@ const isScrollable = (node) => {
 /**
  * Resolves the nearest scroll parent of a node.
  */
-const getScrollParent = (node) => {
+export const getScrollParent = (node) => {
     let currentParent = node.parentElement;
     while (currentParent) {
         if (isScrollable(currentParent)) {
@@ -24,6 +24,3 @@ const getScrollParent = (node) => {
     }
     return document.scrollingElement || document.documentElement;
 };
-
-export { getScrollParent, isScrollable };
-//# sourceMappingURL=scrollParent.js.map

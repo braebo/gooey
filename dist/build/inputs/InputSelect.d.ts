@@ -26,7 +26,7 @@ export interface SelectInputEvents<T> extends InputEvents<LabeledOption<T>> {
     close: void;
     cancel: void;
 }
-export declare class InputSelect<TValueType = any> extends Input<LabeledOption<TValueType>, SelectInputOptions<TValueType>, SelectControllerElements<TValueType>, SelectInputEvents<TValueType>> {
+export declare class InputSelect<TValueType extends ValidInputValue = any> extends Input<LabeledOption<TValueType>, SelectInputOptions<TValueType>, SelectControllerElements<TValueType>, SelectInputEvents<TValueType>> {
     #private;
     readonly __type: "InputSelect";
     readonly initialValue: LabeledOption<TValueType>;

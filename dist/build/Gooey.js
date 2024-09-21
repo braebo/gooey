@@ -19,8 +19,8 @@ import { place } from './shared/place.js';
 import { Folder } from './Folder.js';
 import { o } from './shared/l.js';
 
-//⌟
-//· Constants ····················································································¬
+//#endregion
+//#region Constants ····················································································¬
 const GUI_STORAGE_DEFAULTS = {
     __type: 'GooeyStorageOptions',
     key: 'default',
@@ -124,22 +124,12 @@ class Gooey {
      * @internal
      */
     _isWindowManagerOwner = false;
-    /**
-     * The time of the gooey's creation.
-     * @internal
-     */
-    _birthday = Date.now();
-    /**
-     * The number of milliseconds post-instantiation to watch for adders for repositioning.
-     * @internal
-     */
-    _honeymoon = 1000;
     _theme;
     _log;
     _closedMap;
     static _initialized = false;
     constructor(titleOrOptions, options = {}) {
-        //· Setup ················································································¬
+        //#region Setup ················································································¬
         if (!Gooey._initialized && globalThis.document) {
             Gooey._initialized = true;
             const sheet = new CSSStyleSheet();
@@ -159,23 +149,15 @@ class Gooey {
         if (typeof opts.storage === 'object') {
             opts.storage = Object.assign({}, GUI_STORAGE_DEFAULTS, opts.storage);
         }
-        let reposition = false;
         let storageKey = '';
         const storageOpts = resolveOpts(opts.storage, GUI_STORAGE_DEFAULTS);
-        if (!storageOpts) {
-            reposition = true;
-        }
+        if (!storageOpts) ;
         else {
             storageKey = `${storageOpts.key}::${opts.title?.toLowerCase().replaceAll(/\s/g, '-')}`;
             opts.storage = {
                 ...storageOpts,
                 key: storageKey,
             };
-            // When storage is on, repositioning after animating-in is disabled unless this is the
-            // _very_ first page load.
-            if (!(`${opts.storage.key}::wm::0::position` in localStorage)) {
-                reposition = true;
-            }
         }
         this.opts = opts;
         this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' });
@@ -191,9 +173,10 @@ class Gooey {
             style: {
                 display: 'contents',
             },
-            parent: this.container,
         });
         this.elements.wrapper = this.wrapper;
+        this.wrapper.style.visibility = 'hidden';
+        this.container.append(this.wrapper);
         this._closedMap = persist(`${storageKey || `gooey::${this.opts.title}`}::closed-map`, {});
         this._closedMap;
         this.folder = new Folder({
@@ -229,7 +212,7 @@ class Gooey {
         };
         removeEventListener('keydown', handleUndoRedo);
         addEventListener('keydown', handleUndoRedo);
-        //⌟
+        //#endregion
         const { button, updateIcon } = this._createSettingsButton(this.folder.elements.toolbar.container);
         this.folder.elements.toolbar.settingsButton = button;
         let settingsFolderClosed = GUI_DEFAULTS.settingsFolder.closed;
@@ -257,29 +240,9 @@ class Gooey {
         this.theme = this.opts.theme;
         this.presetManager = this._createPresetManager(this.elements.settingsFolder);
         this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage);
-        this._resolveInitialPosition(reposition);
         if (!this.opts.hidden) {
-            this._reveal();
+            this._revealing = true;
         }
-    }
-    async _reveal() {
-        // In case dispose() was called before this resolved...
-        if (!this.container)
-            return;
-        // Now that we're in position and inputs are loaded, we can animate-in.
-        this.container.appendChild(this.wrapper);
-        this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
-            fill: 'none',
-            duration: 400,
-        });
-        // // Ugly hack to force repaint on Safari to workaround its buggy ass blur filter...
-        // if (isSafari()) {
-        // 	setTimeout(() => {
-        // 		this.folder.element.style.display = 'table'
-        // 		this.folder.element.offsetHeight
-        // 		this.folder.element.style.display = 'flex'
-        // 	}, 500)
-        // }
     }
     get title() {
         return this.folder.title;
@@ -319,11 +282,9 @@ class Gooey {
     get element() {
         return this.folder.element;
     }
+    revealTimeout;
+    revealIdle;
     addFolder(title, options) {
-        if (this._honeymoon && this._birthday - Date.now() < 1000) {
-            this._honeymoon = false;
-            this._reveal();
-        }
         return this.folder.addFolder(title, {
             ...options,
             // @ts-expect-error @internal
@@ -564,6 +525,7 @@ class Gooey {
             if (currentMinWidth && this.opts.width < currentMinWidth) {
                 this.wrapper.style.setProperty('--gooey-root_min-width', `${this.opts.width}px`);
             }
+            this.folder.element.style.width = `${this.opts.width}px`;
         }
         // Use the provided window manager if it's an instance.
         if (options?._windowManager instanceof WindowManager) {
@@ -595,19 +557,29 @@ class Gooey {
         });
         return windowManager;
     }
-    _resolveInitialPosition(reposition) {
+    _revealing = false;
+    _repositionTimeout;
+    refreshPosition() {
+        this._log.fn('refreshPosition');
+        clearTimeout(this._repositionTimeout);
+        this._repositionTimeout = setTimeout(() => {
+            this._log.fn('refreshPosition').debug('FIRED');
+            this._resolvePosition(true);
+            if (this._revealing) {
+                this._revealing = false;
+                // Now that we're in position and inputs are loaded, we can animate-in.
+                this.wrapper.style.visibility = 'visible';
+                this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
+                    fill: 'none',
+                    duration: 400,
+                });
+            }
+        }, 10);
+    }
+    _resolvePosition(reposition) {
         if (!this.container || !this.wrapper)
             return;
-        // Append a non-animating, full-size clone to get the proper rect.
-        const ghost = this.wrapper.cloneNode(true);
-        ghost.style.visibility = 'hidden';
-        this.container.prepend(ghost);
-        // Remove the settings folder height from the rect if it's closed.
-        if (this.elements.settingsFolder.closed.value) {
-            ghost.querySelector('.gooey-settings-folder')?.remove();
-        }
-        const rect = ghost.children[0].getBoundingClientRect();
-        ghost.remove();
+        const rect = this.element.getBoundingClientRect();
         if (typeof this.opts.position === 'string') {
             const bounds = this.container.getBoundingClientRect();
             if (!bounds) {
@@ -618,12 +590,10 @@ class Gooey {
                 bounds,
                 margin: this.opts.margin,
             });
-            if (this.elements.settingsFolder.closed.value) {
-                const settingsFolderHeight = this.elements.settingsFolder.element.getBoundingClientRect().height;
-                placementPosition.y += settingsFolderHeight;
-            }
-            // Use the rect to correct the window manager's positioning when storage is off.
-            if (reposition || (this.opts.storage && this.opts.storage.position === false)) {
+            if (reposition ||
+                // Need to correct the window manager's positioning when storage is off.
+                this.opts.storage === false ||
+                (this.opts.storage && this.opts.storage.position === false)) {
                 const win = this.window;
                 if (win?.draggableInstance) {
                     win.draggableInstance.position = placementPosition;

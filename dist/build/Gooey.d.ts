@@ -305,23 +305,12 @@ export declare class Gooey {
      * @internal
      */
     private _isWindowManagerOwner;
-    /**
-     * The time of the gooey's creation.
-     * @internal
-     */
-    private readonly _birthday;
-    /**
-     * The number of milliseconds post-instantiation to watch for adders for repositioning.
-     * @internal
-     */
-    private _honeymoon;
     private _theme;
     private _log;
     private _closedMap;
     private static _initialized;
     constructor(title?: Partial<GooeyOptions>, options?: Partial<GooeyOptions>);
     constructor(options?: Partial<GooeyOptions>, never?: never);
-    private _reveal;
     get title(): string;
     set title(v: string);
     get closed(): Folder['closed'];
@@ -335,6 +324,8 @@ export declare class Gooey {
      * The root {@link folder} {@link Folder.element|element}.
      */
     get element(): HTMLElement;
+    revealTimeout: ReturnType<typeof setTimeout> | undefined;
+    revealIdle: ReturnType<typeof requestIdleCallback> | undefined;
     addFolder(title: string, options?: Partial<FolderOptions>): Folder;
     /**
      * Saves the current gooey state as a preset.
@@ -374,7 +365,10 @@ export declare class Gooey {
     private _createPresetManager;
     private static _parseWidth;
     private _createWindowManager;
-    private _resolveInitialPosition;
+    private _revealing;
+    private _repositionTimeout;
+    refreshPosition(): void;
+    private _resolvePosition;
     /**
      * todo - Add the public resolved vars to `Themer` and remove this.
      * @internal

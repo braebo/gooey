@@ -35,14 +35,13 @@ class InputButton extends Input {
         });
         this.button = new ButtonController({
             text: opts.text,
-            onClick: opts.onClick,
+            onClick: this.onClick.bind(this),
             parent: container,
         });
         this.elements.controllers = {
             container,
             button: this.button.element,
         };
-        // this._evm.listen(this.elements.controllers.button, 'click', this.click.bind(this))
         this._evm.add(this.state.subscribe(this.refresh.bind(this)));
     }
     get text() {

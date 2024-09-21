@@ -5,16 +5,15 @@ const G = new GooeyTest();
 describe('Gooey constructor', () => {
     let gooey;
     test('empty init', () => {
-        gooey = new Gooey();
+        gooey = G.addGooey();
     });
     test('updating title and dispose', () => {
         gooey.title = 'testing 123';
         expect(gooey.title).toBe('testing 123');
         setTimeout(() => {
             expect(gooey.folder.elements.header.innerText).toBe('testing 123');
-            console.log(gooey.folder.elements.header.innerText);
             gooey.dispose();
-        }, 500);
+        }, 500); // gotta wait for the animation..
     });
     test('container', () => {
         G.addGooey();
@@ -46,7 +45,7 @@ describe('width', () => {
         const gooey = G.addGooey({ title: 'width', width: 345 });
         expect(gooey.element.clientWidth).toBe(345);
     });
-    test('100px', async () => {
+    test('100px correctly reduces minimum width', async () => {
         const gooey = G.addGooey({ title: '100px', width: 100 });
         expect(gooey.element.clientWidth).toBe(100);
     });

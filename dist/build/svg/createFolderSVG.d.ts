@@ -8,4 +8,6 @@ export declare function createFolderConnector(folder: Folder, icon: HTMLDivEleme
         length: number;
     };
 };
-export declare function animateConnector(folder: Folder, action: 'open' | 'close'): Promise<Animation | void>;
+export declare function animateConnector(folder: Folder, action: 'open' | 'close', { instant }?: {
+    instant?: boolean;
+} | undefined): Promise<Animation | void>;

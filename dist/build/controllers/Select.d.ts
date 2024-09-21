@@ -160,6 +160,7 @@ export declare class Select<T> {
      * Positions the dropdown to the selected element.
      */
     updatePosition: () => void;
+    get container(): HTMLElement;
     /**
      * Hides the dropdown.
      */

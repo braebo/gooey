@@ -212,7 +212,7 @@ function createFolderConnector(folder, icon) {
     defer(() => update());
     return { container, svg, path, update };
 }
-function animateConnector(folder, action) {
+function animateConnector(folder, action, { instant = false } = {}) {
     if (!folder.graphics?.connector)
         return Promise.resolve();
     folder.graphics.connector.update();
@@ -249,8 +249,8 @@ function animateConnector(folder, action) {
         { strokeDashoffset: config.offset.to, strokeDasharray: config.array.to },
     ];
     const timing = {
-        duration: config.duration,
-        delay: config.delay,
+        duration: instant ? 0 : config.duration,
+        delay: instant ? 0 : config.delay,
         easing: config.easing,
         fill: 'forwards',
     };

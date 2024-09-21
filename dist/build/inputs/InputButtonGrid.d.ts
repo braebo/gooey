@@ -122,3 +122,4 @@ export declare class InputButtonGrid extends Input<Set<ButtonId>, ButtonGridInpu
     disable(): this;
     dispose(): void;
 }
+export declare function isButtonGridArrays(value: any): value is ButtonGridArrays;

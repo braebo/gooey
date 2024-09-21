@@ -1,4 +1,4 @@
-import { __decorate, __metadata } from './../../external/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.20.0_tslib@2.6.3_typescript@5.5.4/external/tslib/tslib.es6.js';
+import { __decorate, __metadata } from './../../external/.pnpm/@rollup_plugin-typescript@11.1.6_rollup@4.22.2_tslib@2.7.0_typescript@5.6.2/external/tslib/tslib.es6.js';
 import { parseColorFormat } from '../../shared/color/color.js';
 import { NumberController } from '../NumberController.js';
 import { Select } from '../Select.js';
@@ -45,7 +45,7 @@ let ColorComponents = class ColorComponents {
             // disabled: this.opts.disabled,
             disabled: this.disabled,
             container: selectContainer,
-            options: ['hex', 'hex8', 'rgba', 'hsla', 'hsva'],
+            options: ['hex', 'hex8', 'rgba', 'rgbaString', 'hsla', 'hslaString'],
         });
         this.select.on('change', v => {
             this.updateMode(v.value);
@@ -89,7 +89,7 @@ let ColorComponents = class ColorComponents {
                 return;
             // We need to make the first character lowercase to match the format names.
             format = format[0].toLowerCase() + format.slice(1);
-            // @ts-ignore fuck off
+            // @ts-expect-error
             this.input.set(target.value);
         });
         if (this.#modeType() === 'text') {
@@ -189,7 +189,6 @@ let ColorComponents = class ColorComponents {
                 return this.color.blue;
             case 'hsla':
                 return this.color.lightness;
-            case 'hsva':
             default:
                 return this.color.value;
         }
@@ -200,9 +199,6 @@ let ColorComponents = class ColorComponents {
         }
         else if (this.mode === 'hsla') {
             this.color.lightness = v;
-        }
-        else if (this.mode === 'hsva') {
-            this.color.value = v;
         }
         this._locked = true;
         this.input.refresh();
@@ -216,15 +212,15 @@ let ColorComponents = class ColorComponents {
         this.input.refresh();
     }
     #modeType() {
-        if (['rgba', 'hsla', 'hsva'].includes(this.mode)) {
+        if (['rgba', 'hsla'].includes(this.mode)) {
             return 'numbers';
         }
         return 'text';
     }
     #refreshText = () => {
-        this.elements.text.value =
-            // @ts-ignore fuck off
+        this.elements.text.value = // @ts-expect-error
             this.color[this.mode.startsWith('hex') ? this.mode + 'String' : this.mode];
+        this.select.elements.selected.innerText = this.select.elements.selected.innerHTML.replace('String', '*');
     };
     #lastColor;
     #lastMode;

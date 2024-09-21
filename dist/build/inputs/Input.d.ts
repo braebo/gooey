@@ -7,9 +7,9 @@ import type { InputNumber, NumberInputOptions } from './InputNumber';
 import type { InputColor, ColorInputOptions } from './InputColor';
 import type { InputText, TextInputOptions } from './InputText';
 import type { ColorFormat } from '../shared/color/types/colorFormat';
+import type { LabeledOption, Option } from '../controllers/Select';
 import type { EventCallback } from '../shared/EventManager';
 import type { TooltipOptions } from '../shared/Tooltip';
-import type { Option } from '../controllers/Select';
 import type { Color } from '../shared/color/color';
 import type { State } from '../shared/state';
 import type { Commit } from '../UndoManager';
@@ -131,7 +131,7 @@ export type InputPreset<T extends ValidInputOptions> = Omit<InputOptions<T>, 'ti
 export interface ElementMap<T = unknown> {
     [key: string]: HTMLElement | HTMLInputElement | ElementMap | T;
 }
-export type ValidInputValue = string | number | Color | ColorFormat | Option<any>;
+export type ValidInputValue = string | number | Color | ColorFormat | Option<any> | LabeledOption<any> | any[] | (() => void);
 export type ValidInputOptions = TextInputOptions | TextAreaInputOptions | NumberInputOptions | ColorInputOptions | SelectInputOptions<Option<any>> | ButtonInputOptions | ButtonGridInputOptions | SwitchInputOptions;
 export type ValidInput = InputText | InputTextArea | InputNumber | InputColor | InputSelect<Option<any>> | InputButton | InputButtonGrid | InputSwitch;
 export type InputEvents<T extends ValidInputValue = ValidInputValue> = {
@@ -232,6 +232,7 @@ export declare abstract class Input<TValueType extends ValidInputValue = ValidIn
         __type: T__TYPE;
     }, folder: Folder);
     get value(): TValueType;
+    set value(v: TValueType);
     /**
      * The title displayed on this Input's label.
      */

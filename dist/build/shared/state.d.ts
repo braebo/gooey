@@ -28,6 +28,20 @@ export type IsUnion<T> = [T] extends [UnionToIntersection<T>] ? false : true;
 export type UnionState<T> = {
     set: (value: T) => void;
 } & Omit<PrimitiveState<T>, 'set'>;
+/**
+ * A state store is a traditional observable store with additional methods for Arrays, Maps, Sets,
+ * getting and setting the value, reacting to changes, and easily persisting to local storage.
+ *
+ * @param {(v: T) => void} set - Sets the value of the store.
+ * @param {(v: T) => T} update - Provides the current value, and updates it to the returned value.
+ * @param {(v: T) => void} subscribe - Subscribes to the store.
+ * @param {() => T} get - Returns the current value of the store.
+ * @param {() => void} refresh - Refreshes the store.
+ * @param {(cb: (v: T) => void) => void} onChange - Adds a callback that runs when the store changes.
+ * @param {() => void} destroy - Destroys the store and cleans up all listeners.
+ * @param {boolean} isState - Whether this is a state store.
+ * todo - A `subscribeOnce` or `subscribeFor` could be nice.
+ */
 export type State<T> = IsUnion<T> extends true ? UnionState<T> : T extends Array<infer U> ? ArrayState<U> : T extends Map<infer K, infer V> ? MapState<K, V> : T extends Set<infer U> ? SetState<U> : PrimitiveState<T>;
 export interface StateOptions<T> extends Partial<Writable<T>> {
     /**

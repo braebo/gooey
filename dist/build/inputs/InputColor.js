@@ -131,20 +131,6 @@ class InputColor extends Input {
         super.refresh();
         return this;
     };
-    //· Getters & Setters ········································································¬
-    get aTitle() {
-        return this.mode === 'rgba' ? 'r' : 'h';
-    }
-    get bTitle() {
-        return this.mode === 'rgba' ? 'g' : 's';
-    }
-    get cTitle() {
-        return this.mode === 'rgba' ? 'b' : this.mode === 'hsla' ? 'l' : 'v';
-    }
-    get dTitle() {
-        return 'a';
-    }
-    //⌟
     _createCurrentColor(parent) {
         const container = create('div', {
             classes: ['gooey-input-color-current-color-container'],

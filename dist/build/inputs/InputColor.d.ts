@@ -10,7 +10,7 @@ import { Color } from '../shared/color/color';
 import { CopyButton } from '../shared/CopyButton';
 import { Input } from './Input';
 export type ColorMode = (typeof COLOR_MODES)[number];
-export declare const COLOR_MODES: readonly ["rgba", "rgbaString", "hsla", "hslaString", "hsva", "hsvaString", "hex", "hex8", "array"];
+export declare const COLOR_MODES: readonly ["rgba", "rgbaString", "hsla", "hslaString", "hex", "hex8"];
 export interface ColorControllerElements extends ElementMap<ColorPicker> {
     container: HTMLDivElement;
     /**
@@ -73,10 +73,6 @@ export declare class InputColor extends Input<Color, ColorInputOptions, ColorCon
     constructor(options: Partial<ColorInputOptions>, folder: Folder);
     set(v: ColorFormat | Color): this;
     refresh: (v?: Color) => this;
-    get aTitle(): "r" | "h";
-    get bTitle(): "g" | "s";
-    get cTitle(): "v" | "b" | "l";
-    get dTitle(): string;
     private _createCurrentColor;
     private get _pickerContainer();
     togglePicker: () => Promise<void>;

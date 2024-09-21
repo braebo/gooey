@@ -130,7 +130,7 @@ class Input {
         this.elements.title = create('div', {
             classes: ['gooey-input-title'],
             parent: this.elements.container,
-            innerHTML: this.title,
+            innerHTML: this.title.replaceAll(/-|_/g, ' '),
         });
         this.elements.content = create('div', {
             classes: ['gooey-input-content'],
@@ -216,6 +216,10 @@ class Input {
     get value() {
         return this.state.value;
     }
+    set value(v) {
+        // @ts-expect-error - grr
+        this.state.set(v);
+    }
     /**
      * The title displayed on this Input's label.
      */
@@ -224,7 +228,7 @@ class Input {
     }
     set title(v) {
         this._title = v;
-        this.elements.title.innerHTML = v;
+        this.elements.title.innerHTML = v.replaceAll(/-|_/g, ' ');
     }
     /**
      * The main Element.  Usually a container div for the rest of the Input's

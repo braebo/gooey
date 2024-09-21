@@ -171,6 +171,15 @@ class InputSelect extends Input {
                     value: v,
                 };
             }
+            // todo - Double check that this is working as expected.
+            if (Array.isArray(v)) {
+                if (v.every(s => typeof s === 'string')) {
+                    return {
+                        label: v[0],
+                        value: v[0],
+                    };
+                }
+            }
             if (!opts.labelKey) {
                 console.error('Error:', { v, value, opts });
                 throw new Error('Cannot resolve initial value.  Please provide a `labelKey` or use labeled options.');

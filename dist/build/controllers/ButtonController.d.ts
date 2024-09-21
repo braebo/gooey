@@ -7,7 +7,7 @@ export type ButtonEventPayload = {
     };
     button: ButtonController;
 };
-export type ButtonControllerOptions = {
+export interface ButtonControllerOptions {
     readonly __type?: 'ButtonControllerOptions';
     /**
      * The text or HTML to display on the button.  If a function is passed, it will be called
@@ -72,7 +72,7 @@ export type ButtonControllerOptions = {
      * @defaultValue `undefined`
      */
     parent?: HTMLElement;
-};
+}
 export interface ButtonControllerEvents {
     /**
      * Fires when the button is updated externally via the {@link ButtonController.set} method.
