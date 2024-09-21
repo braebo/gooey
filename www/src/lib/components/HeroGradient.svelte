@@ -78,42 +78,47 @@
 	}
 
 	onMount(() => {
-		if (!$page.url.searchParams.has('gradient-gooey')) return
+		if (!$page.url.searchParams.has('gradient-gooey')) {
+            alert('ok')
+            return
+        }
 
-		gooey = new Gooey({
-			title: 'page',
-			position: 'top-right',
-			margin: { x: 16, y: 16 * 3.5 },
-			storage: {
-				key: 'docs-gradient',
-				size: true,
-				position: true,
-			},
-		})
+        alert('wow')
 
-		const gradientFolder = gooey.addFolder('gradient')
+		// gooey = new Gooey({
+		// 	title: 'page',
+		// 	position: 'top-right',
+		// 	margin: { x: 16, y: 16 * 3.5 },
+		// 	storage: {
+		// 		key: 'docs-gradient',
+		// 		size: true,
+		// 		position: true,
+		// 	},
+		// })
 
-		const angleInput = gradientFolder.add('angle', 46, {
-			max: 360,
-			onChange: v => (deg = v),
-		})
+		// const gradientFolder = gooey.addFolder('gradient')
 
-		gradientFolder.addButtonGrid(
-			'variations',
-			chunk(
-				4,
-				gradients.map((_, i) => {
-					return {
-						id: `#${i}`,
-						text: i,
-						onClick: () => {
-							index = i
-							angleInput.set(deg)
-						},
-					}
-				}),
-			),
-		)
+		// const angleInput = gradientFolder.add('angle', 46, {
+		// 	max: 360,
+		// 	onChange: v => (deg = v),
+		// })
+
+		// gradientFolder.addButtonGrid(
+		// 	'variations',
+		// 	chunk(
+		// 		4,
+		// 		gradients.map((_, i) => {
+		// 			return {
+		// 				id: `#${i}`,
+		// 				text: i,
+		// 				onClick: () => {
+		// 					index = i
+		// 					angleInput.set(deg)
+		// 				},
+		// 			}
+		// 		}),
+		// 	),
+		// )
 	})
 </script>
 

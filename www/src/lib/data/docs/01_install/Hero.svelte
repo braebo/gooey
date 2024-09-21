@@ -18,26 +18,24 @@
 		margin: 0 auto;
 	}
 
-	.description {
+	#hero-description {
 		contain: content;
 
 		margin: 0 auto !important;
 
 		border-radius: var(--radius);
 
-		font-size: 1.5rem;
+		font-size: 1.25rem;
 		font-family: var(--font-a);
 		font-variation-settings:
-			'wght' 300,
-			'wdth' 110;
-		letter-spacing: 0.3px;
+			'wght' 380,
+			'wdth' 104;
 		word-spacing: 2px;
-		text-wrap: balance;
 		white-space: nowrap;
 	}
 
 	@media (width < 1000px) {
-		.description {
+		#hero-description {
 			font-variation-settings:
 				'wght' 400,
 				'wdth' 110;
