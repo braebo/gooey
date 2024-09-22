@@ -363,18 +363,18 @@ export abstract class Input<
 			drawerToggleOptions.classes!.push('has-description')
 		}
 
-			drawerToggleOptions.tooltip = {
+		drawerToggleOptions.tooltip = {
 			text: this._description,
-				placement: 'left',
-				delay: 0,
-				offsetX: '-4px',
-				...this.opts.tooltipOptions,
-				style: () => ({
-					'text-align': 'left',
-					'padding-left': '8px',
-					// @ts-expect-error @internal
-					...this.folder.gooey?._getStyles(),
-				}),
+			placement: 'left',
+			delay: 0,
+			offsetX: '-4px',
+			...this.opts.tooltipOptions,
+			style: () => ({
+				'text-align': 'left',
+				'padding-left': '8px',
+				// @ts-expect-error @internal
+				...this.folder.gooey?._getStyles(),
+			}),
 		}
 
 		this.elements.drawerToggle = create('div', drawerToggleOptions)

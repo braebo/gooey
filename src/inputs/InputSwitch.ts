@@ -185,20 +185,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 		this.elements.controllers.stateText.innerText =
 			(this.state.value ? this.opts.labels?.true.state : this.opts.labels?.false.state) ?? ''
 
-		this.emit('refresh', v)
-		return this
-	}
-
-	enable(): this {
-		this.elements.controllers.input.disabled = false
-		this.disabled = false
-		// super.enable()
-		return this
-	}
-	disable(): this {
-		this.elements.controllers.input.disabled = true
-		this.disabled = true
-		// super.disable()
+		super.refresh(v)
 		return this
 	}
 

@@ -208,7 +208,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 		this.picker.refresh()
 		this.components.refresh()
-		super.refresh()
+		super.refresh(v)
 
 		return this
 	}
@@ -366,13 +366,13 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 	enable() {
 		this.picker.enable()
-		this.disabled = false
+		super.enable()
 		return this
 	}
 
 	disable() {
 		this.picker.disable()
-		this.disabled = true
+		super.disable()
 		return this
 	}
 

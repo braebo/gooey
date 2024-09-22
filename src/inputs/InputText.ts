@@ -75,19 +75,6 @@ export class InputText extends Input<string, TextInputOptions, TextControllerEle
 		)
 	}
 
-	enable() {
-		// super.enable()
-		this.disabled = false
-		this.elements.controllers.input.disabled = false
-		return this
-	}
-	disable() {
-		// super.disable()
-		this.disabled = true
-		this.elements.controllers.input.disabled = true
-		return this
-	}
-
 	set = (v?: string | Event) => {
 		if (typeof v === 'undefined') return
 

@@ -65,17 +65,6 @@ export class InputTextArea extends Input<string, TextAreaInputOptions, TextAreaC
 		this._evm.add(this.state.subscribe(this.refresh))
 	}
 
-	enable() {
-		this.elements.controllers.input.disabled = false
-		this.disabled = false
-		return this
-	}
-	disable() {
-		this.elements.controllers.input.disabled = true
-		this.disabled = true
-		return this
-	}
-
 	set = (v?: string | Event) => {
 		if (typeof v === 'undefined') {
 			return
