@@ -508,8 +508,7 @@ export class Folder {
 	private initialHeaderHeight = 0
 
 	private _title: string
-	private _hidden = false
-	private _hiddenFn?: () => boolean
+	private _hidden: boolean | (() => boolean) = false
 	private _disabled = () => false
 	private _log: Logger
 	/**
@@ -650,8 +649,7 @@ export class Folder {
 		this.initialHeaderHeight = this.elements.header.scrollHeight
 
 		if (typeof opts.hidden === 'function') {
-			this._hiddenFn = opts.hidden
-			this._hidden = this._hiddenFn()
+			this._hidden = opts.hidden
 		} else {
 			this._hidden = !!opts.hidden
 		}
@@ -733,7 +731,15 @@ export class Folder {
 	 * Whether the folder is visible.
 	 */
 	get hidden(): boolean {
-		return this._hidden
+		return typeof this._hidden === 'function' ? this._hidden() : this._hidden
+	}
+	set hidden(v: boolean | (() => boolean)) {
+		this._hidden = v
+		this._updateHiddenState()
+	}
+	set hidden(v: boolean | (() => boolean)) {
+		this._hidden = v
+		this._updateHiddenState()
 	}
 
 	/**
@@ -1029,6 +1035,7 @@ export class Folder {
 	): Promise<this> {
 		this._log.fn('show').debug({ instant })
 		this._hidden = false
+		this.element.classList.remove('hidden')
 
 		const anim = await this.element.animate(Folder._SHOW_ANIM, {
 			duration: instant ? 0 : this._animDuration,
@@ -1049,6 +1056,7 @@ export class Folder {
 	): Promise<this> {
 		this._log.fn('hide').debug({ instant })
 		this._hidden = true
+		this.element.classList.add('hidden')
 
 		const anim = await this.element.animate(Folder._HIDE_ANIM, {
 			duration: instant ? 0 : this._animDuration,
@@ -1059,6 +1067,13 @@ export class Folder {
 		if (this._hidden && this.element) anim.commitStyles()
 
 		return this
+	}
+
+	private _updateHiddenState() {
+		const shouldHide = this.hidden
+		if (shouldHide !== this.element.classList.contains('hidden')) {
+			shouldHide ? this.hide(true) : this.show(true)
+		}
 	}
 
 	private _toggleTimeout!: ReturnType<typeof setTimeout>
@@ -1187,14 +1202,12 @@ export class Folder {
 		if (disabledState !== this.disabled) {
 			this.disabled = disabledState
 		}
-		const hiddenState = this._hiddenFn?.()
-		if (typeof hiddenState !== 'undefined' && hiddenState !== this._hidden) {
-			hiddenState ? this.hide() : this.show()
-		}
 
-		for (const input of this.inputs.values()) {
-			input.refresh()
-		}
+		this._updateHiddenState()
+		this._refreshIcon()
+
+		this.refreshAll()
+
 		return this
 	}
 
