@@ -35,12 +35,14 @@ import { fromState, state, type State } from './shared/state'
 import { isLabeledOption } from './controllers/Select'
 import { EventManager } from './shared/EventManager'
 import { TerminalSvg } from './svg/TerminalSvg'
+import { stringify } from './shared/stringify'
 import { Search } from './toolbar/Search'
 import { create } from './shared/create'
 import { select } from './shared/select'
 import { Logger } from './shared/logger'
 import { nanoid } from './shared/nanoid'
 import { defer } from './shared/defer'
+import { tldr } from './shared/tldr'
 import { toFn } from './shared/toFn'
 import { Gooey } from './Gooey'
 
@@ -1878,7 +1880,15 @@ export class Folder {
 				if (isLabeledOption(value)) {
 					return 'InputSelect'
 				}
-				throw new Error('Invalid input view: ' + JSON.stringify(value))
+
+				console.error('Invalid input view: ' + tldr(value, { maxSiblings: 5, maxDepth: 3 }))
+
+				throw new Error('Invalid input view: ', {
+					cause: {
+						value,
+						tldr: tldr(stringify(value, 2), { maxSiblings: 5, maxDepth: 3 }),
+					},
+				})
 			}
 			default: {
 				throw new Error('Invalid input view: ' + value)
