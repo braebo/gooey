@@ -982,20 +982,20 @@ export class Gooey {
 		this._log.fn('refreshPosition')
 
 		requestAnimationFrame(() => {
-		clearTimeout(this._repositionTimeout)
-		this._repositionTimeout = setTimeout(() => {
+			clearTimeout(this._repositionTimeout)
+			this._repositionTimeout = setTimeout(() => {
 				this._log.fn('refreshPosition').debug('Calling _updatePosition()')
 				this._updatePosition()
 
-			if (this._revealing) {
-				this._revealing = false
-				// Now that we're in position and inputs are loaded, we can animate-in.
-				this.wrapper.style.visibility = 'visible'
-				this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
-					fill: 'none',
+				if (this._revealing) {
+					this._revealing = false
+					// Now that we're in position and inputs are loaded, we can animate-in.
+					this.wrapper.style.visibility = 'visible'
+					this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
+						fill: 'none',
 						duration: 150,
-				})
-			}
+					})
+				}
 			}, 100)
 		})
 	}
