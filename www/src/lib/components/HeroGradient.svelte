@@ -168,15 +168,9 @@
 	}
 
 	:global(:root[theme='light']) .hero-gradient-container {
-		position: absolute;
-		inset: 0;
-		z-index: 0;
-
 		height: 57rem;
-		width: 100dvw;
-
+		
 		mask-image: linear-gradient(to bottom, hsla(0deg, 0%, 0%, 0.6) 0%, transparent 100%);
-		mix-blend-mode: hard-light;
 	}
 
 	:global(:root[theme='light']) .hero-gradient {
