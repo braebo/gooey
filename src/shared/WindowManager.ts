@@ -141,13 +141,14 @@ export class WindowManager {
 	add = (
 		node: HTMLElement,
 		options?: Partial<WindowInstanceOptions>,
-	): { destroy: () => void } => {
+	): { window: WindowInstance; destroy: () => void } => {
 		const instance = new WindowInstance(this, node, options)
 		this.windows.set(instance.id, instance)
 
 		const listenerId = this._evm.listen(node, 'grab', this.select)
 
 		return {
+			window: instance,
 			destroy: () => {
 				instance.dispose()
 				this.windows.delete(instance.id)
