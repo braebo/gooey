@@ -505,6 +505,10 @@ export abstract class Input<
 		return this.elements.container
 	}
 
+	/**
+	 * The index of the input in the folder relative to other inputs.  Setting or changing this
+	 * value will update the input's {@link element|`element`}'s order style property.
+	 */
 	get index() {
 		return this._index
 	}
