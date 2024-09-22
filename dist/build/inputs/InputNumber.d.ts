@@ -31,8 +31,6 @@ export declare class InputNumber extends Input<number, NumberInputOptions, Numbe
     numberButtonsController: NumberButtonsController;
     constructor(options: Partial<NumberInputOptions>, folder: Folder);
     set: (v?: number | Event) => this | undefined;
-    enable(): this;
-    disable(): this;
     refresh: () => this;
     dispose(): void;
 }

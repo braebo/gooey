@@ -80,6 +80,7 @@ const GUI_DEFAULTS = {
         uiFolder: { closed: true, presetId: 'gooey_settings__ui_folder' },
         presetsFolder: { closed: true, presetId: 'gooey_settings__presets_folder' },
     },
+    offset: { x: 0, y: 0 },
 };
 /**
  * Methods inherited from {@link Folder} to forward to the gooey.
@@ -107,7 +108,13 @@ class Gooey {
      * Whether any of the inputs have been changed from their default values in the active preset.
      */
     dirty = false;
+    /**
+     * A transparent (display:contents) wrapper for the Gooey.  Used for the global style variables.
+     */
     wrapper;
+    /**
+     * The main div containing the a Gooey — specifically, the {@link Folder.element}.
+     */
     container;
     /**
      * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
@@ -117,6 +124,8 @@ class Gooey {
     themer;
     // themeEditor?: ThemeEditor
     windowManager;
+    moveTo = () => { };
+    moveBy = () => { };
     /**
      * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
      * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
@@ -141,11 +150,16 @@ class Gooey {
                 ...options,
                 title: titleOrOptions,
             }
-            : titleOrOptions;
+            : (titleOrOptions ?? {});
         const opts = deepMergeOpts([GUI_DEFAULTS, initialOptions], {
             concatArrays: false,
         });
         opts.container ??= document.body;
+        opts.offset ??= { x: 0, y: 0 };
+        if (initialOptions.offset?.x)
+            opts.offset.x = initialOptions.offset.x;
+        if (initialOptions.offset?.y)
+            opts.offset.y = initialOptions.offset.y;
         if (typeof opts.storage === 'object') {
             opts.storage = Object.assign({}, GUI_STORAGE_DEFAULTS, opts.storage);
         }
@@ -161,7 +175,6 @@ class Gooey {
         }
         this.opts = opts;
         this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' });
-        this._log.fn('constructor').debug({ options, opts });
         if (this.opts.loadDefaultFont !== false) {
             this._loadFonts();
         }
@@ -281,6 +294,15 @@ class Gooey {
      */
     get element() {
         return this.folder.element;
+    }
+    /**
+     * The position of the window relative to the {@link container}.
+     */
+    get position() {
+        return this.window?.draggableInstance?.position ?? { x: 0, y: 0 };
+    }
+    set position(v) {
+        this.window?.draggableInstance?.moveTo(v);
     }
     revealTimeout;
     revealIdle;
@@ -551,32 +573,42 @@ class Gooey {
             resizable: resizeOpts,
         });
         this._isWindowManagerOwner = true;
-        windowManager.add(this.folder.element, {
+        const { window } = windowManager.add(this.folder.element, {
             // The rest of the options will be inherited from the WindowManager instance.
             id: this.id,
         });
+        this.moveTo = window.moveTo;
+        this.moveBy = window.moveBy;
         return windowManager;
     }
     _revealing = false;
     _repositionTimeout;
     refreshPosition() {
         this._log.fn('refreshPosition');
-        clearTimeout(this._repositionTimeout);
-        this._repositionTimeout = setTimeout(() => {
-            this._log.fn('refreshPosition').debug('FIRED');
-            this._resolvePosition(true);
-            if (this._revealing) {
-                this._revealing = false;
-                // Now that we're in position and inputs are loaded, we can animate-in.
-                this.wrapper.style.visibility = 'visible';
-                this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
-                    fill: 'none',
-                    duration: 400,
-                });
-            }
-        }, 10);
+        requestAnimationFrame(() => {
+            clearTimeout(this._repositionTimeout);
+            this._repositionTimeout = setTimeout(() => {
+                this._log.fn('refreshPosition').debug('Calling _updatePosition()');
+                this._updatePosition();
+                if (this._revealing) {
+                    this._revealing = false;
+                    // Now that we're in position and inputs are loaded, we can animate-in.
+                    this.wrapper.style.visibility = 'visible';
+                    this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
+                        fill: 'none',
+                        duration: 150,
+                    });
+                }
+            }, 100);
+        });
     }
-    _resolvePosition(reposition) {
+    /**
+     * Resolves and sets the position of the root Gooey {@link element}.
+     * This function calculates the correct position based on the specified options,
+     * container bounds, and storage settings. It then updates the position of the
+     * draggable instance if necessary.d
+     */
+    _updatePosition() {
         if (!this.container || !this.wrapper)
             return;
         const rect = this.element.getBoundingClientRect();
@@ -589,15 +621,11 @@ class Gooey {
             const placementPosition = place(rect, this.opts.position, {
                 bounds,
                 margin: this.opts.margin,
+                offset: this.opts.offset,
             });
-            if (reposition ||
-                // Need to correct the window manager's positioning when storage is off.
-                this.opts.storage === false ||
-                (this.opts.storage && this.opts.storage.position === false)) {
-                const win = this.window;
-                if (win?.draggableInstance) {
-                    win.draggableInstance.position = placementPosition;
-                }
+            const win = this.window;
+            if (win?.draggableInstance) {
+                win.draggableInstance.position = placementPosition;
             }
         }
     }

@@ -172,7 +172,7 @@ class Draggable {
         }
     }
     /**
-     * Programmatically sets the position of the draggable element.
+     * Programmatically sets the position of the draggable element relative to the {@link bounds}.
      */
     get position() {
         return this._position;
@@ -409,6 +409,19 @@ class Draggable {
         this._log
             .fn('moveTo')
             .debug('Moved to:', this.position, { rect: this.rect, bounds: this.bounds });
+    }
+    /**
+     * Moves the draggable element by the specified delta.
+     */
+    moveBy(delta) {
+        if (this.disabled || this.disposed)
+            return;
+        const currentPosition = this.position;
+        const newPosition = {
+            x: currentPosition.x + (delta.x || 0),
+            y: currentPosition.y + (delta.y || 0),
+        };
+        this.moveTo(newPosition);
     }
     update(v = this.position) {
         this._log.fn('update').debug('Updating position:', v, this);

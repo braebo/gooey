@@ -25,8 +25,6 @@ export declare class InputText extends Input<string, TextInputOptions, TextContr
     readonly initialValue: string;
     readonly state: State<string>;
     constructor(options: Partial<TextInputOptions>, folder: Folder);
-    enable(): this;
-    disable(): this;
     set: (v?: string | Event) => this | undefined;
     refresh: () => this;
     dispose(): void;

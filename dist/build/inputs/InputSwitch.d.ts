@@ -73,7 +73,5 @@ export declare class InputSwitch extends Input<boolean, SwitchInputOptions, Swit
     constructor(options: Partial<SwitchInputOptions>, folder: Folder);
     set(v?: boolean): this;
     refresh(v?: boolean): this;
-    enable(): this;
-    disable(): this;
     dispose(): void;
 }

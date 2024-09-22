@@ -54,6 +54,7 @@ class WindowManager {
         this.windows.set(instance.id, instance);
         const listenerId = this._evm.listen(node, 'grab', this.select);
         return {
+            window: instance,
             destroy: () => {
                 instance.dispose();
                 this.windows.delete(instance.id);
@@ -161,8 +162,14 @@ class WindowInstance {
     id;
     size = state({ width: 0, height: 0 });
     get position() {
-        return this.draggableInstance?.position;
+        return this.draggableInstance?.position ?? { x: 0, y: 0 };
     }
+    set position(position) {
+        const p = Object.assign({}, this.position, position);
+        this.draggableInstance?.moveTo(p);
+    }
+    moveTo;
+    moveBy;
     constructor(manager, node, options) {
         this.manager = manager;
         this.node = node;
@@ -220,6 +227,8 @@ class WindowInstance {
         if (opts?.preserveZ) {
             node.dataset['keepZ'] = 'true';
         }
+        this.moveTo = this.draggableInstance.moveTo.bind(this.draggableInstance);
+        this.moveBy = this.draggableInstance.moveBy.bind(this.draggableInstance);
     }
     dispose() {
         this.resizableInstance?.dispose();

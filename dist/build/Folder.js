@@ -13,12 +13,14 @@ import { state, fromState } from './shared/state.js';
 import { isLabeledOption } from './controllers/Select.js';
 import { EventManager } from './shared/EventManager.js';
 import { TerminalSvg } from './svg/TerminalSvg.js';
+import { stringify } from './shared/stringify.js';
 import { Search } from './toolbar/Search.js';
 import { create } from './shared/create.js';
 import { select } from './shared/select.js';
 import { Logger } from './shared/logger.js';
 import { nanoid } from './shared/nanoid.js';
 import { defer } from './shared/defer.js';
+import { tldr } from './shared/tldr.js';
 import { toFn } from './shared/toFn.js';
 import './styles/themes/vanilla.js';
 import './styles/themes/scout.js';
@@ -144,7 +146,6 @@ class Folder {
     initialHeaderHeight = 0;
     _title;
     _hidden = false;
-    _hiddenFn;
     _disabled = () => false;
     _log;
     /**
@@ -259,8 +260,7 @@ class Folder {
         this.element.classList.add('instant');
         this.initialHeaderHeight = this.elements.header.scrollHeight;
         if (typeof opts.hidden === 'function') {
-            this._hiddenFn = opts.hidden;
-            this._hidden = this._hiddenFn();
+            this._hidden = opts.hidden;
         }
         else {
             this._hidden = !!opts.hidden;
@@ -328,7 +328,11 @@ class Folder {
      * Whether the folder is visible.
      */
     get hidden() {
-        return this._hidden;
+        return typeof this._hidden === 'function' ? this._hidden() : this._hidden;
+    }
+    set hidden(v) {
+        this._hidden = v;
+        this._updateHiddenState();
     }
     /**
      * Whether the input is disabled.  Modifying this value will update the UI.
@@ -563,6 +567,7 @@ class Folder {
     instant = false) {
         this._log.fn('show').debug({ instant });
         this._hidden = false;
+        this.element.classList.remove('hidden');
         const anim = await this.element.animate(Folder._SHOW_ANIM, {
             duration: instant ? 0 : this._animDuration,
             fill: 'forwards',
@@ -579,6 +584,7 @@ class Folder {
     instant = false) {
         this._log.fn('hide').debug({ instant });
         this._hidden = true;
+        this.element.classList.add('hidden');
         const anim = await this.element.animate(Folder._HIDE_ANIM, {
             duration: instant ? 0 : this._animDuration,
             direction: 'reverse',
@@ -587,6 +593,12 @@ class Folder {
         if (this._hidden && this.element)
             anim.commitStyles();
         return this;
+    }
+    _updateHiddenState() {
+        const shouldHide = this.hidden;
+        if (shouldHide !== this.element.classList.contains('hidden')) {
+            shouldHide ? this.hide(true) : this.show(true);
+        }
     }
     _toggleTimeout;
     _toggleClass = (classname = 'animating') => {
@@ -690,13 +702,9 @@ class Folder {
         if (disabledState !== this.disabled) {
             this.disabled = disabledState;
         }
-        const hiddenState = this._hiddenFn?.();
-        if (typeof hiddenState !== 'undefined' && hiddenState !== this._hidden) {
-            hiddenState ? this.hide() : this.show();
-        }
-        for (const input of this.inputs.values()) {
-            input.refresh();
-        }
+        this._updateHiddenState();
+        this._refreshIcon();
+        this.refreshAll();
         return this;
     }
     /**
@@ -1152,7 +1160,13 @@ class Folder {
                 if (isLabeledOption(value)) {
                     return 'InputSelect';
                 }
-                throw new Error('Invalid input view: ' + JSON.stringify(value));
+                console.error('Invalid input view: ' + tldr(value, { maxSiblings: 5, maxDepth: 3 }));
+                throw new Error('Invalid input view: ', {
+                    cause: {
+                        value,
+                        tldr: tldr(stringify(value, 2), { maxSiblings: 5, maxDepth: 3 }),
+                    },
+                });
             }
             default: {
                 throw new Error('Invalid input view: ' + value);

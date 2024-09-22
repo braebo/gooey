@@ -15,6 +15,7 @@ const INPUT_TYPE_MAP = Object.freeze({
     InputButton: 'ButtonInputOptions',
     InputButtonGrid: 'ButtonGridInputOptions',
     InputSwitch: 'SwitchInputOptions',
+    InputEmpty: 'EmptyInputOptions',
 });
 Object.freeze(keys(INPUT_TYPE_MAP));
 Object.freeze(values(INPUT_TYPE_MAP));
@@ -62,7 +63,7 @@ class Input {
     bubble = false;
     _title = '';
     _index;
-    // #firstUpdate = true
+    _description = () => '';
     _disabled;
     _hidden;
     /**
@@ -92,8 +93,22 @@ class Input {
         this.__log = new Logger(`SuperInput${this.opts.__type.replaceAll(/Options|Input/g, '')} ${this.opts.title}`, { fg: 'skyblue' });
         this.__log.fn('super constructor').debug({ presetId: this.id, options, this: this });
         this._title = this.opts.title ?? '';
-        this._disabled = toFn(this.opts.disabled ?? false);
-        this._hidden = toFn(this.opts.hidden ?? false);
+        this._description =
+            typeof this.opts.description === 'function'
+                ? this.opts.description
+                : typeof this.opts.description === 'string'
+                    ? () => `${this.opts.description}`
+                    : () => (this.disabled ? '🚫 disabled' : '');
+        this._disabled =
+            typeof this.opts.disabled === 'function'
+                ? this.opts.disabled
+                : typeof this.opts.disabled === 'boolean'
+                    ? () => !!this.opts.disabled
+                    : () => this.elements.container.classList.contains('disabled');
+        this._hidden =
+            typeof this.opts.hidden === 'function'
+                ? this.opts.hidden
+                : () => this.elements.container.classList.contains('hidden');
         this._index = this.opts.order ?? this.folder.inputs.size;
         this._index += 1;
         this._dirty = () => this.value !== this.initialValue;
@@ -112,20 +127,20 @@ class Input {
         };
         if (this.opts.description) {
             drawerToggleOptions.classes.push('has-description');
-            drawerToggleOptions.tooltip = {
-                text: this.opts.description,
-                placement: 'left',
-                delay: 0,
-                offsetX: '-4px',
-                ...this.opts.tooltipOptions,
-                style: () => ({
-                    'text-align': 'left',
-                    'padding-left': '8px',
-                    // @ts-expect-error @internal
-                    ...this.folder.gooey?._getStyles(),
-                }),
-            };
         }
+        drawerToggleOptions.tooltip = {
+            text: this._description,
+            placement: 'left',
+            delay: 0,
+            offsetX: '-4px',
+            ...this.opts.tooltipOptions,
+            style: () => ({
+                'text-align': 'left',
+                'padding-left': '8px',
+                // @ts-expect-error @internal
+                ...this.folder.gooey?._getStyles(),
+            }),
+        };
         this.elements.drawerToggle = create('div', drawerToggleOptions);
         this.elements.title = create('div', {
             classes: ['gooey-input-title'],
@@ -138,7 +153,6 @@ class Input {
         });
         this.elements.resetBtn = create('div', {
             classes: ['gooey-input-reset-btn'],
-            // parent: this.elements.content,
             parent: this.elements.title,
             tooltip: {
                 text: !this.opts.resettable
@@ -210,7 +224,10 @@ class Input {
         this.index = this.index;
         this.elements.container.classList.toggle('hidden', this._hidden());
         setTimeout(() => {
-            this.element.classList.toggle('disabled', this._disabled());
+            this._refreshDisabled();
+            if (this.description) {
+                this.elements.drawerToggle.classList.add('has-description');
+            }
         }, 1);
     }
     get value() {
@@ -237,6 +254,10 @@ class Input {
     get element() {
         return this.elements.container;
     }
+    /**
+     * The index of the input in the folder relative to other inputs.  Setting or changing this
+     * value will update the input's {@link element|`element`}'s order style property.
+     */
     get index() {
         return this._index;
     }
@@ -248,14 +269,69 @@ class Input {
         return this.folder.gooey?._undoManager;
     }
     /**
-     * Whether the input is disabled.  A function can be used to dynamically determine the
-     * disabled state.
+     * The description of the input, displayed when hovering over the thin
+     * tab element found on the far left of the input's row.
+     */
+    get description() {
+        return this._description();
+    }
+    set description(v) {
+        this._description = toFn(v);
+        this.elements.drawerToggle.classList.add('has-description');
+    }
+    /**
+     * Whether the input is disabled (non-interactive / dimmed).
+     *
+     * For dynamic disabled states, assign this to a function and it will be called whenever
+     * {@link refresh} is called.  Keep in mind that calling {@link enable} or {@link disable}
+     * will not prevent a dynamic disabled state function from running on the next {@link refresh}.
      */
     get disabled() {
-        return this.element.classList.contains('disabled');
+        return this.elements.container.classList.contains('disabled');
     }
     set disabled(v) {
-        this.element.classList.toggle('disabled', toFn(v)());
+        if (typeof v === 'function') {
+            this._disabled = v;
+            this._refreshDisabled(v());
+        }
+        else {
+            this._refreshDisabled(v);
+        }
+        if (!this.description) {
+            this._description = () => (this.disabled ? '🚫 disabled' : '');
+            this.elements.drawerToggle.classList.add('has-description');
+        }
+        else if (v && this.elements.drawerToggle.classList.contains('has-description')) {
+            this.elements.drawerToggle.classList.remove('has-description');
+        }
+    }
+    /**
+     * Disables the input and any associated controllers. A disabled input can't be interacted
+     * with, and its state can't be changed.
+     */
+    disable() {
+        this.disabled = true;
+        return this;
+    }
+    /**
+     * Removes the disabled state from the input and any associated controllers.
+     */
+    enable() {
+        this.disabled = false;
+        return this;
+    }
+    /**
+     * Updates the disabled state of the input container and the main input element if it exists.
+     */
+    _refreshDisabled(disabled = this._disabled()) {
+        this.element.toggleAttribute('disabled', disabled);
+        this.element.classList.toggle('disabled', disabled);
+        if ('input' in this.elements.controllers) {
+            const input = this.elements.controllers['input'];
+            if (input instanceof HTMLInputElement) {
+                input.disabled = disabled;
+            }
+        }
     }
     /**
      * Completely hides the Input from view when set to `true`.
@@ -293,7 +369,7 @@ class Input {
     /**
      * Called from subclasses at the end of their `set` method to emit the `change` event.
      */
-    _emit(event, v = this.state.value) {
+    emit(event, v = this.state.value) {
         if (this.opts.resettable) {
             this.elements.resetBtn.classList.toggle('dirty', this._dirty());
         }
@@ -339,21 +415,6 @@ class Input {
         this.__log.fn('commit').debug('commited', commit);
         this.undoManager?.commit(commit);
     }
-    // /**
-    //  * Enables the input and any associated controllers.
-    //  */
-    // enable() {
-    // 	this._disabled = toFn(false)
-    // 	return this
-    // }
-    // /**
-    //  * Disables the input and any associated controllers. A disabled input's state can't be
-    //  * changed or interacted with.
-    //  */
-    // disable() {
-    // 	this._disabled = toFn(true)
-    // 	return this
-    // }
     /**
      * Refreshes the value of any controllers to match the current input state.
      */
@@ -363,10 +424,7 @@ class Input {
         if (this.opts.binding) {
             this.state.set(this.opts.binding.target[this.opts.binding.key]);
         }
-        const disabledState = this._disabled();
-        if (disabledState !== this.disabled) {
-            this.disabled = disabledState;
-        }
+        this._refreshDisabled();
         this.elements.resetBtn.classList.toggle('dirty', this._dirty());
         this._evm.emit('refresh', v);
         return this;

@@ -32,7 +32,7 @@ export interface ThemerOptions {
      */
     theme: ThemeDefinition;
     themes: Array<Theme>;
-    mode: ThemeMode;
+    mode?: ThemeMode;
     /**
      * The key to store the theme in localStorage.
      * @default 'fractils::themer'

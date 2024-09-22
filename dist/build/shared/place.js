@@ -18,9 +18,10 @@ import { select } from './select.js';
  * ```
  */
 function place(node, placement = 'top-right', options) {
-    const { bounds, margin } = Object.assign({
+    const { bounds, margin, offset } = Object.assign({
         bounds: undefined,
         margin: 10,
+        offset: { x: 0, y: 0 },
     }, options);
     const rect = typeof node === 'string'
         ? select(node)[0]?.getBoundingClientRect()
@@ -39,27 +40,35 @@ function place(node, placement = 'top-right', options) {
     const m = typeof margin === 'number'
         ? { x: margin, y: margin }
         : Object.assign({ x: 0, y: 0 }, margin);
-    // prettier-ignore
-    switch (placement) {
-        case ('center'):
-        case ('center-center'): return { x: b.width / 2 - rect.width / 2, y: b.height / 2 - rect.height / 2 };
-        case ('top-left'):
-        case ('left-top'): return { x: m.x, y: m.y };
-        case ('top-center'):
-        case ('center-top'): return { x: b.width / 2 - rect.width / 2, y: m.y };
-        case ('top-right'):
-        case ('right-top'): return { x: b.width - rect.width - m.x, y: m.y };
-        case ('bottom-left'):
-        case ('left-bottom'): return { x: m.x, y: b.height - rect.height - m.y };
-        case ('bottom-center'):
-        case ('center-bottom'): return { x: b.width / 2 - rect.width / 2, y: b.height - rect.height - m.y };
-        case ('bottom-right'):
-        case ('right-bottom'): return { x: b.width - rect.width - m.x, y: b.height - rect.height - m.y };
-        case ('left-center'):
-        case ('center-left'): return { x: m.x, y: b.height / 2 - rect.height / 2 };
-        case ('right-center'):
-        case ('center-right'): return { x: b.width - rect.width - m.x, y: b.height / 2 - rect.height / 2 };
-        default: throw new Error('Invalid placement: ' + placement);
+    const position = resolvePosition();
+    if (offset.x)
+        position.x += offset.x;
+    if (offset.y)
+        position.y += offset.y;
+    return position;
+    function resolvePosition() {
+        // prettier-ignore
+        switch (placement) {
+            case ('center'):
+            case ('center-center'): return { x: b.width / 2 - rect.width / 2, y: b.height / 2 - rect.height / 2 };
+            case ('top-left'):
+            case ('left-top'): return { x: m.x, y: m.y };
+            case ('top-center'):
+            case ('center-top'): return { x: b.width / 2 - rect.width / 2, y: m.y };
+            case ('top-right'):
+            case ('right-top'): return { x: b.width - rect.width - m.x, y: m.y };
+            case ('bottom-left'):
+            case ('left-bottom'): return { x: m.x, y: b.height - rect.height - m.y };
+            case ('bottom-center'):
+            case ('center-bottom'): return { x: b.width / 2 - rect.width / 2, y: b.height - rect.height - m.y };
+            case ('bottom-right'):
+            case ('right-bottom'): return { x: b.width - rect.width - m.x, y: b.height - rect.height - m.y };
+            case ('left-center'):
+            case ('center-left'): return { x: m.x, y: b.height / 2 - rect.height / 2 };
+            case ('right-center'):
+            case ('center-right'): return { x: b.width - rect.width - m.x, y: b.height / 2 - rect.height / 2 };
+            default: throw new Error('Invalid placement: ' + placement);
+        }
     }
 }
 

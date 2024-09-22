@@ -98,7 +98,7 @@ class InputSwitch extends Input {
         else {
             throw new Error(`InputBoolean.set() received an invalid value: ${JSON.stringify(v)} (${typeof v})`);
         }
-        this._emit('change', v);
+        this.emit('change', v);
         return this;
     }
     refresh(v) {
@@ -114,19 +114,7 @@ class InputSwitch extends Input {
         this.elements.controllers.input?.tooltip?.refresh();
         this.elements.controllers.stateText.innerText =
             (this.state.value ? this.opts.labels?.true.state : this.opts.labels?.false.state) ?? '';
-        this._emit('refresh', v);
-        return this;
-    }
-    enable() {
-        this.elements.controllers.input.disabled = false;
-        this.disabled = false;
-        // super.enable()
-        return this;
-    }
-    disable() {
-        this.elements.controllers.input.disabled = true;
-        this.disabled = true;
-        // super.disable()
+        super.refresh(v);
         return this;
     }
     dispose() {

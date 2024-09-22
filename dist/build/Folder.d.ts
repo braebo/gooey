@@ -344,7 +344,6 @@ export declare class Folder {
     private initialHeaderHeight;
     private _title;
     private _hidden;
-    private _hiddenFn?;
     private _disabled;
     private _log;
     /**
@@ -381,6 +380,7 @@ export declare class Folder {
      * Whether the folder is visible.
      */
     get hidden(): boolean;
+    set hidden(v: boolean | (() => boolean));
     /**
      * Whether the input is disabled.  Modifying this value will update the UI.
      */
@@ -449,6 +449,7 @@ export declare class Folder {
      * @default false
      */
     instant?: boolean): Promise<this>;
+    private _updateHiddenState;
     private _toggleTimeout;
     private _toggleClass;
     private _resolvePresetId;
@@ -485,7 +486,7 @@ export declare class Folder {
     add<T extends number>(title: string, initialValue: T, options?: NumberInputOptions): InputNumber;
     add<T extends ColorFormat>(title: string, initialValue: T, options?: ColorInputOptions): InputColor;
     add<T extends string>(title: string, initialValue: T, options?: TextInputOptions): InputText;
-    add<T extends any>(title: string, initialValue: T, options?: SelectInputOptions<T>): InputSelect<T>;
+    add<T extends any[]>(title: string, initialValue: T, options?: SelectInputOptions<T>): InputSelect<T>;
     add<T extends (() => void)>(title: string, initialValue: T, options?: ButtonInputOptions): InputButton;
     add<T extends ButtonGridArrays>(title: string, initialValue: T, options?: ButtonGridInputOptions): InputButtonGrid;
     /**

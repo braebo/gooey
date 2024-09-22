@@ -26,9 +26,10 @@ export declare const INPUT_TYPE_MAP: Readonly<{
     InputButton: "ButtonInputOptions";
     InputButtonGrid: "ButtonGridInputOptions";
     InputSwitch: "SwitchInputOptions";
+    InputEmpty: "EmptyInputOptions";
 }>;
-export declare const INPUT_TYPES: readonly ("InputText" | "InputTextArea" | "InputNumber" | "InputColor" | "InputSelect" | "InputButton" | "InputButtonGrid" | "InputSwitch")[];
-export declare const INPUT_OPTION_TYPES: readonly ("TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "ButtonGridInputOptions" | "SwitchInputOptions")[];
+export declare const INPUT_TYPES: readonly ("InputText" | "InputTextArea" | "InputNumber" | "InputColor" | "InputSelect" | "InputButton" | "InputButtonGrid" | "InputSwitch" | "InputEmpty")[];
+export declare const INPUT_OPTION_TYPES: readonly ("TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "ButtonGridInputOptions" | "SwitchInputOptions" | "EmptyInputOptions")[];
 export type BindTarget = Record<any, any>;
 export type BindableObject<T extends BindTarget, K extends keyof T = keyof T> = {
     target: T;
@@ -206,6 +207,7 @@ export declare abstract class Input<TValueType extends ValidInputValue = ValidIn
     bubble: boolean;
     private _title;
     private _index;
+    private _description;
     private _disabled;
     private _hidden;
     /**
@@ -243,15 +245,41 @@ export declare abstract class Input<TValueType extends ValidInputValue = ValidIn
      * {@link Input.elements|`elements`}.
      */
     get element(): HTMLElement;
+    /**
+     * The index of the input in the folder relative to other inputs.  Setting or changing this
+     * value will update the input's {@link element|`element`}'s order style property.
+     */
     get index(): number;
     set index(v: number);
     get undoManager(): import("../UndoManager").UndoManager | undefined;
     /**
-     * Whether the input is disabled.  A function can be used to dynamically determine the
-     * disabled state.
+     * The description of the input, displayed when hovering over the thin
+     * tab element found on the far left of the input's row.
+     */
+    get description(): string;
+    set description(v: string);
+    /**
+     * Whether the input is disabled (non-interactive / dimmed).
+     *
+     * For dynamic disabled states, assign this to a function and it will be called whenever
+     * {@link refresh} is called.  Keep in mind that calling {@link enable} or {@link disable}
+     * will not prevent a dynamic disabled state function from running on the next {@link refresh}.
      */
     get disabled(): boolean;
     set disabled(v: boolean | (() => boolean));
+    /**
+     * Disables the input and any associated controllers. A disabled input can't be interacted
+     * with, and its state can't be changed.
+     */
+    disable(): this;
+    /**
+     * Removes the disabled state from the input and any associated controllers.
+     */
+    enable(): this;
+    /**
+     * Updates the disabled state of the input container and the main input element if it exists.
+     */
+    private _refreshDisabled;
     /**
      * Completely hides the Input from view when set to `true`.
      */
@@ -271,7 +299,7 @@ export declare abstract class Input<TValueType extends ValidInputValue = ValidIn
     /**
      * Called from subclasses at the end of their `set` method to emit the `change` event.
      */
-    _emit(event: keyof TEvents, v?: TValueType): this;
+    emit(event: keyof TEvents, v?: TValueType): this;
     /**
      * Prevents the input from registering undo history, storing the initial
      * for the eventual commit in {@link unlock}.

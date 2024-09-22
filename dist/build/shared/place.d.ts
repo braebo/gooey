@@ -49,6 +49,14 @@ export declare function place(node: DOMRect | VirtualRect | (Record<string, any>
         x: number;
         y: number;
     }>;
+    /**
+     * The offset in pixels to apply to the placement.
+     * @default { x: 0, y: 0 }
+     */
+    offset?: {
+        x?: number;
+        y?: number;
+    };
 }): {
     x: number;
     y: number;

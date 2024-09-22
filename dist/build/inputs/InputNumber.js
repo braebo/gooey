@@ -70,21 +70,9 @@ class InputNumber extends Input {
         }
         this.commit({ to: newValue });
         this.state.set(newValue);
-        this._emit('change', newValue);
+        this.emit('change', newValue);
         return this;
     };
-    enable() {
-        this._log.fn('enable').debug();
-        this.disabled = false;
-        this.elements.controllers.input.disabled = false;
-        return this;
-    }
-    disable() {
-        this._log.fn('disable').debug();
-        this.disabled = true;
-        this.elements.controllers.input.disabled = true;
-        return this;
-    }
     refresh = () => {
         const v = this.state.value;
         this._log.fn('refresh').debug(v);

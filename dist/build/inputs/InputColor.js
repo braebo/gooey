@@ -86,7 +86,7 @@ class InputColor extends Input {
         setTimeout(() => {
             this.expanded ? this.open() : this.close(0);
         }, 10);
-        this._emit('change');
+        this.emit('change');
         this.refresh();
         this.picker.on('pointerdown', this._lock);
         this.picker.on('pointerup', this._unlock);
@@ -119,7 +119,7 @@ class InputColor extends Input {
         }
         const newValue = this.state.value;
         this._log.fn('set').debug({ v, newValue, this: this });
-        this._emit('change', newValue);
+        this.emit('change', newValue);
         this.refresh(newValue);
         return this;
     }
@@ -128,7 +128,7 @@ class InputColor extends Input {
         this.elements.controllers.currentColor.display.style.backgroundColor = v.hex;
         this.picker.refresh();
         this.components.refresh();
-        super.refresh();
+        super.refresh(v);
         return this;
     };
     _createCurrentColor(parent) {
@@ -241,19 +241,19 @@ class InputColor extends Input {
             setter: v => {
                 this.state.value.set(v);
                 this.state.refresh();
-                this._emit('change', this.state.value);
+                this.emit('change', this.state.value);
                 this.refresh();
             },
         });
     };
     enable() {
         this.picker.enable();
-        this.disabled = false;
+        super.enable();
         return this;
     }
     disable() {
         this.picker.disable();
-        this.disabled = true;
+        super.disable();
         return this;
     }
     save() {

@@ -287,7 +287,7 @@ export declare class Draggable {
     private _log;
     constructor(node: HTMLElement, options?: Partial<DraggableOptions>);
     /**
-     * Programmatically sets the position of the draggable element.
+     * Programmatically sets the position of the draggable element relative to the {@link bounds}.
      */
     get position(): {
         x: number;
@@ -342,6 +342,13 @@ export declare class Draggable {
     moveTo(target: {
         x: number;
         y: number;
+    }): void;
+    /**
+     * Moves the draggable element by the specified delta.
+     */
+    moveBy(delta: {
+        x?: number;
+        y?: number;
     }): void;
     update(v?: {
         x: number;

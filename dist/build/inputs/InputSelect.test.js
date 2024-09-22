@@ -37,8 +37,8 @@ describe('addSelect', () => {
 });
 describe('add', () => {
     const gui = g.addGooey();
-    test('from labeled option', () => {
-        const input = gui.add('title', 'foo', { options: ['foo', 'bar', 'baz'] });
+    test('from unlabeled array of options', () => {
+        const input = gui.add('title', ['foo', 'bar', 'baz']);
         expect(input.__type).toStrictEqual('InputSelect');
     });
     test('from unlabeled string array', () => {

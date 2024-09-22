@@ -130,6 +130,14 @@ export interface GooeyOptions {
         uiFolder?: Partial<FolderOptions>;
         presetsFolder?: Partial<FolderOptions>;
     };
+    /**
+     * An offset to apply to the initial position of the gooey.
+     * @default { x: 0, y: 0 }
+     */
+    offset?: {
+        x?: number;
+        y?: number;
+    };
 }
 export interface GooeyOptionsInternal extends GooeyOptions {
     /**
@@ -259,6 +267,10 @@ export declare const GUI_DEFAULTS: {
             readonly presetId: "gooey_settings__presets_folder";
         };
     };
+    readonly offset: {
+        readonly x: 0;
+        readonly y: 0;
+    };
 };
 /**
  * Methods inherited from {@link Folder} to forward to the gooey.
@@ -289,7 +301,13 @@ export declare class Gooey {
      * Whether any of the inputs have been changed from their default values in the active preset.
      */
     dirty: boolean;
+    /**
+     * A transparent (display:contents) wrapper for the Gooey.  Used for the global style variables.
+     */
     wrapper: HTMLElement;
+    /**
+     * The main div containing the a Gooey — specifically, the {@link Folder.element}.
+     */
     container: HTMLElement;
     /**
      * The {@link UndoManager} instance for the gooey, handling undo/redo functionality.
@@ -298,6 +316,14 @@ export declare class Gooey {
     _undoManager: UndoManager;
     themer: Themer;
     windowManager?: WindowManager;
+    moveTo: (position: {
+        x: number;
+        y: number;
+    }) => void;
+    moveBy: (delta: {
+        x?: number;
+        y?: number;
+    }) => void;
     /**
      * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
      * instance _(i.e. a separate {@link Gooey} instance or custom {@link WindowManager})_.  The
@@ -324,6 +350,17 @@ export declare class Gooey {
      * The root {@link folder} {@link Folder.element|element}.
      */
     get element(): HTMLElement;
+    /**
+     * The position of the window relative to the {@link container}.
+     */
+    get position(): {
+        x: number;
+        y: number;
+    };
+    set position(v: {
+        x: number;
+        y: number;
+    });
     revealTimeout: ReturnType<typeof setTimeout> | undefined;
     revealIdle: ReturnType<typeof requestIdleCallback> | undefined;
     addFolder(title: string, options?: Partial<FolderOptions>): Folder;
@@ -368,7 +405,13 @@ export declare class Gooey {
     private _revealing;
     private _repositionTimeout;
     refreshPosition(): void;
-    private _resolvePosition;
+    /**
+     * Resolves and sets the position of the root Gooey {@link element}.
+     * This function calculates the correct position based on the specified options,
+     * container bounds, and storage settings. It then updates the position of the
+     * draggable instance if necessary.d
+     */
+    private _updatePosition;
     /**
      * todo - Add the public resolved vars to `Themer` and remove this.
      * @internal

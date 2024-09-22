@@ -41,7 +41,7 @@ export declare class InputButton extends Input<ButtonController, ButtonInputOpti
     enable(): this;
     disable(): this;
     /**
-     * Overwrites the
+     * Overwrites the button state.
      */
     set: (v: ButtonController | unknown) => void;
     /**

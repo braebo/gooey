@@ -21,8 +21,6 @@ export declare class InputTextArea extends Input<string, TextAreaInputOptions, T
     readonly initialValue: string;
     readonly state: State<string>;
     constructor(options: Partial<TextAreaInputOptions>, folder: Folder);
-    enable(): this;
-    disable(): this;
     set: (v?: string | Event) => this | undefined;
     refresh: () => this;
     dispose(): void;

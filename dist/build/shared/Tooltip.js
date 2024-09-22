@@ -59,7 +59,7 @@ let Tooltip = class Tooltip {
         this.parent = options?.parent ?? document.getElementById('svelte') ?? document.body;
         const el = document.createElement('div');
         el.classList.add('gooey-tooltip');
-        el.innerHTML = String(this._text());
+        el.innerHTML = String(this.text);
         this.element = el;
         if (this.style) {
             requestAnimationFrame(() => {

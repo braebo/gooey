@@ -58,16 +58,16 @@ class InputButton extends Input {
     }
     enable() {
         this.button.enable();
-        this.disabled = false;
+        super.enable();
         return this;
     }
     disable() {
         this.button.disable();
-        this.disabled = true;
+        super.disable();
         return this;
     }
     /**
-     * Overwrites the
+     * Overwrites the button state.
      */
     set = (v) => {
         if (ButtonController.is(v)) {

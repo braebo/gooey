@@ -107,6 +107,7 @@ export declare class WindowManager {
     private _evm;
     constructor(options?: Partial<WindowManagerOptions>);
     add: (node: HTMLElement, options?: Partial<WindowInstanceOptions>) => {
+        window: WindowInstance;
         destroy: () => void;
     };
     update(): void;
@@ -144,7 +145,19 @@ export declare class WindowInstance {
     get position(): {
         x: number;
         y: number;
-    } | undefined;
+    };
+    set position(position: {
+        x?: number;
+        y?: number;
+    });
+    moveTo: (position: {
+        x: number;
+        y: number;
+    }) => void;
+    moveBy: (delta: {
+        x?: number;
+        y?: number;
+    }) => void;
     constructor(manager: WindowManager, node: HTMLElement, options?: WindowInstanceOptions);
     dispose(): void;
 }

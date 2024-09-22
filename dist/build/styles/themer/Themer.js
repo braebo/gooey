@@ -17,7 +17,7 @@ const THEMER_DEFAULTS = {
     persistent: true,
     theme: theme_default,
     themes: [],
-    mode: 'system',
+    mode: undefined,
     localStorageKey: 'fractils::themer',
     vars: {},
 };
@@ -133,7 +133,7 @@ class Themer {
             if (theme)
                 this.theme.set(theme);
         }
-        this.mode = state(opts.mode, {
+        this.mode = state(opts.mode ?? 'system', {
             key: this._key + '::mode',
         });
         this._prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -148,7 +148,9 @@ class Themer {
             }
         });
         this.#addSub(this.mode, v => {
-            this._log.fn(o('mode.subscribe')).debug('v', v, { this: this });
+            this._log
+                .fn(o('mode.subscribe'))
+                .debug('mode change ->', v + (v === 'dark' ? ' 🌙' : ' 🔆'), { this: this });
             if (typeof v === 'undefined')
                 throw new Error('Mode is undefined.');
             if (this._initialized)
