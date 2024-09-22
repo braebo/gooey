@@ -274,8 +274,7 @@ export abstract class Input<
 
 	private _title = ''
 	private _index: number
-
-	// #firstUpdate = true
+	private _description: () => string = () => ''
 	private _disabled: () => boolean
 	private _hidden: () => boolean
 
@@ -318,8 +317,25 @@ export abstract class Input<
 		this.__log.fn('super constructor').debug({ presetId: this.id, options, this: this })
 
 		this._title = this.opts.title ?? ''
-		this._disabled = toFn(this.opts.disabled ?? false)
-		this._hidden = toFn(this.opts.hidden ?? false)
+
+		this._description =
+			typeof this.opts.description === 'function'
+				? this.opts.description
+				: typeof this.opts.description === 'string'
+					? () => `${this.opts.description}`
+					: () => (this.disabled ? '🚫 disabled' : '')
+
+		this._disabled =
+			typeof this.opts.disabled === 'function'
+				? this.opts.disabled
+				: typeof this.opts.disabled === 'boolean'
+					? () => !!this.opts.disabled
+					: () => this.elements.container.classList.contains('disabled')
+
+		this._hidden =
+			typeof this.opts.hidden === 'function'
+				? this.opts.hidden
+				: () => this.elements.container.classList.contains('hidden')
 
 		this._index = this.opts.order ?? this.folder.inputs.size
 		this._index += 1
@@ -342,10 +358,13 @@ export abstract class Input<
 			classes: ['gooey-input-drawer-toggle'],
 			parent: this.elements.container,
 		}
+
 		if (this.opts.description) {
 			drawerToggleOptions.classes!.push('has-description')
+		}
+
 			drawerToggleOptions.tooltip = {
-				text: this.opts.description,
+			text: this._description,
 				placement: 'left',
 				delay: 0,
 				offsetX: '-4px',
@@ -356,7 +375,6 @@ export abstract class Input<
 					// @ts-expect-error @internal
 					...this.folder.gooey?._getStyles(),
 				}),
-			}
 		}
 
 		this.elements.drawerToggle = create('div', drawerToggleOptions)
@@ -374,7 +392,6 @@ export abstract class Input<
 
 		this.elements.resetBtn = create('div', {
 			classes: ['gooey-input-reset-btn'],
-			// parent: this.elements.content,
 			parent: this.elements.title,
 			tooltip: {
 				text: !this.opts.resettable
@@ -454,7 +471,10 @@ export abstract class Input<
 		this.elements.container.classList.toggle('hidden', this._hidden())
 
 		setTimeout(() => {
-			this.element.classList.toggle('disabled', this._disabled())
+			this._refreshDisabled()
+			if (this.description) {
+				this.elements.drawerToggle.classList.add('has-description')
+			}
 		}, 1)
 	}
 
@@ -498,14 +518,73 @@ export abstract class Input<
 	}
 
 	/**
-	 * Whether the input is disabled.  A function can be used to dynamically determine the
-	 * disabled state.
+	 * The description of the input, displayed when hovering over the thin
+	 * tab element found on the far left of the input's row.
+	 */
+	get description(): string {
+		return this._description()
+	}
+	set description(v: string) {
+		this._description = toFn(v)
+		this.elements.drawerToggle.classList.add('has-description')
+	}
+
+	/**
+	 * Whether the input is disabled (non-interactive / dimmed).
+	 *
+	 * For dynamic disabled states, assign this to a function and it will be called whenever
+	 * {@link refresh} is called.  Keep in mind that calling {@link enable} or {@link disable}
+	 * will not prevent a dynamic disabled state function from running on the next {@link refresh}.
 	 */
 	get disabled(): boolean {
-		return this.element.classList.contains('disabled')
+		return this.elements.container.classList.contains('disabled')
 	}
 	set disabled(v: boolean | (() => boolean)) {
-		this.element.classList.toggle('disabled', toFn(v)())
+		if (typeof v === 'function') {
+			this._disabled = v
+			this._refreshDisabled(v())
+		} else {
+			this._refreshDisabled(v)
+		}
+
+		if (!this.description) {
+			this._description = () => (this.disabled ? '🚫 disabled' : '')
+			this.elements.drawerToggle.classList.add('has-description')
+		} else if (v && this.elements.drawerToggle.classList.contains('has-description')) {
+			this.elements.drawerToggle.classList.remove('has-description')
+		}
+	}
+
+	/**
+	 * Disables the input and any associated controllers. A disabled input can't be interacted
+	 * with, and its state can't be changed.
+	 */
+	disable() {
+		this.disabled = true
+		return this
+	}
+
+	/**
+	 * Removes the disabled state from the input and any associated controllers.
+	 */
+	enable() {
+		this.disabled = false
+		return this
+	}
+
+	/**
+	 * Updates the disabled state of the input container and the main input element if it exists.
+	 */
+	private _refreshDisabled(disabled = this._disabled()) {
+		this.element.toggleAttribute('disabled', disabled)
+		this.element.classList.toggle('disabled', disabled)
+
+		if ('input' in this.elements.controllers) {
+			const input = this.elements.controllers['input']
+			if (input instanceof HTMLInputElement) {
+				input.disabled = disabled
+			}
+		}
 	}
 
 	/**
@@ -608,35 +687,20 @@ export abstract class Input<
 		this.undoManager?.commit(commit as Commit)
 	}
 
-	// /**
-	//  * Enables the input and any associated controllers.
-	//  */
-	// enable() {
-	// 	this._disabled = toFn(false)
-	// 	return this
-	// }
-	// /**
-	//  * Disables the input and any associated controllers. A disabled input's state can't be
-	//  * changed or interacted with.
-	//  */
-	// disable() {
-	// 	this._disabled = toFn(true)
-	// 	return this
-	// }
-
 	/**
 	 * Refreshes the value of any controllers to match the current input state.
 	 */
 	refresh(v = this.state.value as TValueType) {
 		if (!this.opts.resettable) return
+
 		if (this.opts.binding) {
 			this.state.set(this.opts.binding.target[this.opts.binding.key])
 		}
-		const disabledState = this._disabled()
-		if (disabledState !== this.disabled) {
-			this.disabled = disabledState
-		}
+
+		this._refreshDisabled()
+
 		this.elements.resetBtn.classList.toggle('dirty', this._dirty())
+
 		this._evm.emit('refresh', v as TValueType)
 		return this
 	}
