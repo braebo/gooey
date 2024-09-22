@@ -115,6 +115,20 @@ export class InputNumber extends Input<number, NumberInputOptions, NumberControl
 		this.state.set(newValue)
 
 		this.emit('change', newValue)
+		return this
+	}
+
+	refresh = () => {
+		const v = this.state.value
+		this._log.fn('refresh').debug(v)
+		this.elements.controllers.range.value = String(v)
+		this.elements.controllers.input.value = String(v)
+		super.refresh(v)
+		return this
+	}
+
+	dispose() {
+		this._log.fn('dispose').debug()
 		super.dispose()
 	}
 }
