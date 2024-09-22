@@ -1270,7 +1270,7 @@ export class Folder {
 	// prettier-ignore
 	add<T extends string>(title: string, initialValue: T, options?: TextInputOptions): InputText
 	// prettier-ignore
-	add<T extends any>(title: string, initialValue: T, options?: SelectInputOptions<T>): InputSelect<T>
+	add<T extends any[]>(title: string, initialValue: T, options?: SelectInputOptions<T>): InputSelect<T>
 	// prettier-ignore
 	add<T extends (() => void)>(title: string, initialValue: T, options?: ButtonInputOptions): InputButton
 	//!^ This overload signature is not compatible with its implementation signature.ts(2394)
