@@ -101,7 +101,7 @@ export class InputText extends Input<string, TextInputOptions, TextControllerEle
 			this.state.set(v)
 		}
 
-		this._emit('change', this.state.value)
+		this.emit('change', this.state.value)
 		return this
 	}
 

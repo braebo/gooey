@@ -114,35 +114,7 @@ export class InputNumber extends Input<number, NumberInputOptions, NumberControl
 		this.commit({ to: newValue })
 		this.state.set(newValue)
 
-		this._emit('change', newValue)
-		return this
-	}
-
-	enable() {
-		this._log.fn('enable').debug()
-		this.disabled = false
-		this.elements.controllers.input.disabled = false
-		return this
-	}
-
-	disable() {
-		this._log.fn('disable').debug()
-		this.disabled = true
-		this.elements.controllers.input.disabled = true
-		return this
-	}
-
-	refresh = () => {
-		const v = this.state.value
-		this._log.fn('refresh').debug(v)
-		this.elements.controllers.range.value = String(v)
-		this.elements.controllers.input.value = String(v)
-		super.refresh(v)
-		return this
-	}
-
-	dispose() {
-		this._log.fn('dispose').debug()
+		this.emit('change', newValue)
 		super.dispose()
 	}
 }

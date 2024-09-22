@@ -158,7 +158,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 			this.expanded ? this.open() : this.close(0)
 		}, 10)
 
-		this._emit('change')
+		this.emit('change')
 		this.refresh()
 
 		this.picker.on('pointerdown', this._lock)
@@ -195,7 +195,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 		this._log.fn('set').debug({ v, newValue, this: this })
 
-		this._emit('change', newValue)
+		this.emit('change', newValue)
 		this.refresh(newValue)
 
 		return this
@@ -358,7 +358,7 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 			setter: v => {
 				this.state.value.set(v)
 				this.state.refresh()
-				this._emit('change', this.state.value)
+				this.emit('change', this.state.value)
 				this.refresh()
 			},
 		})

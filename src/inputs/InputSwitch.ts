@@ -166,7 +166,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 			)
 		}
 
-		this._emit('change', v)
+		this.emit('change', v)
 		return this
 	}
 
@@ -185,7 +185,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 		this.elements.controllers.stateText.innerText =
 			(this.state.value ? this.opts.labels?.true.state : this.opts.labels?.false.state) ?? ''
 
-		this._emit('refresh', v)
+		this.emit('refresh', v)
 		return this
 	}
 

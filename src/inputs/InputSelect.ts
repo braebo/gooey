@@ -188,18 +188,19 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		// }
 
 		this.listen(this.select.element, 'preview', () => {
-			this._emit('preview')
+			this.emit('preview')
 		})
 		this.listen(this.select.element, 'open', () => {
-			this._emit('open')
+			this.emit('open')
 		})
 		this.listen(this.select.element, 'close', () => {
-			this._emit('close')
+			this.emit('close')
 		})
 		this.listen(this.select.element, 'cancel', () => {
-			this._emit('cancel')
+			this.emit('cancel')
 		})
 
+		// Override the default dirty check to use an option's `label` for equality checks.
 		this._dirty = () => this.value.label !== this.initialValue.label
 
 		this._log.fn('constructor').debug({ this: this })
@@ -337,7 +338,7 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		this.#stopPropagation = true
 		this.select.select(value, false)
 		this.state.set(value)
-		this._emit('change', value)
+		this.emit('change', value)
 
 		return this
 	}

@@ -639,7 +639,7 @@ export abstract class Input<
 	/**
 	 * Called from subclasses at the end of their `set` method to emit the `change` event.
 	 */
-	_emit(event: keyof TEvents, v = this.state.value as TValueType) {
+	emit(event: keyof TEvents, v = this.state.value as TValueType) {
 		if (this.opts.resettable) {
 			this.elements.resetBtn.classList.toggle('dirty', this._dirty())
 		}

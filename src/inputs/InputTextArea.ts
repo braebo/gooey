@@ -89,7 +89,7 @@ export class InputTextArea extends Input<string, TextAreaInputOptions, TextAreaC
 			this.state.set(v)
 		}
 
-		this._emit('change', this.state.value)
+		this.emit('change', this.state.value)
 		return this
 	}
 
