@@ -6,6 +6,7 @@
 	import { fly } from 'svelte/transition'
 	import { Tree } from '$lib/utils/tree'
 	import { page } from '$app/stores'
+	import { DEV } from 'esm-env'
 
 	const { absolute = true } = $props()
 
@@ -30,6 +31,10 @@
 		'/docs/theming/themes',
 		'/docs/theming/builder',
 	]
+
+	if (DEV) {
+		routes.push('/demos/_test')
+	}
 
 	const links = new Tree(routes as string[]).root.children!
 
@@ -128,7 +133,7 @@
 
 	{#snippet subnav(link: Branch, i = 0, depth = 1)}
 		<ul>
-			{#each sort( link.children?.filter(c => !c.name.startsWith('_')), true, ) ?? [] as child, j (child.name)}
+			{#each sort( link.children?.filter(c => DEV || !c.name.startsWith('_')), false ) ?? [] as child, j (child.name)}
 				<div
 					class="li"
 					class:active={isActive(child.name, $page.url.pathname)}
