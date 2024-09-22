@@ -739,10 +739,6 @@ export class Folder {
 		this._hidden = v
 		this._updateHiddenState()
 	}
-	set hidden(v: boolean | (() => boolean)) {
-		this._hidden = v
-		this._updateHiddenState()
-	}
 
 	/**
 	 * Whether the input is disabled.  Modifying this value will update the UI.

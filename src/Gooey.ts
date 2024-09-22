@@ -1024,9 +1024,9 @@ export class Gooey {
 				offset: this.opts.offset,
 			})
 
-				const win = this.window
-				if (win?.draggableInstance) {
-					win.draggableInstance.position = placementPosition
+			const win = this.window
+			if (win?.draggableInstance) {
+				win.draggableInstance.position = placementPosition
 			}
 		}
 	}
