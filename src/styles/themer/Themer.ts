@@ -54,7 +54,7 @@ export interface ThemerOptions {
 	 */
 	theme: ThemeDefinition
 	themes: Array<Theme>
-	mode: ThemeMode
+	mode?: ThemeMode
 	/**
 	 * The key to store the theme in localStorage.
 	 * @default 'fractils::themer'
@@ -76,7 +76,7 @@ export const THEMER_DEFAULTS: ThemerOptions = {
 	persistent: true,
 	theme: theme_default,
 	themes: [],
-	mode: 'system',
+	mode: undefined,
 	localStorageKey: 'fractils::themer',
 	vars: {},
 }

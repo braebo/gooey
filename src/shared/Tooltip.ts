@@ -181,7 +181,7 @@ export class Tooltip {
 
 		const el = document.createElement('div')
 		el.classList.add('gooey-tooltip')
-		el.innerHTML = String(this._text())
+		el.innerHTML = String(this.text)
 		this.element = el
 
 		if (this.style) {
