@@ -361,7 +361,14 @@ export class Gooey {
 	 */
 	dirty = false
 
+	/**
+	 * A transparent (display:contents) wrapper for the Gooey.  Used for the global style variables.
+	 */
 	wrapper!: HTMLElement
+
+	/**
+	 * The main div containing the a Gooey — specifically, the {@link Folder.element}.
+	 */
 	container!: HTMLElement
 
 	/**
@@ -409,7 +416,7 @@ export class Gooey {
 						...options,
 						title: titleOrOptions,
 					}
-				: titleOrOptions
+				: (titleOrOptions ?? {})
 
 		const opts = deepMergeOpts([GUI_DEFAULTS, initialOptions], {
 			concatArrays: false,
