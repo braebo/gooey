@@ -212,7 +212,7 @@ export class Themer {
 			if (theme) this.theme.set(theme)
 		}
 
-		this.mode = state(opts.mode, {
+		this.mode = state(opts.mode ?? 'system', {
 			key: this._key + '::mode',
 		})
 
@@ -234,7 +234,9 @@ export class Themer {
 		})
 
 		this.#addSub(this.mode, v => {
-			this._log.fn(o('mode.subscribe')).debug('v', v, { this: this })
+			this._log
+				.fn(o('mode.subscribe'))
+				.debug('mode change ->', v + (v === 'dark' ? ' 🌙' : ' 🔆'), { this: this })
 
 			if (typeof v === 'undefined') throw new Error('Mode is undefined.')
 
