@@ -1,44 +1,35 @@
 <script lang="ts">
-	import { PLACEMENTS } from '../../../../../../src/shared/place'
-	import GooeyThemeSync from '$lib/components/GooeyThemeSync.svelte'
+	import Gooish from '$lib/components/Gooish.svelte'
+	import { page } from '$app/stores'
+
 	import { Gooey } from '../../../../../../src/Gooey'
 	import { themer } from '$lib/themer/themer.svelte'
-	import Gooish from '$lib/components/Gooish.svelte'
-	import { goto } from '$app/navigation'
-	import { page } from '$app/stores'
 	import { onMount } from 'svelte'
 
-	let storage = $state($page.url.searchParams.has('storage'))
+	const storage = $page.url.searchParams.has('storage')
 	// @ts-ignore
-	let count = $state(+$page.url.searchParams.get('count') || -1)
+	const seed = +$page.url.searchParams.get('seed') || Math.random()
 	// @ts-ignore
-	let seed = $state(+$page.url.searchParams.get('seed') || Math.random())
+	let inputs = $state(+$page.url.searchParams.get('count') || -1)
+	// @ts-ignore
+	let gooeys = $state(+$page.url.searchParams.get('gooeys') || 1)
 
 	function getParams() {
 		const params = {} as any
 
-		if (seed < 0.2) {
-			params.foo = 'bar'
+		if (seed > 0.2) {
+			params.foo = 1
 		}
-		if (seed < 0.4) {
-			params.baz = 1
-		}
-
-		if (seed < 0.6) {
-			params.qux = true
+		if (seed > 0.4) {
+			params.bar = 2
 		}
 
-		if (seed < 0.8) {
-			params.quux = 'corge'
+		if (seed > 0.6) {
+			params.baz = 3
 		}
 
-		params.width = 250 + Math.random() * 150
-
-		params.nested = {
-			a: 1,
-			b: 1,
-			c: 1,
-			d: 1,
+		if (seed > 0.8) {
+			params.qux = 4
 		}
 
 		return params
@@ -57,11 +48,17 @@
 			storage,
 		})
 
-		const f = gooey.addFolder('search params', { closed: true })
+		// Sync gooey
+		gooey.themer.mode.set(themer.mode)
+		const unsubscribe = gooey.themer.mode.subscribe(v => {
+			themer.preference = v ?? 'system'
+		})
+		$effect(() => {
+			gooey?.themer.mode.set(themer.mode)
+		})
 
-		f.add('count', count, { min: 0, max: 20, step: 0.1 }).on('change', v => (count = v))
-		f.add('seed', seed, { min: 0, max: 1, step: 0.1 })
-		f.add('apply', applyQueryParams)
+		gooey.add('count', inputs, { min: 0, max: 1, step: 0.1, disabled: true }).on('change', v => (inputs = v))
+		gooey.add('seed', seed, { disabled: true })
 
 		const lsFolder = gooey.addFolder('local storage', { closed: true })
 
@@ -82,32 +79,35 @@
 		])
 
 		return () => {
+			unsubscribe()
 			gooey?.dispose()
 		}
 	})
-
-	function applyQueryParams() {
-		goto(`?count=${count}&seed=${seed}&storage=${storage}`, { replaceState: true })
-	}
 </script>
 
 <section class="section">
 	{#if gooey}
-		{#each PLACEMENTS.slice(0, count) as position}
-			{@const params = getParams()}
-
-			<div class="container">
-				<Gooish
-					{params}
-					{position}
-					storage={gooey?.opts.storage ?? false}
-					title={position}
-					width={params.width}
-					refreshPosition
-				/>
-			</div>
-		{/each}
-		<GooeyThemeSync {gooey} />
+		{#key inputs}
+			{#each Array.from({ length: gooeys }) as _}
+				{@const params = getParams()}
+				{@const width = 250 + Math.random() * 150}
+				{@const offset = {
+					x: (Math.random() * width) / 2,
+					y: (Math.random() * width) / 2,
+				}}
+				<div class="container">
+					<Gooish
+						{params}
+						storage={gooey?.opts.storage ?? false}
+						title={`${Math.round(offset.x)} ${Math.round(offset.y)}`}
+						{width}
+						{offset}
+						position="center"
+						refreshPosition
+					/>
+				</div>
+			{/each}
+		{/key}
 	{/if}
 </section>
 
