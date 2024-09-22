@@ -974,10 +974,11 @@ export class Gooey {
 	refreshPosition() {
 		this._log.fn('refreshPosition')
 
+		requestAnimationFrame(() => {
 		clearTimeout(this._repositionTimeout)
 		this._repositionTimeout = setTimeout(() => {
-			this._log.fn('refreshPosition').debug('FIRED')
-			this._resolvePosition(true)
+				this._log.fn('refreshPosition').debug('Calling _updatePosition()')
+				this._updatePosition()
 
 			if (this._revealing) {
 				this._revealing = false
@@ -985,13 +986,20 @@ export class Gooey {
 				this.wrapper.style.visibility = 'visible'
 				this.folder.element.animate([{ opacity: 0 }, { opacity: 1 }], {
 					fill: 'none',
-					duration: 400,
+						duration: 150,
 				})
 			}
-		}, 10)
+			}, 100)
+		})
 	}
 
-	private _resolvePosition(reposition: boolean) {
+	/**
+	 * Resolves and sets the position of the root Gooey {@link element}.
+	 * This function calculates the correct position based on the specified options,
+	 * container bounds, and storage settings. It then updates the position of the
+	 * draggable instance if necessary.d
+	 */
+	private _updatePosition() {
 		if (!this.container || !this.wrapper) return
 
 		const rect = this.element.getBoundingClientRect()
