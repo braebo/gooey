@@ -169,6 +169,12 @@ export interface GooeyOptions {
 		uiFolder?: Partial<FolderOptions>
 		presetsFolder?: Partial<FolderOptions>
 	}
+
+	/**
+	 * An offset to apply to the initial position of the gooey.
+	 * @default { x: 0, y: 0 }
+	 */
+	offset?: { x?: number; y?: number }
 }
 
 export interface GooeyOptionsInternal extends GooeyOptions {
@@ -316,6 +322,7 @@ export const GUI_DEFAULTS = {
 		uiFolder: { closed: true, presetId: 'gooey_settings__ui_folder' },
 		presetsFolder: { closed: true, presetId: 'gooey_settings__presets_folder' },
 	},
+	offset: { x: 0, y: 0 },
 } as const satisfies GooeyOptions
 
 /**
@@ -407,6 +414,11 @@ export class Gooey {
 		}) as GooeyOptions
 
 		opts.container ??= document.body
+
+		opts.offset ??= { x: 0, y: 0 }
+		if (initialOptions.offset?.x) opts.offset.x = initialOptions.offset.x
+		if (initialOptions.offset?.y) opts.offset.y = initialOptions.offset.y
+
 		if (typeof opts.storage === 'object') {
 			opts.storage = Object.assign({}, GUI_STORAGE_DEFAULTS, opts.storage)
 		}
@@ -425,7 +437,6 @@ export class Gooey {
 		this.opts = opts as GooeyOptions & { storage: GooeyStorageOptions | false }
 
 		this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' })
-		this._log.fn('constructor').debug({ options, opts })
 
 		if (this.opts.loadDefaultFont !== false) {
 			this._loadFonts()
@@ -980,18 +991,12 @@ export class Gooey {
 			const placementPosition = place(rect, this.opts.position, {
 				bounds,
 				margin: this.opts.margin,
+				offset: this.opts.offset,
 			})
 
-			if (
-				reposition ||
-				// Need to correct the window manager's positioning when storage is off.
-				this.opts.storage === false ||
-				(this.opts.storage && this.opts.storage.position === false)
-			) {
 				const win = this.window
 				if (win?.draggableInstance) {
 					win.draggableInstance.position = placementPosition
-				}
 			}
 		}
 	}
