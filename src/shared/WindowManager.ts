@@ -295,9 +295,15 @@ export class WindowInstance {
 
 	id: string
 	size = state({ width: 0, height: 0 })
-	get position() {
-		return this.draggableInstance?.position
+	get position(): { x: number; y: number } {
+		return this.draggableInstance?.position ?? { x: 0, y: 0 }
 	}
+	set position(position: { x?: number; y?: number }) {
+		const p = Object.assign({}, this.position, position)
+		this.draggableInstance?.moveTo(p)
+	}
+	moveTo: (position: { x: number; y: number }) => void
+	moveBy: (delta: { x?: number; y?: number }) => void
 
 	constructor(
 		public manager: WindowManager,
@@ -356,6 +362,9 @@ export class WindowInstance {
 		if (opts?.preserveZ) {
 			node.dataset['keepZ'] = 'true'
 		}
+
+		this.moveTo = this.draggableInstance.moveTo.bind(this.draggableInstance)
+		this.moveBy = this.draggableInstance.moveBy.bind(this.draggableInstance)
 	}
 
 	dispose() {

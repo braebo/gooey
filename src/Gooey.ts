@@ -373,6 +373,8 @@ export class Gooey {
 	themer: Themer
 	// themeEditor?: ThemeEditor
 	windowManager?: WindowManager
+	moveTo: (position: { x: number; y: number }) => void = () => {}
+	moveBy: (delta: { x?: number; y?: number }) => void = () => {}
 
 	/**
 	 * `false` if this {@link Gooey}'s {@link WindowManager} belongs to an existing, external
@@ -585,6 +587,16 @@ export class Gooey {
 	 */
 	get element(): HTMLElement {
 		return this.folder.element
+	}
+
+	/**
+	 * The position of the window relative to the {@link container}.
+	 */
+	get position() {
+		return this.window?.draggableInstance?.position ?? { x: 0, y: 0 }
+	}
+	set position(v: { x: number; y: number }) {
+		this.window?.draggableInstance?.moveTo(v)
 	}
 
 	revealTimeout: ReturnType<typeof setTimeout> | undefined
@@ -946,10 +958,13 @@ export class Gooey {
 		})
 		this._isWindowManagerOwner = true
 
-		windowManager.add(this.folder.element, {
+		const { window } = windowManager.add(this.folder.element, {
 			// The rest of the options will be inherited from the WindowManager instance.
 			id: this.id,
 		})
+
+		this.moveTo = window.moveTo
+		this.moveBy = window.moveBy
 
 		return windowManager
 	}
