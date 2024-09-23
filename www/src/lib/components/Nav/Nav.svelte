@@ -10,9 +10,10 @@
 
 	const { absolute = true } = $props()
 
+	const pageRoutes = $page.data.routes || []
 	// prettier-ignore
 	const routes = [
-		...$page.data.routes,
+		...pageRoutes,
 		'/docs#basics',
 		'/docs#import',
 		'/docs#install',
