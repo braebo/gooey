@@ -5,23 +5,31 @@
 	import { onMount } from 'svelte'
 
 	let gooey = $state<Gooey | undefined>(undefined)
-	let sink = $state<Gooey | undefined>(undefined)
+	let sinkGooey = $state<Gooey | undefined>(undefined)
 
 	onMount(() => {
+		const sink = kitchen({
+			title: 'Kitchen Sink',
+			themeMode: 'system',
+			position: 'top-center',
+		})
+		sinkGooey = sink.gooey
+
+		sink.inputs.text.description = 'static description'
+		let count = 0
+		sink.inputs.number.description = () => 'dynamic description ' + count++
+
 		gooey = new Gooey({
 			title: 'Disabler',
 			themeMode: 'system',
 			position: 'top-center',
 			offset: { y: 400 },
 		})
-		sink = kitchen({
-			title: 'Kitchen Sink',
-			themeMode: 'system',
-			position: 'top-center',
-		})
-		;['text', 'number', 'boolean', 'select', 'color', 'button'].forEach((inputName: string) => {
-			const input = sink!.inputs.get(inputName)!
-			if (Math.random() > 0.5) input.disable()
+		;['text', 'number', 'boolean', 'select', 'color', 'button'].forEach((inputName: string, i) => {
+			const input = sinkGooey!.inputs.get(inputName)!
+
+			if (i > 1 && Math.random() > 0.5) input.disable()
+
 			gooey?.add(
 				inputName,
 				() => {
@@ -35,7 +43,7 @@
 		})
 
 		return () => {
-			sink?.dispose()
+			sinkGooey?.dispose()
 			gooey?.dispose()
 		}
 	})
@@ -45,6 +53,6 @@
 	<GooeyThemeSync {gooey} />
 {/if}
 
-{#if sink}
-	<GooeyThemeSync gooey={sink} />
+{#if sinkGooey}
+	<GooeyThemeSync gooey={sinkGooey} />
 {/if}
