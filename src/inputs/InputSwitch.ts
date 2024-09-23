@@ -13,7 +13,9 @@ import { Input } from './Input'
  */
 export type SwitchInputOptions = InputOptions<boolean> & {
 	readonly __type?: 'SwitchInputOptions'
-	/** Text to display in various parts of the switch. */
+	/**
+	 * Text to display in various parts of the switch.
+	 */
 	labels?: {
 		/** Text to display when the state is `true` */
 		true: {
@@ -123,6 +125,8 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 				delay: 750,
 			},
 		})
+
+		//- Thumb
 		const thumb = create('div', {
 			classes: ['gooey-controller-switch-thumb'],
 			parent: input,

@@ -777,6 +777,7 @@ export class Gooey {
 				labelKey: 'title',
 				initialValue: finalThemer.theme.value,
 			})
+
 			themeInput.on('change', v => {
 				finalThemer.theme.set(v.value)
 			})
