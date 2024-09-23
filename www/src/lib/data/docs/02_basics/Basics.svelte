@@ -362,8 +362,6 @@ const gooey = new Gooey({
 
 		{#if proTipEl}
 			<Info target={proTipEl} side="left" tooltipText={['more tips', 'less tips']}>
-				<div class="br-sm"></div>
-
 				<div class="description">
 					The <code>closed</code> state can be persisted in <code>localStorage</code>
 				</div>
