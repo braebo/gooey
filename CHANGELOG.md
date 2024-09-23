@@ -1,5 +1,11 @@
 # gooey
 
+## 0.3.2
+
+### Patch Changes
+
+-   feat: release ([`cba5bb939f8f1c35e8f86f422c7c226edf7cc28e`](https://github.com/braebo/gooey/commit/cba5bb939f8f1c35e8f86f422c7c226edf7cc28e))
+
 ## 0.3.1
 
 ### Patch Changes
