@@ -9,8 +9,8 @@ import type { InputText, TextInputOptions } from './InputText'
 
 import type { ColorFormat } from '../shared/color/types/colorFormat'
 import type { LabeledOption, Option } from '../controllers/Select'
+import type { Tooltip, TooltipOptions } from '../shared/Tooltip'
 import type { EventCallback } from '../shared/EventManager'
-import type { TooltipOptions } from '../shared/Tooltip'
 import type { CreateOptions } from '../shared/create'
 import type { Color } from '../shared/color/color'
 import type { State } from '../shared/state'
@@ -54,7 +54,6 @@ export type BindableObject<T extends BindTarget, K extends keyof T = keyof T> = 
  * The initial value of an input can be either a raw value, or a "binding"
  */
 export type ValueOrBinding<TValue = ValidInputValue, TBindTarget extends BindTarget = BindTarget> =
-	// todo - this is silly
 	| {
 			value: TValue
 			binding?: BindableObject<TBindTarget>
@@ -132,7 +131,7 @@ export type InputOptions<
 	/**
 	 * Optional tooltip text to display when hovering over the input's title.
 	 */
-	description?: string
+	description?: string | (() => string)
 
 	/**
 	 * When {@link description} is provided, these options can be used to customize the tooltip.
@@ -261,7 +260,7 @@ export abstract class Input<
 		title: HTMLElement
 		content: HTMLElement
 		drawer: HTMLElement
-		drawerToggle: HTMLElement
+		drawerToggle: HTMLElement & { tooltip: Tooltip }
 		controllers: TElements
 		resetBtn: HTMLElement
 	}
@@ -275,8 +274,9 @@ export abstract class Input<
 	private _title = ''
 	private _index: number
 	private _description: () => string = () => ''
-	private _disabled: () => boolean
 	private _hidden: () => boolean
+	private _disabled: () => boolean
+	static DISABLED_DESCRIPTION = '🚫 disabled'
 
 	/**
 	 * Prevents the input from registering commits to undo history until
@@ -323,7 +323,7 @@ export abstract class Input<
 				? this.opts.description
 				: typeof this.opts.description === 'string'
 					? () => `${this.opts.description}`
-					: () => (this.disabled ? '🚫 disabled' : '')
+					: () => (this.disabled ? Input.DISABLED_DESCRIPTION : '')
 
 		this._disabled =
 			typeof this.opts.disabled === 'function'
@@ -354,27 +354,26 @@ export abstract class Input<
 			this.element.style.setProperty('--gooey-input-section-1_width', '0px')
 		}
 
-		const drawerToggleOptions: Partial<CreateOptions> = {
+		const drawerToggleOptions = {
 			classes: ['gooey-input-drawer-toggle'],
 			parent: this.elements.container,
-		}
+			tooltip: {
+				text: this._description,
+				placement: 'left',
+				delay: 0,
+				offsetX: '-4px',
+				...this.opts.tooltipOptions,
+				style: () => ({
+					'text-align': 'left',
+					'padding-left': '8px',
+					// @ts-expect-error @internal
+					...this.folder.gooey?._getStyles(),
+				}),
+			},
+		} satisfies Partial<CreateOptions>
 
 		if (this.opts.description) {
 			drawerToggleOptions.classes!.push('has-description')
-		}
-
-		drawerToggleOptions.tooltip = {
-			text: this._description,
-			placement: 'left',
-			delay: 0,
-			offsetX: '-4px',
-			...this.opts.tooltipOptions,
-			style: () => ({
-				'text-align': 'left',
-				'padding-left': '8px',
-				// @ts-expect-error @internal
-				...this.folder.gooey?._getStyles(),
-			}),
 		}
 
 		this.elements.drawerToggle = create('div', drawerToggleOptions)
@@ -528,9 +527,10 @@ export abstract class Input<
 	get description(): string {
 		return this._description()
 	}
-	set description(v: string) {
+	set description(v: string | (() => string)) {
 		this._description = toFn(v)
 		this.elements.drawerToggle.classList.add('has-description')
+		this.elements.drawerToggle.tooltip.text = v
 	}
 
 	/**
@@ -544,17 +544,11 @@ export abstract class Input<
 		return this.elements.container.classList.contains('disabled')
 	}
 	set disabled(v: boolean | (() => boolean)) {
-		if (typeof v === 'function') {
-			this._disabled = v
-			this._refreshDisabled(v())
-		} else {
-			this._refreshDisabled(v)
-		}
+		this._refreshDisabled(toFn(v)())
 
-		if (!this.description) {
-			this._description = () => (this.disabled ? '🚫 disabled' : '')
+		if (this.description === Input.DISABLED_DESCRIPTION) {
 			this.elements.drawerToggle.classList.add('has-description')
-		} else if (v && this.elements.drawerToggle.classList.contains('has-description')) {
+		} else if (this.description !== '') {
 			this.elements.drawerToggle.classList.remove('has-description')
 		}
 	}
