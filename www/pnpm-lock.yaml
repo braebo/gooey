@@ -83,6 +83,9 @@ importers:
       remark-abbr:
         specifier: ^1.4.2
         version: 1.4.2
+      runed:
+        specifier: ^0.15.2
+        version: 0.15.2(svelte@5.0.0-next.238)
       sass:
         specifier: ^1.77.8
         version: 1.77.8
@@ -1395,6 +1398,11 @@ packages:
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
+
+  runed@0.15.2:
+    resolution: {integrity: sha512-4rqCpoq3IezYYxgGo4ukboXdZ86Z7xPkQJzdIO0h0NVHVX0Hwg+X5rOnRWoqRHMYIwEGpr+tSA2ywhlzOcMF5g==}
+    peerDependencies:
+      svelte: ^5.0.0-next.1
 
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
@@ -3010,6 +3018,11 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
+
+  runed@0.15.2(svelte@5.0.0-next.238):
+    dependencies:
+      esm-env: 1.0.0
+      svelte: 5.0.0-next.238
 
   sade@1.8.1:
     dependencies:
