@@ -1,4 +1,5 @@
 //! wip
+// @ts-nocheck
 import { textController } from '../controllers/text';
 import { create } from '../shared/create';
 import { Logger } from '../shared/logger';

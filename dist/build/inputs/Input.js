@@ -15,7 +15,7 @@ const INPUT_TYPE_MAP = Object.freeze({
     InputButton: 'ButtonInputOptions',
     InputButtonGrid: 'ButtonGridInputOptions',
     InputSwitch: 'SwitchInputOptions',
-    InputEmpty: 'EmptyInputOptions',
+    // InputEmpty: 'EmptyInputOptions',
 });
 Object.freeze(keys(INPUT_TYPE_MAP));
 Object.freeze(values(INPUT_TYPE_MAP));
@@ -64,8 +64,9 @@ class Input {
     _title = '';
     _index;
     _description = () => '';
-    _disabled;
     _hidden;
+    _disabled;
+    static DISABLED_DESCRIPTION = '🚫 disabled';
     /**
      * Prevents the input from registering commits to undo history until
      * {@link unlock} is called.
@@ -98,7 +99,7 @@ class Input {
                 ? this.opts.description
                 : typeof this.opts.description === 'string'
                     ? () => `${this.opts.description}`
-                    : () => (this.disabled ? '🚫 disabled' : '');
+                    : () => (this.disabled ? Input.DISABLED_DESCRIPTION : '');
         this._disabled =
             typeof this.opts.disabled === 'function'
                 ? this.opts.disabled
@@ -124,23 +125,23 @@ class Input {
         const drawerToggleOptions = {
             classes: ['gooey-input-drawer-toggle'],
             parent: this.elements.container,
+            tooltip: {
+                text: this._description,
+                placement: 'left',
+                delay: 0,
+                offsetX: '-4px',
+                ...this.opts.tooltipOptions,
+                style: () => ({
+                    'text-align': 'left',
+                    'padding-left': '8px',
+                    // @ts-expect-error @internal
+                    ...this.folder.gooey?._getStyles(),
+                }),
+            },
         };
         if (this.opts.description) {
             drawerToggleOptions.classes.push('has-description');
         }
-        drawerToggleOptions.tooltip = {
-            text: this._description,
-            placement: 'left',
-            delay: 0,
-            offsetX: '-4px',
-            ...this.opts.tooltipOptions,
-            style: () => ({
-                'text-align': 'left',
-                'padding-left': '8px',
-                // @ts-expect-error @internal
-                ...this.folder.gooey?._getStyles(),
-            }),
-        };
         this.elements.drawerToggle = create('div', drawerToggleOptions);
         this.elements.title = create('div', {
             classes: ['gooey-input-title'],
@@ -278,6 +279,7 @@ class Input {
     set description(v) {
         this._description = toFn(v);
         this.elements.drawerToggle.classList.add('has-description');
+        this.elements.drawerToggle.tooltip.text = v;
     }
     /**
      * Whether the input is disabled (non-interactive / dimmed).
@@ -290,18 +292,11 @@ class Input {
         return this.elements.container.classList.contains('disabled');
     }
     set disabled(v) {
-        if (typeof v === 'function') {
-            this._disabled = v;
-            this._refreshDisabled(v());
-        }
-        else {
-            this._refreshDisabled(v);
-        }
-        if (!this.description) {
-            this._description = () => (this.disabled ? '🚫 disabled' : '');
+        this._refreshDisabled(toFn(v)());
+        if (this.description === Input.DISABLED_DESCRIPTION) {
             this.elements.drawerToggle.classList.add('has-description');
         }
-        else if (v && this.elements.drawerToggle.classList.contains('has-description')) {
+        else if (this.description !== '') {
             this.elements.drawerToggle.classList.remove('has-description');
         }
     }

@@ -8,7 +8,9 @@ import { Input } from './Input';
  */
 export type SwitchInputOptions = InputOptions<boolean> & {
     readonly __type?: 'SwitchInputOptions';
-    /** Text to display in various parts of the switch. */
+    /**
+     * Text to display in various parts of the switch.
+     */
     labels?: {
         /** Text to display when the state is `true` */
         true: {

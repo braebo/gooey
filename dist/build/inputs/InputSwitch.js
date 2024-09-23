@@ -62,6 +62,7 @@ class InputSwitch extends Input {
                 delay: 750,
             },
         });
+        //- Thumb
         const thumb = create('div', {
             classes: ['gooey-controller-switch-thumb'],
             parent: input,

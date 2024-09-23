@@ -8,8 +8,8 @@ import type { InputColor, ColorInputOptions } from './InputColor';
 import type { InputText, TextInputOptions } from './InputText';
 import type { ColorFormat } from '../shared/color/types/colorFormat';
 import type { LabeledOption, Option } from '../controllers/Select';
+import type { Tooltip, TooltipOptions } from '../shared/Tooltip';
 import type { EventCallback } from '../shared/EventManager';
-import type { TooltipOptions } from '../shared/Tooltip';
 import type { Color } from '../shared/color/color';
 import type { State } from '../shared/state';
 import type { Commit } from '../UndoManager';
@@ -26,10 +26,9 @@ export declare const INPUT_TYPE_MAP: Readonly<{
     InputButton: "ButtonInputOptions";
     InputButtonGrid: "ButtonGridInputOptions";
     InputSwitch: "SwitchInputOptions";
-    InputEmpty: "EmptyInputOptions";
 }>;
-export declare const INPUT_TYPES: readonly ("InputText" | "InputTextArea" | "InputNumber" | "InputColor" | "InputSelect" | "InputButton" | "InputButtonGrid" | "InputSwitch" | "InputEmpty")[];
-export declare const INPUT_OPTION_TYPES: readonly ("TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "ButtonGridInputOptions" | "SwitchInputOptions" | "EmptyInputOptions")[];
+export declare const INPUT_TYPES: readonly ("InputText" | "InputTextArea" | "InputNumber" | "InputColor" | "InputSelect" | "InputButton" | "InputButtonGrid" | "InputSwitch")[];
+export declare const INPUT_OPTION_TYPES: readonly ("TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "ButtonGridInputOptions" | "SwitchInputOptions")[];
 export type BindTarget = Record<any, any>;
 export type BindableObject<T extends BindTarget, K extends keyof T = keyof T> = {
     target: T;
@@ -113,7 +112,7 @@ export type InputOptions<TValue = ValidInputValue, TBindTarget extends BindTarge
     /**
      * Optional tooltip text to display when hovering over the input's title.
      */
-    description?: string;
+    description?: string | (() => string);
     /**
      * When {@link description} is provided, these options can be used to customize the tooltip.
      */
@@ -196,7 +195,9 @@ export declare abstract class Input<TValueType extends ValidInputValue = ValidIn
         title: HTMLElement;
         content: HTMLElement;
         drawer: HTMLElement;
-        drawerToggle: HTMLElement;
+        drawerToggle: HTMLElement & {
+            tooltip: Tooltip;
+        };
         controllers: TElements;
         resetBtn: HTMLElement;
     };
@@ -208,8 +209,9 @@ export declare abstract class Input<TValueType extends ValidInputValue = ValidIn
     private _title;
     private _index;
     private _description;
-    private _disabled;
     private _hidden;
+    private _disabled;
+    static DISABLED_DESCRIPTION: string;
     /**
      * Prevents the input from registering commits to undo history until
      * {@link unlock} is called.
@@ -257,7 +259,7 @@ export declare abstract class Input<TValueType extends ValidInputValue = ValidIn
      * tab element found on the far left of the input's row.
      */
     get description(): string;
-    set description(v: string);
+    set description(v: string | (() => string));
     /**
      * Whether the input is disabled (non-interactive / dimmed).
      *

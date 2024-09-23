@@ -1,12 +1,12 @@
 import { Gooey } from '..';
 export const kitchen = (opts) => {
     const g = new Gooey(opts);
-    g.add('text', 'foo');
-    g.add('number', 5);
-    g.add('boolean', true);
-    g.add('select', ['foo', 'bar', 'baz']);
-    g.add('color', '#000000');
-    g.add('button', () => alert('thanks'));
+    const text = g.add('text', 'foo');
+    const number = g.add('number', 5);
+    const boolean = g.add('boolean', true);
+    const select = g.add('select', ['foo', 'bar', 'baz']);
+    const color = g.add('color', '#000000');
+    const button = g.add('button', () => alert('thanks'));
     // g.add('empty') // todo
     const f = g.addFolder('Folder');
     f.add('button grid', [
@@ -19,5 +19,18 @@ export const kitchen = (opts) => {
             { text: 'qux', onClick: () => alert('qux') },
         ],
     ]);
-    return g;
+    return {
+        gooey: g,
+        inputs: {
+            text,
+            number,
+            boolean,
+            select,
+            color,
+            button,
+        },
+        folders: {
+            Folder: f,
+        },
+    };
 };
