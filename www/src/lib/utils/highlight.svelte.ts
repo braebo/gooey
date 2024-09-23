@@ -87,19 +87,21 @@ export async function highlight(text: string, options?: Partial<HighlightOptions
 	}
 }
 
-let highlighterInstance: HighlighterCore
+let highlighterInstance = $state<HighlighterCore>()
 
 /**
  * Highlighter instance singleton used internally.
  * @internal
  */
-async function getHighlighterInstance() {
+export async function getHighlighterInstance() {
 	if (!highlighterInstance) {
 		highlighterInstance = await createHighlighterCore({
 			loadWasm: getWasm,
 			themes: [serendipity],
 			langs: [svelte, typescript, json],
 		})
+		return highlighterInstance
+	} else {
+		return highlighterInstance
 	}
-	return highlighterInstance
 }

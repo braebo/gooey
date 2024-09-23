@@ -23,28 +23,27 @@
 
 	@example SSR
 	
-	```svelte +page.svelte
+	+page.svelte
+	```svelte
 	<script>
 		import Code from 'fractils'
 
 		data
-		const { text, highlightedText } = data
+		const { highlightedText } = data
 	</script>
 
-	<Code ssr {text} {highlightedText} />
+	<Code ssr {highlightedText} lang="js" />
 	```
 	
-	```typescript +page.ts
+	+page.ts
+	```typescript
 	import { highlight } from 'fractils/utils/highlight'
 
 	export async function load({ page, fetch }) {
 		const text = `console.log('hello world')`
 		const highlightedText = await highlight(text, { lang: 'js' })
 
-		return {
-			text,
-			highlightedText,
-		}
+		return { highlightedText }
 	}
 	```
 -->
@@ -55,11 +54,23 @@
 		onclick?: (payload: { text: string; el: HTMLElement }) => void
 		active?: boolean
 	}
+
+	let highlight: typeof import('../utils/highlight.svelte').highlight | undefined = undefined
+
+	async function getHighlighter() {
+		if (!highlight) {
+			console.log('LAZY LOADING HIGHLIGHT')
+			const module = await import('../utils/highlight.svelte')
+			highlight = module.highlight
+		}
+		return highlight
+	}
 </script>
 
+<!-- svelte-ignore state_referenced_locally -->
 <script lang="ts">
 	import type { LanguageRegistration, ThemeInput } from 'shiki'
-	import type { ValidLanguage } from '../utils/highlight'
+	import type { ValidLanguage } from '../utils/highlight.svelte'
 
 	import Copy from './Copy.svelte'
 	import { DEV } from 'esm-env'
@@ -154,27 +165,20 @@
 	let highlightedText = $state(_highlightedText ?? (ssr ? text : sanitize(text ?? '')))
 	const alreadyHighlighted = highlightedText === text
 	let collapsed = $state(_collapsed)
-	let highlight: typeof import('../utils/highlight').highlight | undefined = undefined
-
 	let codeblock: HTMLElement | undefined = undefined
 
 	$effect(() => {
 		highlightedText = _highlightedText ?? (ssr ? text : sanitize(text ?? ''))
-		if (alreadyHighlighted || ssr) return
-
-		if (!highlight) {
-			import('../utils/highlight').then(m => {
-				highlight = m.highlight
-				highlight(text ?? '', { lang, theme }).then(t => {
-					highlightedText = pretty ? t.replaceAll(/"/g, '') : t
-				})
-			})
-		} else {
-			highlight(text ?? '', { lang, theme }).then(t => {
-				highlightedText = pretty ? t.replaceAll(/"/g, '') : t
-			})
+		if (!alreadyHighlighted && !ssr) {
+			highlightCode()
 		}
 	})
+
+	async function highlightCode() {
+		const highlighter = await getHighlighter()
+		const result = await highlighter(text ?? '', { lang, theme })
+		highlightedText = pretty ? result.replaceAll(/"/g, '') : result
+	}
 
 	if (DEV && !text && !highlightedText) {
 		console.error('<Code /> component requires either the `text` or `highlightedText` prop.')
