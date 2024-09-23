@@ -49,8 +49,6 @@
 		width: 100%;
 		min-height: 100vh;
 
-		/* background-color: var(--secondary); */
-
 		z-index: 0;
 	}
 </style>
