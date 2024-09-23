@@ -1317,6 +1317,11 @@ input.gooey-search-input {
 		color: var(--gooey-fg-b);
 	}
 
+	// Dim the text when hovering over the reset button to improve tooltip contrast.
+	&:hover:has(.gooey-input-reset-btn.dirty:hover) {
+		color: var(--gooey-fg-e);
+	}
+
 	&:has(input:active),
 	&:has(.gooey-controller:active) {
 		.gooey-controller-number {
@@ -1360,12 +1365,12 @@ input.gooey-search-input {
 	&.disabled {
 		// opacity: 0.8;
 		// filter: brightness(0.8) contrast(1.2);
-		
+
 		// backdrop-filter: brightness(0.8) contrast(1.2);
-		
+
 		filter: brightness(0.9) contrast(1.1);
 		background: color-mix(in sRGB, var(--gooey-dark-a), transparent 90%);
-		
+
 		pointer-events: none;
 	}
 
