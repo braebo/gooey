@@ -14,10 +14,6 @@
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 
-	"[glsl]": {
-		"editor.defaultFormatter": "raczzalan.webgl-glsl-editor"
-	},
-
 	"[svelte]": {
 		"editor.defaultFormatter": "svelte.svelte-vscode"
 	},
@@ -33,19 +29,16 @@
 	"explorer.fileNesting.expand": false,
 	"explorer.fileNesting.patterns": {
 		".gitignore": ".gitattributes, .gitmodules, .gitmessage, .mailmap, .git-blame*",
-		"*.js": "$(capture).js.map, $(capture).min.js, $(capture).d.ts",
-		// "*.ts": "$(capture).js, $(capture).*.ts",
+		"*.js": "$(capture).min.js, $(capture).d.ts, $(capture).js.map, $(capture).d.ts.map",
+		"*.ts": "$(capture).js, $(capture).test.ts, $(capture).spec.ts, $(capture).d.ts, $(capture).d.ts.map",
 		"*.svelte": "$(capture).js, $(capture).ts, $(capture).*.ts",
-		"index.d.ts": "*.d.ts",
-		"shims.d.ts": "*.d.ts",
-		"default.nix": "shell.nix",
-		".env": "*.env, .env.*, env.d.ts",
 		"dockerfile": ".dockerignore, dockerfile*",
-		"package.json": ".browserslist*, .circleci*, .codecov, .commitlint*, .editorconfig, .firebase*, .flowconfig, .github*, .gitignore, .gitlab*, .gitpod*, .huskyrc*, .jslint*, .lintstagedrc*, .markdownlint*, .mocha*, .node-version, .nodemon*, .npm*, .nvmrc, .pm2*, .pnp.*, .pnpm*, .releaserc*, .sentry*, .stackblitz*, .styleci*, .stylelint*, .tazerc*, .textlint*, .travis*, .vscode*, .watchman*, .xo-config*, .yamllint*, .yarnrc*, api-extractor.json, appveyor*, ava.config.*, azure-pipelines*, bower.json, build.config.*, commitlint*, crowdin*, cypress.json, dangerfile*, dprint.json, firebase.json, grunt*, gulp*, jasmine.*, jenkins*, jest.config.*, jsconfig.*, karma*, lerna*, lint-staged*, nest-cli.*, netlify*, nodemon*, nx.*, package-lock.json, pm2.*, pnpm*, pullapprove*, puppeteer.config.*, renovate*, rollup.config.*, stylelint*, tsdoc.*, tslint*, tsup.config.*, turbo*, typedoc*, vetur.config.*, vitest.config.*, webpack.config.*, workspace.json, xo.config.*, yarn*",
+		"package.json": "bun.lock, deno.lock, .gitignore",
 		"readme.*": "authors, backers.md, changelog*, citation*, code_of_conduct.md, codeowners, contributing.md, contributors, copying, credits, governance.md, history.md, license*, maintainers, readme*, security.md, sponsors.md",
-		"cargo.toml": ".clippy.toml, .rustfmt.toml, cargo.lock, clippy.toml, cross.toml, rust-toolchain.toml, rustfmt.toml",
 		"svelte.config.*": "*.env, .eslint*, .babelrc*, .codecov, .cssnanorc*, .env.*, .htmlnanorc*, .mocha*, .postcssrc*, .terserrc*, api-extractor.json, ava.config.*, babel.config.*, cssnano.config.*, cypress.json, env.d.ts, htmlnanorc.*, jasmine.*, jest.config.*, jsconfig.*, karma*,.prettier*, mdsvex.config.js, playwright.config.*, postcss.config.*, puppeteer.config.*, svgo.config.*, tailwind.config.*, tsdoc.*, unocss.config.*, vercel*, vite.config.*, vitest.config.*, webpack.config.*, windi.config.*",
-		"favicon.ico": "robots.txt, safari-pinned-tab.svg, browserconfig.xml, site.webmanifest, *.png"
+		"favicon.ico": "robots.txt, safari-pinned-tab.svg, browserconfig.xml, site.webmanifest, *.png",
+		".prettierrc": ".prettierignore",
+		"vitest.config.ts": "vitest.shims.d.ts"
 	},
 
 	//* More comment tags.
@@ -109,6 +102,14 @@
 
 	"editor.tokenColorCustomizations": {
 		"textMateRules": [
+			//* More subtle samplekit shiki pp tags.
+			{
+				"scope": ["keyword.control.svelte", "!text.svelte", "!source.svelte"],
+				"settings": {
+					// "foreground": "#FF00FF"
+					"foreground": "#5a86ff36"
+				}
+			},
 			//* More subtle Template Tags.
 			{
 				"scope": [
