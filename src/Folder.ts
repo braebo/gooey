@@ -1575,7 +1575,11 @@ export class Folder {
 		return this.addText(key as string, opts.value as TValue, opts)
 	}
 
-	addColor(title: string, value?: ColorFormat, options?: ColorInputOptions): InputColor {
+	addColor(
+		title: string,
+		value?: ColorFormat | (string & {}),
+		options?: ColorInputOptions,
+	): InputColor {
 		const opts = this._resolveOpts(title, value, options)
 		const input = new InputColor(opts, this)
 		return this._registerInput(input, opts.presetId)
