@@ -13,6 +13,8 @@ floating gui library for the web
 
 </p>
 
+Gooey is designed for creating interactive control panels that work seamlessly in both development and production environments. Use it for creative coding, data visualization, interactive art, educational demos, WebGL experiments, and any web experience where users need real-time parameter control.
+
 <blockquote>
   <h6>🚧 Pre <code>v1.0.0</code></h6>
   Changes are frequent and breaking 𛱠
@@ -21,18 +23,18 @@ floating gui library for the web
 <br>
 
 <!-- TOC -->
-
--   [Features](#features)
--   [Getting Started](#getting-started)
-    -   [1. Install](#1-install)
-    -   [2. Create a new `Gooey`](#2-create-a-new-gooey)
--   [Basics](#basics)
--   [Inputs](#inputs)
-    -   [`add` vs `bind`](#add-vs-bind)
-    -   [`add`](#add)
-    -   [`bind`](#bind)
--   [About](#about)
--   [Roadmap](#roadmap)
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [1. Install](#1-install)
+  - [2. Create a new `Gooey`](#2-create-a-new-gooey)
+- [Basics](#basics)
+- [Inputs](#inputs)
+  - [`add` vs `bind`](#add-vs-bind)
+  - [`add`](#add)
+  - [`addMany`](#addmany)
+  - [`bind`](#bind)
+- [About](#about)
+- [Roadmap](#roadmap)
 <!-- /TOC -->
 
 <br>
