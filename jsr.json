@@ -1,13 +1,11 @@
 {
-  "$schema": "https://jsr.io/schema/config-file.v1.json",
-  "name": "@braebo/gooey",
-  "version": "0.3.2",
-  "exports": "./src/index.ts",
-  "publish": {
-    "include": [
-      "src",
-      "README.md",
-      "LICENSE"
-    ]
-  }
+	"$schema": "https://jsr.io/schema/config-file.v1.json",
+	"name": "@braebo/gooey",
+	"version": "0.3.2",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"publish": {
+		"include": ["src", "README.md", "LICENSE"]
+	}
 }

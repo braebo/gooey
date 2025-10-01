@@ -5,6 +5,10 @@
 		"target": "ESNext",
 		"module": "ESNext",
 
+		// JS
+		"allowJs": true,
+		"checkJs": true,
+
 		// "noEmit": true,
 		"moduleResolution": "Bundler",
 		"verbatimModuleSyntax": true,
@@ -26,8 +30,9 @@
 		// Rollup
 		"esModuleInterop": true,
 
-		"outDir": "dist/build"
+		// "outDir": "dist/build"
+		"outDir": "dist"
 	},
-	"include": ["src/**/*.ts", "src/**/*.js", "global.d.ts"],
-	"exclude": ["node_modules/**"]
+	"include": ["svelte.config.js", "src/**/*.ts", "src/**/*.js", "global.d.ts"],
+	"exclude": ["node_modules/**", "dist/**"]
 }
