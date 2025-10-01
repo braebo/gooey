@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Old build script - migrated to `tsdown`.
+ */
+
 import renameNodeModules from 'rollup-plugin-rename-node-modules'
 import typescript from '@rollup/plugin-typescript'
 import resolve from '@rollup/plugin-node-resolve'
@@ -18,6 +22,7 @@ const spinner = ora({
 	stream: process.stdout,
 }).start()
 
+// 1
 spinner.start(pc.magenta('sass') + ' build')
 
 const css = await esbuild.build({
