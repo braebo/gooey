@@ -1,4 +1,5 @@
 import type { ElementMap, InputOptions } from './Input'
+import type { Tooltip } from '../shared/Tooltip'
 import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
@@ -10,20 +11,36 @@ import { create } from '../shared/create'
 import { Input } from './Input'
 
 export interface NumberControllerElements extends ElementMap {
+	/** The main container for the number input. */
 	container: HTMLElement
+	/** Increment/decrement buttons. */
 	buttons: {
 		container: HTMLDivElement
 		increment: HTMLDivElement
 		decrement: HTMLDivElement
 	}
-	input: HTMLInputElement
-	range: HTMLInputElement
+	/** The text input. */
+	input: HTMLInputElement & { tooltip: Tooltip }
+	/** The range slider. */
+	slider: HTMLInputElement
 }
 
 export type NumberInputOptions = {
 	readonly __type?: 'NumberInputOptions'
+	/**
+	 * The minimum value (lowest/inclusive).
+	 * @defaultValue 0 for positive numbers, `initialValue * 2` for negative numbers.
+	 */
 	min?: number
+	/**
+	 * The maximum value (highest/inclusive).
+	 * @defaultValue `initialValue * 2` for positive numbers, `initialValue * -2` for negative numbers.
+	 */
 	max?: number
+	/**
+	 * The amount to increment/decrement by.
+	 * @defaultValue 0.001 if the value is small (less than 10), otherwise 0.1
+	 */
 	step?: number
 } & InputOptions<number>
 
@@ -31,6 +48,20 @@ export const NUMBER_INPUT_DEFAULTS: NumberInputOptions = {
 	__type: 'NumberInputOptions' as const,
 } as const
 
+/**
+ * A combined input with a traditional text input, increment/decrement buttons, and a slider.
+ *
+ * @example
+ * ```ts
+ * gooey.add('foo', 0)
+ * gooey.addNumber('bar', 10)
+ * gooey.bind({ baz: 100 }, 'baz')
+ * ```
+ *
+ * Hold down `cmd`/`ctrl` to snap to drag the number text input.
+ *
+ * Hold down `shift` to double the step, and `option`/`alt` to halve it (this works both on the slider, and when dragging the text input).
+ */
 export class InputNumber extends Input<number, NumberInputOptions, NumberControllerElements> {
 	readonly __type = 'InputNumber' as const
 	private _log: Logger
@@ -59,7 +90,7 @@ export class InputNumber extends Input<number, NumberInputOptions, NumberControl
 		if (v < 0 || v > 1) {
 			min = v <= 0 ? v * 2 : 0
 			max = v <= 0 ? v * -2 : v * 2
-			step = v / 100 <= 0.1 ? 0.001 : 0.1
+			step = Math.abs(v) < 10 ? 0.001 : 0.1
 		}
 
 		opts.min ??= min
@@ -86,13 +117,13 @@ export class InputNumber extends Input<number, NumberInputOptions, NumberControl
 			container,
 			input: this.numberController.element,
 			buttons: this.numberButtonsController.elements,
-			range: rangeController(this, opts, container),
+			slider: rangeController(this, opts, container),
 		} as const satisfies NumberControllerElements
 
 		this._evm.add(this.state.subscribe(this.refresh))
 
-		this._evm.listen(this.elements.controllers.range, 'pointerdown', this.lock)
-		this._evm.listen(this.elements.controllers.range, 'pointerup', () => this.unlock())
+		this._evm.listen(this.elements.controllers.slider, 'pointerdown', this.lock)
+		this._evm.listen(this.elements.controllers.slider, 'pointerup', () => this.unlock())
 
 		this._evm.listen(this.elements.controllers.input, 'input', this.set)
 
@@ -121,7 +152,7 @@ export class InputNumber extends Input<number, NumberInputOptions, NumberControl
 	refresh = () => {
 		const v = this.state.value
 		this._log.fn('refresh').debug(v)
-		this.elements.controllers.range.value = String(v)
+		this.elements.controllers.slider.value = String(v)
 		this.elements.controllers.input.value = String(v)
 		super.refresh(v)
 		return this
