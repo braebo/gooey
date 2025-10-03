@@ -1,10 +1,9 @@
-// https://mdsvex.com/docs#options
 import autolinkHeadings from 'rehype-autolink-headings'
 import slug from 'rehype-slug'
 import abbr from 'remark-abbr'
 
+import { /* escapeSvelte, */ defineMDSveXConfig } from 'mdsvex'
 import { createHighlighter } from 'shiki'
-import { escapeSvelte } from 'mdsvex'
 
 const highlighter = await createHighlighter({
 	themes: [
@@ -235,31 +234,40 @@ const highlighter = await createHighlighter({
 	langs: ['javascript', 'typescript', 'svelte'],
 })
 
-const mdsvexConfig = {
-	extensions: ['.md', '.mdx'],
+export const mdsvexConfig = defineMDSveXConfig({
+	extensions: ['.svelte'],
 	highlight: async (code, lang = 'text') => {
-		const html = escapeSvelte(
-			highlighter.codeToHtml(code, {
+		const html =
+			//  escapeSvelte(
+			highlighter.codeToHtml(escapeCurlyBois(code), {
 				lang,
 				theme: 'serendipity',
 				transformers: [transformerNotationHighlight(), transformerNotationFocus(), transformerNotationDiff()],
-			}),
-		)
+			}) // )
 		return `{@html \`${html}\` }`
 	},
-	smartypants: {
-		dashes: 'oldschool',
-	},
-	remarkPlugins: [abbr],
-	rehypePlugins: [
-		slug,
-		[
-			autolinkHeadings,
-			{
-				behavior: 'wrap',
-			},
-		],
-	],
+	// smartypants: {
+	// 	dashes: 'oldschool',
+	// },
+	// remarkPlugins: [abbr],
+	// rehypePlugins: [
+	// 	slug,
+	// 	[
+	// 		autolinkHeadings,
+	// 		{
+	// 			behavior: 'wrap',
+	// 		},
+	// 	],
+	// ],
+})
+
+/**
+ * Returns code with curly braces and backticks replaced by HTML entity equivalents
+ * @param {string} html - highlighted HTML
+ * @returns {string} - escaped HTML
+ */
+function escapeCurlyBois(code) {
+	return code.replace(/[{}`]/g, character => ({ '{': '&lbrace;', '}': '&rbrace;', '`': '&grave;' })[character])
 }
 
 export default mdsvexConfig

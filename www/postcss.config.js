@@ -1,14 +1,10 @@
 import autoprefixer from 'autoprefixer'
 import cssnano from 'cssnano'
 
-const dev = process.env.NODE_ENV !== 'production'
+const plugins = [autoprefixer]
 
-export default {
-	plugins: [
-		autoprefixer,
-		!dev &&
-			cssnano({
-				preset: 'default',
-			}),
-	],
+if (process.env.NODE_ENV === 'production') {
+	plugins.push(cssnano)
 }
+
+export default { plugins }
