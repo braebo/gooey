@@ -51,6 +51,7 @@
 	},
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.2",
+		"@braebo/ansi": "^0.2.0",
 		"@braebo/docinator": "link:@braebo/docinator",
 		"@changesets/cli": "2.29.7",
 		"@fontsource-variable/fredoka": "^5.2.10",
