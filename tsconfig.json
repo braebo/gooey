@@ -33,6 +33,6 @@
 		// "outDir": "dist/build"
 		"outDir": "dist"
 	},
-	"include": ["svelte.config.js", "src/**/*.ts", "src/**/*.js", "global.d.ts"],
+	"include": ["src/**/*.ts", "src/**/*.js", "global.d.ts"],
 	"exclude": ["node_modules/**", "dist/**"]
 }
