@@ -30,7 +30,7 @@
 	"explorer.fileNesting.patterns": {
 		".gitignore": ".gitattributes, .gitmodules, .gitmessage, .mailmap, .git-blame*",
 		"*.js": "$(capture).min.js, $(capture).d.ts, $(capture).js.map, $(capture).d.ts.map",
-		"*.ts": "$(capture).js, $(capture).test.ts, $(capture).spec.ts, $(capture).d.ts, $(capture).d.ts.map",
+		"*.ts": "$(capture).js, $(capture).test.ts, $(capture).spec.ts, $(capture).d.ts, $(capture).d.ts.map, $(capture).md",
 		"*.svelte": "$(capture).js, $(capture).ts, $(capture).*.ts",
 		"dockerfile": ".dockerignore, dockerfile*",
 		"package.json": "bun.lock, deno.lock, .gitignore",
