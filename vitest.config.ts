@@ -2,10 +2,6 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
 	test: {
-		browser: {
-			enabled: true,
-			name: 'chrome',
-		},
 		projects: [
 			{
 				test: {
@@ -13,9 +9,14 @@ export default defineConfig({
 					include: ['src/**/*.test.ts'],
 					browser: {
 						provider: 'webdriverio',
-						name: 'chrome',
 						enabled: true,
 						viewport: { width: 800, height: 1000 },
+						instances: [
+							{
+								browser: 'chrome',
+								viewport: { width: 800, height: 1000 },
+							},
+						],
 					},
 				},
 			},
