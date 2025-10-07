@@ -1,5 +1,11 @@
+dist
 node_modules
-.DS_Store
+
+# Docinator
 docs/extracted/
 _docs
-dist
+
+# Vitest
+__screenshots__
+
+.DS_Store
