@@ -4,13 +4,15 @@ import { parse } from 'cookie'
 
 export const handle: Handle = ({ event, resolve }) => {
 	const cookies = parse(event.request.headers?.get('cookie') || '')
-	event.locals.theme = <'dark' | 'light' | 'system'>cookies.theme || 'dark'
+	event.locals.theme = <'dark' | 'light' | 'system'>cookies['theme'] || 'dark'
 
 	let page = ''
 	return resolve(event, {
 		transformPageChunk: ({ html, done }) => {
 			page += html
-			if (done) return page.replace('%gooey.theme%', event.locals.theme)
+			if (done) {
+				return page.replace('%gooey.theme%', event.locals.theme)
+			}
 		},
 	})
 }

@@ -45,8 +45,16 @@
 		<!-- prettier-ignore -->
 		<link rel="preload" href="%sveltekit.assets%/fonts/monaspace/MonaspaceNeon_wght-wdth-slnt.ttf" as="font" type="font/ttf"  crossorigin />
 
+		<style>
+			body {
+				background: var(--bg-a, #0b0b11);
+			}
+		</style>
+
 		%sveltekit.head%
 	</head>
+
+	
 
 	<body>
 		<div id="gooey" style="display: contents">%sveltekit.body%</div>
