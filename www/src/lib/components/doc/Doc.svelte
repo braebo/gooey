@@ -88,7 +88,7 @@
 
 		<!-- svelte-ignore slot_element_deprecated -->
 		<div class="description" class:mobile>
-			{#snippet description()}
+			<!-- {#snippet description()} -->
 				{#if comment}
 					<div class="summary">
 						{@html comment.summary}
@@ -99,8 +99,8 @@
 						<Examples examples={comment.examples} />
 					{/if}
 				{/if}
-			{/snippet}
-			{@render description()}
+			<!-- {/snippet} -->
+			<!-- {@render description?.()} -->
 		</div>
 
 		{#if include('props')}

@@ -25,7 +25,8 @@
 	} = $props()
 </script>
 
-<button class="install-wrapper" {onclick} class:active {tabindex}>
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<div role="button" class="install-wrapper" {onclick} class:active {tabindex}>
 	<code class="install" {style}>
 		{@html text}
 	</code>
@@ -39,7 +40,7 @@
 			tabindex={-1}
 		/>
 	</div>
-</button>
+</div>
 
 <style lang="scss">
 	.install-wrapper {

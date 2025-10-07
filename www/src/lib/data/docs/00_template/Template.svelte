@@ -57,7 +57,7 @@ gooey.add('count', 1)
 	<div class="info-wrapper">
 		<div class="description em">
 			<span bind:this={eventsEl}>
-				See <a href="#events">Events</a>
+				More <a href="#events">Event</a> options
 			</span>
 		</div>
 

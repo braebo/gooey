@@ -1,6 +1,6 @@
-<!-- SampleKit version -->
 <script lang="ts" module>
 	import type { Example } from './types'
+	// import { page } from '$app/stores'
 
 	const bindManyData = $state({
 		wght: 100,
@@ -330,7 +330,7 @@ const gooey = new Gooey({
 				</div>
 
 				<div class="example">
-					<Code headless lang="ts" highlightedText={highlighted.bindMany1.code} ssr />
+					<Code headless lang="ts" highlightedText={highlighted.bindMany1} ssr />
 				</div>
 
 				<div class="description em plain">
@@ -348,7 +348,7 @@ const gooey = new Gooey({
 	</div>
 
 	<div class="example">
-		<Code ssr headless lang="ts" highlightedText={highlighted.folders.code} />
+		<Code ssr headless lang="ts" highlightedText={highlighted.folders} />
 
 		<LiveExample title="folders" onMount={data.folders.fn} position="center" />
 	</div>
@@ -370,7 +370,7 @@ const gooey = new Gooey({
 				</div>
 
 				<div class="example">
-					<Code headless lang="ts" highlightedText={highlighted.folders1.code} ssr />
+					<Code headless lang="ts" highlightedText={highlighted.folders1} ssr />
 				</div>
 			</Info>
 		{/if}

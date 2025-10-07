@@ -2,11 +2,12 @@
 	import { IMPORT_MODES, importMode } from '../../importMode.svelte'
 	import InstallButton from './InstallButton.svelte'
 	import Info from '$lib/components/Info.svelte'
+	import H from '$lib/components/H.svelte'
 
 	let infoTarget = $state<HTMLElement>()
 </script>
 
-<h2 id="install" class="section-title">Install</h2>
+<H l="2" id="install">Install</H>
 
 <section class="section">
 	<div class="installation-options">
@@ -252,12 +253,12 @@
 		}
 
 		.installer {
-			:global(code) {
-				min-width: 18rem;
-				padding: 0.25rem 0;
+			// :global(code) {
+			// 	min-width: 18rem;
+			// 	padding: 0.25rem 0;
 
-				font-size: var(--font-sm);
-			}
+			// 	font-size: var(--font-sm);
+			// }
 
 			:global(.gooey) {
 				margin: 0;

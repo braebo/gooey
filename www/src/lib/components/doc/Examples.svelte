@@ -29,6 +29,7 @@
 							text={block.raw}
 							highlightedText={block.content}
 							lang={block.lang}
+							ssr
 						/>
 					</div>
 				{:else}

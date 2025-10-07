@@ -1,4 +1,4 @@
-<script lang="ts">
+{/* <script lang="ts">
 	import Code from '$lib/components/Code.svelte'
 	import LiveExample from '$lib/components/LiveExample.svelte'
 </script>
@@ -8,6 +8,7 @@
 Create a <span class="gooey">gooey</span> with some [inputs](/docs#inputs)
 
 <Code ssr headless lang="ts" highlightedText="asd" />
+
 <div class="example">
 		<Code ssr headless lang="ts" highlightedText={String(`import { Gooey } from 'gooey'\nconst gooey = new Gooey()`)} />
 
@@ -18,4 +19,4 @@ Create a <span class="gooey">gooey</span> with some [inputs](/docs#inputs)
 		}}
 		position="center"
 	/>
-</div>
+</div> */}
