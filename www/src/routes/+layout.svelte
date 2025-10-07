@@ -2,26 +2,28 @@
 	import '@fontsource-variable/fredoka'
 	import '../styles/app.scss'
 
+	import { defer } from '../../../src/shared/defer'
+
 	import { setupViewTransition } from 'sveltekit-view-transition'
 	import HeroGradient from '$lib/components/HeroGradient.svelte'
 	import NavMobile from '$lib/components/Nav/NavMobile.svelte'
 	import Header from '$lib/components/Header/Header.svelte'
 	import PageTitle from '$lib/components/PageTitle.svelte'
+	import GooeyKit from '$lib/components/GooeyKit.svelte'
 	import { preloadData } from '$app/navigation'
-	import { defer } from '../../../src/shared/defer'
 	import { device } from '$lib/device.svelte'
 	import { Tree } from '$lib/utils/tree'
-	import { page } from '$app/stores'
+	import { page } from '$app/state'
 	import { onMount } from 'svelte'
 
 	setupViewTransition()
 
 	let { children } = $props()
 
-	let links = $derived(new Tree($page.data.routes as string[]).root.children!)
+	let links = $derived(new Tree(page.data.routes as string[]).root.children!)
 
 	onMount(() => {
-		if (!$page.url.pathname.includes('/docs')) {
+		if (!page.url.pathname.includes('/docs')) {
 			defer(() => preloadData('/docs'))
 		}
 	})
@@ -35,13 +37,24 @@
 	<NavMobile {links} />
 {/if}
 
-<div class="page">
-	{@render children?.()}
+<div class="page-wrapper">
+	<div class="sidebar-gutter" class:mobile={device.mobile}></div>
+
+	<div class="page">
+		{@render children?.()}
+	</div>
 </div>
 
 <HeroGradient />
 
+<GooeyKit {links} />
+
 <style>
+	.page-wrapper {
+		display: flex;
+		flex-direction: row;
+	}
+
 	.page {
 		display: flex;
 		gap: 1rem;

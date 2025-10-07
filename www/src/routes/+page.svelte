@@ -4,6 +4,8 @@
 
 <Nav />
 
+<div class="sidebar-background"></div>
+
 <div class="anim">
 	<div class="slant" />
 </div>

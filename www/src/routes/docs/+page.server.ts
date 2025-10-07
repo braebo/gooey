@@ -5,21 +5,18 @@ import { data as basics } from '$lib/data/docs/02_basics/Basics.svelte'
 
 import { transformerNotationHighlight, transformerNotationFocus, transformerNotationDiff } from '@shikijs/transformers'
 import { getHighlighterInstance } from '$lib/utils/highlight.svelte'
+// import { trimmer } from '$lib/utils/trimmer'
 
-export const prerender = true
-export const ssr = false
-
-/**
- * todo - When this was in an external file, it refused to re-use the highlighter instance,
- * todo - instead creating a new one each time... what was that about?
- */
 const highlighter = await getHighlighterInstance()
 
 export async function load() {
 	const highlightedEntries = await Promise.all(
-		Object.entries(Object.assign({}, basics, import_)).map(async ([key, { code }]) => {
+		// Object.entries(Object.assign({}, { code: { code: '' } })).map(async ([key, { code }]) => {
+		Object.entries(Object.assign({}, import_, basics)).map(async ([key, { code }]) => {
 			try {
+				// const trimmed = trimmer(code)
 				const highlighted = highlighter.codeToHtml(code, {
+					// const highlighted = highlighter.codeToHtml(trimmed, {
 					lang: 'ts',
 					theme: 'serendipity',
 					transformers: [
@@ -27,10 +24,10 @@ export async function load() {
 						transformerNotationFocus(),
 						transformerNotationDiff(),
 					],
+					// mergeWhitespaces: true,
 				} as CodeToHastOptions<string, string>)
 				return [key, highlighted]
 			} catch (error) {
-				console.error(error)
 				return [key, code]
 			}
 		}),
