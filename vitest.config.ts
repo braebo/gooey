@@ -8,6 +8,7 @@ export default defineConfig({
 					name: 'gooey',
 					include: ['src/**/*.test.ts'],
 					browser: {
+						// headless: true,
 						provider: 'webdriverio',
 						enabled: true,
 						viewport: { width: 800, height: 1000 },

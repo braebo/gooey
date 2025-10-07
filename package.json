@@ -28,23 +28,23 @@
 	],
 	"scripts": {
 		"build": "tsdown",
-		"build:watch": "tsdown --watch",
-		"build:all": "pnpm build && pnpm build:site",
-		"build:site": "cd www && bun i && bun run build",
+		"build:watch": "tsdown --watch ./src",
+		"build:all": "bun run build && bun run build:www",
+		"build:www": "cd www && bun i && bun run build",
 		"check": "tsc --noEmit",
-		"check:all": "pnpm check && pnpm check:site",
-		"check:site": "cd www && pnpm check",
+		"check:all": "bun check && bun check:www",
+		"check:www": "cd www && bun check",
 		"check:watch": "tsc --noEmit --watch",
-		"dev": "cd www && pnpm dev",
-		"dev:site": "cd www && pnpm dev",
+		"dev": "cd www && bun dev",
+		"dev:www": "cd www && bun dev",
 		"docinate": "bun run ../docinator/src/docinator.ts ./docs/extracted ./docs/highlighted",
 		"docinate:watch": "bun run --watch ../docinator/src/docinator.ts ./docs/extracted ./src/docs/highlighted",
-		"extract": "pnpm extractinator extract src docs/extracted --quiet=false",
+		"extract": "bun extractinator extract src docs/extracted --quiet=false",
 		"format": "prettier --write src",
 		"lint": "publint && prettier --check src",
-		"sort": "pnpm dlx sort-package-json && cd www && pnpm dlx sort-package-json",
+		"sort": "bunx sort-package-json && cd www && pnpm dlx sort-package-json",
 		"sync-version": "changeset version && pnpx sync-version jsr.json",
-		"test": "pnpm vitest"
+		"test": "bun vitest"
 	},
 	"dependencies": {
 		"esm-env": "^1.2.2"
