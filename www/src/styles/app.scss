@@ -1,108 +1,114 @@
-@import './font.scss';
-@import './theme.scss';
-@import './utils.scss';
-@import './inputs.scss';
-@import './elements.scss';
+@use 'font.scss';
+@use 'theme.scss';
+@use 'utils.scss';
+@use 'inputs.scss';
+@use 'elements.scss';
 
-::view-transition-new(*) {
-	animation-duration: 0.15s;
-}
-::view-transition-old(*) {
-	animation-duration: 0.15s;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-	animation: none;
-	mix-blend-mode: normal;
-	display: block;
-	scale: 1;
-	transform: scale(1);
-}
-
-:root {
-	view-transition-name: none;
-	
-	scroll-behavior: smooth;
-	scroll-padding-top: 2rem;
-	scroll-snap-align: start;
-}
-
-:root {
-	--mobile: 1000px;
-
-	--radius-sm: 0.1875rem;
-	--radius: 0.3125rem;
-	--radius-md: 0.4375rem;
-	--radius-lg: 0.625rem;
-
-	--page-width: clamp(400px, 100%, min(1100px, 100vw));
-
-	--padding-lg: 1.5rem;
-	--padding-md: 1rem;
-	--padding: 0.75rem;
-	--padding-sm: 0.5rem;
-
-	--focus-outline-color: color-mix(in hsl, var(--fg-d), var(--theme-a) 50%);
-
-	--shadow-lightness: 0.5;
-
-	--shadow-sm: 0rem 0.0313rem 0.0469rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
-		0rem 0.125rem 0.0938rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
-		0rem 0.15rem 0.125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.05)),
-		0rem 0.1875rem 0.1875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
-		0rem 0.3125rem 0.3125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
-		0rem 0.4375rem 0.625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.15));
-
-	--shadow: 0rem 0.0469rem 0.0625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.03)),
-		0rem 0.15rem 0.125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
-		0rem 0.28rem 0.1875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.05)),
-		0rem 0.3125rem 0.3125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.065)),
-		0rem 0.625rem 0.625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.09)),
-		0rem 0.625rem 1.25rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1));
-
-	--shadow-lg: 0rem 0.078rem 0.0625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.06)),
-		0rem 0.15rem 0.15rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.07)),
-		0rem 0.28rem 0.3125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.08)),
-		0rem 0.3125rem 0.5rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
-		0rem 0.625rem 0.9375rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
-		0rem 1.25rem 1.875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.01));
-
-	&[theme='light'] {
-		--shadow-lightness: 0.33;
+@layer app {
+	::view-transition-new(*) {
+		animation-duration: 0.15s;
 	}
-}
+	::view-transition-old(*) {
+		animation-duration: 0.15s;
+	}
 
-html {
-	color-scheme: light dark;
-	-webkit-text-size-adjust: 100%;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	min-height: 100vh;
-}
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation: none;
+		mix-blend-mode: normal;
+		display: block;
+		scale: 1;
+		transform: scale(1);
+	}
 
-body {
-	display: flex;
-	flex-direction: column;
-	position: relative;
+	:root {
+		view-transition-name: none;
 
-	width: 100%;
-	max-width: 100vw;
-	min-height: 100vh;
-	margin: 0;
+		scroll-behavior: smooth;
+		scroll-padding-top: 2rem;
+		scroll-snap-align: start;
+	}
 
-	background-color: var(--secondary);
+	:root {
+		--mobile: 1000px;
 
-	transition:
-		color 0.5s,
-		background-color 0.1s;
+		--radius-sm: 0.1875rem;
+		--radius: 0.3125rem;
+		--radius-md: 0.4375rem;
+		--radius-lg: 0.625rem;
 
-	touch-action: pan-y;
+		--page-width: clamp(400px, 100%, min(1100px, 100vw));
 
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
+		--padding-lg: 1.5rem;
+		--padding-md: 1rem;
+		--padding: 0.75rem;
+		--padding-sm: 0.5rem;
 
-*:focus-visible {
-	outline-color: var(--focus-outline-color);
+		--focus-outline-color: color-mix(in hsl, var(--fg-d), var(--theme-a) 50%);
+
+		--shadow-lightness: 0.5;
+
+		--shadow-sm:
+			0rem 0.0313rem 0.0469rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
+			0rem 0.125rem 0.0938rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
+			0rem 0.15rem 0.125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.05)),
+			0rem 0.1875rem 0.1875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
+			0rem 0.3125rem 0.3125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
+			0rem 0.4375rem 0.625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.15));
+
+		--shadow:
+			0rem 0.0469rem 0.0625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.03)),
+			0rem 0.15rem 0.125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.04)),
+			0rem 0.28rem 0.1875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.05)),
+			0rem 0.3125rem 0.3125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.065)),
+			0rem 0.625rem 0.625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.09)),
+			0rem 0.625rem 1.25rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1));
+
+		--shadow-lg:
+			0rem 0.078rem 0.0625rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.06)),
+			0rem 0.15rem 0.15rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.07)),
+			0rem 0.28rem 0.3125rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.08)),
+			0rem 0.3125rem 0.5rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
+			0rem 0.625rem 0.9375rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.1)),
+			0rem 1.25rem 1.875rem rgba(0, 0, 0, calc(var(--shadow-lightness) * 0.01));
+
+		&[theme='light'] {
+			--shadow-lightness: 0.33;
+		}
+	}
+
+	html {
+		color-scheme: light dark;
+		-webkit-text-size-adjust: 100%;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		min-height: 100vh;
+	}
+
+	body {
+		display: flex;
+		flex-direction: column;
+		position: relative;
+
+		width: 100%;
+		max-width: 100vw;
+		min-height: 100vh;
+		margin: 0;
+
+		// background: var(--bg-a, #0b0b11);
+		background-color: var(--secondary);
+
+		transition:
+			color 0.5s,
+			background-color 0.1s;
+
+		touch-action: pan-y;
+
+		overflow-x: hidden;
+		overflow-y: scroll;
+	}
+
+	*:focus-visible {
+		outline-color: var(--focus-outline-color);
+	}
 }

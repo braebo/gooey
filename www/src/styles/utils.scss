@@ -1,25 +1,36 @@
+@mixin br() {
+	user-select: none;
+	pointer-events: none;
+	z-index: -1;
+}
 .br-xs {
+	@include br();
 	height: 0.5rem;
 }
 .br-sm {
+	@include br();
 	height: 1rem;
 }
 .br {
+	@include br();
 	height: 1.75rem;
 }
 .br-md {
+	@include br();
 	height: 4rem;
 	@media screen and (max-width: 560px) {
 		height: 3rem;
 	}
 }
 .br-lg {
+	@include br();
 	height: 6.5rem;
 	@media screen and (max-width: 560px) {
 		height: 5rem;
 	}
 }
 .br-xl {
+	@include br();
 	height: 10rem;
 	@media screen and (max-width: 560px) {
 		height: 6rem;
