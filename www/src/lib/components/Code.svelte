@@ -28,7 +28,6 @@
 	<script>
 		import Code from 'fractils'
 
-		data
 		const { highlightedText } = data
 	</script>
 
@@ -49,29 +48,41 @@
 -->
 
 <script lang="ts" module>
+	import type { highlight as highlightFn } from '$lib/utils/highlight.svelte'
+
 	export type Tab = {
 		text: string
 		onclick?: (payload: { text: string; el: HTMLElement }) => void
 		active?: boolean
 	}
 
-	let highlight: typeof import('../utils/highlight.svelte').highlight | undefined = undefined
+	function log(...args: any[]) {
+		if (!DEV) return
+		console.log(`\x1b[1m\x1b[33mCode.svelte\x1b[0m\n↳ `, ...args)
+	}
+
+	let highlight = $state<typeof highlightFn>()
 
 	async function getHighlighter() {
 		if (!highlight) {
-			console.log('LAZY LOADING HIGHLIGHT')
 			const module = await import('../utils/highlight.svelte')
-			highlight = module.highlight
+
+			if (!highlight) log('Lazy loading highlight() function.')
+
+			highlight ??= module.highlight
 		}
+
 		return highlight
 	}
 </script>
 
 <!-- svelte-ignore state_referenced_locally -->
 <script lang="ts">
+	import type { ValidLanguage } from '$lib/utils/highlight.svelte'
 	import type { LanguageRegistration, ThemeInput } from 'shiki'
-	import type { ValidLanguage } from '../utils/highlight.svelte'
+	import type { Snippet } from 'svelte'
 
+	// import { trimmer } from '$lib/utils/trimmer'
 	import Copy from './Copy.svelte'
 	import { DEV } from 'esm-env'
 	import './code.scss'
@@ -80,49 +91,59 @@
 		/**
 		 * Effectively just disables the client-side highlighting, assuming the text has already
 		 * been highlighted on the server.
-		 * @defaultValue false
+		 * @default false
 		 */
 		ssr?: boolean
 		/**
 		 * An optional title to display above the code block.
-		 * @defaultValue 'code'
+		 * @default 'code'
 		 */
 		title?: string
 		/**
 		 * The language to use.  Must be a {@link LanguageRegistration}, ideally important
 		 * directly from the corresponding `shiki/langs/<lang>.mjs' module.
-		 * @defaultValue 'json'
+		 * @default 'json'
 		 */
-		lang?: ValidLanguage
+		lang?: ValidLanguage | ({} & string)
 		/**
 		 * The theme to use.
-		 * @defaultValue 'github'
+		 * @default 'serendipity'
 		 */
 		theme?: 'serendipity' | ThemeInput
 		/**
 		 * If true, a button will be displayed to copy the code to the clipboard.
-		 * @defaultValue true
+		 * @default true
 		 */
 		copyButton?: boolean
 		/**
 		 * If true, the code block will be collapsed by default.
-		 * @defaultValue false
+		 * @default false
 		 */
 		collapsed?: boolean
 		/**
 		 * If true, noise like `"` and `;` will be stripped (nice for JSON).
-		 * @defaultValue false
+		 * @default false
 		 */
 		pretty?: boolean
+		/**
+		 * If true, leading whitespace will be trimmed based on the minimum indentation level.
+		 * @default false
+		 */
+		trim?: boolean
 		close?: () => void
 		minimize?: () => void
 		maximize?: () => void
 		/**
 		 * Hides the header element when `false`.
-		 * @default false
+		 * @default true
 		 */
 		headless?: boolean
 		tabs?: Tab[]
+		/**
+		 * Bypasses the `.code-window` and `.codeblock` wrappers.
+		 * @default false
+		 */
+		nowrap?: boolean
 	} & (
 		| {
 				/**
@@ -134,6 +155,7 @@
 				 * prop is `true`, the highlighter will not be loaded / run on the client.
 				 */
 				highlightedText?: string
+				children?: Snippet
 		  }
 		| {
 				/**
@@ -145,6 +167,19 @@
 				 * prop is `true`, the highlighter will not be loaded / run on the client.
 				 */
 				highlightedText: string
+				children?: Snippet
+		  }
+		| {
+				/**
+				 * The string to highlight.
+				 */
+				text?: string
+				/**
+				 * Optional pre-highlighted text.  If this is provided _and_ the {@link ssr}
+				 * prop is `true`, the highlighter will not be loaded / run on the client.
+				 */
+				highlightedText?: string
+				children: Snippet
 		  }
 	)
 
@@ -158,16 +193,23 @@
 		copyButton = true,
 		collapsed: _collapsed = false,
 		pretty = false,
-		headless = false,
+		headless = true,
 		tabs = $bindable([]),
+		children = undefined,
+		nowrap = false,
 	}: Boilerplate = $props()
 
 	let highlightedText = $state(_highlightedText ?? (ssr ? text : sanitize(text ?? '')))
 	const alreadyHighlighted = highlightedText === text
+
 	let collapsed = $state(_collapsed)
 	let codeblock: HTMLElement | undefined = undefined
+	let loopGuard = false
 
 	$effect(() => {
+		if (loopGuard) return
+		loopGuard = true
+
 		highlightedText = _highlightedText ?? (ssr ? text : sanitize(text ?? ''))
 		if (!alreadyHighlighted && !ssr) {
 			highlightCode()
@@ -175,20 +217,25 @@
 	})
 
 	async function highlightCode() {
+		loopGuard = true
+		log('Highlighter called client-side!')
+
 		const highlighter = await getHighlighter()
-		const result = await highlighter(text ?? '', { lang, theme })
-		highlightedText = pretty ? result.replaceAll(/"/g, '') : result
+		let result = await highlighter(text ?? '', { lang: lang as ValidLanguage, theme })
+
+		if (pretty) result = result.replaceAll(/"/g, '')
+
+		highlightedText = result
 	}
 
-	if (DEV && !text && !highlightedText) {
-		console.error('<Code /> component requires either the `text` or `highlightedText` prop.')
-
-		if (!text && highlightedText) {
-			console.warn(
-				'`highlightedText` was provided, but unhighlighted `text` prop is required for copy/paste and screen-reader support.',
-			)
-		}
-	}
+	// if (DEV && !text && !highlightedText) {
+	// 	// console.error('<Code /> component requires either the `text` or `highlightedText` prop.')
+	// 	// if (!text && highlightedText) {
+	// 	// 	console.warn(
+	// 	// 		'`highlightedText` was provided, but unhighlighted `text` prop is required for copy/paste and screen-reader support.',
+	// 	// 	)
+	// 	// }
+	// }
 
 	/**
 	 * Replace all `<` and `>` with their HTML entities to avoid
@@ -202,7 +249,7 @@
 <!-- invisible plain text version for screen readers -->
 <div class="sr-only" aria-label={`code snippet titled ${title}`}>{text}</div>
 
-<div class="code-window">
+<div class:code-window={!nowrap} class:nowrap>
 	<div class="nav" class:headless>
 		{#each tabs as t}
 			<button
@@ -219,7 +266,7 @@
 		{/each}
 	</div>
 
-	<div class="codeblock" class:collapsed bind:this={codeblock}>
+	<div class:codeblock={!nowrap} class:nowrap class:collapsed bind:this={codeblock}>
 		{#if text && copyButton}
 			<div class="copy-container">
 				<div class="sticky">
@@ -228,10 +275,12 @@
 			</div>
 		{/if}
 
-		{#if highlightedText}
+		{#if highlightedText}1
 			<pre class="shiki-wrapper">{@html highlightedText}</pre>
-		{:else}
+		{:else if text}
 			<pre class="shiki-wrapper">{text}</pre>
+		{:else if children}
+			{@render children()}
 		{/if}
 	</div>
 </div>
@@ -248,5 +297,9 @@
 
 	.headless {
 		display: none;
+	}
+
+	.nowrap {
+		display: contents;
 	}
 </style>

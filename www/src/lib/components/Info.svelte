@@ -77,8 +77,6 @@
 			show = !show
 		}
 
-		tooltip && (tooltip.placement = show ? 'left' : side === 'right' ? 'right' : 'left')
-
 		if (tooltip) {
 			tooltip.placement = show ? 'left' : side === 'right' ? 'right' : 'left'
 		}
@@ -106,6 +104,7 @@
 		onclick={() => reposition()}
 		style:top="{top}px"
 		style:left="{left}px"
+		aria-label="toggle more info"
 	>
 		<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" overflow="visible">
 			<g
@@ -331,11 +330,13 @@
 			display: flex;
 			flex-direction: column;
 			gap: 1rem;
-			margin: 1.5rem 0;
+			/* margin: 1.5rem 0; */
+			margin: 1rem;
+			/* margin-top: 0; */
 
 			width: 100%;
 			opacity: 0;
-			transform: translateY(0.2rem);
+			transform: translateY(-1rem);
 			transition: 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
 			z-index: 100;

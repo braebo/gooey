@@ -1,5 +1,6 @@
 <script lang="ts">
 	import HomeIcon from '$lib/components/Header/HomeIcon.svelte'
+	import ThemeSelector from '$lib/components/ThemeSelector.svelte'
 	import ThemeSwitch from '../ThemeSwitch.svelte'
 	import { device } from '$lib/device.svelte'
 </script>
@@ -15,6 +16,7 @@
 
 	{#if !device.mobile}
 		<div id="theme" class="corner" class:mobile={device.mobile}>
+			<ThemeSelector />
 			<ThemeSwitch />
 		</div>
 	{/if}
@@ -71,5 +73,8 @@
 		position: absolute;
 		top: 0.75rem;
 		right: 0.75rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 </style>

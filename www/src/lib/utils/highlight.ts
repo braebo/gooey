@@ -3,12 +3,13 @@ import svelte from 'shiki/langs/svelte.mjs'
 import json from 'shiki/langs/json.mjs'
 
 import type { HighlighterCore } from 'shiki/core'
-import { createOnigurumaEngine, type CodeToHastOptions, loadWasm } from 'shiki'
+import type { CodeToHastOptions } from 'shiki'
 import type { ThemeInput } from 'shiki'
 
 import { transformerNotationHighlight, transformerNotationFocus, transformerNotationDiff } from '@shikijs/transformers'
 import { serendipity } from './highlight.serendipity'
 import { createHighlighterCore } from 'shiki/core'
+import getWasm from 'shiki/wasm'
 
 export type HighlightOptions = Partial<Omit<CodeToHastOptions<string, string>, 'lang' | 'theme'>> & {
 	/**
@@ -31,8 +32,28 @@ export const HIGHLIGHT_DEFAULTS: HighlightOptions = {
 const themes = new Set<ThemeInput>()
 
 export type ValidLanguage = (typeof LANGUAGES)[number]
-// prettier-ignore
-const LANGUAGES = ['json', 'javascript', 'typescript', 'stylus', 'sass', 'css', 'less', 'postcss', 'coffee', 'scss', 'html', 'pug', 'markdown', 'svelte', 'js', 'ts', 'styl', 'coffeescript', 'jade', 'md'] as const
+const LANGUAGES = [
+	'json',
+	'javascript',
+	'typescript',
+	'stylus',
+	'sass',
+	'css',
+	'less',
+	'postcss',
+	'coffee',
+	'scss',
+	'html',
+	'pug',
+	'markdown',
+	'svelte',
+	'js',
+	'ts',
+	'styl',
+	'coffeescript',
+	'jade',
+	'md',
+] as const
 
 // The default theme.
 themes.add('serendipity' as ThemeInput)
@@ -66,7 +87,7 @@ export async function highlight(text: string, options?: Partial<HighlightOptions
 	}
 }
 
-let highlighterInstance = $state<HighlighterCore>()
+let highlighterInstance: HighlighterCore | null = null
 
 /**
  * Highlighter instance singleton used internally.
@@ -74,11 +95,10 @@ let highlighterInstance = $state<HighlighterCore>()
  */
 export async function getHighlighterInstance() {
 	if (!highlighterInstance) {
-		await loadWasm(import('shiki/wasm'))
 		highlighterInstance = await createHighlighterCore({
+			loadWasm: getWasm,
 			themes: [serendipity],
 			langs: [svelte, typescript, json],
-			engine: createOnigurumaEngine(import('shiki/wasm')),
 		})
 		return highlighterInstance
 	} else {

@@ -47,6 +47,7 @@
 	onkeypress={() => (show = true)}
 	tabindex="0"
 	style:height={h}
+	style:min-height="var(--min-height, initial)"
 >
 	{#if show}
 		<Gooish bind:gooey {...props} />
@@ -125,7 +126,6 @@
 
 		background: var(--bg-a);
 		color: var(--fg-d);
-		border: 1px solid var(--bg-b);
 		border-radius: var(--radius);
 
 		font-size: var(--font-xs);

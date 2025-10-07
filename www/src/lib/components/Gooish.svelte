@@ -23,7 +23,12 @@
 
 	onMount(() => {
 		requestAnimationFrame(() => {
-			const width = window.innerWidth < 900 ? 320 : 380
+			let width = window.innerWidth < 900 ? 320 : 380
+			const elWidth = el?.offsetWidth
+
+			if (elWidth) {
+				width = Math.min(elWidth * 0.9, width)
+			}
 
 			gooey = new Gooey({
 				storage: false,

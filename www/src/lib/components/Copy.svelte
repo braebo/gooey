@@ -90,6 +90,7 @@
 	onkeydown={(e) => {if (e.key === 'Enter' || e.key === ' ') copy(e)}}
 	bind:this={btn}
 	{tabindex}
+	aria-label="Copy to clipboard"
 >
 	<div class="svg-container">
 		<svg

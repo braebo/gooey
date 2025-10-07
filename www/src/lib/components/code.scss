@@ -7,11 +7,11 @@ $ease-open: cubic-bezier(0.08, 1.12, 0.3, 0.97);
 
 $max-height: 80vh;
 
-:root[theme='light'] {
-	.code-window {
-		background: color-mix(in lch, var(--dark-b), var(--dark-d));
-	}
-}
+// :root[theme='light'] {
+// 	.code-window {
+// 		background: color-mix(in hsl, var(--dark-a), var(--dark-b) 20%);
+// 	}
+// }
 
 .code-window {
 	box-sizing: border-box;
@@ -28,9 +28,8 @@ $max-height: 80vh;
 	backdrop-filter: blur(0.5rem);
 	-webkit-backdrop-filter: blur(0.5rem);
 	border-radius: var(--radius);
-	box-shadow: var(--shadow-sm);
+	// box-shadow: var(--shadow-sm);
 
-	font-size: 0.8rem;
 	text-align: var(--text-align, left);
 
 	overflow: hidden;
@@ -63,7 +62,7 @@ $max-height: 80vh;
 
 		margin: 0;
 
-		overflow-y: auto;
+		// overflow-y: auto;
 	}
 
 	.nav {
@@ -143,30 +142,28 @@ $max-height: 80vh;
 	}
 }
 
-.shiki.has-focused {
-	.line {
+[data-shiki].has-focus {
+	[data-line] {
 		transition: 0.25s;
 	}
 
-	.line {
+	[data-line] {
 		filter: blur(1px) saturate(0.5) brightness(0.8);
 	}
 
-	.line.focused {
+	[data-line].focus {
 		filter: blur(0) saturate(1) brightness(1);
-		font-variation-settings: 'wght' 700;
 	}
 }
 
-.has-focused:hover .line {
+[data-shiki].has-focus:hover [data-line] {
 	filter: none;
 }
 
-.shiki .line.focused {
+[data-shiki] [data-line].focus {
 	filter: none;
 }
-
-pre.shiki-wrapper {
+.shik-wrapper {
 	height: var(--height, 100%);
 	max-height: $max-height;
 	padding: 0 1rem;
@@ -185,7 +182,7 @@ pre.shiki-wrapper {
 		// padding: 0 0.5rem;
 		padding: 0 var(--padding);
 
-		pre.shiki {
+		pre[data-shiki] {
 			padding: 0;
 			// margin: 0.33rem 0;
 			margin: calc(var(--padding) * 0.85) 0;
@@ -206,44 +203,45 @@ pre.shiki-wrapper {
 	z-index: 1;
 }
 
-// @defaultValue text
-pre.shiki code span.line {
+pre[data-shiki] code span[data-line] {
 	margin-left: auto;
 }
 
-////// Scrollbars //////
-
-pre.shiki {
-	overflow-x: visible;
-	cursor: auto;
-	user-select: text;
-	::selection {
-		background: color-mix(in lch, var(--dark-b), var(--dark-c) 20%);
-	}
-}
+////? Scrollbars ?////
 
 $scrollbar-width: 7px;
-pre.shiki-wrapper {
+pre[data-shiki] {
 	scrollbar-gutter: stable;
+	overflow: auto;
+	cursor: auto;
+	user-select: text;
+
+	code {
+		padding-right: 2rem;
+	}
+
+	::selection {
+		background: color-mix(in lch, var(--bg-b), var(--bg-c) 30%);
+	}
 }
-pre.shiki-wrapper::-webkit-scrollbar {
+pre[data-shiki]::-webkit-scrollbar {
 	height: $scrollbar-width;
 	width: $scrollbar-width;
 
 	border-radius: 0.25rem;
 	background: transparent; /* make scrollbar transparent */
 }
-pre.shiki-wrapper::-webkit-scrollbar-thumb {
+pre[data-shiki]::-webkit-scrollbar-thumb {
 	background: var(--bg-b);
 	border-radius: 0.125rem;
 
 	cursor: pointer;
 }
-pre.shiki-wrapper::-webkit-scrollbar-corner {
+pre[data-shiki]::-webkit-scrollbar-corner {
 	background: transparent;
 }
 
-.shiki {
+[data-shiki] {
 	filter: brightness(0.9);
 
 	&:focus {
@@ -258,12 +256,11 @@ pre.shiki-wrapper::-webkit-scrollbar-corner {
 		outline-offset: 7px;
 	}
 }
-html[theme='light'] .shiki {
-	filter: brightness(1.1);
-}
+// html[theme='light'] [data-shiki] {
+// 	filter: brightness(1.1);
+// }
 
-div.code-window > div.codeblock > pre > pre > code,
-div.code-window > div.codeblock > * {
+div.code-window > div.codeblock > pre > pre > code {
 	font-family: var(--font-mono);
 	font-size: var(--font-size, var(--font));
 	line-height: var(--line-height, 1.1rem);

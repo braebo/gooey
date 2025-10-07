@@ -1,5 +1,3 @@
-<!-- @hmr:reset -->
-
 <script lang="ts">
 	import GooeyThemeSync from '$lib/components/GooeyThemeSync.svelte'
 	import { params } from '$lib/components/orbs/params'
@@ -18,7 +16,7 @@
 	let orbs = true
 
 	onMount(() => {
-		params.update((p) => {
+		params.update(p => {
 			p.height = Math.round(window.innerHeight / 10)
 			p.width = Math.round(window.innerWidth / 7)
 			return p
@@ -33,7 +31,7 @@
 	})
 
 	function onResize() {
-		params.update((p) => {
+		params.update(p => {
 			p.height = Math.round(window.innerHeight / 10)
 			p.width = Math.round(window.innerWidth / 7)
 			return p
@@ -51,13 +49,7 @@
 	{#if $showCode}
 		<div class="debug" transition:fly={{ y: 5, duration: 250, easing: quintOut }}>
 			{#key $code}
-				<Code
-					--max-height="90vh"
-					title="active preset"
-					lang="ts"
-					text={$code}
-					on:close={() => showCode.set(false)}
-				/>
+				<Code --max-height="90vh" title="active preset" lang="ts" text={$code} />
 			{/key}
 		</div>
 	{/if}

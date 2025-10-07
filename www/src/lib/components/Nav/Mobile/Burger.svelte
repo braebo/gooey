@@ -2,9 +2,9 @@
 	import { fly } from 'svelte/transition'
 	import { OnMount } from 'fractils'
 
-	export let showMenu = false
+	let { showMenu = $bindable(false) } = $props()
 
-	let intro = true
+	let intro = $state(true)
 
 	const handleClick = () => {
 		intro = false
@@ -17,9 +17,9 @@
 	role="button"
 	tabindex="0"
 	class:showMenu
-	on:keypress={handleClick}
+	onkeypress={handleClick}
 	out:fly|global={{ x: 75 }}
-	on:pointerdown={handleClick}
+	onpointerdown={handleClick}
 >
 	<OnMount>
 		{#key showMenu}

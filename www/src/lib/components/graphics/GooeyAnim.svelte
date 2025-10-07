@@ -96,12 +96,12 @@
 	function onpointerdown(e: PointerEvent) {
 		grabbing = true
 		mouseOffset = e.clientX - thumbEl!.getBoundingClientRect().left
-		hueInput?.elements.controllers.range.classList.add('active')
+		hueInput?.elements.controllers.slider.classList.add('active')
 	}
 
 	function onblur() {
 		grabbing = false
-		hueInput?.elements.controllers.range.classList.remove('active')
+		hueInput?.elements.controllers.slider.classList.remove('active')
 	}
 
 	function onpointermove(e: PointerEvent) {
@@ -151,7 +151,7 @@
 	const fps = 60
 	const interval = 1000 / fps
 
-	requestAnimationFrame(tick)
+	globalThis?.requestAnimationFrame?.(tick)
 	function tick() {
 		if (disposed) return
 		const now = performance.now()

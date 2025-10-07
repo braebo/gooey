@@ -1,10 +1,10 @@
-import type { ThemeInput } from 'shiki'
+import type { ThemeRegistrationRaw } from 'shiki'
 
 /**
  * The default shikiji theme for `highlight`.
  * @internal
  */
-export const serendipity: ThemeInput = {
+export const serendipity = {
 	name: 'serendipity',
 	type: 'dark',
 	colors: {
@@ -20,7 +20,7 @@ export const serendipity: ThemeInput = {
 			},
 		},
 		{
-			scope: ['comment'],
+			scope: ['comment', 'punctuation.definition.comment'],
 			settings: {
 				foreground: '#6B6D7C',
 				fontStyle: 'italic',
@@ -45,12 +45,7 @@ export const serendipity: ThemeInput = {
 			},
 		},
 		{
-			scope: [
-				'entity.name.section',
-				'entity.name.tag',
-				'entity.name.namespace',
-				'entity.name.type',
-			],
+			scope: ['entity.name.section', 'entity.name.tag', 'entity.name.namespace', 'entity.name.type'],
 			settings: {
 				foreground: '#94b8ff',
 			},
@@ -182,12 +177,7 @@ export const serendipity: ThemeInput = {
 			},
 		},
 		{
-			scope: [
-				'variable.other',
-				'variable.language',
-				'variable.function',
-				'variable.argument',
-			],
+			scope: ['variable.other', 'variable.language', 'variable.function', 'variable.argument'],
 			settings: {
 				foreground: '#DEE0EF',
 			},
@@ -236,6 +226,6 @@ export const serendipity: ThemeInput = {
 		// 	}
 		// }
 	],
-}
+} as const satisfies ThemeRegistrationRaw
 
 export default serendipity

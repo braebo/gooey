@@ -1,4 +1,5 @@
 import type { Theme } from './themer.types'
+export type { Theme }
 
 import vanilla from './themes/vanilla'
 import scout from './themes/scout'
@@ -34,6 +35,9 @@ class Themer {
 	activeTheme = $state<Theme>(vanilla)
 	preference = $state<'light' | 'dark' | 'system'>('system')
 	mode = $derived.by(() => this.#resolveMode())
+	colors = $derived.by(() =>
+		Object.fromEntries(Object.entries(this.activeTheme.vars.color).map(([k, v]) => [k, this.resolveLightDark(v)])),
+	)
 	themes = { vanilla, flat, scout } satisfies Record<string, Theme>
 
 	css?: CSSStyleSheet
@@ -65,7 +69,7 @@ class Themer {
 		if (globalThis.window) {
 			this.init()
 		} else {
-			console.warn('Themer: window object not found. Aborting initialization.')
+			console.warn('\x1b[96mthemer.svelte.ts\x1b[39m: window object not found - \x1b[33maborting\x1b[39m')
 			// todo - what could be done server-side?
 		}
 
@@ -107,7 +111,8 @@ class Themer {
 
 		let str = ':root {\n'
 		for (const [k, v] of Object.entries(this.activeTheme.vars.color)) {
-			str += `\t${k}: ${v};\n`
+			const resolvedValue = this.resolveLightDark(v)
+			str += `\t${k}: ${resolvedValue};\n`
 		}
 		str += '}'
 
@@ -116,6 +121,23 @@ class Themer {
 		document.documentElement.style.setProperty('color-scheme', this.mode)
 
 		this.#updateStorage()
+	}
+
+	/**
+	 * Resolves a light-dark CSS function based on the current theme mode.
+	 * @param value The light-dark CSS function as a string
+	 * @returns The resolved value based on the current mode
+	 */
+	resolveLightDark(value: string): string {
+		const lightDarkRegex = /light-dark\((.*?),(.*?)\)/
+		const match = value.match(lightDarkRegex)
+
+		if (match) {
+			const [, lightValue, darkValue] = match
+			return this.mode === 'light' ? lightValue.trim() : darkValue.trim()
+		}
+
+		return value // Return the original value if it's not a light-dark function
 	}
 
 	/**
@@ -140,10 +162,7 @@ class Themer {
 	}
 
 	#updateStorage(): void {
-		if (!this.#storage) {
-			console.log('STORAGE DISABLED')
-			return
-		}
+		if (!this.#storage) throw new Error('Storage is disabled')
 
 		globalThis.localStorage?.setItem(this.#storageKey, this.preference)
 		const newMode = this.#resolveMode(this.preference)
