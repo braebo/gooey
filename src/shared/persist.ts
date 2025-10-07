@@ -57,7 +57,7 @@ export function persist<T>(
 		get(): T {
 			if (bail()) return value!
 			const storedValue = localStorage.getItem(key)
-			return storedValue ? JSON.parse(storedValue) : value
+			return storedValue ? JSON.parse(storedValue) : value as T
 		},
 		set(newValue: T) {
 			if (bail()) return

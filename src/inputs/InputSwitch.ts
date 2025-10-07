@@ -158,7 +158,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 
 		if (typeof v === 'boolean') {
 			this.undoManager?.commit({
-				// @ts-expect-error - ¯\_(ツ)_/¯
+				// @ts-expect-error - // TODO
 				target: this,
 				from: this.state.value,
 				to: v,

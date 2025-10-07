@@ -477,17 +477,18 @@ export class PresetManager {
 			},
 		)
 
+		// console.log('this.presets.value.map(p => p.title)', this.presets.value.map(p => p.title))
+
 		//? Presets Select Input
-		this._presetsInput = presetsFolder.addSelect('', this.presets.value, {
-			labelKey: 'title',
-			order: 0,
+		this._presetsInput = presetsFolder.addSelect('', {
 			value: this.activePreset.value,
-			resettable: false,
-			presetId: presetsFolder.presetId + '__preset_select',
+			options: this.presets.value
 		})
 
+		// console.log('this._presetsInput.options', this._presetsInput.options)
+
 		let first = true
-		this._presetsInput.on('change', ({ value }) => {
+		this._presetsInput.on('change', (value) => {
 			if (first) {
 				this._log
 					.fn("_presetsInput.on('change')")
@@ -630,7 +631,7 @@ export class PresetManager {
 	}
 
 	private _toggleRename = () => {
-		if (this._presetsInput.select.elements.selected.getAttribute('contenteditable')) {
+		if (this._presetsInput.selectController.elements.selected.getAttribute('contenteditable')) {
 			this._handleRename()
 		} else {
 			this._enableRename()
@@ -652,7 +653,7 @@ export class PresetManager {
 	private _enableRename = (cursorToEnd = true) => {
 		this._log.fn('_enableRename').debug({ this: this })
 
-		const el = this._presetsInput.select.elements.selected
+		const el = this._presetsInput.selectController.elements.selected
 
 		if (this.defaultPresetIsActive) {
 			this._log.warn('Cannot rename default preset.')
@@ -666,7 +667,7 @@ export class PresetManager {
 		}
 
 		this._renamePresetButton.element.classList.add('active')
-		this._presetsInput.select.disableClicks = true
+		this._presetsInput.selectController.disableClicks = true
 		el.setAttribute('contenteditable', 'true')
 		el.focus()
 		const range = document.createRange()
@@ -686,8 +687,8 @@ export class PresetManager {
 	private _handleRename = (e?: Event) => {
 		this._log.fn('_disableRename').debug({ e, this: this })
 
-		this._presetsInput.select.disableClicks = false
-		this._presetsInput.select.elements.selected.removeAttribute('contenteditable')
+		this._presetsInput.selectController.disableClicks = false
+		this._presetsInput.selectController.elements.selected.removeAttribute('contenteditable')
 		this._renamePresetButton.element.classList.remove('active')
 
 		this.folder.evm.clearGroup('preset-manager-rename')
@@ -756,7 +757,7 @@ export class PresetManager {
 
 		this._presetsInput.options = this.presets.value.map(o => ({ label: o.title, value: o }))
 		const activePreset = this.activePreset.value
-		this._presetsInput.set({ label: activePreset.title, value: activePreset })
+		this._presetsInput.select({ label: activePreset.title, value: activePreset })
 
 		this._refreshInputs()
 	}

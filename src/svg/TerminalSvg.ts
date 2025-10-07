@@ -12,7 +12,7 @@ export class TerminalSvg {
 	classes = [this.class, 'gooey-cancel']
 
 	constructor(folder: Folder) {
-		const parent = folder.elements.header
+		const parent = folder.elements.toolbar.container
 		let style = undefined as StyleDefinition | undefined
 
 		if (folder.isRoot) this.classes.push('gooey-terminal-icon-root')
@@ -34,7 +34,8 @@ export class TerminalSvg {
 			tooltip: {
 				text: `console.log`,
 				delay: 1500,
-				placement: folder.isRoot ? 'right' : 'left',
+				// placement: folder.isRoot ? 'right' : 'left',
+                placement: 'top',
 				offsetX: folder.isRoot ? `${8}px` : `${-8}px`,
 				// @ts-expect-error - @internal
 				style: folder.gooey?._getStyles,
@@ -50,45 +51,30 @@ export class TerminalSvg {
 
 	static style = /*css*/ `
         .gooey-terminal-icon {
-            display: grid;
-            place-items: center;
-            
-            position: absolute;
-            right: 0.25rem;
-            top: 0;
-            bottom: 0;
-            margin: auto 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
 
             color: var(--gooey-fg-d);
-            transform: translateY(15%);
-            opacity: 0;
-            /* opacity: 0.075; */
+            opacity: 0.1;
             border-radius: 3px;
 
             transition-duration: 0.2s;
             transition-property: opacity, background;
             transition-delay: 0.25s, 0s;
-
-            z-index: 1;
             
+            pointer-events: auto;
             cursor: pointer;
+            z-index: 1;
 
             &:hover {
+                opacity: 0.75;
                 background: var(--gooey-bg-b);
             }
         }
 
-        .gooey-terminal-icon-root {
-            right: unset;
-            left: 0.33rem;
-            top: -0.25rem;
-        }
-
-        .gooey-terminal-icon:hover {
-            opacity: 0.75;
-        }
     `
 }

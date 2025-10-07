@@ -16,51 +16,87 @@ describe('addSelect', () => {
 	const gui = g.addGooey()
 
 	test('correctly adds the title', () => {
-		const select = gui.addSelect('testing 123', options)
+		const select = gui.addSelect('testing 123', { value: 'foo', options })
 		expect(select.title).toBe('testing 123')
 	})
 
-	test('options with initialValue', () => {
-		const select = gui.addSelect('foobar', ['foo', 'bar'], { initialValue: 'bar' })
+	test('options with value', () => {
+		const select = gui.addSelect('foobar', 'bar', { options: ['foo', 'bar'] })
 		expect(select.options).toStrictEqual(options)
-		expect(select.state.value).toStrictEqual(options[1])
+		expect(select.value).toBe('bar')
+		expect(select.selected.value).toStrictEqual(options[1])
 	})
 
-	test('options without initialValue', () => {
-		const select = gui.addSelect('select', ['foo', 'bar'])
+	test('inline value+options object', () => {
+		const select = gui.addSelect('select', { value: 'foo', options: ['foo', 'bar'] })
 
 		expect(select.options).toStrictEqual([
 			{ label: 'foo', value: 'foo' },
 			{ label: 'bar', value: 'bar' },
 		])
 
-		expect(
-			select.state.value,
-			'Incorrect fallback - expected the option at index 0\n',
-		).toStrictEqual(options[0])
+		expect(select.value, 'Incorrect value\n').toBe('foo')
+		expect(select.selected.value, 'Incorrect selected option\n').toStrictEqual(options[0])
 	})
 
-	test('all options', () => {
-		const select = gui.addSelect('select', options, {
-			initialValue: options[1],
+	test('labeled options', () => {
+		const select = gui.addSelect('select', {
+			value: options[1].value,
+			options,
 		})
 
 		expect(select.options).toStrictEqual(options)
-		expect(select.state.value).toStrictEqual(options[1])
+		expect(select.value).toBe('bar')
+		expect(select.selected.value).toStrictEqual(options[1])
+	})
+})
+
+describe('bindSelect', () => {
+	const gui = g.addGooey()
+
+	test('correctly binds the title', () => {
+		const target = { theme: 'foo' }
+		const select = gui.bindSelect(target, 'theme', { options: ['foo', 'bar'] })
+		expect(select.title).toBe('theme')
 	})
 })
 
 describe('add', () => {
 	const gui = g.addGooey()
 
-	test('from unlabeled array of options', () => {
-		const input = gui.add('title', ['foo', 'bar', 'baz'])
+	test('value + options config pattern', () => {
+		const input = gui.add('select1', 'foo', { options: ['foo', 'bar', 'baz'] })
 		expect(input.__type).toStrictEqual('InputSelect')
+		expect(input.value).toBe('foo')
 	})
 
-	test('from unlabeled string array', () => {
-		const input = gui.add('title', ['foo', 'bar', 'baz'])
+	test('value + labeled options config pattern', () => {
+		const input = gui.add('select2', 1, {
+			options: [
+				{ label: 'One', value: 1 },
+				{ label: 'Two', value: 2 },
+			],
+		})
 		expect(input.__type).toStrictEqual('InputSelect')
+		expect(input.value).toBe(1)
+	})
+
+	test('inline value+options object pattern', () => {
+		const input = gui.add('select3', { value: 'bar', options: ['foo', 'bar', 'baz'] })
+		expect(input.__type).toStrictEqual('InputSelect')
+		expect(input.value).toBe('bar')
+	})
+
+	test('inline labeled options pattern', () => {
+		const input = gui.add('select4', {
+			value: 2,
+			options: [
+				{ label: 'One', value: 1 },
+				{ label: 'Two', value: 2 },
+			],
+		})
+		expect(input.__type).toStrictEqual('InputSelect')
+		expect(input.value).toBe(2)
 	})
 })
 
@@ -70,30 +106,49 @@ describe('addMany', () => {
 	test('from labeled option', () => {
 		gui.addMany(
 			{
-				foo: {
-					label: 'foo',
-					value: 'foo',
+				labeledSelect: {
+					value: 1,
+					options: [
+						{ label: 'first', value: 1 },
+						{ label: 'second', value: 2 },
+						{ label: 'third', value: 3 },
+					],
 				},
 			},
+			/** This should not be necessary to generate an InputSelect, but it's useful to ensure
+			    that the Input and InputOptions are correctly inferred by `addMany`. */
 			{
-				foo: {
+				labeledSelect: {
 					__type: 'SelectInputOptions',
-					options: [
-						{ label: 'foo', value: 'foo' },
-						{ label: 'bar', value: 'bar' },
-						{ label: 'baz', value: 'baz' },
-					],
 				},
 			},
 		)
 
-		const input = gui.inputs.get('foo')!
-		expect(input.value).toMatchObject({ label: 'foo', value: 'foo' })
+		const input = gui.inputs.get('labeledSelect')! as any
+		expect(input.__type).toBe('InputSelect')
+		expect(input.value).toBe(1)
+		expect(input.selected.value).toMatchObject({ label: 'first', value: 1 })
 	})
 
 	test('from unlabeled string array', () => {
-		gui.addMany({ foo: ['foo', 'bar', 'baz'] })
-		const input = gui.inputs.get('foo')!
-		expect(input.value).toMatchObject({ label: 'foo', value: 'foo' })
+		gui.addMany(
+			{
+				stringSelect: {
+					value: 'foo',
+					options: ['foo', 'bar', 'baz'],
+				},
+			},
+			/** This should not be necessary to generate an InputSelect, but it's useful to ensure
+			    that the Input and InputOptions are correctly inferred by `addMany`. */
+			{
+				stringSelect: {
+					__type: 'SelectInputOptions',
+				},
+			},
+		)
+		const input = gui.inputs.get('stringSelect')! as any
+		expect(input.__type).toBe('InputSelect')
+		expect(input.value).toBe('foo')
+		expect(input.selected.value).toMatchObject({ label: 'foo', value: 'foo' })
 	})
 })

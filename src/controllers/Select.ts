@@ -8,7 +8,19 @@ import { values } from '../shared/object'
 import { create } from '../shared/create'
 import { Logger } from '../shared/logger'
 
-export type LabeledOption<T> = { label: string; value: T }
+/**
+ * An option value with an associated label used to represent this option in the UI.
+ */
+export type LabeledOption<T> = {
+	/**
+	 * The text displayed for this option in the multiselect dropdown.
+	 */
+	label: string
+	/**
+	 * The raw value of this option.
+	 */
+	value: T
+}
 export type Option<T> = T | LabeledOption<T>
 
 export interface SelectInputOptions<T> {

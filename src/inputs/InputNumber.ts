@@ -122,12 +122,12 @@ export class InputNumber extends Input<number, NumberInputOptions, NumberControl
 
 		this._evm.add(this.state.subscribe(this.refresh))
 
-		this._evm.listen(this.elements.controllers.slider, 'pointerdown', this.lock)
+		this._evm.listen(this.elements.controllers.slider, 'pointerdown', () => this.lock())
 		this._evm.listen(this.elements.controllers.slider, 'pointerup', () => this.unlock())
 
 		this._evm.listen(this.elements.controllers.input, 'input', this.set)
 
-		this._evm.listen(this.elements.controllers.input, 'dragStart', this.lock)
+		this._evm.listen(this.elements.controllers.input, 'dragStart', () => this.lock())
 		this._evm.listen(this.elements.controllers.input, 'dragEnd', () => this.unlock())
 	}
 

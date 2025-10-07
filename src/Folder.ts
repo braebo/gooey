@@ -1,4 +1,4 @@
-import { DEV } from 'esm-env'
+import { BROWSER, DEV } from 'esm-env'
 
 import type {
 	Input,
@@ -12,6 +12,7 @@ import type { ColorFormat } from './shared/color/types/colorFormat'
 import type { LabeledOption, Option } from './controllers/Select'
 import type { ColorObject } from './shared/color/types/objects'
 import type { ColorString } from './shared/color/types/strings'
+import type { ToolbarButtonConfig } from './svg/ToolbarButton'
 import type { GooeyOptions, GooeyPreset } from './Gooey'
 import type { Tooltip } from './shared/Tooltip'
 
@@ -20,6 +21,7 @@ import { InputButton, type ButtonInputOptions } from './inputs/InputButton'
 import { InputSelect, type SelectInputOptions } from './inputs/InputSelect'
 import { InputNumber, type NumberInputOptions } from './inputs/InputNumber'
 import { InputColor, type ColorInputOptions } from './inputs/InputColor'
+import { InputArray, type ArrayInputOptions } from './inputs/InputArray'
 import { InputText, type TextInputOptions } from './inputs/InputText'
 import {
 	InputButtonGrid,
@@ -31,19 +33,19 @@ import {
 import { animateConnector, createFolderConnector, createFolderSvg } from './svg/createFolderSVG'
 import { Color, isColor, isColorFormat } from './shared/color/color'
 import { composedPathContains } from './shared/cancelClassFound'
-import { fromState, state, type State } from './shared/state'
+import { state, type State } from './shared/state'
 import { isLabeledOption } from './controllers/Select'
 import { EventManager } from './shared/EventManager'
+import { ToolbarButton } from './svg/ToolbarButton'
 import { TerminalSvg } from './svg/TerminalSvg'
-import { stringify } from './shared/stringify'
 import { Search } from './toolbar/Search'
 import { create } from './shared/create'
 import { select } from './shared/select'
 import { Logger } from './shared/logger'
 import { nanoid } from './shared/nanoid'
 import { defer } from './shared/defer'
-import { tldr } from './shared/tldr'
 import { toFn } from './shared/toFn'
+import { dim, r } from './shared/l'
 import { Gooey } from './Gooey'
 
 //#region Types ··················································································¬
@@ -64,13 +66,17 @@ export type InferOptions<T> = T extends number
 				? TextInputOptions
 				: T extends ButtonGridArrays
 					? ButtonGridInputOptions
-					: T extends Array<infer T>
-						? SelectInputOptions<T>
-						: T extends Option<infer T>
-							? SelectInputOptions<T>
-							: T extends () => void
-								? ButtonInputOptions
-								: InputOptions
+					: T extends LabeledOption<infer U>[]
+						? SelectInputOptions<U>
+						: T extends { value: infer V; options: Array<infer V> }
+							? SelectInputOptions<V>
+							: T extends Option<infer U>
+								? SelectInputOptions<U>
+								: T extends Array<infer U>
+									? ArrayInputOptions<U>
+									: T extends () => void
+										? ButtonInputOptions
+										: InputOptions
 
 /**
  * Resolves any provided value to the corresponding {@link ValidInput} associated with the type.
@@ -87,11 +93,15 @@ export type InferInput<TValueType> = TValueType extends number
 					? InputButton
 					: TValueType extends ButtonGridArrays
 						? InputButtonGrid
-						: TValueType extends Array<infer T>
-							? InputSelect<T>
-							: TValueType extends Option<infer T>
-								? InputSelect<T>
-								: ValidInput
+						: TValueType extends LabeledOption<infer U>[]
+							? InputSelect<U>
+							: TValueType extends { value: infer V; options: Array<infer V> }
+								? InputSelect<V>
+								: TValueType extends Option<infer U>
+									? InputSelect<U>
+									: TValueType extends Array<infer U>
+										? InputArray<U>
+										: ValidInput
 
 /**
  * Resolves a target object to a type that represents the same structure, but with all values
@@ -113,19 +123,23 @@ export type InferInput<TValueType> = TValueType extends number
  * ```
  */
 export type InferTargetOptions<TTarget> = {
-	[K in keyof TTarget]?: TTarget[K] extends Array<infer U>
+	[K in keyof TTarget]?: TTarget[K] extends LabeledOption<infer U>[]
 		? Partial<SelectInputOptions<U>>
 		: TTarget[K] extends LabeledOption<infer U>
-			? Partial<SelectInputOptions<LabeledOption<U>>>
-			: TTarget[K] extends Function
-				? Partial<ButtonInputOptions>
-				: TTarget[K] extends ColorFormat
-					? Partial<ColorInputOptions>
-					: TTarget[K] extends object
-						? InferTargetOptions<TTarget[K]> & {
-								folderOptions?: Partial<FolderOptions>
-							}
-						: Partial<InferOptions<TTarget[K]>>
+			? Partial<SelectInputOptions<U>>
+			: TTarget[K] extends { value: infer V; options: Array<infer V> }
+				? Partial<SelectInputOptions<V>>
+				: TTarget[K] extends Array<infer U>
+					? Partial<ArrayInputOptions<U>>
+					: TTarget[K] extends Function
+						? Partial<ButtonInputOptions>
+						: TTarget[K] extends ColorFormat
+							? Partial<ColorInputOptions>
+							: TTarget[K] extends object
+								? InferTargetOptions<TTarget[K]> & {
+										folderOptions?: Partial<FolderOptions>
+									}
+								: Partial<InferOptions<TTarget[K]>>
 }
 
 /**
@@ -160,13 +174,17 @@ export type InferInputs<TTarget> =
 							? InputColor
 							: TTarget[K] extends string
 								? InputText
-								: TTarget[K] extends Array<infer T>
-									? InputSelect<T>
-									: TTarget[K] extends () => void
-										? InputButton
-										: TTarget[K] extends object
-											? InferInputs<TTarget[K]> & { folder: Folder }
-											: never
+								: TTarget[K] extends LabeledOption<infer U>[]
+									? InputSelect<U>
+									: TTarget[K] extends { value: infer V; options: Array<infer V> }
+										? InputSelect<V>
+										: TTarget[K] extends Array<infer U>
+											? InputArray<U>
+											: TTarget[K] extends () => void
+												? InputButton
+												: TTarget[K] extends object
+													? InferInputs<TTarget[K]> & { folder: Folder }
+													: never
 			}
 		: never
 
@@ -386,6 +404,7 @@ const INTERNAL_FOLDER_DEFAULTS = {
 	gooey: undefined,
 	_headerless: false,
 } as const satisfies InternalFolderOptions
+
 //#endregion
 
 /**
@@ -531,6 +550,10 @@ export class Folder {
 	 */
 	private static _presetIdMap = new Map<string, string>()
 	/**
+	 * Default maximum number of properties to process in addMany/bindMany.
+	 */
+	private static _DEFAULT_MAX_SIZE = 50
+	/**
 	 * The duration of the open/close and hide/show animations in ms.
 	 * @default 350
 	 *
@@ -554,7 +577,11 @@ export class Folder {
 			options,
 		) as FolderOptions & InternalFolderOptions
 
-		this._log = new Logger(`Folder ${opts.title}`, { fg: 'DarkSalmon' })
+		this._log = new Logger(`Folder ${opts.title}`, {
+			fg: 'DarkSalmon',
+			// TODO REMOVE THIS AFTER TESTING `svelte-starter`
+			logLevel: BROWSER ? 'error' : 'debug',
+		})
 		this._log.fn('constructor').debug({ opts, this: this })
 
 		this.isRoot = opts.isRoot
@@ -1153,30 +1180,43 @@ export class Folder {
 			preset.hidden ? this.hide() : this.show(true)
 		}
 
-		for (const input of this.inputs.values()) {
+		const inputs = [...this.inputs.values()]
+		for (let i = 0; i < this.inputs.size; i++) {
+			const input = inputs[i]
 			const inputPreset = preset.inputs.find(c => c.presetId === input.opts.presetId)
 			if (!inputPreset) {
-				console.warn(`Missing input for preset: ${preset.title}`, {
-					preset,
-					input,
-					this: this,
-				})
+				if (i === this.inputs.size - 1) {
+					console.warn(
+						`Missing input for preset title "${preset.title}" with presetId "${input.opts.presetId}"`,
+						{
+							preset,
+							input,
+							inputs: this.inputs,
+							input_presetIds: [...this.inputs.values()].map(i => i.opts.presetId),
+							this: this,
+						},
+					)
+				}
 				continue
 			}
 
-			input.load(inputPreset)
+			// TODO - Fix this properly!!  Casting as any for now.
+			;(input as any).load(inputPreset)
 		}
 
-		for (const child of this.children) {
+		for (let i = 0; i < this.children.length; i++) {
+			const child = this.children[i]
 			if (!child.saveable) continue
 
 			const folderPreset = preset.children?.find(f => f.id === child.presetId)
 			if (!folderPreset) {
-				console.warn(`No folder found with presetId: ${preset.id}`, {
-					child,
-					preset,
-					this: this,
-				})
+				if (i === this.children.length - 1) {
+					console.warn(`No folder found with presetId: ${preset.id}`, {
+						child,
+						preset,
+						this: this,
+					})
+				}
 				continue
 			}
 
@@ -1185,6 +1225,7 @@ export class Folder {
 
 		return this
 	}
+
 	//#endregion Save/Load
 	//#endregion Folders
 
@@ -1262,6 +1303,11 @@ export class Folder {
 	//#region Add ····························································¬
 
 	// prettier-ignore
+	// Select overloads must come first so they take precedence when `options` is provided
+	add<T>(title: string, initialValue: { value: T; options: Array<Option<T>> }): InputSelect<T>
+	// prettier-ignore
+	add<T, O extends { options: Array<any> }>(title: string, initialValue: T, options: O): InputSelect<T>
+	// prettier-ignore
 	add<T extends boolean>(title: string, initialValue: T, options?: SwitchInputOptions): InputSwitch
 	// prettier-ignore
 	add<T extends number>(title: string, initialValue: T, options?: NumberInputOptions): InputNumber
@@ -1270,13 +1316,11 @@ export class Folder {
 	// prettier-ignore
 	add<T extends string>(title: string, initialValue: T, options?: TextInputOptions): InputText
 	// prettier-ignore
-	add<T extends any[]>(title: string, initialValue: T, options?: SelectInputOptions<T>): InputSelect<T>
-	// prettier-ignore
 	add<T extends (() => void)>(title: string, initialValue: T, options?: ButtonInputOptions): InputButton
-	//!^ This overload signature is not compatible with its implementation signature.ts(2394)
-	//!  Folder.ts(1198, 2): The implementation signature is declared here.
 	// prettier-ignore
 	add<T extends ButtonGridArrays>(title: string, initialValue: T, options?: ButtonGridInputOptions): InputButtonGrid
+	// prettier-ignore
+	add<T>(title: string, initialValue: T[], options?: ArrayInputOptions<T>): InputArray<T>
 	/**
 	 * Adds an input to the folder based on the type of the `initialValue` parameter.
 	 * @param title - The title of the input to display in the label area of the input's "row".
@@ -1285,16 +1329,37 @@ export class Folder {
 	 */
 	add<const T extends ValidInputValue, const O extends InferOptions<T>>(
 		title: string,
-		initialValue: T,
+		initialValue: T | T[] | ValidInputValue[],
 		options?: O,
-	): InferInput<T> {
-		const opts = this._resolveOpts(title, initialValue, options)
+	): InferInput<T> | InputArray<ValidInputValue> {
+		const opts = this._resolveOpts(title, initialValue as any, options)
 		const input = this._createInput(opts)
 		this._registerInput(input, opts.presetId)
 		this._log.fn('add').debug({ input, opts })
-		return input as InferInput<T>
+		return input as any
 	}
 	//#endregion Add
+
+	// TODO delete this after the API design for `addSelect`, `add`, `addMany`, `bindSelect`, `bind`, and `bindMany` are finalized for `InputSelect`.
+	// // note to llms: the characters "//=>"" tell the ide to render the type inline, and is only visible to the user.
+	// _test() {
+	// 	const arr = this.add('arr', ['a', 'b', 'c']) // const arr: InputArray<string>
+	// 	arr //=>
+
+	// 	const sel1 = this.addSelect('sel3', 'foo', { options: ['foo', 'bar', 'baz'] }) // I like this API because it communicates the importance of the input.value being the selected option's value.
+	// 	sel1 //=>
+	// 	//^ InputSelect<unknown> (should be InputSelect<string>)
+
+	// 	const sel3 = this.addSelect('sel1', { value: 'a', options: ['a', 'b', 'c'] }) //  I like this API because it doesn't require additional options.options to be specified.
+	// 	sel1 //=>
+	// 	//^ InputSelect<unknown> (should be InputSelect<string>)
+
+	// 	// This is a currently supported API, but it's no longer intuitive because `value` is no longer `LabeledOption<T>`, and is now just `T`, so it should probably be removed.
+	// 	const sel2 = this.addSelect('sel2', [{ value: 'a', label: 'Option A' }], { initialValue: { value: 'a', label: 'Option A' } })
+	// 	// I don't know why this works too and what the difference is -- that's confusing... but this likely also shares problems with the old API above.
+	// 	const sel2 = this.addSelect('sel2', [{ value: 'a', label: 'Option A' }], { value: { value: 'a', label: 'Option A' } })
+	// 	sel2 //=>
+	// }
 
 	//#region Bind ···························································¬
 
@@ -1328,9 +1393,27 @@ export class Folder {
 		TInput extends InferInput<TValue>,
 	>(target: TTarget, key: TKey, options: Partial<TOptions> = {}): TInput {
 		const title = options.title ?? (key as string)
-		const opts = this._resolveOpts(title, target[key] as TValue, options)
+		const value = target[key] as TValue
 
-		opts.value ??= target[key] as TValue
+		// TODO -  Handle nested objects by creating folders and binding recursively.
+		// // TODO - review this edit from Claude carefully:
+		// // TODO - edit - yea it literally just crashes the consumer's browser tab with an infinite loop -_-
+		// // if (
+		// // 	typeof value === 'object' &&
+		// // 	value !== null &&
+		// // 	!Array.isArray(value) &&
+		// // 	!isColor(value) &&
+		// // 	!isLabeledOption(value)
+		// // ) {
+		// // 	const folderOptions = (options as any)?.folderOptions || {}
+		// // 	const folder = this.addFolder(title, folderOptions)
+		// // 	const result = folder.bindMany(value as any, options as any)
+		// // 	return result as unknown as TInput
+		// // }
+
+		const opts = this._resolveOpts(title, value, options)
+
+		opts.value ??= value
 		opts.binding = { target, key, initial: opts.value }
 
 		const input = this._createInput(opts)
@@ -1377,10 +1460,23 @@ export class Folder {
 			 * An array of keys to include in a target object when generating inputs.
 			 */
 			include?: InferTargetKeys<T>[]
+			/**
+			 * Maximum total number of properties to process across all depths (prevents browser crashes from large objects).
+			 * @default 50
+			 */
+			maxSize?: number
 		},
 	): { folders: InferFolders<T>; inputs: TInputs } {
 		this._log.fn('addMany').debug({ target, options }, this)
-		return this._walk(target, ((options as any) || undefined) ?? {}, this, new Set(), 'add')
+
+		const maxSize = options?.maxSize ?? Folder._DEFAULT_MAX_SIZE
+		return this._walk(
+			target,
+			{ ...(((options as any) || undefined) ?? {}), maxSize },
+			this,
+			new Set(),
+			'add',
+		)
 	}
 
 	bindMany<
@@ -1398,10 +1494,23 @@ export class Folder {
 			 * An array of keys to include in a target object when generating inputs.
 			 */
 			include?: InferTargetKeys<T>[]
+			/**
+			 * Maximum total number of properties to process across all depths (prevents browser crashes from large objects).
+			 * @default 50
+			 */
+			maxSize?: number
 		},
 	): { inputs: TInputs; folders: InferFolders<T> } {
 		this._log.fn('bindMany').debug({ target, options }, this)
-		return this._walk(target, ((options as any) || undefined) ?? {}, this, new Set(), 'bind')
+
+		const maxSize = options?.maxSize ?? Folder._DEFAULT_MAX_SIZE
+		return this._walk(
+			target,
+			{ ...(((options as any) || undefined) ?? {}), maxSize },
+			this,
+			new Set(),
+			'bind',
+		)
 	}
 	//#endregion Bind
 
@@ -1415,17 +1524,33 @@ export class Folder {
 		options: TOptions & {
 			exclude?: InferTargetKeys<T>[]
 			include?: InferTargetKeys<T>[]
+			maxSize?: number
 		},
 		folder: Folder,
 		seen: Set<any>,
 		mode: 'bind' | 'add',
+		/**
+		 * Counts the total number of properties processed to prevent browser crashes from large objects with nested objects firing recursive calls to {@link bindMany}/{@link addMany}.
+		 */
+		_count = { value: 0 },
 	): { inputs: TInputs; folders: TFolders } {
 		const result = { inputs: {} as TInputs, folders: {} as NoInfer<TFolders> }
+		const maxSize = options.maxSize ?? Folder._DEFAULT_MAX_SIZE
 
 		if (seen.has(target)) return result
 		seen.add(target)
 
 		for (let [key, value] of Object.entries(target)) {
+			if (_count.value >= maxSize) {
+				this._log
+					.fn('_walk')
+					.warn(
+						`Reached maxSize limit (${maxSize}). Stopping processing.`,
+						`Skipped properties: ${Object.keys(target).join(', ')}`,
+					)
+				break
+			}
+
 			if (
 				(Array.isArray(options['exclude']) && options['exclude'].includes(key as any)) ||
 				(Array.isArray(options['include']) && !options['include'].includes(key as any))
@@ -1447,28 +1572,36 @@ export class Folder {
 
 				if (!hasValue && mode === 'bind') {
 					console.error(
-						`bindMany() error: target object's key "${key}" is \`null\`, and no valid "value" option was provided as a fallback.`,
+						`bindMany() error: target object's key "${key}" is \`${value}\`, and no valid initial "value" option was provided.`,
 						{ key, value, inputOptions },
 					)
 					throw new Error('Invalid binding.')
 				}
 			}
 
-			if (typeof value === 'object') {
-				if ('options' in inputOptions) {
-					//? InputSelect
+			// Convert undefined to string for text input.
+			if (value === undefined) {
+				value = 'undefined'
+				this._log.fn('_walk').debug(`Converting undefined to string for property: ${key}`)
+			}
+
+			if (typeof value === 'object' && value !== null) {
+				if ('value' in value && 'options' in value && Array.isArray(value.options)) {
+					//? InputSelect ({ value: T, options: T[] } shape)
 					input =
 						mode === 'bind'
 							? folder.bindSelect(
 									target,
 									key as keyof T,
-									inputOptions as SelectInputOptions,
+									{ ...inputOptions, options: value.options } as any,
 								)
-							: folder.addSelect(
-									key,
-									(inputOptions as SelectInputOptions).options!,
-									inputOptions,
-								)
+							: folder.addSelect(key, value as any)
+				} else if ('options' in inputOptions) {
+					//? InputSelect (options in inputOptions)
+					input =
+						mode === 'bind'
+							? folder.bindSelect(target, key as keyof T, inputOptions as any)
+							: folder.addSelect(key, target[key], inputOptions as any)
 				} else if (isColor(value)) {
 					//? InputColor
 					input =
@@ -1476,25 +1609,34 @@ export class Folder {
 							? folder.bindColor(value, 'color', { title: key, ...inputOptions })
 							: folder.addColor(key, value, inputOptions)
 				} else if (Array.isArray(value)) {
-					// this._log.info('value', {
-					// 	value,
-					// 	key,
-					// 	inputOptions,
-					// 	isButtonGridArrays: isButtonGridArrays(value),
-					// })
 					//? InputButtonGrid
 					if (isButtonGridArrays(value)) {
 						input = folder.addButtonGrid(key, value, inputOptions)
-					} else {
-						//? InputSelect
+					} else if (value.length > 0 && isLabeledOption(value[0])) {
+						//? InputSelect (array of labeled options) - treat as { value, options } shape
 						input =
 							mode === 'bind'
 								? folder.bindSelect(
 										target,
 										key as keyof T,
-										inputOptions as SelectInputOptions,
+										{ ...inputOptions, options: value } as any,
 									)
-								: folder.addSelect(key, value, inputOptions)
+								: folder.addSelect(key, {
+										value: value[0].value,
+										options: value,
+									} as any)
+					} else if ('options' in inputOptions) {
+						//? InputSelect (explicit options provided)
+						input =
+							mode === 'bind'
+								? folder.bindSelect(target, key as keyof T, inputOptions as any)
+								: folder.addSelect(key, target[key], inputOptions as any)
+					} else {
+						//? InputArray (default for data arrays)
+						input =
+							mode === 'bind'
+								? folder.bindArray(target, key as keyof T, inputOptions)
+								: folder.addArray(key, value, inputOptions)
 					}
 				} else {
 					//? Folder
@@ -1505,7 +1647,14 @@ export class Folder {
 					}
 					const newFolder = folder.addFolder(key, folderOptions)
 
-					const res = this._walk(value, inputOptions, newFolder, seen, mode)
+					const res = this._walk(
+						value,
+						{ ...inputOptions, maxSize },
+						newFolder,
+						seen,
+						mode,
+						_count,
+					)
 
 					// @ts-expect-error
 					input = res.inputs
@@ -1527,6 +1676,7 @@ export class Folder {
 			if (input) {
 				// @ts-expect-error
 				result.inputs[key] = input
+				_count.value++
 			}
 		}
 
@@ -1631,58 +1781,71 @@ export class Folder {
 	 * Adds a new {@link InputSelect} to the folder.
 	 * @example
 	 * ```ts
-	 * // For primitives:
-	 * gui.addSelect('theme', ['light', 'dark'], { initialValue: 'light' })
+	 * // Pattern 1: Value first, options in config (consistent with other inputs)
+	 * gui.addSelect('theme', 'light', { options: ['light', 'dark'] })
 	 *
-	 * // For objects:
-	 * const options = {
-	 *   foo: { id: 0 },
-	 *   bar: { id: 1 },
-	 * }
+	 * // Pattern 2: Inline value+options object (skip 3rd param, works great with addMany)
+	 * gui.addSelect('theme', { value: 'light', options: ['light', 'dark'] })
 	 *
-	 * todo - Implement this -- will need to detect that the list has objects and pass a union of
-	 * todo - their keys to the initialValue type or something?
-	 * gui.addSelect('foobar', options, { initialValue: 'foo' })
+	 * // Pattern 3: Labeled options (for non-primitives needing labels)
+	 * gui.addSelect('item', { value: 1, options: [{ value: 1, label: 'One' }, { value: 2, label: 'Two' }] })
 	 * ```
 	 */
 	addSelect<T>(
 		title: string,
-		array: T[],
+		valueOrConfig: T | { value: T; options: Array<Option<T>> },
 		options?: SelectInputOptions<NoInfer<T>> & {
-			initialValue?: NoInfer<T>
+			value?: NoInfer<T>
+			options?: Array<NoInfer<T>>
 		},
 	): InputSelect<T> {
-		const opts = this._resolveOpts(title, array, options)
-		opts.options = array
-		opts.value =
-			options?.initialValue ?? (fromState(array)?.at(0) as T) ?? options?.binding?.initial
+		// Pattern 2: Inline { value, options } object
+		// Pass it directly to _resolveOpts and let InputSelect constructor handle it.
+		if (
+			typeof valueOrConfig === 'object' &&
+			valueOrConfig !== null &&
+			'value' in valueOrConfig &&
+			'options' in valueOrConfig
+		) {
+			const opts = this._resolveOpts(title, valueOrConfig as T, options)
+			return this._registerInput(new InputSelect(opts, this), opts.presetId) as InputSelect<T>
+		}
 
-		if (!opts.value) {
-			console.warn('No value provided for select:', { title, array, options, opts })
+		// Pattern 1: Value first, options in config
+		const opts = this._resolveOpts(title, valueOrConfig as T, options)
+		if (!options?.options) {
+			throw new Error(
+				`addSelect: options array required. Use { options: [...] } in the third parameter.`,
+			)
 		}
 		return this._registerInput(new InputSelect(opts, this), opts.presetId) as InputSelect<T>
 	}
 	/**
-	 * todo - Does this work / make sense?  It's just wrapping the list in a function.. which
-	 * happens internally anyways... I'm not sure what binding to a select should do, other than
-	 * ensure that the options array is regularly refreshed after interactions... but without a
-	 * way to listen to changes on the target object's array (i.e. forcing or wrapping with a
-	 * store), I'm not sure what the behavior should be.
+	 * Binds an {@link InputSelect} to a target object property.
+	 * Requires `options` array to be provided in the options parameter.
+	 * @example
+	 * ```ts
+	 * const params = { theme: 'light' }
+	 * gui.bindSelect(params, 'theme', { options: ['light', 'dark'] })
+	 * ```
 	 */
 	bindSelect<
 		T extends Record<string, any>,
 		K extends keyof T,
 		V extends T[K] extends Option<infer U> ? U : InvalidBinding,
-		A extends Array<V>,
-		O extends SelectInputOptions<V> = SelectInputOptions<V> & {
-			options: A
-			initialValue?: V
-			targetKey?: keyof T
+		O extends SelectInputOptions<V> & {
+			options: Array<V>
 		},
-	>(target: T, key: K, options = {} as O): InputSelect<V> {
+	>(target: T, key: K, options: O): InputSelect<V> {
 		const opts = this._resolveBinding(target, key, options)
+		if (!options.options) {
+			throw new Error(
+				`bindSelect: options array required. Use { options: [...] } in the options parameter.`,
+			)
+		}
+		opts.options = options.options
 		opts.value = target[key]
-		return this.addSelect(key as string, opts.options as A, opts as O)
+		return this.addSelect(key as string, opts.value as V, opts as any)
 	}
 
 	/**
@@ -1713,6 +1876,37 @@ export class Folder {
 	>(target: T, key: K, options?: Partial<SwitchInputOptions>): InputSwitch {
 		const opts = this._resolveBinding(target, key, options)
 		return this.addSwitch(key as string, opts.value as V, opts)
+	}
+
+	/**
+	 * Adds a new {@link InputArray} to the folder.
+	 * @example
+	 * ```ts
+	 * const array = gui.addArray('Items', ['a', 'b', 'c'])
+	 * array.on('change', console.log)
+	 * ```
+	 */
+	addArray<T>(title: string, value: T[], options?: Partial<ArrayInputOptions<T>>): InputArray<T> {
+		const opts = this._resolveOpts(title, value, options)
+		const input = new InputArray(opts, this)
+		return this._registerInput(input, opts.presetId)
+	}
+
+	/**
+	 * Binds an {@link InputArray} to the array at the target object's key.
+	 * @example
+	 * ```ts
+	 * const params = { items: ['a', 'b', 'c'] }
+	 * const array = gui.bindArray(params, 'items')
+	 * ```
+	 */
+	bindArray<
+		T extends Record<string, any>,
+		K extends keyof T,
+		V extends T[K] extends Array<infer U> ? Array<U> : InvalidBinding,
+	>(target: T, key: K, options?: Partial<ArrayInputOptions>): InputArray {
+		const opts = this._resolveBinding(target, key, options)
+		return this.addArray(key as string, opts.value as V, opts)
 	}
 	//#endregion Adders
 
@@ -1800,6 +1994,8 @@ export class Folder {
 				return new InputSwitch(options as SwitchInputOptions, this)
 			case 'InputButtonGrid':
 				return new InputButtonGrid(options as ButtonGridInputOptions, this)
+			case 'InputArray':
+				return new InputArray(options as ArrayInputOptions, this)
 		}
 
 		throw new Error('Invalid input type: ' + type + ' for options: ' + options)
@@ -1841,6 +2037,17 @@ export class Folder {
 			return 'InputButton'
 		}
 
+		// Check for inline { value, options } pattern before other checks.
+		if (
+			value &&
+			typeof value === 'object' &&
+			!Array.isArray(value) &&
+			'value' in value &&
+			'options' in value
+		) {
+			return 'InputSelect'
+		}
+
 		if (('options' in options && Array.isArray(options.options)) || isLabeledOption(value)) {
 			value ??= options.options[0]
 			options.value ??= value
@@ -1872,7 +2079,12 @@ export class Folder {
 					if (isButtonGridArrays(value)) {
 						return 'InputButtonGrid'
 					}
-					return 'InputSelect'
+					// Check if explicit select options are provided
+					if ('options' in options && Array.isArray(options.options)) {
+						return 'InputSelect'
+					}
+					// Default to InputArray for data arrays
+					return 'InputArray'
 				}
 				if (isColor(value)) {
 					return 'InputColor'
@@ -1881,17 +2093,21 @@ export class Folder {
 					return 'InputSelect'
 				}
 
-				console.error('Invalid input view: ' + tldr(value, { maxSiblings: 5, maxDepth: 3 }))
+				console.log(r(dim('Offending input options:')), options)
+				console.log(r(dim('Offending value:')), value)
 
-				throw new Error('Invalid input view: ', {
-					cause: {
-						value,
-						tldr: tldr(stringify(value, 2), { maxSiblings: 5, maxDepth: 3 }),
-					},
+				throw new Error('Failed to resolve object value to the corresponding input type.', {
+					cause: { options, value },
 				})
 			}
 			default: {
-				throw new Error('Invalid input view: ' + value)
+				console.log(r(dim('Offending input options:')), options)
+				console.log(r(dim('Offending value:')), value)
+
+				throw new Error(
+					'Failed to resolve the input type for the provided options and value.',
+					{ cause: { options, value } },
+				)
 			}
 		}
 	}
@@ -2031,10 +2247,14 @@ export class Folder {
 		if (this.graphics) {
 			defer(() => {
 				clearTimeout(this.#timeout)
+
 				this.#timeout = setTimeout(() => {
 					const svg = createFolderSvg(this)
+
+					// todo - sup with this replacing itself twice?
 					this.graphics?.icon.replaceWith(svg)
 					if (this.graphics) this.graphics.icon = svg
+
 					if (this.#first) {
 						this.graphics?.connector?.update()
 						this.#first = false
@@ -2073,6 +2293,13 @@ export class Folder {
 		}
 
 		this.disposed = true
+	}
+
+	/**
+	 * Add a button to the folder's toolbar.
+	 */
+	addToolbarButton(config: ToolbarButtonConfig): ToolbarButton {
+		return new ToolbarButton(this, config)
 	}
 }
 

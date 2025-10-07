@@ -35,6 +35,7 @@ export interface LoggerOptions {
 	/**
 	 * Run the logger on the server.
 	 * @default false
+	 * TODO This didn't work when I just tried it in a Vitest environment.. isn't being applied properly.
 	 */
 	server?: boolean
 	/**
@@ -45,6 +46,7 @@ export interface LoggerOptions {
 	/**
 	 * Whether to only run the logger in development mode.
 	 * @default true
+	 * TODO Not yet implemented.
 	 */
 	devOnly?: boolean
 	/**
@@ -56,9 +58,14 @@ export interface LoggerOptions {
 	 * @default ''
 	 */
 	title?: string
+	/**
+	 * The {@link LogLevel} of the logger: `trace` | `debug` | `info` | `warn` | `error` | `fatal` | `off`
+	 * @default 'info'
+	 */
+	logLevel?: LogLevel
 }
 
-// todo - How can we ensure the logger is stripped completely from production builds?
+// TODO How can we ensure the logger is stripped completely from production builds?
 const ENABLED = true
 // // DEV &&
 // // @ts-ignore - For Vite environments.
@@ -68,14 +75,17 @@ const ENABLED = true
 // // @ts-ignore - VITEST is a global variable injected by Vite.
 // !(import.meta?.env?.VITEST && !import.meta?.env?.VITE_FRACTILS_LOG_VITEST)
 
-export type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'off'
+const LOG_LEVELS = ['trace', 'debug', 'info', 'warn', 'error', 'off'] as const
+export type LogLevel = (typeof LOG_LEVELS)[number]
 
 export class Logger {
+	static LOG_LEVEL: LogLevel | undefined = undefined
 	private static _BYPASS_STYLES = false
 	private static _BYPASS_DEFER = true
 
 	title = ''
 	options: LoggerOptions
+	logLevel: LogLevel = 'info'
 	color: (str: string) => string
 
 	#logger: (...args: any[]) => void
@@ -94,6 +104,11 @@ export class Logger {
 		const colorname = options?.fg?.toLowerCase() ?? randomCSSColorName()
 		const fg = colorname in CSS_COLORS ? CSS_COLORS[colorname as CSSColorName] : colorname
 
+		// @ts-expect-error - // TODO env log level support is broken now - VITE_XXX is deprecated and import.meta.env should not be erroring in a modern vite project and should be fixed.
+		const env = import.meta?.env?.VITE_FRACTILS_LOG_LEVEL as LogLevel
+		// console.log('env', env)
+		this.logLevel = options?.logLevel || env || Logger.LOG_LEVEL || this.logLevel
+		// console.log('this.logLevel', this.logLevel)
 		this.color = hex(fg)
 		this.#logger = Logger.createLogger(this.title, this.options)
 
@@ -118,7 +133,7 @@ export class Logger {
 	 */
 	flush = (...args: any[]) => {
 		if (this.buffer.length) {
-			if (args[0].match(/ⓘ|⚠|⛔|💀/)) {
+			if (args[0].match(/ⓘ|⚠|⛔|💀|🐞/)) {
 				this.buffer.unshift(args.shift())
 			}
 			this.consolidateBuffer()
@@ -136,8 +151,12 @@ export class Logger {
 	}
 
 	debug(...args: any[]) {
-		// @ts-ignore
-		if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === 'debug') this.flush('🐞', ...args)
+		// if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === 'debug') this.flush('🐞', ...args)
+		if (LOG_LEVELS.indexOf(this.logLevel) > LOG_LEVELS.indexOf('debug')) {
+			return this
+		}
+
+		this.flush('🐞', ...args)
 		return this
 	}
 

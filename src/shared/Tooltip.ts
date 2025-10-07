@@ -286,7 +286,7 @@ export class Tooltip {
 	/**
 	 * Animates the tooltip into view.
 	 */
-	show(): this {
+	show(opts?: { instant?: boolean; delay?: number }): this {
 		if (this.showing) return this
 		if (!this.text) return this
 
@@ -301,6 +301,8 @@ export class Tooltip {
 
 		clearTimeout(this._delayInTimer)
 		clearTimeout(this._delayOutTimer)
+
+		const delay = opts?.instant ? 0 : (opts?.delay ?? this.opts.delay)
 
 		this._delayInTimer = setTimeout(async () => {
 			this.mount()
@@ -326,7 +328,7 @@ export class Tooltip {
 
 			this._updatePosition()
 			this._maybeWatchAnchor()
-		}, this.opts.delay)
+		}, delay)
 
 		return this
 	}

@@ -1,3 +1,7 @@
+/**
+ * TODO Failing tests: `bun run vitest --browser.headless src/Folder.test.ts`
+ */
+
 import type { ElementMap, InputEvents, InputOptions, ValidInputValue } from './Input'
 import type { Option, LabeledOption } from '../controllers/Select'
 import type { State } from '../shared/state'
@@ -13,12 +17,16 @@ import { Input } from './Input'
 
 export type SelectInputOptions<T = ValidInputValue> = Omit<
 	InputOptions<T | { label: string; value: T }>,
-	'onChange' | 'value'
+	'onChange'
 > & {
 	__type?: 'SelectInputOptions'
 	onChange?: (value: LabeledOption<T>) => void
-} & {
-	labelKey?: string
+	/**
+	 * For arrays of unlabeled objects, labelKey specifies a key to use as the label.
+	 * If none is provided, select will attempt to use a `label` or `title` key if they exist.
+	 * If neither exist, an error will be thrown.
+	 */
+	labelKey?: T extends Record<infer K, any> ? K : string
 	value?: T
 	options?: Array<T>
 }
@@ -33,7 +41,15 @@ export interface SelectControllerElements<T> extends ElementMap {
 	select: Select<T>['elements']
 }
 
-export interface SelectInputEvents<T> extends InputEvents<LabeledOption<T>> {
+export interface SelectInputEvents<T> extends InputEvents<T> {
+	/**
+	 * Emitted when an option is selected, providing the full LabeledOption.
+	 * Use this when you need access to both the value and label.
+	 */
+	select: LabeledOption<T>
+	/**
+	 * Emitted when hovering over an option (preview).
+	 */
 	preview: LabeledOption<T>
 	open: void
 	close: void
@@ -41,14 +57,65 @@ export interface SelectInputEvents<T> extends InputEvents<LabeledOption<T>> {
 }
 
 export class InputSelect<TValueType extends ValidInputValue = any> extends Input<
-	LabeledOption<TValueType>,
+	TValueType,
 	SelectInputOptions<TValueType>,
 	SelectControllerElements<TValueType>,
 	SelectInputEvents<TValueType>
 > {
 	readonly __type = 'InputSelect' as const
-	readonly initialValue: LabeledOption<TValueType>
-	state: State<LabeledOption<TValueType>>
+	readonly initialValue: TValueType
+
+	/**
+	 * Reactive state containing the raw value (T, not LabeledOption<T>).
+	 * This is automatically kept in sync with `selected`.
+	 * Consistent with other Input types.
+	 */
+	state: State<TValueType>
+
+	/**
+	 * The currently selected option (full LabeledOption<T> with both label and value).
+	 * This is the source of truth for the selection. When this changes, `state` is
+	 * automatically updated with the raw value.
+	 */
+	selected: State<LabeledOption<TValueType>>
+
+	/**
+	 * The raw value of the currently selected option (just T, not LabeledOption<T>).
+	 * Consistent with other Input types.
+	 */
+	override get value(): TValueType {
+		// @ts-expect-error - Safe: TValueType extends ValidInputValue which includes arrays, but InputSelect
+		// only receives primitive values. TypeScript can't narrow the State<T> conditional type for generics.
+		return this.state.value
+	}
+
+	override set value(v: TValueType) {
+		// For primitives, use strict equality
+		if (typeof v !== 'object' || v === null) {
+			const option = this.options.find(o => o.value === v)
+			if (option) {
+				this.selected.set(option)
+				return
+			}
+		}
+
+		let value = isLabeledOption(v) ? v.value : v
+
+		// For objects, use JSON stringify for deep comparison.
+		const vStr = JSON.stringify(value)
+		const option = this.options.find(o => JSON.stringify(o.value) === vStr)
+
+		if (option) {
+			this.selected.set(option)
+		} else {
+			console.warn(
+				`InputSelect: Could not find option with value`,
+				value,
+				'in options',
+				this.options,
+			)
+		}
+	}
 
 	#options: () => TValueType[]
 	set options(v: SelectInputOptions['options']) {
@@ -56,12 +123,15 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		v ??= []
 		this.#options = toFn(v)
 
-		this.select.clear()
+		this.selectController.clear()
 
 		for (const option of fromState(this.#options())) {
-			this.select.add(option as Option<TValueType>)
+			this.selectController.add(option as Option<TValueType>)
 		}
 	}
+	/**
+	 * The options array of valid values for this select input.
+	 */
 	get options(): LabeledOption<TValueType>[] {
 		return this.resolveOptions(this.#options())
 	}
@@ -69,7 +139,7 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 	/**
 	 * The select controller instance.
 	 */
-	select: Select<TValueType>
+	selectController: Select<TValueType>
 
 	/**
 	 * A latch for event propagation. Toggled off everytime an event aborted.
@@ -95,10 +165,20 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 
 		super(opts, folder)
 
-		this._evm.registerEvents(['preview', 'open', 'close', 'cancel'])
+		this._evm.registerEvents(['select', 'preview', 'open', 'close', 'cancel'])
 
 		this._log = new Logger(`InputSelect ${opts.title}`, { fg: 'slategrey' })
 		this._log.fn('constructor').debug({ opts, this: this })
+
+		// Handle the inline { value, options } pattern.
+		// When the value itself is an object with both 'value' and 'options' properties,
+		// extract them and use them instead of treating the whole object as the value.
+		const v = opts.value
+		if (v && typeof v === 'object' && !Array.isArray(v) && 'value' in v && 'options' in v) {
+			const config = v as { value: TValueType; options: Array<any> }
+			opts.value = config.value
+			opts.options = config.options
+		}
 
 		opts.value ??= opts.binding?.initial ?? fromState(this.targetValue)
 		this.initialValue = this.resolveInitialValue(opts)
@@ -110,14 +190,27 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 
 		this.#options = toFn(this.opts.options ?? [])
 
-		this.state = state(this.initialValue)
+		// Initialize selected with the full LabeledOption
+		this.selected = state(this.labeledSelection)
+
+		// Initialize state as a derived state that extracts the raw value from selected
+		this.state = state(this.selected.value.value)
+
+		// Keep state in sync with selected
+		this._evm.add(
+			this.selected.subscribe(labeledOption => {
+				// @ts-expect-error - Safe: labeledOption.value is TValueType, but TypeScript can't narrow
+				// the State<T> conditional type for generics (sees union of ArrayState | MapState | etc)
+				this.state.set(labeledOption.value)
+			}),
+		)
 
 		const container = create('div', {
 			classes: ['gooey-input-select-container'],
 			parent: this.elements.content,
 		})
 
-		this.select = new Select({
+		this.selectController = new Select({
 			// @ts-expect-error - ¯\_(ツ)_/¯
 			input: this,
 			container,
@@ -128,14 +221,14 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 
 		this.elements.controllers = {
 			container,
-			select: this.select.elements,
+			select: this.selectController.elements,
 		} as const satisfies SelectControllerElements<TValueType>
 
 		this.disabled = opts.disabled ?? false
 
 		this._evm.add(
-			this.state.subscribe(v => {
-				if (!this.select.bubble) return
+			this.selected.subscribe(v => {
+				if (!this.selectController.bubble) return
 
 				if (this.targetObject) {
 					if (isState(this.targetValue)) {
@@ -151,12 +244,12 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 				if (this.#stopPropagation) {
 					this.#stopPropagation = false
 					this._log
-						.fn('state.subscribe')
+						.fn('selected.subscribe')
 						.debug('Stopped propagation.  Subscribers will not be notified.')
 					return
 				}
 
-				this.set(v)
+				this.select(v)
 			}),
 		)
 
@@ -168,12 +261,12 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		}
 
 		// Bind our state to the select controller.
-		this.select.on('change', v => {
+		this.selectController.on('change', v => {
 			this._log.fn('select.onChange').debug(v)
 			if (this.#stopPropagation) return
 			// Make sure the select controller doesn't react to its own changes.
 			this.#stopPropagation = true
-			this.set(v)
+			this.select(v)
 		})
 
 		// todo - bind to options if it's observable ?
@@ -187,21 +280,21 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		// 	)
 		// }
 
-		this.listen(this.select.element, 'preview', () => {
+		this.listen(this.selectController.element, 'preview', () => {
 			this.emit('preview')
 		})
-		this.listen(this.select.element, 'open', () => {
+		this.listen(this.selectController.element, 'open', () => {
 			this.emit('open')
 		})
-		this.listen(this.select.element, 'close', () => {
+		this.listen(this.selectController.element, 'close', () => {
 			this.emit('close')
 		})
-		this.listen(this.select.element, 'cancel', () => {
+		this.listen(this.selectController.element, 'cancel', () => {
 			this.emit('cancel')
 		})
 
 		// Override the default dirty check to use an option's `label` for equality checks.
-		this._dirty = () => this.value.label !== this.initialValue.label
+		this._dirty = () => this.selected.value.label !== this.labeledSelection.label
 
 		this._log.fn('constructor').debug({ this: this })
 	}
@@ -228,13 +321,31 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 			}
 
 			if (!this.opts.labelKey) {
+				// prettier-ignore
+				// Try to fallback to 'label' key if it exists.
+				if (selectOptions.every(o => o && typeof o === 'object' && 'label' in o && typeof o.label === 'string')) {
+					return selectOptions.map(o => ({
+						label: (o as TValueType & { label: string }).label,
+						value: o,
+					}))
+				}
+
+				// prettier-ignore
+				// Try to fallback to 'title' key if it exists.
+				if (selectOptions.every(o => o && typeof o === 'object' && 'title' in o && typeof o.title === 'string')) {
+					return selectOptions.map(o => ({
+						label: (o as TValueType & { title: string }).title,
+						value: o,
+					}))
+				}
+
 				throw new Error(
 					'Recieved unlabeled options with no `labelKey` specified.  Please label your options or provide the `labelKey` to use as a label.',
 				)
 			}
 
 			return selectOptions.map(o => ({
-				label: o[this.opts.labelKey as keyof typeof o] as string,
+				label: o[this.opts.labelKey as unknown as keyof typeof o] as string,
 				value: o,
 			}))
 		}
@@ -242,47 +353,12 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		return selectOptions
 	}
 
-	resolveInitialValue(opts: SelectInputOptions<TValueType>): LabeledOption<TValueType> {
+	resolveInitialValue(opts: SelectInputOptions<TValueType>): TValueType {
 		const value = opts.binding ? opts.binding.target[opts.binding.key] : opts.value!
-		const v = fromState(value)
-		if (!isLabeledOption(v)) {
-			if (typeof v === 'string') {
-				return {
-					label: v,
-					value: v as unknown as TValueType,
-				}
-			}
-
-			// todo - Double check that this is working as expected.
-			if (Array.isArray(v)) {
-				if (v.every(s => typeof s === 'string')) {
-					return {
-						label: v[0],
-						value: v[0] as TValueType,
-					}
-				}
-			}
-
-			if (!opts.labelKey) {
-				console.error('Error:', { v, value, opts })
-				throw new Error(
-					'Cannot resolve initial value.  Please provide a `labelKey` or use labeled options.',
-				)
-			}
-
-			return {
-				label: v[opts.labelKey],
-				value: v,
-			}
-		}
-
-		return v as LabeledOption<TValueType>
+		return fromState(value)
 	}
 
-	resolveInitialLabel(
-		initialValue: this['initialValue'],
-		opts: SelectInputOptions<TValueType>,
-	): string {
+	resolveInitialLabel(initialValue: TValueType, opts: SelectInputOptions<TValueType>): string {
 		const v = isState(initialValue) ? initialValue.value : initialValue
 
 		this._log.fn('resolveInitialLabel').debug({ v, initialValue, opts })
@@ -291,11 +367,35 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 			return v.label
 		}
 
-		if (opts.labelKey) {
-			return initialValue[opts.labelKey as keyof this['initialValue']] as string
+		// If we have options, try to find a matching labeled option for the initialValue.
+		if (opts.options && Array.isArray(opts.options) && opts.options.length > 0) {
+			// Check if the first option is already a labeled option.
+			if (isLabeledOption(opts.options[0])) {
+				const labeledOptions = opts.options as LabeledOption<TValueType>[]
+				// For primitives, use strict equality.
+				if (typeof v !== 'object' || v === null) {
+					const match = labeledOptions.find(o => o.value === v)
+					if (match) return match.label
+				} else {
+					// For objects, use JSON stringify for deep comparison.
+					const vStr = JSON.stringify(v)
+					const match = labeledOptions.find(o => JSON.stringify(o.value) === vStr)
+					if (match) return match.label
+				}
+			}
 		}
 
-		return stringify(v)
+		if (opts.labelKey) {
+			return initialValue[opts.labelKey as unknown as keyof typeof initialValue] as string
+		}
+
+		if (v && typeof v === 'object') {
+			if ('title' in v && typeof v.title === 'string') return v.title
+			if ('label' in v && typeof v.label === 'string') return v.label
+			return stringify(v)
+		}
+
+		return String(v)
 	}
 
 	get targetObject() {
@@ -330,15 +430,27 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 	}
 
 	/**
-	 * Selects the given {@link LabeledOption} and updates the ui.
+	 * Sets the value (required by base Input class).
+	 * This accepts the raw value and finds the corresponding option.
 	 */
-	set(value: LabeledOption<TValueType>) {
-		this._log.fn('set').debug(value)
+	set(v: TValueType): void {
+		this.value = v
+	}
+
+	/**
+	 * Selects the given {@link LabeledOption} and updates the ui.
+	 * Use this when you have the full labeled option.
+	 */
+	select(value: LabeledOption<TValueType>) {
+		this._log.fn('select').debug(value)
 
 		this.#stopPropagation = true
-		this.select.select(value, false)
-		this.state.set(value)
-		this.emit('change', value)
+		this.selectController.select(value, false)
+		this.selected.set(value)
+		this.emit('change', value.value)
+		// @ts-expect-error - Safe: 'select' event expects LabeledOption<T>, but TypeScript's event
+		// manager type inference doesn't properly handle custom event types in extended interfaces
+		this.emit('select', value)
 
 		return this
 	}
@@ -346,19 +458,19 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 	enable() {
 		this._log.fn('enable').debug()
 		this.disabled = false
-		this.select.enable()
+		this.selectController.enable()
 		return this
 	}
 
 	disable() {
 		this._log.fn('disable').debug()
 		this.disabled = true
-		this.select.disable()
+		this.selectController.disable()
 		return this
 	}
 
 	refresh = () => {
-		const v = this.state.value
+		const v = this.selected.value
 		this._log.fn('refresh').debug({ v, this: this })
 
 		if (!this.labeledSelection) {
@@ -366,13 +478,13 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		}
 
 		const newOptions = this.options.filter(
-			o => !this.select.options.some(oo => oo.label === o.label),
+			o => !this.selectController.options.some(oo => oo.label === o.label),
 		)
 
 		for (const option of newOptions) {
-			this.select.add(option)
+			this.selectController.add(option)
 		}
-		this.select.select(this.labeledSelection, false)
+		this.selectController.select(this.labeledSelection, false)
 
 		super.refresh()
 		return this

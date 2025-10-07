@@ -12,8 +12,9 @@ export { Folder } from './Folder'
 export type { State } from './shared/state'
 export { state } from './shared/state'
 
-export type { ColorMode, ColorValue } from './shared/color/color'
+export type { ColorFormat, ColorObject, ColorString } from './shared/color/types/colorFormat'
 export { Color, isColor, isColorFormat, parseColorFormat } from './shared/color/color'
+export type { ColorMode, ColorValue } from './shared/color/color'
 
 export type { InputButtonGrid, ButtonGridInputOptions } from './inputs/InputButtonGrid'
 export type { InputSelect, SelectInputOptions } from './inputs/InputSelect'
@@ -21,6 +22,7 @@ export type { InputButton, ButtonInputOptions } from './inputs/InputButton'
 export type { InputSwitch, SwitchInputOptions } from './inputs/InputSwitch'
 export type { InputNumber, NumberInputOptions } from './inputs/InputNumber'
 export type { InputColor, ColorInputOptions } from './inputs/InputColor'
+export type { InputArray, ArrayInputOptions } from './inputs/InputArray'
 export type { InputText, TextInputOptions } from './inputs/InputText'
 
 // Shared

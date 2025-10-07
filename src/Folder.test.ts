@@ -1,9 +1,13 @@
-// import { tldr } from './shared/tldr'
-import { Gooey } from './Gooey'
 import { GooeyTest } from './tests/Gooey/GooeyTest'
 import { describe, expect, test } from 'vitest'
+// import { stringify } from './shared/stringify'
+// import { paint } from '@braebo/ansi'
+// import { tldr } from './shared/tldr'
+import { Gooey } from './Gooey'
 
 const G = new GooeyTest()
+
+// testing
 
 describe('addMany', () => {
 	const stuff = {
@@ -13,7 +17,8 @@ describe('addMany', () => {
 		button: () => console.log('button clicked'),
 		nested: {
 			color: '#ff000011' as const,
-			select: ['a', 'b', 'c'],
+			array: ['a', 'b', 'c'],
+			select: { value: 'a', options: ['a', 'b', 'c'] },
 			doubleNested: {
 				foobar: 'baz',
 			},
@@ -73,11 +78,22 @@ describe('addMany', () => {
 	})
 
 	// prettier-ignore
+	test('input array', () => {
+		const inputArray = inputs.nested.array
+		expect(inputArray, '❌ Missing from allInputs.').toMatchObject(gooey.allInputs.get('array')!)
+		expect(inputArray?.__type, '❌ Incorrect input type.').toBe('InputArray')
+		// InputArray now returns the full array, not a selected value
+		expect(inputArray?.value, '❌ Bad array value.').toEqual(['a', 'b', 'c'])
+	})
+
+	// prettier-ignore
 	test('input select', () => {
 		const inputSelect = inputs.nested.select
 		expect(inputSelect, '❌ Missing from allInputs.').toMatchObject(gooey.allInputs.get('select')!)
 		expect(inputSelect?.__type, '❌ Incorrect input type.').toBe('InputSelect')
-		expect(inputSelect?.value.value, '❌ Bad select value.').toBe('a')
+		expect(inputSelect?.value, '❌ Bad select raw value.').toBe('a')
+		expect(inputSelect?.state.value, '❌ Bad state value.').toBe('a')
+		expect(inputSelect?.selected.value, '❌ Bad selected option.').toMatchObject({ label: 'a', value: 'a' })
 	})
 
 	inputs.number.on('change', v => console.log('number changed', v))

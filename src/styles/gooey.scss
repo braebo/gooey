@@ -1,3 +1,22 @@
+//· Reset ···································································¬
+// Avoid external global bleed.
+:where(.gooey-root) {
+	all: revert;
+	box-sizing: border-box;
+}
+
+// Set sane box-sizing.
+:where(.gooey-root, .gooey-root *) {
+	box-sizing: border-box;
+}
+
+// Keeps UA behavior.
+:where(.gooey-root) :where(button, input, select, textarea) {
+	all: revert;
+	font: inherit;
+}
+//⌟
+
 //· Mixins ···································································¬
 
 @mixin fontMono {
@@ -1127,7 +1146,7 @@ input.gooey-search-input {
 	color: var(--gooey-fg-c);
 	background: var(--gooey-drawer-toggle_background);
 	transition: background var(--gooey-transition-duration);
-	box-shadow: -1px 0 1px 0.5px color-mix(in sRGB, var(--gooey-bg-a) 50%, transparent) inset;
+	// box-shadow: -1px 0 1px 0.5px color-mix(in sRGB, var(--gooey-bg-a) 50%, transparent) inset;
 
 	border-top-right-radius: var(--gooey-radius-sm);
 	border-bottom-right-radius: var(--gooey-radius-sm);
@@ -1237,7 +1256,8 @@ input.gooey-search-input {
 
 	color: var(--gooey-input-container_color);
 	outline: var(--gooey-input-container_outline);
-	box-shadow: var(--gooey-input-container_box-shadow);
+	// TODO These shadows are what have nuked performance.  Should find other shadows that might also be excessively hurting performance.
+	// box-shadow: var(--gooey-input-container_box-shadow);
 
 	transition: opacity 0.15s ease-in 0.2s;
 
@@ -1258,7 +1278,7 @@ input.gooey-search-input {
 			width: $inverted-border-size;
 			height: $inverted-border-size * 2;
 			border-top-left-radius: $inverted-border-radius;
-			box-shadow: 0 -#{$inverted-border-size} 0 0 var(--gooey-folder-header_background);
+			// box-shadow: 0 -#{$inverted-border-size} 0 0 var(--gooey-folder-header_background);
 
 			clip-path: inset(0 0 0 0);
 			opacity: 1;
@@ -1274,7 +1294,7 @@ input.gooey-search-input {
 			width: $inverted-border-size;
 			min-height: $inverted-border-size * 2;
 			border-top-right-radius: $inverted-border-radius;
-			box-shadow: 0 -#{$inverted-border-size} 0 0 var(--gooey-folder-header_background);
+			// box-shadow: 0 -#{$inverted-border-size} 0 0 var(--gooey-folder-header_background);
 
 			clip-path: inset(0 0 0 0);
 			opacity: 1;
@@ -1295,7 +1315,7 @@ input.gooey-search-input {
 			height: $inverted-border-size * 2;
 			width: $inverted-border-size;
 			border-bottom-left-radius: $inverted-border-radius-bottom;
-			box-shadow: 0 $inverted-border-size 0 0 var(--gooey-folder-header_background);
+			// box-shadow: 0 $inverted-border-size 0 0 var(--gooey-folder-header_background);
 			clip-path: inset(0 0 0 0);
 		}
 		// bottom right corner
@@ -1308,7 +1328,7 @@ input.gooey-search-input {
 			height: $inverted-border-size * 2;
 			width: $inverted-border-size;
 			border-bottom-right-radius: $inverted-border-radius-bottom;
-			box-shadow: 0 $inverted-border-size 0 0 var(--gooey-folder-header_background);
+			// box-shadow: 0 $inverted-border-size 0 0 var(--gooey-folder-header_background);
 			clip-path: inset(0 0 0 0);
 		}
 	}
@@ -1717,7 +1737,8 @@ input.gooey-search-input {
 				min-width: var(--gooey-input-section-2_width);
 				height: 1.5rem;
 
-				background-image: linear-gradient(45deg, $color 25%, transparent 25%),
+				background-image:
+					linear-gradient(45deg, $color 25%, transparent 25%),
 					linear-gradient(-45deg, $color 25%, transparent 25%),
 					linear-gradient(45deg, transparent 75%, $color 75%),
 					linear-gradient(-45deg, transparent 75%, $color 75%);

@@ -252,7 +252,7 @@ export interface GooeyStorageOptions {
 
 export interface GooeyPreset {
 	__type: 'GooeyPreset'
-	__version: string
+	__version: string | number
 	id: string
 	title: string
 	data: FolderPreset
@@ -543,9 +543,7 @@ export class Gooey {
 
 		this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage)
 
-		if (!this.opts.hidden) {
-			this._revealing = true
-		}
+		this._revealing = true
 	}
 
 	get title(): string {
@@ -772,14 +770,14 @@ export class Gooey {
 		)
 
 		if (folder) {
-			const themeInput = uiFolder.addSelect('theme', finalThemer.themes.value, {
-				presetId: uiFolder.presetId + '__theme_select',
-				labelKey: 'title',
-				initialValue: finalThemer.theme.value,
+			const themeInput = uiFolder.addSelect('theme', {
+				value: finalThemer.theme.value,
+				options: finalThemer.themes.value,
+				// }, { labelKey: 'title' })
 			})
 
 			themeInput.on('change', v => {
-				finalThemer.theme.set(v.value)
+				finalThemer.theme.set(v)
 			})
 
 			const modeButtons = uiFolder.addButtonGrid(

@@ -33,6 +33,8 @@ export function styled<T extends { new (...args: any[]): {}; style: string }>(
 
 				if (!dis.stylesheet) {
 					const stylesheet = document.createElement('style')
+					// TODO Wrap styles in @layer for specificity control?  Seems to do more harm than good.
+					// stylesheet.innerHTML = `@layer gooey-components {\n${dis.style}\n}`
 					stylesheet.innerHTML = dis.style
 					document.head.appendChild(stylesheet)
 					dis.stylesheet = stylesheet

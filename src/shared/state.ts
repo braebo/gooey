@@ -66,6 +66,17 @@ export type State<T> =
 					? SetState<U>
 					: PrimitiveState<T>
 
+// export type State<T> =
+// 	[T] extends [Array<infer U>]
+// 		? ArrayState<U>
+// 		: [T] extends [Map<infer K, infer V>]
+// 			? MapState<K, V>
+// 			: [T] extends [Set<infer U>]
+// 				? SetState<U>
+// 				: IsUnion<T> extends true
+// 					? UnionState<T>
+// 					: PrimitiveState<T>
+
 export interface StateOptions<T> extends Partial<Writable<T>> {
 	/**
 	 * If provided, the store will be persisted to local storage
