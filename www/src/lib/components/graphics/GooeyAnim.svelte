@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { InputNumber } from '../../../../../src/index'
+	import type { InputNumber, InputColor } from 'gooey'
 
 	import GooeyThemeSync from '../GooeyThemeSync.svelte'
 	import { Gooey } from '../../../../../src/index'
 	import { device } from '$lib/device.svelte'
 	import { onMount } from 'svelte'
 	import presets from './presets'
+	import { Color } from 'gooey'
 
 	const viewBox = {
 		width: 500,
@@ -18,11 +19,18 @@
 	let thumbEl = $state<SVGRectElement>()
 
 	let hueInput: InputNumber
-	let hue = $state(210)
+	let colorInput: InputColor
+
+	let color = new Color('#57abffff')
+	let saturation = $state(color.saturation)
+	let lightness = $state(color.lightness)
+	let hue = $state(color.hue)
+	let opacity = $state(color.alpha)
 
 	let p = $state({
 		orbs: {
-			hue: '#57abffff' as const,
+			color,
+			hue: color.hue,
 			size: 1.22,
 		},
 		goo: {
@@ -46,13 +54,10 @@
 
 	let duration = $derived(p.goo.speed ? mapRange(p.goo.speed, 0, 1, 100, 5) : 0)
 
-	let progress = $derived.by(() => {
-		if (sliderEl === undefined || thumbEl === undefined) return 1
-		const x = +sliderEl.getAttribute('x')!
-		const width = +sliderEl.getAttribute('width')!
-		const thumbWidth = +thumbEl.getAttribute('width')!
-		return mapRange(hue, 0, 1, x, width + x - thumbWidth)
-	})
+	// svelte-ignore state_referenced_locally
+	let progress = $state(mapRange(hue, 0, 360, 0, 1))
+
+	$effect(() => {})
 
 	onMount(() => {
 		// Create the gui.
@@ -66,6 +71,9 @@
 
 		// Bind to the params and configure their options.
 		const { inputs } = gooey.bindMany(p, {
+			orbs: {
+				hue: { min: 0, max: 360, step: 1 },
+			},
 			goo: {
 				folderOptions: { closed: true },
 				texture: { options: ['turbulence', 'fractalNoise'], value: 'fractalNoise' },
@@ -77,10 +85,26 @@
 		})
 
 		// Store a ref to the slider input to sync it with the svg slider.
-		const hueInput = inputs.orbs.hue
+		hueInput = inputs.orbs.hue as unknown as InputNumber
+		colorInput = inputs.orbs.color as unknown as InputColor
+
 		hueInput.on('change', v => {
-			hue = v.hue
+			hue = v
+			colorInput.value.hue = v
+			colorInput.refresh()
+			updateProgress()
 		})
+
+		colorInput.on('change', v => {
+			hue = v.hue
+			hueInput.value = v.hue
+			saturation = v.saturation
+			lightness = v.lightness
+			opacity = v.alpha
+			updateProgress()
+		})
+
+		updateProgress()
 
 		ready = true
 
@@ -115,8 +139,20 @@
 		const maxX = sliderLeft + sliderWidth - thumbWidth
 		const newX = Math.min(Math.max(clientX - mouseOffset, minX), maxX)
 
-		hue = mapRange(newX, minX, maxX, 0, 360)
-		hueInput.refresh()
+		hue = Math.round(mapRange(newX, minX, maxX, 0, 360))
+		hueInput.value = hue
+		colorInput.value.hue = hue
+		colorInput.refresh()
+		updateProgress()
+	}
+
+	function updateProgress() {
+		if (sliderEl && thumbEl) {
+			const x = +sliderEl.getAttribute('x')!
+			const width = +sliderEl.getAttribute('width')!
+			const thumbWidth = +thumbEl.getAttribute('width')!
+			progress = mapRange(hue, 0, 360, x, width + x - thumbWidth)
+		}
 	}
 
 	function randomPositions(n = 3) {
@@ -181,7 +217,7 @@
 		overflow="visible"
 		style="overflow: visible"
 	>
-		<ellipse id="orb2" cx="247" cy="97" rx={14 * p.orbs.size} ry={14 * p.orbs.size} fill="url(#gooey_anim_gradient_2)">
+		<ellipse id="orb2" cx="247" cy="97" rx={14 * p.orbs.size} ry={14 * p.orbs.size} fill="url(#gooey_anim_gradient_2)" {opacity}>
 			<animateTransform {...randomPositions()} />
 		</ellipse>
 
@@ -199,7 +235,7 @@
 				bind:this={thumbEl}
 				id="thumb"
 				filter="url(#gooey_anim_thumb_glow)"
-				fill="hsl({310 + hue % 360}, 100%, 67%)"
+				fill="hsl({310 + hue % 360}, {saturation}%, {lightness}%)"
 				width="15"
 				height="36"
 				x={progress}
@@ -207,6 +243,7 @@
 				rx="5.4"
 				{onblur}
 				{onpointerdown}
+				{opacity}
 				role="slider"
 				tabindex="0"
 				aria-valuemin="0"
@@ -215,15 +252,15 @@
 			/>
 		</g>
 
-		<ellipse id="orb1" cx="110" cy="120" rx={10 * p.orbs.size} ry={10 * p.orbs.size} fill="url(#gooey_anim_gradient_1)">
+		<ellipse id="orb1" cx="110" cy="120" rx={10 * p.orbs.size} ry={10 * p.orbs.size} fill="url(#gooey_anim_gradient_1)" {opacity}>
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
-		<ellipse id="orb4" cx="490" cy="75" rx={10 * p.orbs.size} ry={10 * p.orbs.size} fill="url(#gooey_anim_gradient_4)">
+		<ellipse id="orb4" cx="490" cy="75" rx={10 * p.orbs.size} ry={10 * p.orbs.size} fill="url(#gooey_anim_gradient_4)" {opacity}>
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
-		<ellipse id="orb3" cx="326" cy="55" rx={8.5 * p.orbs.size} ry={8.5 * p.orbs.size} fill="url(#gooey_anim_gradient_3)">
+		<ellipse id="orb3" cx="326" cy="55" rx={8.5 * p.orbs.size} ry={8.5 * p.orbs.size} fill="url(#gooey_anim_gradient_3)" {opacity}>
 			<animateTransform {...randomPositions(5)} />
 		</ellipse>
 
@@ -231,22 +268,22 @@
 			<!--//- Orb Gradients -->
 
 			<linearGradient id="gooey_anim_gradient_1" class="gooey_anim_gradient_1" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<stop stop-color="hsl({shift1 + hue % 360}, 100%, 67%)" />
+				<stop stop-color="hsl({shift1 + hue % 360}, {saturation}%, {lightness}%)" />
 				<stop offset="1" stop-color="hsl({shift1 + 20 + hue % 360}, 42%, 25%)" />
 			</linearGradient>
 
 			<linearGradient id="gooey_anim_gradient_2" class="gooey_anim_gradient_2" gradientUnits="objectBoundingBox" x1 ="1" x2="1"y1="0"y2="1">
-				<stop stop-color="hsl({shift2 + hue % 360}, 100%, 67%)" />
+				<stop stop-color="hsl({shift2 + hue % 360}, {saturation}%, {lightness}%)" />
 				<stop offset="1" stop-color="hsl({shift2 + 20 + hue % 360}, 42%, 30%)" />
 			</linearGradient>
 
 			<linearGradient id="gooey_anim_gradient_4" class="gooey_anim_gradient_4" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<stop stop-color="hsl({shift4 + hue % 360}, 100%, 67%)" />
+				<stop stop-color="hsl({shift4 + hue % 360}, {saturation}%, {lightness}%)" />
 				<stop offset="1" stop-color="hsl({shift4 + 20 + hue % 360}, 42%, 30%)" />
 			</linearGradient>
 
 			<linearGradient id="gooey_anim_gradient_3" class="gooey_anim_gradient_3" gradientUnits="objectBoundingBox" x1="1" x2="1" y1="0" y2="1">
-				<stop stop-color="hsl({shift3 + hue % 360}, 100%, 67%)" />
+				<stop stop-color="hsl({shift3 + hue % 360}, {saturation}%, {lightness}%)" />
 				<stop offset="1" stop-color="hsl({shift3 + 20 + hue % 360}, 42%, 30%)" />
 			</linearGradient>
 
@@ -274,13 +311,13 @@
 					{/if}
 				</feOffset>
 
-				<feDisplacementMap in="SourceGraphic" in2="TURBULENCE" scale={p.goo.gooeyness}>
+				<feDisplacementMap in="SourceGraphic" in2="TURBULENCE" scale={p.goo.gooeyness}></feDisplacementMap>
 			</filter>
 		</defs>
 	</svg>
 </div>
 
-<style lang="scss">
+<style>
 	.logo {
 		width: min(50rem, 90vw);
 		margin: auto;

@@ -88,7 +88,10 @@ export class ColorPicker {
 		const opts = { ...COLOR_PICKER_DEFAULTS, ...options }
 
 		this.opts = opts
-		this._log = new Logger(`ColorPicker ${input.title}`, { fg: 'lightgreen' })
+		this._log = new Logger(`ColorPicker ${input.title}`, {
+			fg: 'lightgreen',
+			logLevel: 'debug',
+		})
 		this._log.fn('constructor').debug({ opts, this: this })
 
 		this._lastColor = this.input.state.value.clone()
@@ -124,6 +127,7 @@ export class ColorPicker {
 			type: 'range',
 			classes: ['gooey-input-range', 'gooey-input-color-picker-hue'],
 			parent: container,
+			value: this.input.state.value.hue,
 			min: 0,
 			max: 359,
 		})
@@ -131,7 +135,7 @@ export class ColorPicker {
 
 		tooltip(hueSlider, {
 			parent: container,
-			text: () => `${this.input.state.value.hsla.h}`,
+			text: () => `${this.input.value.hue}`,
 			placement: 'top',
 			offsetX: '0px',
 			anchor: {
@@ -192,6 +196,9 @@ export class ColorPicker {
 		this._updateGradients()
 		setTimeout(this.draw, 10)
 		setTimeout(this._updateHandle, 20)
+		setTimeout(() => {
+			hueSlider.value = String(this.input.state.value.hue)
+		}, 30)
 	}
 
 	get canvas() {
@@ -225,7 +232,7 @@ export class ColorPicker {
 	}
 
 	set(v: ColorValue) {
-		this.input.state.value.set(v)
+		this.input.value.set(v)
 		this.input.refresh()
 		this.refresh()
 	}
@@ -233,6 +240,9 @@ export class ColorPicker {
 	setAlpha = (e: InputEvent) => {
 		this.input.state.value.alpha = Number((e.target as HTMLInputElement).value)
 		this.input.refresh()
+		this.input.emit('change', this.input.state.value)
+		this.refresh()
+		// this.input.set(this.input.state.value)
 	}
 
 	/**
@@ -332,8 +342,12 @@ export class ColorPicker {
 		const y = clamp(e.clientY - top, 0, height)
 
 		const { s, v } = this._getColorAtPosition(x, y)
-		this.input.state.value.hsv = { h: this.hue, s, v }
-		this.input.set(this.input.state.value)
+
+		this.input.value.saturation = s
+		this.input.value.value = v
+		this.input.refresh()
+		this.input.emit('change', this.input.value)
+		this.refresh()
 
 		this._drawHandle(this._getHandlePosition(this.input.state.value))
 	}
@@ -359,9 +373,10 @@ export class ColorPicker {
 
 		const hue = Number((e.target as HTMLInputElement).value)
 
-		const { s, v, a } = this.input.state.value.hsva
-		this.input.state.value.hsva = { h: hue, s, v, a }
-		this.input.set(this.input.state.value)
+		this.input.value.hue = hue
+		this.input.refresh()
+		this.input.emit('change', this.input.value)
+		this.refresh()
 
 		this.elements.handle.style.background = this.input.state.value.hexString
 
