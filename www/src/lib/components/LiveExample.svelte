@@ -1,8 +1,9 @@
 <script lang="ts" generics="T extends Record<string, any> = Record<string, any>">
-	import { Gooey, type GooeyOptions } from '../../../../src/Gooey'
+	import type { Snippet } from 'svelte'
+
+	import { Gooey, type GooeyOptions } from 'gooey'
 	import { device } from '$lib/device.svelte'
 	import Gooish from './Gooish.svelte'
-	import type { Snippet } from 'svelte'
 
 	let {
 		children,

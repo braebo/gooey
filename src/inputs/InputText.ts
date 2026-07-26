@@ -59,6 +59,15 @@ export class InputText extends Input<string, TextInputOptions, TextControllerEle
 		const container = create('div', {
 			classes: ['gooey-input-text-container'],
 			parent: this.elements.content,
+			tooltip: {
+				text: `Max length: ${this.opts.maxLength!}`,
+				placement: 'left',
+				delay: 0,
+				offsetX: '-4px',
+				hideOnClick: true,
+				manual: true,
+				...this.opts.tooltipOptions,
+			},
 		})
 
 		this.elements.controllers = {
@@ -76,17 +85,21 @@ export class InputText extends Input<string, TextInputOptions, TextControllerEle
 	}
 
 	set = (v?: string | Event) => {
-		if (typeof v === 'undefined') return
-
-		if (typeof v !== 'string') {
-			if (v?.target && 'value' in v.target) {
-				this.commit({ to: v.target.value as string })
-				this.state.set(v.target.value as string)
-			}
-		} else {
-			this.commit({ to: v })
-			this.state.set(v)
+		if (typeof v !== 'string' && v?.target && 'value' in v.target) {
+			v = v.target.value as string
 		}
+
+		if (typeof v !== 'string') return
+
+		if (v.length > this.opts.maxLength!) {
+			v = v.slice(0, this.opts.maxLength!)
+			this.elements.drawerToggle.tooltip.text = `Max length: ${this.opts.maxLength!}`
+			this.elements.drawerToggle.tooltip.show()
+			alert(`Max length: ${this.opts.maxLength!}`)
+		}
+
+		this.commit({ to: v })
+		this.state.set(v)
 
 		this.emit('change', this.state.value)
 		return this

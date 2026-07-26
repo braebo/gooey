@@ -1,61 +1,87 @@
 <script lang="ts">
-	import { IMPORT_MODES, importMode } from '$lib/data/importMode.svelte'
-	import InstallButton from './InstallButton.svelte'
+	import { installer, INSTALLERS, bundler, jsr } from './installer.svelte'
+	import CopyInstallCommand from './CopyInstallCommand.svelte'
 	import Info from '$lib/components/Info.svelte'
 	import H from '$lib/components/H.svelte'
+	import { onMount } from 'svelte'
+	import { Gooey } from 'gooey'
 
 	let infoTarget = $state<HTMLElement>()
+	let container = $state<HTMLElement>()
+	let gooey = $state<Gooey>()
+	// let minHeight = $derived(gooey?.elements.container?.clientHeight || 500)
+
+	onMount(() => {
+		gooey = new Gooey('choose your weapon', {
+			container,
+		})
+		const installers = gooey.addButtonGrid('', [
+			INSTALLERS.map(i => {
+				return {
+					text: i,
+					onClick: () => (installer.current = i),
+				}
+			}),
+		])
+
+		// const bundlerSwitch = gooey.addSwitch('Bundler', bundler.current, {
+		// 	onChange: v => (bundler.current = v),
+		// 	description: 'Use <code>devDependencies</code> for<br> bundlers like Vite.',
+		// })
+		// const jsrSwitch = gooey.addSwitch('JSR', jsr.current, { onChange: v => (jsr.current = v) })
+
+		installers.on('click', v => {
+			let text = v.button.text
+			// bundlerSwitch.disabled = text === 'CDN'
+			// jsrSwitch.disabled = text === 'CDN'
+			for (const button of options.buttons.values()) {
+				button.disabled = text === 'CDN'
+				if (button.disabled) button.active = false
+			}
+		})
+
+		const options = gooey.addButtonGrid(
+			'options',
+			[
+				[
+					{ text: 'JSR', onClick: ({ button }) => (jsr.current = button.active) },
+					{ text: 'Bundler', onClick: ({ button }) => (bundler.current = button.active) },
+				],
+			],
+			{
+				multiple: true,
+			},
+		)
+	})
 </script>
 
-<!-- <h2 id="install" class="section-title">Install</h2> -->
 <H l="2" id="install">Install</H>
 
 <section class="section">
 	<div class="installation-options">
-		<!-- prettier-ignore -->
-		<div class="selectors">
+		<!-- <div class="selectors">
 			<div id="choose-your-weapon" class="description em">choose your weapon</div>
-			<button class="btn selector" class:active={importMode.value === 'JSR'} onclick={() => (importMode.value = 'JSR')}>JSR</button>
-			<button class="btn selector" class:active={importMode.value === 'NPM'} onclick={() => (importMode.value = 'NPM')}>NPM</button>
-			<button class="btn selector" class:active={importMode.value === 'CDN'} onclick={() => (importMode.value = 'CDN')}>CDN</button>
-		</div>
+			{#each INSTALLERS as i}
+				<button
+					class="btn selector"
+					class:active={installer.current === i}
+					onclick={() => (installer.current = i)}>{i}</button
+				>
+			{/each}
+		</div> -->
+
+		<div class="gooey-container selectors" bind:this={container} style="min-height: 10rem"></div>
+
+		<!-- TODO Simplified: -->
 
 		<div class="installers">
-			<div class:active={importMode.value === 'NPM'} class="installer">
-				<InstallButton
-					tabindex={importMode.value === 'NPM' ? 0 : -1}
-					text={`
-					<span>npm install </span>
-					<span class="gooey">&nbsp;gooey</span>
-				`}
-					copyText={`npm install gooey`}
-					onclick={() => (importMode.value = 'NPM')}
-				/>
-			</div>
-			<div class:active={importMode.value === 'JSR'} class="installer">
-				<InstallButton
-					tabindex={importMode.value === 'JSR' ? 0 : -1}
-					text={`
-						npx jsr add
-						<span>
-							&nbsp;<span style="color:color-mix(in lch, var(--theme-a), var(--light-e) 25%)">@braebo</span><span
-								style="color:color-mix(in lch, var(--theme-a), var(--light-e) 75%)"><div
-								style="display: inline-block; transform: translateX(2px);">/</span
-							><span class="gooey" style="transform: translateX(1px);">gooey</span></div>
-						</span>
-					`}
-					copyText={`npx jsr add @braebo/gooey`}
-					onclick={() => (importMode.value = 'JSR')}
-				/>
-			</div>
-			<div class:active={importMode.value === 'CDN'} class="installer">
-				<InstallButton
-					tabindex={importMode.value === 'CDN' ? 0 : -1}
-					text={IMPORT_MODES.CDN.replace('gooey', '<div class="gooey">gooey&nbsp;</div>')}
-					copyText={IMPORT_MODES.CDN}
-					onclick={() => (importMode.value = 'CDN')}
-				/>
-			</div>
+			{#each INSTALLERS as i}
+				{@const active = installer.current === i}
+
+				<div class:active class="installer">
+					<CopyInstallCommand installer={i} {active} />
+				</div>
+			{/each}
 		</div>
 
 		<div class="info">
@@ -143,9 +169,9 @@
 		}
 
 		:global(.gooey) {
-			transform: translateY(-0.1rem) rotate(-1deg) skew(-1deg) scale(1.1);
-			padding-right: 0.1rem;
-			padding-left: 0.2rem;
+			transform: translateY(-0.125rem) rotate(-1deg) skew(-1deg) scale(1.05);
+			// padding-right: 0.1rem;
+			padding: 0 0.33rem;
 		}
 	}
 
@@ -251,13 +277,6 @@
 
 		.installers {
 			max-width: calc(100vw - 2rem);
-		}
-
-		.installer {
-			:global(.gooey) {
-				margin: 0;
-				padding: 0;
-			}
 		}
 	}
 </style>

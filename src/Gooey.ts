@@ -395,7 +395,7 @@ export class Gooey {
 	private _closedMap: PersistedValue<Record<string, boolean>>
 	private static _initialized = false
 
-	constructor(title?: Partial<GooeyOptions>, options?: Partial<GooeyOptions>)
+	constructor(title?: string, options?: Partial<GooeyOptions>)
 	constructor(options?: Partial<GooeyOptions>, never?: never)
 	constructor(
 		titleOrOptions?: string | Partial<GooeyOptions>,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { themer } from '$lib/themer/themer.svelte'
-	import { Gooey } from '../../../../src/index'
 	import { onMount } from 'svelte'
+	import { Gooey } from 'gooey'
 
 	const { gooey }: { gooey: Gooey } = $props()
 

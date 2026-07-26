@@ -13,29 +13,27 @@
 			position: 'top-center',
 		})
 
-		gooey.addButtonGrid(
+		const grid = gooey.addButtonGrid(
 			'addButtonGrid',
 			[
 				[
 					{
-						text: 'foo',
-						onClick: (v) => {
+						text: 'foo 0',
+						onClick: v => {
+							const [text, count] = v.button.text.split(' ')
+							v.button.text = `${text} ${Number(count) + 1}`
+							console.log({ callback: v })
 							_ = v
-							console.log('foo', v)
 						},
 					},
 					{
-						text: 'bar',
-						onClick: (v) => {
-							_ = v
-							console.log('bar', v)
+						text: 'Button Grid',
+						onClick: () => {
+							console.log({ grid })
+							// _ = tldr(grid.buttons, { maxSiblings: 20 })
 						},
-					},
-					{
-						text: 'baz',
-						onClick: (v) => {
-							_ = v
-							console.log('baz', v)
+						tooltip: {
+							text: 'Logs and displays button grid information.',
 						},
 					},
 				],

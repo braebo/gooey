@@ -16,6 +16,7 @@
 	import { page } from '$app/state'
 	import { onMount } from 'svelte'
 
+
 	setupViewTransition()
 
 	let { children } = $props()

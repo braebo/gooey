@@ -1,14 +1,15 @@
 <script lang="ts">
-	import type { GooeyOptions, Folder, InputText } from '../../../../src'
+	import type { GooeyOptions, Folder, InputText } from 'gooey'
 	import type { Branch } from '$lib/utils/tree'
 	
+	import { createHeroGradientGooey as createGradientFolder } from '$lib/components/HeroGradient.svelte'
 	import { useInspector } from '$lib/utils/useInspector'
 	import { afterNavigate, goto } from '$app/navigation'
 	import GooeyThemeSync from './GooeyThemeSync.svelte'
 	import { themer } from '$lib/themer/themer.svelte'
-	import { Gooey } from '../../../../src/Gooey'
 	import { page } from '$app/state'
 	import { onMount } from 'svelte'
+	import { Gooey } from 'gooey'
 	// import { Store } from 'runed'
 
 	let {
@@ -44,6 +45,7 @@
 		createRoutesFolder(gooey)
 		createUrlFolder(gooey)
 		createThemerFolder(gooey)
+		createGradientFolder(gooey)
 
 		return () => {
 			gooey?.dispose()

@@ -14,7 +14,7 @@ type Anchors = { x: Anchor; y: Anchor }
 type AnchorRect = DOMRect | { left: number; top: number; width: number; height: number }
 
 /**
- * Options for the tooltip.
+ * Options for a single instance of the {@link Tooltip} class.
  */
 export interface TooltipOptions {
 	readonly __type?: 'TooltipOptions'

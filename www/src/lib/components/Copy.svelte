@@ -16,7 +16,7 @@
 		tooltipOptions = {} as TooltipOptions,
 		tabindex = 0,
 	}: {
-		text: string
+		text: string | (() => string)
 		style?: string
 		phase?: Phase
 		blur?: boolean
@@ -49,7 +49,7 @@
 		event.preventDefault()
 
 		try {
-			navigator.clipboard?.writeText?.(text)
+			navigator.clipboard?.writeText?.(typeof text === 'function' ? text() : text)
 		} catch (error) {
 			console.error('Failed to copy to clipboard:', error)
 		}

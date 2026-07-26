@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { IMPORT_MODES, importMode } from '../../importMode.svelte'
 	import InstallButton from './InstallButton.svelte'
 	import Info from '$lib/components/Info.svelte'
@@ -180,4 +180,4 @@
 			}
 		}
 	}
-</style>
+</style> -->

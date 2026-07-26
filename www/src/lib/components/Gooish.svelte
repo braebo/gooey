@@ -1,7 +1,7 @@
 <!-- svelte-ignore state_referenced_locally -->
 <script lang="ts" generics="T extends Record<string, any> = Record<string, any>">
-	import { Gooey, type GooeyOptions } from '../../../../src/Gooey'
 	import GooeyThemeSync from './GooeyThemeSync.svelte'
+	import { Gooey, type GooeyOptions } from 'gooey'
 	import { onMount } from 'svelte'
 
 	let {

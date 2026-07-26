@@ -87,6 +87,7 @@ function highlightCode(node, highlighter) {
 		: 'plaintext'
 	const code = toText(codeElement, { whitespace: 'pre' })
 	// const highlighted = highlighter.codeToHtml(code, { lang: `${lang}` as any, theme: 'serendipity' })
-	const highlighted = highlight(code, { lang: `${lang}`, theme: 'serendipity' })
+	// const highlighted = highlight(code, { lang: `${lang}`, theme: 'serendipity' })
+	const highlighted = highlighter.highlightSync(code, { lang: `${lang}`, theme: 'serendipity' })
 	return raw({ type: 'raw', value: highlighted })
 }

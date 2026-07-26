@@ -2,11 +2,10 @@
 	import type { InputNumber, InputColor } from 'gooey'
 
 	import GooeyThemeSync from '../GooeyThemeSync.svelte'
-	import { Gooey } from '../../../../../src/index'
 	import { device } from '$lib/device.svelte'
+	import { Gooey, Color } from 'gooey'
 	import { onMount } from 'svelte'
 	import presets from './presets'
-	import { Color } from 'gooey'
 
 	const viewBox = {
 		width: 500,
@@ -34,12 +33,12 @@
 			size: 1.22,
 		},
 		goo: {
-			speed: 0.66,
-			animate: true,
-			texture: 'fractalNoise',
+			// animate: true,
 			gooeyness: 50,
 			viscosity: 0.0123,
 			density: 1,
+			texture: 'fractalNoise',
+			speed: 0.66,
 		},
 	})
 
@@ -306,9 +305,9 @@
 				<feTile width="{viewBox.width * 3}" height="{viewBox.width}" />
 
 				<feOffset result="TURBULENCE" dx="0" width="{viewBox.width * 2}">
-					{#if p.goo.animate}
+					<!-- {#if p.goo.animate} -->
 						<animate attributeName="dx" from="-{viewBox.width}" to="0" begin="0s" dur="{duration}s" repeatCount="indefinite" />
-					{/if}
+					<!-- {/if} -->
 				</feOffset>
 
 				<feDisplacementMap in="SourceGraphic" in2="TURBULENCE" scale={p.goo.gooeyness}></feDisplacementMap>

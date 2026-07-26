@@ -1,46 +1,44 @@
 <script lang="ts">
-	import type { TooltipOptions } from '../../../../../../src/shared/Tooltip'
+	import type { Installer } from './installer.svelte'
+	import type { TooltipOptions } from 'gooey'
 
+	import { getCmd, getLib, installer as active_installer } from './installer.svelte'
 	import Copy from '$lib/components/Copy.svelte'
 
-	let phase: 'idle' | 'active' | 'outro' = $state('idle')
-	let animating = $derived(phase !== 'idle')
-
 	const {
-		text,
-		copyText,
-		active = false,
-		onclick = () => {},
+		installer,
+		active = $bindable(false),
 		style = '',
 		tooltipOptions = {},
-		tabindex = 0,
-	}: {
-		text: string
-		copyText?: string
+}: {
+		installer: Installer
 		active?: boolean
-		onclick?: () => void
+		tabindex?: number
 		style?: string
 		tooltipOptions?: Partial<TooltipOptions>
-		tabindex?: number
 	} = $props()
+
+	let element = $state<HTMLElement>()
+	let text = $derived((element?.innerText ?? '').trim().replace(/\s+/g, ' '))
+	let phase: 'idle' | 'active' | 'outro' = $state('idle')
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div role="button" class="install-wrapper" {onclick} class:active {tabindex}>
-	<code class="install" {style}>
-		{@html text}
+<button class="install-wrapper" class:active onclick={() => (active_installer.current = installer)}>
+	<code class="install" {style} bind:this={element}>
+		{@html getCmd(installer)} <span>{@html getLib(installer)}</span>
 	</code>
 
-	<div class="copy" class:animating>
+	<div class="copy" class:animating={phase !== 'idle'}>
 		<Copy
-			text={copyText ?? text}
+			{text}
 			bind:phase
 			style="box-sizing:border-box;position:absolute;inset:0;margin:0;width:100%;height:100%;"
 			tooltipOptions={{ ...tooltipOptions, placement: 'bottom', offsetY: '5px' }}
 			tabindex={-1}
 		/>
 	</div>
-</div>
+</button>
 
 <style lang="scss">
 	.install-wrapper {

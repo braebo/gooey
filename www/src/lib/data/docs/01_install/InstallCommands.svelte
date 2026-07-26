@@ -1,5 +1,6 @@
-<script lang="ts">
-	import { IMPORT_MODES, importMode } from '../../importMode.svelte'
+<!-- <script lang="ts">
+	// import { IMPORT_MODES, importMode } from '../../importMode.svelte'
+	import { installer, INSTALLERS } from '$lib/data/importMode.svelte'
 	import InstallButton from './InstallButton.svelte'
 	import Info from '$lib/components/Info.svelte'
 	import H from '$lib/components/H.svelte'
@@ -11,48 +12,54 @@
 
 <section class="section">
 	<div class="installation-options">
-		<!-- prettier-ignore -->
 		<div class="selectors">
 			<div id="choose-your-weapon" class="description em">choose your weapon</div>
-			<button class="btn selector" class:active={importMode.value === 'JSR'} onclick={() => (importMode.value = 'JSR')}>JSR</button>
-			<button class="btn selector" class:active={importMode.value === 'NPM'} onclick={() => (importMode.value = 'NPM')}>NPM</button>
-			<button class="btn selector" class:active={importMode.value === 'CDN'} onclick={() => (importMode.value = 'CDN')}>CDN</button>
+			<button
+				class="btn selector"
+				class:active={installer.current === 'JSR'}
+				onclick={() => (installer.current = 'JSR')}>JSR</button
+			>
+			<button
+				class="btn selector"
+				class:active={installer.current === 'NPM'}
+				onclick={() => (installer.current = 'NPM')}>NPM</button
+			>
+			<button
+				class="btn selector"
+				class:active={installer.current === 'CDN'}
+				onclick={() => (installer.current = 'CDN')}>CDN</button
+			>
 		</div>
 
 		<div class="installers">
-			<div class:active={importMode.value === 'NPM'} class="installer">
+			<div class:active={installer.current === 'NPM'} class="installer">
 				<InstallButton
-					tabindex={importMode.value === 'NPM' ? 0 : -1}
+					tabindex={installer.current === 'NPM' ? 0 : -1}
 					text={`
 					<span>npm install </span>
 					<span class="gooey">&nbsp;gooey</span>
 				`}
 					copyText={`npm install gooey`}
-					onclick={() => (importMode.value = 'NPM')}
+					onclick={() => (installer.current = 'NPM')}
 				/>
 			</div>
-			<div class:active={importMode.value === 'JSR'} class="installer">
+			<div class:active={installer.current === 'JSR'} class="installer">
 				<InstallButton
-					tabindex={importMode.value === 'JSR' ? 0 : -1}
+					tabindex={installer.current === 'JSR' ? 0 : -1}
 					text={`
 						npx jsr add
-						<span>
-							&nbsp;<span style="color:color-mix(in lch, var(--theme-a), var(--light-e) 25%)">@braebo</span><span
-								style="color:color-mix(in lch, var(--theme-a), var(--light-e) 75%)"><div
-								style="display: inline-block; transform: translateX(2px);">/</span
-							><span class="gooey" style="transform: translateX(1px);">gooey</span></div>
-						</span>
+						<span>&nbsp;<span style="color:color-mix(in lch, var(--theme-a), var(--light-e) 25%)">@braebo</span><span style="color:color-mix(in lch, var(--theme-a), var(--light-e) 75%)"><div style="display: inline-block; transform: translateX(2px);">/</span><span class="gooey" style="transform: translateX(1px);">gooey</span></div></span>
 					`}
 					copyText={`npx jsr add @braebo/gooey`}
-					onclick={() => (importMode.value = 'JSR')}
+					onclick={() => (installer.current = 'JSR')}
 				/>
 			</div>
-			<div class:active={importMode.value === 'CDN'} class="installer">
+			<div class:active={installer.current === 'CDN'} class="installer">
 				<InstallButton
-					tabindex={importMode.value === 'CDN' ? 0 : -1}
+					tabindex={installer.current === 'CDN' ? 0 : -1}
 					text={IMPORT_MODES.CDN.replace('gooey', '<div class="gooey">gooey&nbsp;</div>')}
 					copyText={IMPORT_MODES.CDN}
-					onclick={() => (importMode.value = 'CDN')}
+					onclick={() => (installer.current = 'CDN')}
 				/>
 			</div>
 		</div>
@@ -266,4 +273,4 @@
 			}
 		}
 	}
-</style>
+</style> -->

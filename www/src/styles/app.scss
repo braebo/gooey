@@ -1,8 +1,11 @@
+@use 'btn.scss';
 @use 'font.scss';
 @use 'theme.scss';
 @use 'utils.scss';
 @use 'inputs.scss';
 @use 'elements.scss';
+
+@layer app, docs;
 
 @layer app {
 	::view-transition-new(*) {

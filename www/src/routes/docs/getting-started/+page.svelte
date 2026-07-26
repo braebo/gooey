@@ -20,12 +20,3 @@
 <Basics />
 
 <div class="br-xl" />
-
-<div class="br-xl" />
-<div class="br-xl" />
-<div class="br-xl" />
-<div class="br-xl" />
-<div class="br-xl" />
-<div class="br-xl" />
-<div class="br-xl" />
-<div class="br-xl" />

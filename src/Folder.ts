@@ -23,12 +23,7 @@ import { InputNumber, type NumberInputOptions } from './inputs/InputNumber'
 import { InputColor, type ColorInputOptions } from './inputs/InputColor'
 import { InputArray, type ArrayInputOptions } from './inputs/InputArray'
 import { InputText, type TextInputOptions } from './inputs/InputText'
-import {
-	InputButtonGrid,
-	isButtonGridArrays,
-	type ButtonGridInputOptions,
-	type ButtonGridArrays,
-} from './inputs/InputButtonGrid'
+import { InputButtonGrid, type ButtonGridInputOptions, type ButtonGridArrays } from './inputs/InputButtonGrid'
 
 import { animateConnector, createFolderConnector, createFolderSvg } from './svg/createFolderSVG'
 import { Color, isColor, isColorFormat } from './shared/color/color'
@@ -64,19 +59,17 @@ export type InferOptions<T> = T extends number
 			? ColorInputOptions
 			: T extends string
 				? TextInputOptions
-				: T extends ButtonGridArrays
-					? ButtonGridInputOptions
-					: T extends LabeledOption<infer U>[]
-						? SelectInputOptions<U>
-						: T extends { value: infer V; options: Array<infer V> }
-							? SelectInputOptions<V>
-							: T extends Option<infer U>
-								? SelectInputOptions<U>
-								: T extends Array<infer U>
-									? ArrayInputOptions<U>
-									: T extends () => void
-										? ButtonInputOptions
-										: InputOptions
+				: T extends LabeledOption<infer U>[]
+					? SelectInputOptions<U>
+					: T extends { value: infer V; options: Array<infer V> }
+						? SelectInputOptions<V>
+						: T extends Option<infer U>
+							? SelectInputOptions<U>
+							: T extends Array<infer U>
+								? ArrayInputOptions<U>
+								: T extends () => void
+									? ButtonInputOptions
+									: InputOptions
 
 /**
  * Resolves any provided value to the corresponding {@link ValidInput} associated with the type.
@@ -91,17 +84,15 @@ export type InferInput<TValueType> = TValueType extends number
 				? InputText
 				: TValueType extends () => void
 					? InputButton
-					: TValueType extends ButtonGridArrays
-						? InputButtonGrid
-						: TValueType extends LabeledOption<infer U>[]
-							? InputSelect<U>
-							: TValueType extends { value: infer V; options: Array<infer V> }
-								? InputSelect<V>
-								: TValueType extends Option<infer U>
-									? InputSelect<U>
-									: TValueType extends Array<infer U>
-										? InputArray<U>
-										: ValidInput
+					: TValueType extends LabeledOption<infer U>[]
+						? InputSelect<U>
+						: TValueType extends { value: infer V; options: Array<infer V> }
+							? InputSelect<V>
+							: TValueType extends Option<infer U>
+								? InputSelect<U>
+								: TValueType extends Array<infer U>
+									? InputArray<U>
+									: ValidInput
 
 /**
  * Resolves a target object to a type that represents the same structure, but with all values
@@ -1318,8 +1309,6 @@ export class Folder {
 	// prettier-ignore
 	add<T extends (() => void)>(title: string, initialValue: T, options?: ButtonInputOptions): InputButton
 	// prettier-ignore
-	add<T extends ButtonGridArrays>(title: string, initialValue: T, options?: ButtonGridInputOptions): InputButtonGrid
-	// prettier-ignore
 	add<T>(title: string, initialValue: T[], options?: ArrayInputOptions<T>): InputArray<T>
 	/**
 	 * Adds an input to the folder based on the type of the `initialValue` parameter.
@@ -1609,10 +1598,7 @@ export class Folder {
 							? folder.bindColor(value, 'color', { title: key, ...inputOptions })
 							: folder.addColor(key, value, inputOptions)
 				} else if (Array.isArray(value)) {
-					//? InputButtonGrid
-					if (isButtonGridArrays(value)) {
-						input = folder.addButtonGrid(key, value, inputOptions)
-					} else if (value.length > 0 && isLabeledOption(value[0])) {
+					if (value.length > 0 && isLabeledOption(value[0])) {
 						//? InputSelect (array of labeled options) - treat as { value, options } shape
 						input =
 							mode === 'bind'
@@ -2076,9 +2062,6 @@ export class Folder {
 			}
 			case 'object': {
 				if (Array.isArray(value)) {
-					if (isButtonGridArrays(value)) {
-						return 'InputButtonGrid'
-					}
 					// Check if explicit select options are provided
 					if ('options' in options && Array.isArray(options.options)) {
 						return 'InputSelect'

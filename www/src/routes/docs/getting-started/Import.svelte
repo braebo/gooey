@@ -1,7 +1,10 @@
+<!-- TODO Update this component to use the new Installer instance. -->
+
 <script lang="ts">
 	import type { Tab } from '$lib/components/Code.svelte'
 
-	import { importMode, IMPORT_MODES } from '$lib/data/importMode.svelte'
+	// import { importMode, IMPORT_MODES } from '$lib/data/importMode.svelte'
+	import { installer } from './install-commands/installer.svelte'
 	import Code from '$lib/components/Code.svelte'
 	import H from '$lib/components/H.svelte'
 
@@ -18,25 +21,25 @@
 	let tabs: Tab[] = $derived([
 		{
 			text: 'JSR',
-			onclick: () => (importMode.value = 'JSR'),
-			active: importMode.value === 'JSR',
+			onclick: () => (installer.current = 'JSR'),
+			active: installer.current === 'JSR',
 		},
 		{
 			text: 'NPM',
-			onclick: () => (importMode.value = 'NPM'),
-			active: importMode.value === 'NPM',
+			onclick: () => (installer.current = 'NPM'),
+			active: installer.current === 'NPM',
 		},
 		{
 			text: 'CDN',
-			onclick: () => (importMode.value = 'CDN'),
-			active: importMode.value === 'CDN',
+			onclick: () => (installer.current = 'CDN'),
+			active: installer.current === 'CDN',
 		},
 	])
 
 	$effect(() => {
-		if (importMode.value) {
+		if (installer.current) {
 			if (first) {
-				if (span) span.innerText = `'${IMPORT_MODES[importMode.value]}'`
+				if (span) span.innerText = `'${installer.current}'`
 				first = false
 				console.warn('first')
 			} else {
@@ -67,7 +70,7 @@
 
 		await anim.finished
 
-		div.innerText = `'${IMPORT_MODES[importMode.value]}'`
+		div.innerText = `'${installer.current}'`
 
 		anim = div.animate(
 			[
@@ -91,8 +94,8 @@
 	<div class="example" bind:this={el}>
 		<Code {tabs} headless={false}>
 			{#snippet children()}
+				<!-- -->
 				<!-- shiki-start
-nowrap
 ```ts
 import { Gooey } from 'gooey'
  

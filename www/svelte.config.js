@@ -43,7 +43,6 @@ const transforms = {
 const opts = await getOrLoadOpts({
 	transformMap: Object.assign(defaultTransformMap, transforms),
 	highlighter: {
-		// @ts-expect-error
 		core: highlighter,
 		cssVarToThemeName: {
 			dark: 'serendipity',
@@ -59,7 +58,7 @@ const config = {
 		{
 			name: 'auto-import-code-component',
 			script: ({ content, markup, filename, attributes }) => {
-				if (!attributes.module && markup.includes('<!-- shiki-start') && !filename.endsWith('Code.svelte')) {
+				if (!attributes.module && markup.includes('<!-- shiki-start') && !filename?.endsWith('Code.svelte')) {
 					if (!content.match(/import Code from/)) {
 						const s = new MagicString(content)
 						s.prepend('import Code from "$lib/components/Code.svelte";\n')
@@ -71,7 +70,7 @@ const config = {
 				}
 				return {
 					code: content,
-					map: null,
+					map: undefined,
 				}
 			},
 		},
@@ -91,8 +90,6 @@ const config = {
 		inspector: {
 			toggleButtonPos: 'bottom-left',
 			toggleKeyCombo: 'control-alt',
-			showToggleButton: 'active',
-			holdMode: true,
 		},
 	},
 	onwarn: (/** @type {{ code: string; }} */ warning, /** @type {(arg0: any) => void} */ handler) => {

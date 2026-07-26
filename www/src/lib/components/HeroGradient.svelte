@@ -1,10 +1,8 @@
-<script lang="ts">
-	// import { Gooey } from '../../../../../gooey/src/Gooey'
-	import { themer } from '$lib/themer/themer.svelte'
-	import { fade } from 'svelte/transition'
-	import { cubicOut } from 'svelte/easing'
-	import { page } from '$app/stores'
-	// import { onMount } from 'svelte'
+<script module lang="ts">
+	import type { Gooey } from 'gooey'
+
+	import { PersistedState } from 'runed'
+	import { DEV } from 'esm-env'
 
 	const gradients = [
 		{
@@ -49,74 +47,79 @@
 		},
 	]
 
-	let index = $state(1)
-	let gradient = $derived(gradients[index])
-	// svelte-ignore state_referenced_locally
-	let deg = $state(gradient.deg)
+	// let index = $state({ current: 1 })
+	let index = new PersistedState('hero-gradient-index', 1)
+	let gradient = $derived(gradients[index.current])
+	let deg = $derived(gradients[index.current].deg)
 	let str = $derived(gradient.str(deg))
 
-	$effect(() => {
-		$page.url.pathname
-		themer.mode
-
-		randomize()
-	})
-
-	function randomize() {
+	export function randomize() {
 		const i =
 			themer.mode === 'light'
 				? [2, 6, 7][Math.floor(Math.random() * 3)]
 				: Math.floor(Math.random() * gradients.length)
 
-		index = i
-		deg = gradients[index].deg
+		if (index.current !== i) {
+			index.current = i
+		}
 	}
 
-	// function chunk(size: number, arr: any[]) {
-	// 	return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size))
-	// }
+	export async function createHeroGradientGooey(gooey: Gooey) {
+		if (!DEV || gooey.folder.children.some(child => child.title === 'gradient')) {
+			return
+		}
 
-	// let gooey = $state<Gooey>()
-	// onMount(() => {
-	// 	gooey = new Gooey({
-	// 		title: 'page',
-	// 		position: 'top-right',
-	// 		margin: { x: 16, y: 16 * 3.5 },
-	// 		storage: {
-	// 			key: 'docs-gradient',
-	// 			size: true,
-	// 			position: true,
-	// 		},
-	// 	})
+		const gradientFolder = gooey.addFolder('gradient')
 
-	// 	const gradientFolder = gooey.addFolder('gradient')
+		const angleInput = gradientFolder.add('angle', 46, {
+			max: 360,
+			onChange: v => (deg = v),
+		})
 
-	// 	const angleInput = gradientFolder.add('angle', 46, {
-	// 		max: 360,
-	// 		onChange: v => (deg = v),
-	// 	})
+		function chunk(size: number, arr: any[]) {
+			return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size))
+		}
 
-	// 	gradientFolder.addButtonGrid(
-	// 		'variations',
-	// 		chunk(
-	// 			4,
-	// 			gradients.map((_, i) => {
-	// 				return {
-	// 					id: `#${i}`,
-	// 					text: i,
-	// 					onClick: () => {
-	// 						index = i
-	// 						angleInput.set(deg)
-	// 					},
-	// 				}
-	// 			}),
-	// 		),
-	// 	)
-	// })
+		gradientFolder.addButtonGrid(
+			'variations',
+			chunk(
+				4,
+				gradients.map((_, i) => {
+					return {
+						id: `#${i}`,
+						text: i,
+						onClick: () => {
+							index.current = i
+							angleInput.set(deg)
+						},
+					}
+				}),
+			),
+		)
+	}
+</script>
+
+<script lang="ts">
+	import { themer } from '$lib/themer/themer.svelte'
+	import { fade } from 'svelte/transition'
+	import { cubicOut } from 'svelte/easing'
+	import { page } from '$app/state'
+	import { onMount } from 'svelte'
+
+	$effect(() => {
+		page.url.pathname
+		themer.mode
+
+		randomize()
+	})
+
+	onMount(() => {
+		randomize()
+	})
 </script>
 
 <div class="hero-gradient-container">
-	{#key index}
+	{#key index.current}
 		<div
 			class="hero-gradient"
 			in:fade={{ duration: 5000, easing: cubicOut }}
@@ -146,6 +149,8 @@
 
 		pointer-events: none;
 		user-select: none;
+
+		opacity: 0;
 	}
 
 	.hero-gradient {
@@ -169,7 +174,7 @@
 
 	:global(:root[theme='light']) .hero-gradient-container {
 		height: 57rem;
-		
+
 		mask-image: linear-gradient(to bottom, hsla(0deg, 0%, 0%, 0.6) 0%, transparent 100%);
 	}
 

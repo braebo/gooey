@@ -1,5 +1,3 @@
-import { DEV } from 'esm-env'
-
 export type UserAgent = 'mac' | 'windows' | 'linux' | 'ios' | 'ipados' | 'android' | 'node' | 'deno'
 
 /**
@@ -9,7 +7,6 @@ export type UserAgent = 'mac' | 'windows' | 'linux' | 'ios' | 'ipados' | 'androi
  */
 export function getOS(request?: Request): UserAgent {
 	const platform = getUserAgent(request)
-	if (DEV) console.log('ua.ts getOs() ->', platform)
 
 	if (isIOS(request)) return 'ios'
 	if (isIPad(request)) return 'ipados'

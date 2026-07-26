@@ -1,8 +1,10 @@
+<!-- based on InputNumber: "../../../../../src/inputs/InputNumber.ts" -->
+
 <script lang="ts">
 	import LiveExample from '$lib/components/LiveExample.svelte'
-	import H from '$lib/components/H.svelte'
 	import Props from '$lib/components/Props.svelte'
 	import KBD from '$lib/components/KBD.svelte'
+	import H from '$lib/components/H.svelte'
 </script>
 
 <H l="2" id="number">Number</H>
@@ -52,27 +54,6 @@ shiki-end -->
 	<div class="br"></div>
 	<H l="3" id="NumberOptions">Number Options</H>
 
-	<div class="example">
-		<!-- shiki-start
-c"has-focus" p
-```ts
-gooey.add('foo', 50, {
-  min: 0,    //! c"focus"
-  max: 100,  //! c"focus"
-  step: 1,   //! c"focus"
-})
-```
-shiki-end -->
-
-		<LiveExample
-			title="Number Options"
-			onMount={g => {
-				g.add('foo', 50, { min: 0, max: 100, step: 1 })
-			}}
-			position="center"
-		/>
-	</div>
-
 	<div class="description">
 		<Props
 			props={[
@@ -95,10 +76,35 @@ shiki-end -->
 		/>
 	</div>
 
+	<div class="example">
+		<!-- shiki-start
+c"has-focus" p
+```ts
+gooey.add('foo', 50, {
+  min: 0,    //! c"focus"
+  max: 100,  //! c"focus"
+  step: 1,   //! c"focus"
+})
+```
+shiki-end -->
+
+		<LiveExample
+			title="Number Options"
+			onMount={g => {
+				g.add('foo', 50, { min: 0, max: 100, step: 1 })
+			}}
+			position="center"
+		/>
+	</div>
+
 	<!--? Use cases -->
 
 	<div class="br"></div>
-	<div class="description">Number inputs can handle various scenarios:</div>
+
+	<div class="description">
+		Hold <KBD key="cmd" /> to make the text input draggable. While dragging, holding <KBD key="shift" /> will double
+		the step, and <KBD key="alt" /> will halve it (this works both on the slider, and when dragging the text input).
+	</div>
 
 	<div class="example">
 		<!-- shiki-start
@@ -118,15 +124,10 @@ shiki-end -->
 				const i = g.add('drag', 50, {
 					step: 1,
 				})
-				i.elements.controllers.input.tooltip.show()
+				setTimeout(i.elements.controllers.input.tooltip.show, 10)
 			}}
 			position="center"
 		/>
-	</div>
-
-	<div class="description">
-		Holding <KBD key="cmd" /> makes the text input draggable. While dragging, holding <KBD key="shift" /> will double
-		the step, and <KBD key="alt" /> will halve it (this works both on the slider, and when dragging the text input).
 	</div>
 
 	<!--? Advanced usage -->

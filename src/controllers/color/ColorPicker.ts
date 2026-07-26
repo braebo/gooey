@@ -88,10 +88,7 @@ export class ColorPicker {
 		const opts = { ...COLOR_PICKER_DEFAULTS, ...options }
 
 		this.opts = opts
-		this._log = new Logger(`ColorPicker ${input.title}`, {
-			fg: 'lightgreen',
-			logLevel: 'debug',
-		})
+		this._log = new Logger(`ColorPicker ${input.title}`, { fg: 'lightgreen' })
 		this._log.fn('constructor').debug({ opts, this: this })
 
 		this._lastColor = this.input.state.value.clone()

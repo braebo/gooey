@@ -1,8 +1,27 @@
-import { describe, expect, test } from 'vitest'
+import type { ButtonGridArrays } from './InputButtonGrid'
 
+import { describe, expect, test } from 'vitest'
 import { Gooey } from '../Gooey'
 
 document.body.style.background = 'black'
+
+const BUTTONS = [
+	[
+		{
+			text: 'foo 0',
+			onClick: ({ button }: { button: any }) => {
+				const [text, count] = button.id.split(' ')
+				button.text = `${text} ${Number(count) + 1}`
+			},
+		},
+		{
+			text: 'bar',
+			onClick: (v: any) => {
+				console.log('bar', v)
+			},
+		},
+	],
+] as const satisfies ButtonGridArrays
 
 describe('InputButtonGrid', () => {
 	const gooey = new Gooey({
@@ -13,59 +32,29 @@ describe('InputButtonGrid', () => {
 	})
 
 	test('addButtonGrid', () => {
-		gooey.addButtonGrid(
-			'addButtonGrid',
-			[
-				[
-					{
-						text: 'foo',
-						onClick: v => {
-							console.log('foo', v)
-						},
-					},
-					{
-						text: 'bar',
-						onClick: v => {
-							console.log('bar', v)
-						},
-					},
-					{
-						text: 'baz',
-						onClick: v => {
-							console.log('baz', v)
-						},
-					},
-				],
-			],
-			{
-				applyActiveClass: true,
-			},
-		)
+		gooey.addButtonGrid('addButtonGrid', BUTTONS, {
+			applyActiveClass: true,
+		})
 	})
 
 	test('id collisions', () => {
-		const grid = gooey.addButtonGrid(
-			'id collisions',
+		const grid = gooey.addButtonGrid('id collisions', [
 			[
-				[
-					{
-						text: 'foo',
-						onClick: console.log,
-					},
-					{
-						text: 'foo',
-						onClick: console.log,
-					},
-				],
+				{
+					text: 'foo',
+					onClick: console.log,
+				},
+				{
+					text: 'foo',
+					onClick: console.log,
+				},
 			],
-			{
-				applyActiveClass: true,
-			},
-		)
+		])
 
 		const [, b] = grid.buttons.values()
 		expect(b.id).toBe('foo1')
 
+		// TODO Make `buttons.get()` typesafe.
 		const foo = grid.buttons.get('foo')
 		expect(foo).toBeDefined()
 
