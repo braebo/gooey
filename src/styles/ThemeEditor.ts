@@ -8,7 +8,7 @@ import { isColor } from '../shared/color/color'
 import { entries } from '../shared/object'
 import { isType } from '../shared/isType'
 import { Logger } from '../shared/logger'
-import { Gooey } from '../Gooey'
+import { Gooey, type GooeyOptions, type GooeyOptionsInternal } from '../Gooey'
 
 export class ThemeEditor {
 	gooey: Gooey
@@ -31,10 +31,9 @@ export class ThemeEditor {
 		this.gooey = new Gooey({
 			title: 'Theme Editor',
 			container: targetGooey.container,
-			// @ts-expect-error - @internal
 			_windowManager: targetGooey.windowManager,
 			_themer: targetGooey.themer,
-		})
+		} satisfies Partial<GooeyOptionsInternal> as Partial<GooeyOptions>)
 
 		if (!this.targetGooey.themer) {
 			throw new Error('Themer not found.')

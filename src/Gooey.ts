@@ -10,7 +10,7 @@ import type { Commit } from './UndoManager'
 import theme_default from './styles/themes/vanilla'
 import theme_scout from './styles/themes/scout'
 import theme_flat from './styles/themes/flat'
-import style from './styles/gooey.css'
+import style from './styles/gooey-css'
 
 import { WindowManager, WINDOWMANAGER_DEFAULTS } from './shared/WindowManager'
 import { persist, type PersistedValue } from './shared/persist'

@@ -36,7 +36,7 @@ const css = await esbuild.build({
 })
 
 await writeFile(
-	'src/styles/gooey.css.ts',
+	'src/styles/gooey-css.ts',
 	`export default String.raw\`${css.outputFiles[0].text}\``,
 	'utf-8',
 )

@@ -95,7 +95,6 @@ export class InputText extends Input<string, TextInputOptions, TextControllerEle
 			v = v.slice(0, this.opts.maxLength!)
 			this.elements.drawerToggle.tooltip.text = `Max length: ${this.opts.maxLength!}`
 			this.elements.drawerToggle.tooltip.show()
-			alert(`Max length: ${this.opts.maxLength!}`)
 		}
 
 		this.commit({ to: v })
