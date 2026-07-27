@@ -330,7 +330,7 @@ export const GUI_DEFAULTS = {
  * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
  */
 // prettier-ignore
-const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor', 'open', 'close', 'show', 'hide', 'toggle', 'toggleHidden'] as const satisfies Array<keyof Folder>;
+const FORWARDED_METHODS = ['on', 'add', 'addMany', 'addButtonGrid', 'addSelect', 'addButton', 'addText', 'addNumber', 'addSwitch', 'addColor', 'addArray', 'bind', 'bindMany', 'bindButtonGrid', 'bindSelect', 'bindButton', 'bindText', 'bindNumber', 'bindSwitch', 'bindColor', 'bindArray', 'open', 'close', 'show', 'hide', 'toggle', 'toggleHidden'] as const satisfies Array<keyof Folder>;
 //#endregion
 
 export interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {}
@@ -1051,7 +1051,7 @@ export class Gooey {
 		if (this._isWindowManagerOwner) {
 			this.windowManager?.dispose()
 		}
-		this.presetManager.folder.dispose()
+		this.presetManager?.folder?.dispose()
 		this.elements.settingsFolder?.dispose()
 		this.folder?.dispose()
 	}
