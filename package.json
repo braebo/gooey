@@ -55,7 +55,6 @@
 	"devDependencies": {
 		"@arethetypeswrong/core": "^0.18.2",
 		"@braebo/ansi": "^0.2.0",
-		"@braebo/docinator": "link:@braebo/docinator",
 		"@changesets/cli": "2.29.7",
 		"@fontsource-variable/fredoka": "^5.2.10",
 		"@rollup/plugin-node-resolve": "16.0.1",
@@ -69,7 +68,6 @@
 		"changeset": "0.2.6",
 		"csstype": "3.1.3",
 		"esbuild": "0.25.10",
-		"extractinator": "link:extractinator",
 		"jsr-exports-lint": "^0.4.1",
 		"nodemon": "^3.1.10",
 		"ora": "9.0.0",
