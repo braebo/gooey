@@ -48,6 +48,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Setup-node's registry-url writes an .npmrc that reads NODE_AUTH_TOKEN, and its
+          # presence makes changesets/action skip writing its own NPM_TOKEN one.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to JSR
         if: steps.changesets.outputs.published == 'true'
