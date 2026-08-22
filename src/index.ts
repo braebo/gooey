@@ -9,6 +9,15 @@ export { Gooey, GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS }
 
 export { Folder } from './Folder'
 
+export type {
+	WebMCPOptions,
+	WebMCPHandle,
+	WebMCPTool,
+	WebMCPInputSchema,
+	ModelContext,
+} from './webmcp'
+export { registerWebMCP } from './webmcp'
+
 export type { State } from './shared/state'
 export { state } from './shared/state'
 
