@@ -83,6 +83,12 @@ export class InputElement extends Input<
 		this.initialValue = opts.value!
 		this.state = state(opts.value!)
 
+		// Input rows are `height: 0%` with a one-line `min-height` floor, which is right for a
+		// controller and wrong for arbitrary content -- anything taller than a row overflows
+		// onto its neighbors and steals their pointer events.  Custom content sets its own
+		// height, so let the row grow to it.
+		this.elements.container.style.setProperty('height', 'auto')
+
 		this.elements.controllers = {
 			container: create('div', {
 				classes: ['gooey-input-element-container'],

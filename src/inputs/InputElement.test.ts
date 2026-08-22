@@ -74,6 +74,22 @@ describe('InputElement', () => {
 		expect(input.container.childNodes.length).toBe(0)
 	})
 
+	test('the row grows to fit content taller than an input', async () => {
+		const tall = document.createElement('div')
+		tall.style.height = '200px'
+
+		const input = gooey.addElement('tall', tall)
+
+		// The folder's open animation drives `grid-template-rows` from 0fr, so nothing has a real
+		// height until it finishes.
+		await new Promise(resolve => setTimeout(resolve, 400))
+
+		// A normal input row is `height: 0%` with a one-row `min-height` floor -- tall content
+		// would overflow it and cover the inputs below.
+		expect(input.element.style.height).toBe('auto')
+		expect(input.element.getBoundingClientRect().height).toBeGreaterThanOrEqual(200)
+	})
+
 	test('presets skip element inputs', () => {
 		const folder = gooey.addFolder('presets')
 		folder.addText('text', 'foo')
