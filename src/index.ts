@@ -23,6 +23,7 @@ export type { InputSwitch, SwitchInputOptions } from './inputs/InputSwitch'
 export type { InputNumber, NumberInputOptions } from './inputs/InputNumber'
 export type { InputColor, ColorInputOptions } from './inputs/InputColor'
 export type { InputArray, ArrayInputOptions } from './inputs/InputArray'
+export type { InputElement, ElementInputOptions, ElementContent } from './inputs/InputElement'
 export type { InputText, TextInputOptions } from './inputs/InputText'
 
 // Shared

@@ -5,6 +5,7 @@ import type { InputSwitch, SwitchInputOptions } from './InputSwitch'
 import type { InputSelect, SelectInputOptions } from './InputSelect'
 import type { InputNumber, NumberInputOptions } from './InputNumber'
 // import type { InputEmpty, EmptyInputOptions } from './InputEmpty'
+import type { InputElement, ElementInputOptions } from './InputElement'
 import type { InputArray, ArrayInputOptions } from './InputArray'
 import type { InputColor, ColorInputOptions } from './InputColor'
 import type { InputText, TextInputOptions } from './InputText'
@@ -41,6 +42,7 @@ export const INPUT_TYPE_MAP = Object.freeze({
 	InputButtonGrid: 'ButtonGridInputOptions',
 	InputSwitch: 'SwitchInputOptions',
 	InputArray: 'ArrayInputOptions',
+	InputElement: 'ElementInputOptions',
 	// InputEmpty: 'EmptyInputOptions',
 })
 
@@ -182,6 +184,7 @@ export type ValidInputOptions =
 	| ButtonGridInputOptions
 	| SwitchInputOptions
 	| ArrayInputOptions
+	| ElementInputOptions
 
 export type ValidInput =
 	| InputText
@@ -194,6 +197,7 @@ export type ValidInput =
 	| InputButtonGrid
 	| InputSwitch
 	| InputArray
+	| InputElement
 
 export type InputEvents<T extends ValidInputValue = ValidInputValue> = {
 	/**

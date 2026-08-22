@@ -23,6 +23,7 @@ import { InputNumber, type NumberInputOptions } from './inputs/InputNumber'
 import { InputColor, type ColorInputOptions } from './inputs/InputColor'
 import { InputArray, type ArrayInputOptions } from './inputs/InputArray'
 import { InputText, type TextInputOptions } from './inputs/InputText'
+import { InputElement, type ElementInputOptions, type ElementContent } from './inputs/InputElement'
 import { InputButtonGrid, type ButtonGridInputOptions, type ButtonGridArrays } from './inputs/InputButtonGrid'
 
 import { animateConnector, createFolderConnector, createFolderSvg } from './svg/createFolderSVG'
@@ -1174,6 +1175,9 @@ export class Folder {
 		const inputs = [...this.inputs.values()]
 		for (let i = 0; i < this.inputs.size; i++) {
 			const input = inputs[i]
+			// Unsaveable inputs (i.e. `addElement` content) were never written to the preset.
+			if (!input.opts.saveable) continue
+
 			const inputPreset = preset.inputs.find(c => c.presetId === input.opts.presetId)
 			if (!inputPreset) {
 				if (i === this.inputs.size - 1) {
@@ -1893,6 +1897,29 @@ export class Folder {
 	>(target: T, key: K, options?: Partial<ArrayInputOptions>): InputArray {
 		const opts = this._resolveBinding(target, key, options)
 		return this.addArray(key as string, opts.value as V, opts)
+	}
+
+	/**
+	 * Adds a new {@link InputElement} to the folder, mounting arbitrary content in place of a
+	 * controller.  The content is either an existing element, or a mount function receiving the
+	 * container (and optionally returning a cleanup function).  It has no value to serialize, so
+	 * it's skipped when saving and loading presets.
+	 * @example
+	 * ```ts
+	 * gui.addElement('Notes', container => {
+	 * 	container.innerHTML = renderMarkdown(notes)
+	 * 	return () => container.replaceChildren()
+	 * })
+	 * ```
+	 */
+	addElement(
+		title: string,
+		content: ElementContent,
+		options?: Partial<ElementInputOptions>,
+	): InputElement {
+		const opts = this._resolveOpts(title, content, options)
+		const input = new InputElement(opts, this)
+		return this._registerInput(input, opts.presetId)
 	}
 	//#endregion Adders
 
