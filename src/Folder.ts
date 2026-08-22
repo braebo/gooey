@@ -24,7 +24,11 @@ import { InputColor, type ColorInputOptions } from './inputs/InputColor'
 import { InputArray, type ArrayInputOptions } from './inputs/InputArray'
 import { InputText, type TextInputOptions } from './inputs/InputText'
 import { InputElement, type ElementInputOptions, type ElementContent } from './inputs/InputElement'
-import { InputButtonGrid, type ButtonGridInputOptions, type ButtonGridArrays } from './inputs/InputButtonGrid'
+import {
+	InputButtonGrid,
+	type ButtonGridInputOptions,
+	type ButtonGridArrays,
+} from './inputs/InputButtonGrid'
 
 import { animateConnector, createFolderConnector, createFolderSvg } from './svg/createFolderSVG'
 import { Color, isColor, isColorFormat } from './shared/color/color'

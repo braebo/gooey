@@ -14,10 +14,10 @@ export type ColorString =
 	// | RgbaObject
 	| HslString
 	| HslaString
-	// | HslObject
-	// | HslaObject
-	// | HsvObject
-	// | HsvaObject
+// | HslObject
+// | HslaObject
+// | HsvObject
+// | HsvaObject
 
 /** A 6-character hex color string: `'#5500ee'` */
 export type HexString = `#${string}${string}${string}${string}${string}${string}`

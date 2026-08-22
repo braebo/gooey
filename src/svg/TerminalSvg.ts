@@ -35,7 +35,7 @@ export class TerminalSvg {
 				text: `console.log`,
 				delay: 1500,
 				// placement: folder.isRoot ? 'right' : 'left',
-                placement: 'top',
+				placement: 'top',
 				offsetX: folder.isRoot ? `${8}px` : `${-8}px`,
 				// @ts-expect-error - @internal
 				style: folder.gooey?._getStyles,

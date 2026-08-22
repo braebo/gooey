@@ -482,13 +482,13 @@ export class PresetManager {
 		//? Presets Select Input
 		this._presetsInput = presetsFolder.addSelect('', {
 			value: this.activePreset.value,
-			options: this.presets.value
+			options: this.presets.value,
 		})
 
 		// console.log('this._presetsInput.options', this._presetsInput.options)
 
 		let first = true
-		this._presetsInput.on('change', (value) => {
+		this._presetsInput.on('change', value => {
 			if (first) {
 				this._log
 					.fn("_presetsInput.on('change')")

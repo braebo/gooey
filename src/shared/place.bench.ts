@@ -6,8 +6,8 @@ import { select } from './select'
 import { bench } from 'vitest'
 
 bench('place', () => {
-    place('window', 'top-right')
-    place('window', 'center-center')
+	place('window', 'top-right')
+	place('window', 'center-center')
 })
 
 bench('placeOG', () => {

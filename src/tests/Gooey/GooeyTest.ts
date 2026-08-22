@@ -16,9 +16,11 @@ export class GooeyTest {
 		document.body.append(this.page)
 	}
 
-	public addGooey(options: Partial<GooeyOptions> & {
-		height?: number
-	} = {}) {
+	public addGooey(
+		options: Partial<GooeyOptions> & {
+			height?: number
+		} = {},
+	) {
 		if (!options.container) {
 			const height = options.height ?? 10
 			const container = document.createElement('div')
