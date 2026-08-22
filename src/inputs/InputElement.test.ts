@@ -40,11 +40,18 @@ describe('InputElement', () => {
 			return () => cleaned++
 		})
 
-		const next = document.createElement('span')
-		next.textContent = 'second'
+		let nextMounts = 0
+		let nextCleaned = 0
+		const next = (container: HTMLElement) => {
+			nextMounts++
+			container.textContent = 'second'
+			return () => nextCleaned++
+		}
 		input.set(next)
 
-		expect(cleaned).toBe(1)
+		expect(cleaned).toBe(1) // the previous content's cleanup ran exactly once.
+		expect(nextMounts).toBe(1) // the replacement mounts exactly once, not twice.
+		expect(nextCleaned).toBe(0) // the replacement's own cleanup must not fire mid-set.
 		expect(input.container.textContent).toBe('second')
 		expect(input.state.value).toBe(next)
 	})

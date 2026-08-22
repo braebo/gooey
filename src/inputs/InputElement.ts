@@ -108,8 +108,10 @@ export class InputElement extends Input<
 	 * Replaces the mounted content, running the previous mount function's cleanup first.
 	 */
 	set = (v: ElementContent): this => {
+		// `state.set` notifies subscribers synchronously, and `refresh` (subscribed in the
+		// constructor) already mounts `v` -- mounting again here would run the fresh mount's
+		// cleanup mid-set and mount the content twice.
 		this.state.set(v)
-		this.#mount(v)
 		this.emit('change', v)
 		return this
 	}

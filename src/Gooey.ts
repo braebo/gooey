@@ -939,6 +939,7 @@ export class Gooey {
 				id: this.id,
 				resizable: resizeOpts,
 				draggable: dragOpts,
+				storageId: storageOpts ? storageOpts.key : undefined,
 			})
 
 			return windowManager
@@ -967,6 +968,7 @@ export class Gooey {
 		const { window } = windowManager.add(this.folder.element, {
 			// The rest of the options will be inherited from the WindowManager instance.
 			id: this.id,
+			storageId: storageOpts ? storageOpts.key : undefined,
 		})
 
 		this.moveTo = window.moveTo

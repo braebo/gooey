@@ -151,7 +151,12 @@ function resolveModelContext(): ModelContext | undefined {
 
 class WebMCPRegistration implements WebMCPHandle {
 	readonly enabled = true
-	tools: string[] = []
+	#tools: string[] = []
+
+	/** A frozen snapshot, consistent with the disabled handle's frozen-array contract. */
+	get tools(): readonly string[] {
+		return Object.freeze([...this.#tools])
+	}
 
 	#gooey: Gooey
 	#mc: ModelContext
@@ -222,15 +227,22 @@ class WebMCPRegistration implements WebMCPHandle {
 	/** Registers one tool, de-duping its name and swallowing whatever the browser throws. */
 	#add(tool: WebMCPTool): void {
 		let name = tool.name
-		for (let i = 2; this.tools.includes(name); i++) name = `${tool.name}-${i}`
+		for (let i = 2; this.#tools.includes(name); i++) name = `${tool.name}-${i}`
 		tool.name = name
 
 		try {
 			// `registerTool`'s options bag isn't pinned down in the draft.  If `signal` isn't a
 			// member, WebIDL drops it and we fall back to `unregisterTool` on dispose.
 			const result = this.#mc.registerTool(tool, { signal: this.#controller.signal })
-			if (isPromise(result)) result.catch(err => this.#log.fn('register').error(err))
-			this.tools.push(name)
+			this.#tools.push(name)
+			if (isPromise(result)) {
+				result.catch(err => {
+					this.#log.fn('register').error(err)
+					// Registration never actually landed -- don't leave a phantom name behind.
+					const i = this.#tools.indexOf(name)
+					if (i !== -1) this.#tools.splice(i, 1)
+				})
+			}
 		} catch (err) {
 			this.#log.fn('register').error('Failed to register tool', { name, err })
 		}
@@ -249,7 +261,7 @@ class WebMCPRegistration implements WebMCPHandle {
 		}
 
 		if (typeof this.#mc.unregisterTool === 'function') {
-			for (const name of this.tools) {
+			for (const name of this.#tools) {
 				try {
 					this.#mc.unregisterTool(name)
 				} catch (err) {
@@ -258,7 +270,7 @@ class WebMCPRegistration implements WebMCPHandle {
 			}
 		}
 
-		this.tools = []
+		this.#tools = []
 	}
 
 	#name(path: string): string {

@@ -53,6 +53,29 @@ describe('position', () => {
 	})
 })
 
+describe('window persistence identity', () => {
+	test('storageId is stable across constructions despite the random root id', () => {
+		// `folder.element.id` is `gooey-root_${nanoid()}` -- a fresh id every construction.
+		// Persistence must key off the slugged-title storage key instead, or every page
+		// load orphans the previous run's saved position/size.
+		const a = G.addGooey({ title: 'stable-storage', storage: true })
+		const idA = a.folder.element.id
+		const storageIdA = a.window?.storageId
+
+		a.dispose()
+
+		const b = G.addGooey({ title: 'stable-storage', storage: true })
+		const idB = b.folder.element.id
+		const storageIdB = b.window?.storageId
+
+		expect(idA).not.toBe(idB) // sanity: the random root id really does change.
+		expect(storageIdA).toBeTruthy()
+		expect(storageIdA).toBe(storageIdB)
+
+		b.dispose()
+	})
+})
+
 describe('width', () => {
 	test('width is respected', async () => {
 		const gooey = G.addGooey({ title: 'width', width: 345 })
