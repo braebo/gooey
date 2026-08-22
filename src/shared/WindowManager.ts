@@ -66,7 +66,9 @@ interface WindowManagerStorageOptions {
 	__type?: 'WindowManagerStorageOptions'
 
 	/**
-	 * Prefix to use for localStorage keys.
+	 * Prefix to use for localStorage keys.  Each window appends its own
+	 * {@link WindowInstanceOptions.storageId|storageId}, i.e.
+	 * `"window-manager::wm::inspector::position"`.
 	 * @default "window-manager"
 	 */
 	key: string
@@ -222,6 +224,13 @@ export class WindowManager {
 		opts.preserveZ = options?.preserveZ ?? defaults.preserveZ
 		opts.draggable = resolveOpts(options?.draggable, defaults.draggable)
 		opts.resizable = resolveOpts(options?.resizable, defaults.resizable)
+
+		// `resolveOpts` hands back `defaults` _by reference_ when nothing was provided.  Each
+		// window resolves against `manager.opts`, so without a copy, one window's
+		// localStorage key (and bounds, margin, ...) would be written onto every other
+		// window's options.
+		if (opts.draggable) opts.draggable = { ...opts.draggable }
+		if (opts.resizable) opts.resizable = { ...opts.resizable }
 		opts.bounds =
 			options?.bounds ??
 			(isObject(options?.draggable) ? options.draggable.bounds : defaults.bounds)
@@ -284,6 +293,37 @@ export type WindowInstanceOptions = Partial<WindowManagerOptions> & {
 	 * @default nanoid()
 	 */
 	id?: string
+
+	/**
+	 * A _stable_ identifier used to key this window's persisted position / size in
+	 * localStorage.  Unlike {@link id}, it must be the same on every page load -- it is the
+	 * only way for a window to find its own saved layout again.
+	 *
+	 * Resolution order, highest priority first:
+	 *
+	 * 1. this option
+	 * 2. the `id` attribute already present on the node when it was added
+	 * 3. the window's insertion index _(fallback)_
+	 *
+	 * The insertion-index fallback is only stable for apps that always create the same
+	 * windows in the same order.  If the number or order of windows can vary between page
+	 * loads, windows will read each other's saved layouts -- pass a `storageId` (or give the
+	 * element an `id`) to avoid it.
+	 *
+	 * @remarks {@link id} is deliberately _not_ used, since it's often generated per-session
+	 * (i.e. {@link nanoid}), which would silently orphan every write.
+	 *
+	 * @default undefined
+	 */
+	storageId?: string
+}
+
+/**
+ * Builds a window's localStorage key, i.e. `"my-app::wm::inspector::position"`.  An empty
+ * `prefix` is dropped.
+ */
+function windowStorageKey(prefix: string, storageId: string, suffix: 'position' | 'size') {
+	return [prefix, 'wm', storageId, suffix].filter(Boolean).join('::')
 }
 
 /**
@@ -294,6 +334,13 @@ export class WindowInstance {
 	resizableInstance?: Resizable
 
 	id: string
+
+	/**
+	 * The stable identity used to key this window's persisted position / size.
+	 * @see {@link WindowInstanceOptions.storageId}
+	 */
+	storageId: string
+
 	size = state({ width: 0, height: 0 })
 	get position(): { x: number; y: number } {
 		return this.draggableInstance?.position ?? { x: 0, y: 0 }
@@ -310,8 +357,14 @@ export class WindowInstance {
 		public node: HTMLElement,
 		options?: WindowInstanceOptions,
 	) {
-		this.id = node.id || options?.id || `wm-instance-${nanoid(8)}`
+		// Captured before `node.id` is assigned below -- an id the consumer put on the
+		// element themselves is stable across page loads, so it can key persistence.
+		const authoredNodeId = node.id || undefined
+
+		this.id = authoredNodeId || options?.id || `wm-instance-${nanoid(8)}`
 		node.id ||= this.id
+
+		this.storageId = options?.storageId ?? authoredNodeId ?? `${manager.windows.size}`
 
 		// @ts-expect-error - yoink
 		const opts = manager._resolveOptions(options, manager.opts)
@@ -326,33 +379,19 @@ export class WindowInstance {
 		} else {
 			// Construct a unique draggable localStorage key for each window.
 			if (typeof dragOpts === 'object' && dragOpts.localStorageKey !== undefined) {
-				const dragKeyParts = [] as string[]
-				if (typeof dragOpts.localStorageKey === 'undefined') {
-					if (typeof manager.opts.localStorage === 'object') {
-						dragKeyParts.push(manager.opts.localStorage.key)
-					} else {
-						dragKeyParts.push(WINDOWMANGER_STORAGE_DEFAULTS.key)
-					}
-				} else if (dragOpts.localStorageKey) {
-					dragKeyParts.push(dragOpts.localStorageKey)
-				}
-				dragKeyParts.push('wm', `${this.manager.windows.size}`, 'position')
-				dragOpts.localStorageKey = dragKeyParts.join('::')
+				dragOpts.localStorageKey = windowStorageKey(
+					dragOpts.localStorageKey,
+					this.storageId,
+					'position',
+				)
 			}
 			// Construct a unique resizable localStorage key for each window.
 			if (typeof resizeOpts === 'object' && resizeOpts.localStorageKey !== undefined) {
-				const resizeKeyParts = [] as string[]
-				if (typeof resizeOpts.localStorageKey === 'undefined') {
-					if (typeof manager.opts.localStorage === 'object') {
-						resizeKeyParts.push(manager.opts.localStorage.key)
-					} else {
-						resizeKeyParts.push(WINDOWMANGER_STORAGE_DEFAULTS.key)
-					}
-				} else if (resizeOpts.localStorageKey) {
-					resizeKeyParts.push(resizeOpts.localStorageKey)
-				}
-				resizeKeyParts.push('wm', `${this.manager.windows.size}`, 'size')
-				resizeOpts.localStorageKey = resizeKeyParts.join('::')
+				resizeOpts.localStorageKey = windowStorageKey(
+					resizeOpts.localStorageKey,
+					this.storageId,
+					'size',
+				)
 			}
 		}
 
