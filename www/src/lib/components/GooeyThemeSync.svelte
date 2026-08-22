@@ -1,7 +1,10 @@
 <script lang="ts">
+	// Typed against the workspace source rather than `gooey`'s published types -- every caller
+	// imports from `src/`, and the two resolve to structurally different classes.
+	import type { Gooey } from '../../../../src/index'
+
 	import { themer } from '$lib/themer/themer.svelte'
 	import { onMount } from 'svelte'
-	import { Gooey } from 'gooey'
 
 	const { gooey }: { gooey: Gooey } = $props()
 
