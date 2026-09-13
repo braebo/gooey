@@ -28,9 +28,10 @@ jobs:
           # No registry-url: it writes an .npmrc that reads a placeholder NODE_AUTH_TOKEN,
           # which shadows the OIDC exchange.
 
-      # Trusted publishing needs npm >= 11.5.1; Node 22 ships 10.x.
+      # Trusted publishing needs npm >= 11.5.1; Node 22 ships 10.x. Pinned to 11: npm 12's
+      # `pack --json` output breaks tsdown's ATTW check ("Invalid npm pack output format").
       - name: Upgrade npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@11
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
