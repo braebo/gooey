@@ -202,6 +202,19 @@ export class Resizable {
 
 	#log: Logger
 
+	/**
+	 * Whether any grabber can change the element's height.  An element with no vertical grabber
+	 * must never be given an inline height -- one pins it forever, so a folder that collapses
+	 * inside it can never shrink it again.
+	 */
+	get #canResizeY(): boolean {
+		if (this.disabled) return false
+		return (
+			this.opts.corners.length > 0 ||
+			this.opts.sides.some(side => side === 'top' || side === 'bottom')
+		)
+	}
+
 	constructor(
 		public node: HTMLElement,
 		options?: Partial<ResizableOptions>,
@@ -255,7 +268,7 @@ export class Resizable {
 			node.style.width = width + 'px'
 		}
 
-		if (height && height >= 0) {
+		if (height && height >= 0 && this.#canResizeY) {
 			node.style.height = height + 'px'
 		}
 

@@ -99,6 +99,72 @@ describe('addMany', () => {
 	inputs.number.on('change', v => console.log('number changed', v))
 })
 
+describe('nested folder collapse', () => {
+	const settle = (ms = 600) => new Promise(resolve => setTimeout(resolve, ms))
+
+	const nest = (gooey: Gooey) => {
+		const parent = gooey.addFolder('parent')
+		const child = parent.addFolder('child')
+		child.addNumber('a', 1)
+		child.addNumber('b', 2)
+		child.addNumber('c', 3)
+		return { parent, child }
+	}
+
+	test('parent shrinks when its child collapses', async () => {
+		const gooey = G.addGooey({ height: 1000, title: 'collapse' })
+		const { parent, child } = nest(gooey)
+		await settle()
+
+		const before = parent.elements.content.getBoundingClientRect().height
+		child.close()
+		await settle(800)
+		const after = parent.elements.content.getBoundingClientRect().height
+
+		expect(after, '❌ Parent content did not shrink.').toBeLessThan(before)
+	})
+
+	// A persisted size used to be re-applied as an inline `height` on the root element, pinning
+	// the gooey at its tallest so no folder collapse could ever shrink it again.
+	test('a persisted size does not pin the root height', async () => {
+		localStorage.clear()
+		const container = document.createElement('div')
+		container.style.cssText = 'position: relative; height: 1000px;'
+		document.body.append(container)
+
+		const opts = {
+			title: 'persisted',
+			container,
+			position: 'center',
+			storage: { key: 'persisted-size', size: true },
+		} as const
+
+		const first = new Gooey(opts)
+		nest(first)
+		await settle()
+		// Stand in for a width drag, which persists the current height along with the width.
+		const resizable = first.window!.resizableInstance!
+		resizable.size.set({
+			width: first.folder.element.offsetWidth,
+			height: first.folder.element.offsetHeight,
+		})
+		await settle(100)
+		first.dispose()
+
+		const second = new Gooey(opts)
+		const { child } = nest(second)
+		await settle()
+
+		const before = second.folder.element.getBoundingClientRect().height
+		child.close()
+		await settle(800)
+		const after = second.folder.element.getBoundingClientRect().height
+
+		expect(second.folder.element.style.height, '❌ Root was given an inline height.').toBe('')
+		expect(after, '❌ Root height is stuck at its tallest.').toBeLessThan(before)
+	})
+})
+
 const wow = new Gooey()
 const folder = wow.addFolder('asd')
 
