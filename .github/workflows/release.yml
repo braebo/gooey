@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: write # To create release (changesets/action).
       pull-requests: write # To create release pull request (changesets/action).
-      id-token: write # Required for JSR.
+      id-token: write # OIDC — npm trusted publishing and JSR both mint their token from it.
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +25,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
+          # No registry-url: it writes an .npmrc that reads a placeholder NODE_AUTH_TOKEN,
+          # which shadows the OIDC exchange.
+
+      # Trusted publishing needs npm >= 11.5.1; Node 22 ships 10.x.
+      - name: Upgrade npm
+        run: npm install -g npm@latest
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -39,6 +44,11 @@ jobs:
       - name: Test
         run: bun run check
 
+      # changesets/action writes ~/.npmrc with `_authToken=$NPM_TOKEN` when none exists —
+      # "undefined" as a token would shadow the OIDC exchange. An existing file makes it skip.
+      - name: npmrc for trusted publishing
+        run: echo "provenance=true" > ~/.npmrc
+
       - name: Release or Create Release Pull Request or Do Nothing
         id: changesets
         uses: changesets/action@v1
@@ -47,10 +57,9 @@ jobs:
           publish: bunx changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # Setup-node's registry-url writes an .npmrc that reads NODE_AUTH_TOKEN, and its
-          # presence makes changesets/action skip writing its own NPM_TOKEN one.
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # No NPM_TOKEN: the package's trusted publisher on npmjs.com is this repo + this
+          # workflow file, and npm exchanges the job's OIDC token for a publish credential.
+          # Every token-based run since 0.4.0 died with E404 on PUT — a dead secret.
 
       - name: Publish to JSR
         if: steps.changesets.outputs.published == 'true'
