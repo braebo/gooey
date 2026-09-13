@@ -33,6 +33,7 @@ Gooey is designed for creating interactive control panels that work seamlessly i
   - [`add`](#add)
   - [`addMany`](#addmany)
   - [`bind`](#bind)
+- [In an app](#in-an-app)
 - [About](#about)
 - [Roadmap](#roadmap)
 <!-- /TOC -->
@@ -497,6 +498,33 @@ const data = {
 gooey.bind(data, 'size') // -> InputNumber
 gooey.bind(data, 'color') // -> InputColor
 ```
+
+<br>
+
+## In an app
+
+The constructor touches `document.body` — construct after mount, and `dispose()` on teardown:
+
+```typescript
+onMount(() => { gui = new Gooey({ title: 'voice' }) })
+onDestroy(() => gui?.dispose())
+```
+
+`disabled` and `hidden` take a function, re-evaluated on `input.refresh()` — call it on the dependents when the driver changes:
+
+```typescript
+const voice = gui.addSelect('voice', 'charlotte', { options: voices })
+const knob = gui.add('stability', 0.5, { disabled: () => !isEleven(voice.value) })
+voice.on('change', () => knob.refresh())
+```
+
+`input.set(v)` fires `change`; `input.refresh()` re-reads the binding and emits only `refresh` — the path for an update you don't want echoed to your own change handler.
+
+`storage: true` persists `closed`, `theme`, and `presets`; `position` and `size` are opt-in (`storage: { position: true }`); `hidden` is never persisted.
+
+The select dropdown portals to `<body>` at `z-index: 100` — a host panel at or above that hides its own open dropdowns.
+
+`registerWebMCP(gui)` registers one WebMCP tool per input plus a `<prefix>.state` reader, and unregisters on `dispose()`.
 
 <br>
 
