@@ -26,6 +26,7 @@
         "nodemon": "^3.1.10",
         "ora": "9.0.0",
         "picocolors": "1.1.1",
+        "playwright": "^1.63.0",
         "pocket-shader": "^0.3.1",
         "prettier": "3.6.2",
         "publint": "0.3.13",
@@ -877,6 +878,10 @@
     "picomatch": ["picomatch@4.0.3", "", {}, "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q=="],
 
     "pify": ["pify@4.0.1", "", {}, "sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g=="],
+
+    "playwright": ["playwright@1.63.0", "", { "dependencies": { "playwright-core": "1.63.0" }, "bin": { "playwright": "cli.js" } }, "sha512-+7ziBLidS4NaNCdt57SUDT+wYmmd5fmiQejUic/kb+YsYSCPyOOE9sebzMjNmQrsnNpDJqd4WHvV/8lfKfUDUg=="],
+
+    "playwright-core": ["playwright-core@1.63.0", "", { "bin": { "playwright-core": "cli.js" } }, "sha512-rYCsBF/M5HjUch52bbtVONEFjv6Xu8sm8h72dNlR5bzIE1fvC/bxgspzkjSfU+MweEMmPM8KJebG6nnyxo5mCg=="],
 
     "pocket-shader": ["pocket-shader@0.3.1", "", {}, "sha512-2qHHDqTMB2+9bqGY4GQ/Hbkvk6s6TexA6ScZ2iKcYNLstraFKXDFRcHLbRMyTOJ0UoelR2l4DE4KMqjdKEeKgg=="],
 

@@ -9,12 +9,12 @@ export default defineConfig({
 					include: ['src/**/*.test.ts'],
 					browser: {
 						// headless: true,
-						provider: 'webdriverio',
+						provider: 'playwright',
 						enabled: true,
 						viewport: { width: 800, height: 1000 },
 						instances: [
 							{
-								browser: 'chrome',
+								browser: 'chromium',
 								viewport: { width: 800, height: 1000 },
 							},
 						],
