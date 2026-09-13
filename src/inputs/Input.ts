@@ -101,10 +101,10 @@ export type InputOptions<
 
 	/**
 	 * Whether the input is hidden. A function can be used to dynamically determine the hidden
-	 * state.
+	 * state, in which case it is re-evaluated on every {@link Input.refresh}.
 	 * @default false
 	 */
-	hidden?: boolean
+	hidden?: boolean | (() => boolean)
 
 	/**
 	 * The order in which this input should appear in its folder relative to the other inputs.
@@ -347,7 +347,9 @@ export abstract class Input<
 		this._hidden =
 			typeof this.opts.hidden === 'function'
 				? this.opts.hidden
-				: () => this.elements.container.classList.contains('hidden')
+				: typeof this.opts.hidden === 'boolean'
+					? () => !!this.opts.hidden
+					: () => this.elements.container.classList.contains('hidden')
 
 		this._index = this.opts.order ?? this.folder.inputs.size
 		this._index += 1
@@ -479,7 +481,7 @@ export abstract class Input<
 		}
 
 		this.index = this.index
-		this.elements.container.classList.toggle('hidden', this._hidden())
+		this._refreshHidden()
 
 		setTimeout(() => {
 			this._refreshDisabled()
@@ -556,6 +558,11 @@ export abstract class Input<
 		return this.elements.container.classList.contains('disabled')
 	}
 	set disabled(v: boolean | (() => boolean)) {
+		// A function becomes the new dynamic source of truth, re-evaluated on every `refresh`.
+		// A boolean is a one-off override -- `enable()` / `disable()` must not clobber a dynamic
+		// state function, which re-asserts itself on the next `refresh`.
+		if (typeof v === 'function') this._disabled = v
+
 		this._refreshDisabled(toFn(v)())
 
 		if (this.description === Input.DISABLED_DESCRIPTION) {
@@ -605,7 +612,14 @@ export abstract class Input<
 	}
 	set hidden(v: boolean | (() => boolean)) {
 		this._hidden = toFn(v)
-		this.elements.container.classList.toggle('hidden', this._hidden())
+		this._refreshHidden()
+	}
+
+	/**
+	 * Updates the hidden state of the input container.
+	 */
+	private _refreshHidden(hidden = this._hidden()) {
+		this.elements.container.classList.toggle('hidden', hidden)
 	}
 
 	/**
@@ -701,13 +715,16 @@ export abstract class Input<
 	 * Refreshes the value of any controllers to match the current input state.
 	 */
 	refresh(v = this.state.value as TValueType) {
-		if (!this.opts.resettable) return
+		// Dynamic `disabled` / `hidden` state functions re-evaluate on every refresh -- before the
+		// `resettable` bail, since they have nothing to do with the reset button.
+		this._refreshDisabled()
+		this._refreshHidden()
+
+		if (!this.opts.resettable) return this
 
 		if (this.opts.binding) {
 			this.state.set(this.opts.binding.target[this.opts.binding.key])
 		}
-
-		this._refreshDisabled()
 
 		this.elements.resetBtn.classList.toggle('dirty', this._dirty())
 

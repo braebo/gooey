@@ -175,7 +175,6 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 	}
 
 	refresh(v?: boolean): this {
-		if (this.disabled) return this
 		this.#log.fn('refresh').debug({ v, this: this })
 
 		if (typeof v === 'undefined') {
