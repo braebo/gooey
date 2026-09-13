@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  # Re-run the JSR publish by hand when npm published but the job died after it
+  # (a rejected tag push, a runner hiccup) — `gh workflow run release.yml`.
+  workflow_dispatch:
 
 jobs:
   release:
@@ -63,5 +66,5 @@ jobs:
           # Every token-based run since 0.4.0 died with E404 on PUT — a dead secret.
 
       - name: Publish to JSR
-        if: steps.changesets.outputs.published == 'true'
+        if: steps.changesets.outputs.published == 'true' || github.event_name == 'workflow_dispatch'
         run: bunx jsr publish --allow-dirty --allow-slow-types
