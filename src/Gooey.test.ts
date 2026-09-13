@@ -46,6 +46,30 @@ describe('position', () => {
 		expect(pos.y).not.toBe(0)
 	})
 
+	test('a persisted position outranks the placement', async () => {
+		const a = G.addGooey({
+			title: 'persisted-position',
+			position: 'top-right',
+			storage: { key: 'pp', position: true },
+		})
+		await new Promise(resolve => setTimeout(resolve, 150))
+		const key = a.window!.draggableInstance!.opts.localStorageKey!
+		localStorage.setItem(key, JSON.stringify({ x: 7, y: 11 }))
+		a.dispose()
+
+		const b = G.addGooey({
+			title: 'persisted-position',
+			position: 'top-right',
+			storage: { key: 'pp', position: true },
+		})
+		// Past the reveal's 100ms `_updatePosition`, which used to re-apply the placement.
+		await new Promise(resolve => setTimeout(resolve, 200))
+
+		expect(b.position).toEqual({ x: 7, y: 11 })
+		localStorage.removeItem(key)
+		b.dispose()
+	})
+
 	test('container: "body"', () => {
 		const gooey = G.addGooey({ container: 'body' })
 		expect(gooey.container).toBe(document.body)

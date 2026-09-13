@@ -1063,6 +1063,12 @@ export class Gooey {
 		const rect = this.element.getBoundingClientRect()
 
 		if (typeof this.opts.position === 'string') {
+			// A placement is the first-open default. Once a position has been persisted, the
+			// draggable restored it at construction and the placement must not overwrite it --
+			// this runs on every reveal, so without the check the gooey snapped home on reload.
+			const stored = this.window?.draggableInstance?.opts.localStorageKey
+			if (stored && globalThis.localStorage?.getItem(stored) !== null) return
+
 			const bounds = this.container.getBoundingClientRect()
 			if (!bounds) {
 				console.error('Invalid bounds:', this.opts.container)
