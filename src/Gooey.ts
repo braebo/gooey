@@ -164,11 +164,30 @@ export interface GooeyOptions {
 	 * additional settings, `uiFolder` and `presetsFolder`, which are {@link FolderOptions}
 	 * for the 2 sub-folders.
 	 * @default { closed: true }
+	 *
+	 * `false` hides the settings folder and omits the toolbar's settings button, for a gooey
+	 * used as a plain window rather than a control panel.  The folder itself is still built, so
+	 * the {@link Gooey.themer|themer} and {@link Gooey.presetManager|preset manager} behave
+	 * exactly as they otherwise would -- there is simply no way in.
 	 */
-	settingsFolder?: Partial<FolderOptions> & {
-		uiFolder?: Partial<FolderOptions>
-		presetsFolder?: Partial<FolderOptions>
-	}
+	settingsFolder?:
+		| false
+		| (Partial<FolderOptions> & {
+				uiFolder?: Partial<FolderOptions>
+				presetsFolder?: Partial<FolderOptions>
+		  })
+
+	/**
+	 * Another {@link Gooey} to share a {@link WindowManager} and {@link Themer} with.  Child
+	 * gooeys stack against their parent instead of floating in a z-order of their own, and
+	 * follow its theme.  Each still keeps its own {@link GooeyOptions.storage|storage} key, so
+	 * position and size persist per window.
+	 *
+	 * Disposing a child leaves the parent's window manager and themer alone.
+	 *
+	 * @default undefined
+	 */
+	parentGooey?: Gooey
 
 	/**
 	 * An offset to apply to the initial position of the gooey.
@@ -390,6 +409,9 @@ export class Gooey {
 	 * @internal
 	 */
 	private _isWindowManagerOwner = false
+	/** {@link GooeyOptions.settingsFolder}, with the `false` case narrowed away. */
+	private _settingsFolderOpts?: Exclude<GooeyOptions['settingsFolder'], false>
+
 	private _theme!: GooeyOptions['theme']
 	private _log: Logger
 	private _closedMap: PersistedValue<Record<string, boolean>>
@@ -444,6 +466,14 @@ export class Gooey {
 		}
 
 		this.opts = opts as GooeyOptions & { storage: GooeyStorageOptions | false }
+
+		// `parentGooey` is the public door onto the internal options the shared paths below
+		// already read -- an explicit `_windowManager` / `_themer` still wins.
+		if (this.opts.parentGooey) {
+			const internal = this.opts as GooeyOptionsInternal
+			internal._windowManager ??= this.opts.parentGooey.windowManager
+			internal._themer ??= this.opts.parentGooey.themer
+		}
 
 		this._log = new Logger(`Gooey ${this.opts.title}`, { fg: 'palevioletred' })
 
@@ -507,26 +537,34 @@ export class Gooey {
 		addEventListener('keydown', handleUndoRedo)
 		//#endregion
 
-		const { button, updateIcon } = this._createSettingsButton(
-			this.folder.elements.toolbar.container,
-		)
-		this.folder.elements.toolbar.settingsButton = button
+		const settingsOpts = opts.settingsFolder === false ? undefined : opts.settingsFolder
+		this._settingsFolderOpts = settingsOpts
+
+		let updateIcon = () => {}
+		if (settingsOpts) {
+			const settingsButton = this._createSettingsButton(this.folder.elements.toolbar.container)
+			this.folder.elements.toolbar.settingsButton = settingsButton.button
+			updateIcon = settingsButton.updateIcon
+		}
 
 		let settingsFolderClosed = GUI_DEFAULTS.settingsFolder.closed
 		// Use localstorage, if enabled.
 		if (typeof opts.storage === 'object' && opts.storage.closed !== false) {
 			settingsFolderClosed = this._closedMap.value['gooey_settings'] ?? true
-		} else if (opts.settingsFolder?.closed) {
-			settingsFolderClosed = opts.settingsFolder.closed
+		} else if (settingsOpts?.closed) {
+			settingsFolderClosed = settingsOpts.closed
 		}
 
 		this.elements.settingsFolder = this.addFolder('gooey_settings_folder', {
 			// @ts-expect-error @internal
 			_headerless: true,
-			...opts.settingsFolder,
+			...settingsOpts,
 			closed: settingsFolderClosed,
 			saveable: false,
 			presetId: 'gooey_settings',
+			// Built either way, so the themer and preset manager are unchanged -- with no
+			// button in the toolbar there's simply no way into it.
+			hidden: opts.settingsFolder === false,
 		})
 		this.elements.settingsFolder.element.classList.add(
 			'gooey-settings-folder',
@@ -764,7 +802,7 @@ export class Gooey {
 			Object.assign(
 				{},
 				GUI_DEFAULTS.settingsFolder.uiFolder,
-				this.opts.settingsFolder?.uiFolder,
+				this._settingsFolderOpts?.uiFolder,
 				{ presetId: 'gooey_settings__ui_folder' },
 			),
 		)
@@ -854,8 +892,8 @@ export class Gooey {
 
 		let closed = GUI_DEFAULTS.settingsFolder.presetsFolder.closed
 
-		if (this.opts.settingsFolder?.presetsFolder?.closed) {
-			closed = this.opts.settingsFolder.presetsFolder.closed
+		if (this._settingsFolderOpts?.presetsFolder?.closed) {
+			closed = this._settingsFolderOpts.presetsFolder.closed
 		}
 
 		return new PresetManager(this, settingsFolder, {
@@ -863,7 +901,7 @@ export class Gooey {
 			defaultPreset,
 			localStorageKey,
 			folderOptions: {
-				...this.opts.settingsFolder?.presetsFolder,
+				...this._settingsFolderOpts?.presetsFolder,
 				closed,
 			},
 		})
@@ -935,12 +973,17 @@ export class Gooey {
 		if ((options as GooeyOptionsInternal)?._windowManager instanceof WindowManager) {
 			const windowManager = (options as GooeyOptionsInternal)._windowManager!
 
-			windowManager.add(this.folder.element, {
+			const { window } = windowManager.add(this.folder.element, {
 				id: this.id,
 				resizable: resizeOpts,
 				draggable: dragOpts,
 				storageId: storageOpts ? storageOpts.key : undefined,
 			})
+
+			// A shared manager's windows are still movable by their own gooey -- without these
+			// the no-op defaults stay, and `moveTo` silently does nothing on every child.
+			this.moveTo = window.moveTo
+			this.moveBy = window.moveBy
 
 			return windowManager
 		}
