@@ -8,6 +8,10 @@
 		"javascript"
 	],
 	"homepage": "https://gooey.braebo.dev",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/braebo/gooey.git"
+	},
 	"license": "MIT",
 	"author": "braebo",
 	"type": "module",
