@@ -63,6 +63,19 @@ describe('parentGooey', () => {
 		expect(child.moveBy).toBe(windowOf(child)!.moveBy)
 	})
 
+	// A shared themer was built around the parent's wrapper, so it wrote its css vars only
+	// there — a child rendered with no vars at all, header height included.
+	test("a child's wrapper is a target of the shared themer", () => {
+		const parent = make({ title: 'parent', storage: false })
+		const child = make({ title: 'child', storage: false, parentGooey: parent })
+
+		const headerHeight = (gooey: Gooey) =>
+			getComputedStyle(gooey.wrapper).getPropertyValue('--gooey-header_height')
+
+		expect(headerHeight(parent)).toBeTruthy()
+		expect(headerHeight(child)).toBe(headerHeight(parent))
+	})
+
 	test('disposing a child leaves the parent alive', () => {
 		const parent = make({ title: 'parent', storage: false })
 		const child = make({ title: 'child', storage: false, parentGooey: parent })

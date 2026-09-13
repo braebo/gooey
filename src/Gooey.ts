@@ -573,9 +573,16 @@ export class Gooey {
 		updateIcon()
 		this.elements.settingsFolder.element.style.setProperty('order', '-99') // todo - sup with this?
 
-		this.themer =
-			(this.opts as GooeyOptionsInternal)._themer ??
-			this._createThemer(this.elements.settingsFolder)!
+		const sharedThemer = (this.opts as GooeyOptionsInternal)._themer
+		if (sharedThemer) {
+			this.themer = sharedThemer
+			// A themer only writes its css vars onto the targets it knows about, and a shared one
+			// was built around someone else's wrapper. Without this a child gooey renders with no
+			// vars at all — a zero-height header, with the content drawn over the title.
+			sharedThemer.addTarget(this.wrapper)
+		} else {
+			this.themer = this._createThemer(this.elements.settingsFolder)!
+		}
 		this.theme = this.opts.theme
 		this.presetManager = this._createPresetManager(this.elements.settingsFolder)
 
