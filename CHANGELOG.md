@@ -1,5 +1,37 @@
 # gooey
 
+## 0.5.0
+
+### Minor Changes
+
+- A bound color field keeps the format it started in — `bindColor({ color: '#0000ff' }, 'color')` no longer overwrites the field with a `Color` object. ([`94c8741`](https://github.com/braebo/gooey/commit/94c874182328ea22229b8ae25a9a74c8269d34df))
+    - Hex (`#rrggbb`, `#rrggbbaa`, `#rgb`, `#rgba`), `rgb()`, `rgba()`, `hsl()`, `hsla()`, `{ r, g, b(, a) }`, `{ h, s, l(, a) }`, `{ h, s, v(, a) }`, and `{ kelvin }` fields stay in that format; a `Color` field stays a `Color`.
+    - The input keeps the full color: alpha set on a `#rrggbb` field holds, and a write to the field from outside lands on `refresh()`.
+    - `bindColor` rejects a field that isn't color-shaped at the type level.
+    - `hsl()` strings parse as hsl (they parsed as rgb).
+    - `Color` gains `hex3String`, `hex4String`, and `kelvinColor`.
+
+- `minWidth`, `maxWidth` and `maxHeight` options, and root sizing defaults move out of the theme. ([`a359682`](https://github.com/braebo/gooey/commit/a359682f7d12a6b5d9af473ad2ed5f644fa4d342))
+
+    `--gooey-root_width/min-width/max-width/max-height` used to be theme vars written onto `.gooey-wrapper` on every theme apply, so a mode change clobbered any sizing a gooey had set for itself. Their defaults now live in `gooey.scss` as zero-specificity `:where(.gooey-root)` custom properties, and the new options write inline on `.gooey-root`. Var names are unchanged, so a consumer overriding them keeps working.
+
+    Each option takes `number | string` — a number is pixels, a string is a css length, `'none'` is unbounded — and has a matching getter/setter on the instance. `width` now also applies when `resizable: false`.
+
+    A resizable gooey wider than its bounds now shrinks with them (a window resize, a zoom) so the grabbers stay reachable — the 35rem cap used to do that by accident.
+
+- Themer reseam — one writer per element, and user themes persist. ([`de15286`](https://github.com/braebo/gooey/commit/de152862b274d4bd28c2ba0c90494039da9b6f16))
+    - `Themer.attach(el)` / `detach(el)` replace `addTarget`; every target gets the css vars and the `theme` / `mode` attributes on each apply. `ThemerOptions.wrapper` is gone — the owning gooey builds its themer on `.gooey-wrapper`, and each gooey stamps its own `.gooey-root`, so a child under `parentGooey` now follows the shared theme and mode instead of freezing on its first stamp.
+    - `gooey.theme = 'scout'` switches the themer (shared across a `parentGooey` family) instead of only stamping an attribute; a child's `theme` option is ignored.
+    - Disposing a child no longer disposes the parent's themer.
+    - `Themer.userThemes` — themes added with `create()` persist under `<key>::themes` and merge over the code's themes by title. The old `save` / `load` / `toJSON` / `fromJSON` are removed: their keys never matched, and a stored array shadowed edits to themes in source.
+    - `create()` actually adds the theme now; a storage-less gooey no longer persists under a literal `'undefined'` key; `storage.theme: false` really disables theme persistence.
+
+### Patch Changes
+
+- The package ships `llms-full.txt` — the README plus the full API reference rendered from TSDoc — for agents that read a library's docs from `node_modules`. ([`3285807`](https://github.com/braebo/gooey/commit/32858071a28ec63914ddd36575bafc792014464e))
+
+- An element input taller than the room left under the root's `maxHeight` no longer bleeds upward over the rows above it — `.gooey-input-container` aligns `safe center`, so the content starts at its row and the root content scrolls. ([`29fbad8`](https://github.com/braebo/gooey/commit/29fbad879729af27a46bf6f1aaca46f311b68951))
+
 ## 0.4.1
 
 ### Patch Changes
