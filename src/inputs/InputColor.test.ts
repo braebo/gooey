@@ -109,6 +109,18 @@ describe('a bound field keeps the format it started in', () => {
 	})
 })
 
+describe('add with shorthand hex', () => {
+	test('add builds a color input from #rgb and #rgba', () => {
+		expect(gooey.add('shorthand', '#00f').__type).toBe('InputColor')
+		expect(gooey.add('shorthand alpha', '#00f8').__type).toBe('InputColor')
+	})
+
+	test('add keeps a short hex-looking string without # as text', () => {
+		expect(gooey.add('year', '2024').__type).toBe('InputText')
+		expect(gooey.add('word', 'face').__type).toBe('InputText')
+	})
+})
+
 describe('the input owns the color; the field is its projection', () => {
 	test('alpha set through the picker holds on a field that has no alpha', () => {
 		const target = { color: '#0000FF' }

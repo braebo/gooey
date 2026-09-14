@@ -13743,7 +13743,7 @@ The default values for [GooeyOptions](#gooeyoptions).
 
 ### parseColorFormat()
 
-> **parseColorFormat**(`color`): `"number"` \| `"HexString"` \| `"Hex8String"` \| `"RgbaString"` \| `"HslaString"` \| `"Color"` \| `"RgbColor"` \| `"HsvColor"` \| `"HslColor"` \| `undefined`
+> **parseColorFormat**(`color`): `"number"` \| `"HexString"` \| `"Hex8String"` \| `"HexStringShorthand"` \| `"HexAlphaStringShorthand"` \| `"RgbaString"` \| `"HslaString"` \| `"Color"` \| `"RgbColor"` \| `"HsvColor"` \| `"HslColor"` \| `undefined`
 
 #### Parameters
 
@@ -13753,7 +13753,7 @@ The default values for [GooeyOptions](#gooeyoptions).
 
 #### Returns
 
-`"number"` \| `"HexString"` \| `"Hex8String"` \| `"RgbaString"` \| `"HslaString"` \| `"Color"` \| `"RgbColor"` \| `"HsvColor"` \| `"HslColor"` \| `undefined`
+`"number"` \| `"HexString"` \| `"Hex8String"` \| `"HexStringShorthand"` \| `"HexAlphaStringShorthand"` \| `"RgbaString"` \| `"HslaString"` \| `"Color"` \| `"RgbColor"` \| `"HsvColor"` \| `"HslColor"` \| `undefined`
 
 ***
 

@@ -1,5 +1,5 @@
 ---
-'gooey': patch
+'gooey': minor
 ---
 
 A bound color field keeps the format it started in — `bindColor({ color: '#0000ff' }, 'color')` no longer overwrites the field with a `Color` object.

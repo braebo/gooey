@@ -514,6 +514,10 @@ export function parseColorFormat(color: ColorFormat | (string & {})) {
 			return 'HexString' as const
 		} else if (color.match(/^#?[0-9a-fA-F]{8}$/)) {
 			return 'Hex8String' as const
+		} else if (color.match(/^#[0-9a-fA-F]{3}$/)) {
+			return 'HexStringShorthand' as const
+		} else if (color.match(/^#[0-9a-fA-F]{4}$/)) {
+			return 'HexAlphaStringShorthand' as const
 		} else if (color.match(/^rgba?/)) {
 			return 'RgbaString' as const
 		} else if (color.match(/^hsla?/)) {
