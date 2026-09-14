@@ -7,10 +7,26 @@ on:
   # Re-run the JSR publish by hand when npm published but the job died after it
   # (a rejected tag push, a runner hiccup) — `gh workflow run release.yml`.
   workflow_dispatch:
+  pull_request:
 
 jobs:
+  # llms-full.txt is committed; a PR or push that changes the API or README without
+  # rerunning `bun run llms` fails here.
+  llms:
+    name: llms-full.txt is fresh
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run llms
+      - run: git diff --exit-code llms-full.txt
+
   release:
-    if: github.repository == 'braebo/gooey'
+    needs: llms
+    if: github.repository == 'braebo/gooey' && github.event_name != 'pull_request'
     name: Release
     runs-on: ubuntu-latest
     permissions:

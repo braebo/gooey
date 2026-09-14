@@ -6,3 +6,4 @@
 - No `link:` dependencies — they resolve only inside the bopo monorepo, and CI installs gooey on its own.
 - `www/` demos import gooey from `src/`, never the published `gooey` package — the two classes differ structurally and svelte-check rejects the mix.
 - `skills/gooey/SKILL.md` names paths inside the published package; a change to the README or the `dist/inputs` layout updates it in the same commit.
+- An API or README change reruns `bun run llms` in the same commit.
