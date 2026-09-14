@@ -1,5 +1,6 @@
 import { GooeyTest } from './tests/Gooey/GooeyTest'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
+import { page } from '@vitest/browser/context'
 import { Gooey } from './Gooey'
 
 const G = new GooeyTest()
@@ -114,6 +115,19 @@ describe('width', () => {
 	test('width: 700 holds once maxWidth lifts the clamp', async () => {
 		const gooey = G.addGooey({ title: 'wide', width: 700, maxWidth: 'none' })
 		expect(gooey.element.clientWidth).toBe(700)
+	})
+
+	// The 35rem cap used to keep a gooey inside any viewport by accident; with the cap
+	// lifted, the resizer has to follow its bounds itself.
+	test('a gooey wider than its bounds shrinks when the viewport does', async () => {
+		const gooey = G.addGooey({ title: 'fit', width: 700, maxWidth: 'none' })
+		expect(gooey.element.clientWidth).toBe(700)
+		try {
+			await page.viewport(400, 600)
+			await vi.waitFor(() => expect(gooey.element.clientWidth).toBeLessThanOrEqual(400))
+		} finally {
+			await page.viewport(800, 1000)
+		}
 	})
 
 	test("maxWidth: 'none' computes to none", async () => {

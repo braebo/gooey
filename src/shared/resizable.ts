@@ -281,6 +281,12 @@ export class Resizable {
 
 		this.createGrabbers()
 
+		// Keep the grabbers reachable: when the bounds shrink (a window resize, a zoom)
+		// the node shrinks with them.
+		const boundsObserver = new ResizeObserver(this.#fitBounds)
+		boundsObserver.observe(this.bounds)
+		this.#listeners.push(() => boundsObserver.disconnect())
+
 		if (+this.node.style.minWidth > this.boundsRect.width) {
 			console.error('Min width is greater than bounds width.')
 			return
@@ -291,6 +297,13 @@ export class Resizable {
 
 	get boundsRect() {
 		return this.bounds.getBoundingClientRect()
+	}
+
+	#fitBounds = () => {
+		const max = this.boundsRect.width
+		if (max > 0 && this.node.offsetWidth > max) {
+			this.node.style.width = `${Math.max(max, this.#minWidth)}px`
+		}
 	}
 
 	//? Create resize grabbers.
