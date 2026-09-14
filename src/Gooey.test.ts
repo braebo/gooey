@@ -106,8 +106,29 @@ describe('width', () => {
 		expect(gooey.element.clientWidth).toBe(345)
 	})
 
-	test('100px correctly reduces minimum width', async () => {
+	test('the default 35rem max-width still clamps a wider width', async () => {
+		const gooey = G.addGooey({ title: 'clamped', width: 700 })
+		expect(gooey.element.clientWidth).toBe(560)
+	})
+
+	test('width: 700 holds once maxWidth lifts the clamp', async () => {
+		const gooey = G.addGooey({ title: 'wide', width: 700, maxWidth: 'none' })
+		expect(gooey.element.clientWidth).toBe(700)
+	})
+
+	test("maxWidth: 'none' computes to none", async () => {
+		const gooey = G.addGooey({ title: 'unbounded', maxWidth: 'none' })
+		expect(getComputedStyle(gooey.element).maxWidth).toBe('none')
+	})
+
+	test('100px correctly reduces minimum width, and survives a mode flip', async () => {
 		const gooey = G.addGooey({ title: '100px', width: 100 })
+		expect(gooey.element.clientWidth).toBe(100)
+
+		// The lowered min-width used to be written on the wrapper, which the themer rewrites on
+		// every apply -- so a mode change snapped the gooey back out to the 20rem default.
+		gooey.themer.mode.set('light')
+		gooey.themer.mode.set('dark')
 		expect(gooey.element.clientWidth).toBe(100)
 	})
 })

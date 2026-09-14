@@ -328,6 +328,17 @@
 	box-sizing: border-box;
 }
 
+// Structural sizing defaults.  Not theme vars -- no theme or mode varies them, and the themer
+// rewrites every var it owns on every apply, which would clobber the `width` / `minWidth` /
+// `maxWidth` / `maxHeight` options written inline on `.gooey-root`.  Zero specificity, so a
+// consumer's own `.gooey-root { --gooey-root_max-width: ... }` wins without `!important`.
+:where(.gooey-root) {
+	--gooey-root_width: 24rem;
+	--gooey-root_min-width: 20rem;
+	--gooey-root_max-width: 35rem;
+	--gooey-root_max-height: 90vh;
+}
+
 .gooey-root {
 	contain: content;
 

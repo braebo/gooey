@@ -118,9 +118,52 @@ export interface GooeyOptions {
 	 *
 	 * @remakrs This can also be set by overriding the `--gooey-root_width` CSS custom property on
 	 * the {@link Gooey.element} element `.gooey-root`, which is responsible for the root width.
+	 *
+	 * A {@link GooeyOptions.minWidth|minWidth} / {@link GooeyOptions.maxWidth|maxWidth} given
+	 * explicitly wins over this.  Without one, a `width` below the default minimum lowers that
+	 * minimum so the gooey can actually be as narrow as it was asked to be.
 	 * @default undefined
 	 */
 	width?: number
+
+	/**
+	 * The narrowest the gooey may be, as a resize floor and a css `min-width` on
+	 * {@link Gooey.element}.  A number is pixels, a string is passed through as a css length
+	 * (`'12rem'`, `'30%'`), and `'none'` leaves it unbounded.
+	 *
+	 * @remarks Writes the `--gooey-root_min-width` custom property inline on `.gooey-root`, so it
+	 * survives a theme or mode change.  When omitted, the `:where(.gooey-root)` default in
+	 * `gooey.scss` (`20rem`) applies.
+	 * @default undefined
+	 */
+	minWidth?: number | string
+
+	/**
+	 * The widest the gooey may be, as a resize ceiling and a css `max-width` on
+	 * {@link Gooey.element}.  A number is pixels, a string is passed through as a css length, and
+	 * `'none'` leaves it unbounded -- which is what a gooey used as a window rather than a control
+	 * panel usually wants, since the default `35rem` silently stops a drag at 560px.
+	 *
+	 * @remarks Writes the `--gooey-root_max-width` custom property inline on `.gooey-root`, so it
+	 * survives a theme or mode change.  When omitted, the `:where(.gooey-root)` default in
+	 * `gooey.scss` (`35rem`) applies.
+	 * @default undefined
+	 */
+	maxWidth?: number | string
+
+	/**
+	 * The tallest the gooey's content may grow before it scrolls, as a css `max-height` on the
+	 * root content element.  A number is pixels, a string is passed through as a css length
+	 * (`'90vh'`), and `'none'` leaves it unbounded.
+	 *
+	 * @remarks This caps the scrolling content, not the header -- the root itself is
+	 * `height: fit-content`, and the resize grabbers are left/right only.  Writes the
+	 * `--gooey-root_max-height` custom property inline on `.gooey-root`, so it survives a theme or
+	 * mode change.  When omitted, the `:where(.gooey-root)` default in `gooey.scss` (`90vh`)
+	 * applies.
+	 * @default undefined
+	 */
+	maxHeight?: number | string
 
 	/**
 	 * The initial expanded state of the gooey.
@@ -649,6 +692,56 @@ export class Gooey {
 		this.window?.draggableInstance?.moveTo(v)
 	}
 
+	/**
+	 * The narrowest the gooey may be.  See {@link GooeyOptions.minWidth}.
+	 */
+	get minWidth(): string {
+		return this._readRootVar('min-width')
+	}
+	set minWidth(v: number | string) {
+		this._writeRootVar('min-width', v)
+	}
+
+	/**
+	 * The widest the gooey may be.  See {@link GooeyOptions.maxWidth}.
+	 */
+	get maxWidth(): string {
+		return this._readRootVar('max-width')
+	}
+	set maxWidth(v: number | string) {
+		this._writeRootVar('max-width', v)
+	}
+
+	/**
+	 * The tallest the gooey's content may grow before it scrolls.  See
+	 * {@link GooeyOptions.maxHeight}.
+	 */
+	get maxHeight(): string {
+		return this._readRootVar('max-height')
+	}
+	set maxHeight(v: number | string) {
+		this._writeRootVar('max-height', v)
+	}
+
+	private _readRootVar(name: 'min-width' | 'max-width' | 'max-height'): string {
+		const inline = this.folder.element.style.getPropertyValue(`--gooey-root_${name}`)
+		if (inline) return inline.trim()
+		if (!globalThis.window) return ''
+		return getComputedStyle(this.folder.element).getPropertyValue(`--gooey-root_${name}`).trim()
+	}
+
+	private _writeRootVar(
+		name: 'min-width' | 'max-width' | 'max-height',
+		value: number | string,
+	): void {
+		// Inline on `.gooey-root`, never the wrapper -- the themer rewrites every var it owns on
+		// the wrapper on every apply, so a mode flip would undo it.
+		this.folder.element.style.setProperty(
+			`--gooey-root_${name}`,
+			typeof value === 'number' ? `${value}px` : value,
+		)
+	}
+
 	revealTimeout: ReturnType<typeof setTimeout> | undefined
 	revealIdle: ReturnType<typeof requestIdleCallback> | undefined
 
@@ -914,20 +1007,29 @@ export class Gooey {
 		})
 	}
 
-	private static _parseWidth(str?: string): number | undefined {
-		if (!str) return
+	/**
+	 * Writes {@link GooeyOptions.width|width} and the sizing limits onto `.gooey-root`.  An
+	 * explicit limit always wins; `width` only lowers a `min-width` still left at its default.
+	 */
+	private _applyRootSizing(): void {
+		const { width, minWidth, maxWidth, maxHeight } = this.opts
 
-		if (!globalThis.window) {
-			console.warn('parseCss can only be used in the browser')
-			return
+		if (typeof minWidth !== 'undefined') this.minWidth = minWidth
+		if (typeof maxWidth !== 'undefined') this.maxWidth = maxWidth
+		if (typeof maxHeight !== 'undefined') this.maxHeight = maxHeight
+
+		if (typeof width === 'undefined') return
+
+		this.folder.element.style.width = `${width}px`
+
+		// A width narrower than the default floor lowers it -- otherwise the gooey silently
+		// renders wider than it was asked to be.  An explicit `minWidth` is the user's call.
+		if (typeof minWidth === 'undefined' && globalThis.window) {
+			const currentMinWidth = parseFloat(getComputedStyle(this.folder.element).minWidth)
+			if (currentMinWidth && width < currentMinWidth) {
+				this.minWidth = width
+			}
 		}
-
-		const dummy = document.createElement('div')
-		dummy.style.width = str
-		document.body.appendChild(dummy)
-		const width = dummy.getBoundingClientRect().width
-		dummy.remove()
-		return width
 	}
 
 	private _createWindowManager(
@@ -962,18 +1064,13 @@ export class Gooey {
 			}
 		}
 
+		// Sizing binds a non-resizable gooey too, so it runs outside the `resizeOpts` guard.  It
+		// also has to run before the window manager adds the element, since the resizer reads the
+		// node's computed min/max at init.
+		this._applyRootSizing()
+
 		if (resizeOpts && this.opts.width) {
 			resizeOpts.initialSize = { width: this.opts.width }
-
-			// Update the min-width variable if the provided width is smaller than the default.
-			const currentMinWidth = Gooey._parseWidth(
-				this.wrapper.style.getPropertyValue('--gooey-root_min-width'),
-			)
-			if (currentMinWidth && this.opts.width < currentMinWidth) {
-				this.wrapper.style.setProperty('--gooey-root_min-width', `${this.opts.width}px`)
-			}
-
-			this.folder.element.style.width = `${this.opts.width}px`
 		}
 
 		// Use the provided window manager if it's an instance.

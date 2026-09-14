@@ -34,10 +34,9 @@ const GUI_VARS_UTILITY = {
 const GUI_VARS_STRUCTURED: ThemeVars = {
 	base: {
 		root: {
-			width: '24rem',
-			'min-width': '20rem',
-			'max-width': '35rem',
-			'max-height': '90vh',
+			// `width` / `min-width` / `max-width` / `max-height` are not theme vars -- no theme or
+			// mode varies them, and a theme apply would clobber the sizing options written inline
+			// on `.gooey-root`.  Their defaults live in `gooey.scss` under `:where(.gooey-root)`.
 			opacity: '0.5',
 			'backdrop-filter': 'blur(0.5rem)',
 			header: {
