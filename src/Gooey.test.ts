@@ -128,7 +128,9 @@ describe('width', () => {
 		const row = input.elements.container.getBoundingClientRect()
 		const content = input.elements.content.getBoundingClientRect()
 		expect(content.top).toBeGreaterThanOrEqual(row.top)
-		const scroller = gooey.element.querySelector(':scope > .gooey-content-wrapper > .gooey-content')!
+		const scroller = gooey.element.querySelector(
+			':scope > .gooey-content-wrapper > .gooey-content',
+		)!
 		expect(scroller.scrollHeight).toBeGreaterThan(scroller.clientHeight)
 	})
 

@@ -320,10 +320,7 @@ export class Themer {
 		}
 
 		this.themes.set([...existing, theme])
-		this.userThemes.set([
-			...this.userThemes.value.filter(t => t.title !== theme.title),
-			theme,
-		])
+		this.userThemes.set([...this.userThemes.value.filter(t => t.title !== theme.title), theme])
 
 		return this
 	}

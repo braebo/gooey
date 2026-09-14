@@ -117,7 +117,7 @@ export interface GooeyOptions {
 	/**
 	 * The initial width of the gooey in pixels.
 	 *
-	 * @remakrs This can also be set by overriding the `--gooey-root_width` CSS custom property on
+	 * @remarks This can also be set by overriding the `--gooey-root_width` CSS custom property on
 	 * the {@link Gooey.element} element `.gooey-root`, which is responsible for the root width.
 	 *
 	 * A {@link GooeyOptions.minWidth|minWidth} / {@link GooeyOptions.maxWidth|maxWidth} given
@@ -586,7 +586,9 @@ export class Gooey {
 
 		let updateIcon = () => {}
 		if (settingsOpts) {
-			const settingsButton = this._createSettingsButton(this.folder.elements.toolbar.container)
+			const settingsButton = this._createSettingsButton(
+				this.folder.elements.toolbar.container,
+			)
 			this.folder.elements.toolbar.settingsButton = settingsButton.button
 			updateIcon = settingsButton.updateIcon
 		}
