@@ -5,7 +5,8 @@
 	"keywords": [
 		"gui",
 		"typescript",
-		"javascript"
+		"javascript",
+		"tanstack-intent"
 	],
 	"homepage": "https://gooey.braebo.dev",
 	"repository": {
@@ -28,7 +29,9 @@
 	"files": [
 		"dist",
 		"README.md",
-		"LICENSE"
+		"LICENSE",
+		"skills",
+		"!skills/_artifacts"
 	],
 	"scripts": {
 		"build": "tsdown",
