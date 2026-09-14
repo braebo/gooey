@@ -1,0 +1,13 @@
+{
+	"plugin": ["typedoc-plugin-markdown"],
+	"entryPoints": ["src/index.ts"],
+	"mergeReadme": true,
+	"router": "module",
+	"entryFileName": "llms-full",
+	"fileExtension": ".txt",
+	"out": ".llms",
+	"excludeProtected": true,
+	"excludeInternal": true,
+	"disableSources": true,
+	"hidePageHeader": true
+}

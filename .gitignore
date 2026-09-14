@@ -5,6 +5,9 @@ node_modules
 docs/extracted/
 _docs
 
+# typedoc scratch for `bun run llms`
+.llms
+
 # Vitest
 __screenshots__
 
