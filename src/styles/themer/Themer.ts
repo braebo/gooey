@@ -19,20 +19,8 @@ import { hexToRgb } from '../../shared/hexToRgb'
 import { entries } from '../../shared/object'
 import { Logger } from '../../shared/logger'
 import { select } from '../../shared/select'
-import { c, g, o, r } from '../../shared/l'
+import { c, g, o } from '../../shared/l'
 import { state } from '../../shared/state'
-
-/**
- * A JSON representation of the {@link Themer} class. Used in the
- * {@link Themer.toJSON | toJSON()} and {@link Themer.fromJSON | fromJSON()},
- * methods, and subsequently, in {@link Themer.save | save()}
- * and {@link Themer.load | load()}.
- */
-export interface ThemerJSON {
-	themes: Theme[]
-	activeTheme: ThemeTitle
-	mode: ThemeMode
-}
 
 /**
  * Options for the {@link Themer} class.
@@ -44,7 +32,8 @@ export interface ThemerOptions {
 	 */
 	autoInit: boolean
 	/**
-	 * Whether to persist the Themer state in localStorage.
+	 * Whether to persist the active theme title and mode in localStorage.
+	 * Needs a {@link localStorageKey}; without one nothing persists.
 	 * @default true
 	 */
 	persistent: boolean
@@ -56,8 +45,8 @@ export interface ThemerOptions {
 	themes: Array<Theme>
 	mode?: ThemeMode
 	/**
-	 * The key to store the theme in localStorage.
-	 * @default 'fractils::themer'
+	 * The localStorage key prefix for the persisted title and mode.
+	 * @default undefined
 	 */
 	localStorageKey?: string
 	wrapper?: HTMLElement
@@ -77,7 +66,7 @@ export const THEMER_DEFAULTS: ThemerOptions = {
 	theme: theme_default,
 	themes: [],
 	mode: undefined,
-	localStorageKey: 'fractils::themer',
+	localStorageKey: undefined,
 	vars: {},
 }
 
@@ -100,21 +89,14 @@ export const THEMER_DEFAULTS: ThemerOptions = {
  * which can be set to 'light', 'dark', or 'system'.
  *
  * @example
- * ```svelte
- * <script lang="ts">
- * 	import { Themer } from 'fractils'
- * 	import my_theme from './themes/my_theme'
+ * ```ts
+ * import { Themer } from 'gooey'
+ * import my_theme from './themes/my_theme'
  *
- * 	const themer = new Themer('document', {
- * 		theme: my_theme,    // optional theme definition (JS object or JSON)
- * 		themes: [my_theme], // optional array of themes
- * 		mode: 'dark',       // optional initial mode ('light', 'dark', or 'system')
- * 	})
- * </script>
+ * const themer = new Themer('document', { theme: my_theme, themes: [my_theme], mode: 'dark' })
  *
- * <h1>{themer.theme.title}</h1>
- * <button on:click={() => themer.mode = 'dark'}>dark mode</button>
- * <button on:click={() => themer.addTheme({...})}>add theme</button>
+ * themer.mode.set('light')
+ * themer.create({ ...my_theme, title: 'my_theme_2' })
  * ```
  */
 export class Themer {
@@ -130,9 +112,16 @@ export class Themer {
 	theme: State<Theme>
 
 	/**
-	 * All themes available to the themer.
+	 * All themes available to the themer — {@link ThemerOptions.themes} plus {@link userThemes}.
 	 */
 	themes: State<Theme[]>
+
+	/**
+	 * Themes added at runtime with {@link create}.  Persisted under `<key>::themes` when
+	 * {@link ThemerOptions.persistent}, and merged over the code's themes by title on load.
+	 * Code themes are never stored — their source is their record.
+	 */
+	userThemes: State<Theme[]>
 
 	/**
 	 * The title of the currently active {@link theme}.
@@ -160,8 +149,6 @@ export class Themer {
 
 	private _initialized = false
 	private _prefersDark: MediaQueryList
-	private _persistent: boolean
-	private _key: string
 	private _unsubs: Array<() => void> = []
 	private _targets = new Set<HTMLElement>()
 	private _log: Logger
@@ -177,7 +164,9 @@ export class Themer {
 		options?: Partial<ThemerOptions>,
 	) {
 		const opts = deepMergeOpts([THEMER_DEFAULTS, options])
-		this._key = String(opts.localStorageKey)
+		// Persistence needs both the flag and a key — `String(undefined)` used to mint a shared
+		// 'undefined::…' key for every storage-less themer on the origin.
+		const key = opts.persistent && opts.localStorageKey ? opts.localStorageKey : undefined
 
 		if (opts.wrapper) {
 			this.wrapper = opts.wrapper
@@ -196,14 +185,16 @@ export class Themer {
 
 		this.theme = state(resolveTheme(opts.theme, opts.vars))
 
-		this.themes = state(
-			opts.themes.map(t => {
-				return resolveTheme(t, opts.vars)
-			}),
-		)
+		this.userThemes = state<Theme[]>([], { key: key && key + '::themes' })
+
+		const user = this.userThemes.value
+		const code = opts.themes
+			.map(t => resolveTheme(t, opts.vars))
+			.filter(t => !user.some(u => u.title === t.title))
+		this.themes = state([...code, ...user])
 
 		this.activeThemeTitle = state(opts.theme.title, {
-			key: this._key + '::activeTheme',
+			key: key && key + '::activeTheme',
 		})
 
 		const storedTitle = this.activeThemeTitle.value
@@ -213,7 +204,7 @@ export class Themer {
 		}
 
 		this.mode = state(opts.mode ?? 'system', {
-			key: this._key + '::mode',
+			key: key && key + '::mode',
 		})
 
 		this._prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
@@ -222,8 +213,6 @@ export class Themer {
 		this._unsubs.push(() =>
 			this._prefersDark.removeEventListener('change', this.#handlePrefChange),
 		)
-
-		this._persistent = opts.persistent ?? true
 
 		this.#addSub(this.theme, v => {
 			this._log.fn(o('theme.subscribe')).debug({ v, this: this })
@@ -267,12 +256,12 @@ export class Themer {
 		if (this._initialized) return this
 		this._initialized = true
 
-		// Make sure the initial theme is in the themes array.
+		// Make sure the initial theme is in the themes array — a code theme, so not via `create`.
 		if (!themes.find(t => t.title === theme.title)) {
-			this.create(theme, { overwrite: true, save: false })
+			this.themes.set([...themes, theme])
 		}
 
-		this.load()?.applyTheme()
+		this.applyTheme()
 
 		return this
 	}
@@ -292,17 +281,8 @@ export class Themer {
 	 * The current mode, taking into account the system preferences.
 	 */
 	get activeMode(): 'light' | 'dark' {
-		const _mode = this.mode.value
-		const mode =
-			typeof _mode === 'object' && 'value' in _mode
-				? (_mode as { value: 'light' | 'dark' }).value
-				: _mode
-
-		if (mode === 'system') {
-			return this.#systemPreference
-		}
-
-		return mode as 'light' | 'dark'
+		const mode = this.mode.value
+		return mode === 'system' ? this.#systemPreference : mode
 	}
 
 	get #systemPreference() {
@@ -314,7 +294,7 @@ export class Themer {
 	}
 
 	/**
-	 * Adds a new theme to the Themer and optionally saves it to localStorage.
+	 * Adds a new theme to the Themer and to {@link userThemes}.
 	 */
 	create = (
 		/**
@@ -330,49 +310,29 @@ export class Themer {
 			 * @default false
 			 */
 			overwrite?: boolean
-			/**
-			 * Whether to re-save the Themer state to localStorage
-			 * after adding the new theme.  If {@link ThemerOptions.persistent}
-			 * is `false`, this option is ignored.
-			 * @default true
-			 */
-			save?: boolean
 		},
 	) => {
-		this._log.fn(c('addTheme')).debug({ newTheme, options, this: this })
+		this._log.fn(c('create')).debug({ newTheme, options, this: this })
 
 		const theme = structuredClone(newTheme)
-
 		const overwrite = options?.overwrite ?? false
-		const save = options?.save ?? true
 
 		const [dupes, existing] = partition(this.themes.value, t => t.title === theme.title)
-		const alreadyExists = dupes.length > 0
 
-		if (!overwrite && alreadyExists) {
-			// Preserve the existing theme while de-duping it.
-			existing.push(structuredClone(dupes[0]))
+		if (!overwrite && dupes.length > 0) {
+			// Keep the existing theme and give the new one a suffixed title.
+			existing.push(dupes[0])
 
-			// Increment the title.
-			let i = 0
-			while (true) {
-				const newTitle = `${theme.title} (${i++})`
-
-				if (!existing.some(t => t.title === newTitle)) {
-					theme.title = newTitle
-					break
-				}
-
-				if (i > 100) {
-					this._log.fn(c('addTheme')).debug(r('Runaway loop detected.') + ' Aborting.', {
-						this: this,
-					})
-					break
-				}
-			}
+			let i = 1
+			while (existing.some(t => t.title === `${theme.title} (${i})`)) i++
+			theme.title = `${theme.title} (${i})`
 		}
 
-		if (save) this.save()
+		this.themes.set([...existing, theme])
+		this.userThemes.set([
+			...this.userThemes.value.filter(t => t.title !== theme.title),
+			theme,
+		])
 
 		return this
 	}
@@ -399,12 +359,11 @@ export class Themer {
 		const isActive = this.theme.value.title === themeTitle
 
 		this.themes.set(this.themes.value.filter(t => t.title !== themeTitle))
+		this.userThemes.set(this.userThemes.value.filter(t => t.title !== themeTitle))
 
 		if (isActive) {
 			this.theme.set(themes[nextIndex] ?? themes.at(-1))
 		}
-
-		this.save()
 
 		return this
 	}
@@ -443,98 +402,11 @@ export class Themer {
 	}
 
 	/**
-	 * Updates Themer state from JSON.
-	 */
-	fromJSON(json: ThemerJSON) {
-		const isNewTheme = this.theme.value.title !== json.activeTheme
-
-		let theme = json.themes.find(t => t.title === json.activeTheme)
-		theme ??= this.themes.value.find(t => t.title === json.activeTheme)
-
-		if (!theme) {
-			this._log.error('`activeTheme` not found in `themes` array.', {
-				activeTheme: json.activeTheme,
-				json,
-				this: this,
-			})
-			throw new Error(`Theme not found.`)
-		}
-
-		this.themes.set(json.themes)
-		this.mode.set(json.mode)
-
-		if (isNewTheme) {
-			this.applyTheme()
-		}
-	}
-
-	/**
-	 * Serializes the current Themer state to JSON.
-	 */
-	toJSON() {
-		return {
-			themes: this.themes.value,
-			activeTheme: this.theme.value.title,
-			mode: this.mode.value,
-		} satisfies ThemerJSON
-	}
-
-	/**
-	 * Loads Themer state from localStorage.
-	 * @returns The JSON that was loaded (if found).
-	 */
-	load = () => {
-		this._log.fn(c('load')).debug({ this: this })
-
-		if (this._persistent && 'localStorage' in globalThis) {
-			const json = localStorage.getItem(this._key + '::themer')
-
-			if (json) {
-				this.fromJSON(JSON.parse(json))
-			}
-		}
-
-		return this
-	}
-
-	/**
-	 * Saves the current Themer state to localStorage.
-	 * @returns The JSON that was saved.
-	 */
-	save() {
-		this._log.fn(c('save')).debug({ this: this })
-
-		if (!('localStorage' in globalThis)) return
-		if (!this._persistent) return
-
-		const json = this.toJSON()
-
-		const exists = `${this._key}themer` in localStorage
-
-		try {
-			const identical =
-				exists &&
-				JSON.parse(JSON.stringify(json)) ===
-					JSON.parse(localStorage.getItem(`${this._key}themer`) || '')
-
-			if (!identical) {
-				localStorage.setItem(`${this._key}themer`, JSON.stringify(json))
-			}
-		} catch (error) {
-			console.error(r('Error') + ': Failed to save to localStorage.', { error, this: this })
-			throw new Error(`Failed to save to localStorage.`)
-		}
-
-		return json
-	}
-
-	/**
-	 * Removes the current Themer state from localStorage.
+	 * Resets to the default theme, 'system' mode, and no other themes; forgets {@link userThemes}.
 	 */
 	clear() {
 		this._log.fn(c('clear')).debug({ this: this })
-		if (!('localStorage' in globalThis)) return
-		localStorage.removeItem(`${this._key}themer`)
+		this.userThemes.set([])
 		this.themes.set([theme_default])
 		this.theme.set(theme_default)
 		this.mode.set('system')
