@@ -49,7 +49,6 @@ export interface ThemerOptions {
 	 * @default undefined
 	 */
 	localStorageKey?: string
-	wrapper?: HTMLElement
 	/**
 	 * Additional variables to apply to the theme.
 	 * @default {}
@@ -101,7 +100,8 @@ export const THEMER_DEFAULTS: ThemerOptions = {
  */
 export class Themer {
 	/**
-	 * The element to theme.
+	 * The first target — every target gets the theme's css vars and the `theme` / `mode`
+	 * attributes on each apply; {@link attach} adds more.
 	 */
 	node: HTMLElement
 
@@ -142,11 +142,6 @@ export class Themer {
 	 */
 	mode: State<'light' | 'dark' | 'system'>
 
-	/**
-	 * If provided, theme css vars will be added to the wrapper.
-	 */
-	wrapper?: HTMLElement
-
 	private _initialized = false
 	private _prefersDark: MediaQueryList
 	private _unsubs: Array<() => void> = []
@@ -167,10 +162,6 @@ export class Themer {
 		// Persistence needs both the flag and a key — `String(undefined)` used to mint a shared
 		// 'undefined::…' key for every storage-less themer on the origin.
 		const key = opts.persistent && opts.localStorageKey ? opts.localStorageKey : undefined
-
-		if (opts.wrapper) {
-			this.wrapper = opts.wrapper
-		}
 
 		this.node =
 			node === 'document'
@@ -232,7 +223,7 @@ export class Themer {
 			if (this._initialized) this.applyTheme()
 		})
 
-		this._targets.add(this.wrapper ?? this.node.parentElement ?? this.node)
+		this._targets.add(this.node)
 
 		if (opts.autoInit) {
 			this.init()
@@ -376,9 +367,9 @@ export class Themer {
 	}
 
 	/**
-	 * Applies the current theme to the document.
+	 * Applies the current theme to every target (or just the ones given).
 	 */
-	applyTheme = (targets?: HTMLElement[]) => {
+	applyTheme = (targets: HTMLElement[] = [...this._targets]) => {
 		this._log
 			.fn(c('applyTheme'))
 			.debug({ theme: this.theme.value.title, targets: this._targets, this: this })
@@ -393,10 +384,10 @@ export class Themer {
 		}
 
 		this.#applyStyleProps(theme, targets)
-		this.node.setAttribute('theme', theme.title)
-		this.node.setAttribute('mode', this.activeMode)
-		this.wrapper?.setAttribute('theme', theme.title)
-		this.wrapper?.setAttribute('mode', this.activeMode)
+		for (const target of targets) {
+			target.setAttribute('theme', theme.title)
+			target.setAttribute('mode', this.activeMode)
+		}
 
 		return this
 	}
@@ -412,21 +403,29 @@ export class Themer {
 		this.mode.set('system')
 	}
 
-	addTarget(target: HTMLElement) {
+	/**
+	 * Adds a target and applies the current theme to it now.
+	 */
+	attach(target: HTMLElement) {
 		this._targets.add(target)
 		this.applyTheme([target])
+		return this
 	}
 
 	/**
-	 * Generates CSS custom properties from a theme config.
-	 * @param config - The theme config to generate CSS from.
-	 * @returns A string of CSS custom properties.
+	 * Stops theming a target.  Its vars and attributes stay as they were until something
+	 * else writes them.
+	 */
+	detach(target: HTMLElement) {
+		this._targets.delete(target)
+		return this
+	}
+
+	/**
+	 * Writes a theme's css vars onto the targets.
 	 * @internal
 	 */
-	#applyStyleProps = (
-		themeConfig: Theme,
-		targets = this._targets as any as HTMLElement[],
-	): void => {
+	#applyStyleProps = (themeConfig: Theme, targets: HTMLElement[]): void => {
 		const config = themeConfig
 		this._log.fn(c('applyStyleProps')).debug({ config, this: this })
 

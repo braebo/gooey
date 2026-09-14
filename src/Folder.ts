@@ -2137,7 +2137,6 @@ export class Folder {
 			return create('div', {
 				id: `gooey-root_${this.id}`,
 				classes: ['gooey-root', 'gooey-folder', 'closed'],
-				dataset: { theme: this.gooey!.theme ?? 'default' },
 				parent: select(opts.container)[0],
 				style: width ? { width } : undefined,
 			})

@@ -31,7 +31,7 @@ import { o } from './shared/l'
 
 //#region Types ························································································¬
 
-type GooeyTheme = 'default' | 'flat' | 'scout' | (string & {})
+type GooeyTheme = 'vanilla' | 'flat' | 'scout' | (string & {})
 
 export interface GooeyElements {
 	root: HTMLElement
@@ -78,8 +78,9 @@ export interface GooeyOptions {
 
 	/**
 	 * The title of the theme to use for the gooey.  To add your own themes,
-	 * use {@link themerOptions.themes}.
-	 * @default 'default'
+	 * use {@link GooeyOptions.themes|themes}.  Ignored under {@link parentGooey} — a child
+	 * follows the parent's theme.
+	 * @default 'vanilla'
 	 */
 	theme: GooeyTheme
 
@@ -197,7 +198,7 @@ export interface GooeyOptions {
 
 	/**
 	 * Whether to load the default font for use.  Set to `false` if you're overwriting
-	 * the `--fragcui-font` variable in your theme.
+	 * the `--gooey-font-family` variable in your theme.
 	 * @default true
 	 */
 	loadDefaultFont?: boolean
@@ -455,7 +456,7 @@ export class Gooey {
 	/** {@link GooeyOptions.settingsFolder}, with the `false` case narrowed away. */
 	private _settingsFolderOpts?: Exclude<GooeyOptions['settingsFolder'], false>
 
-	private _theme!: GooeyOptions['theme']
+	private _isThemerOwner = false
 	private _log: Logger
 	private _closedMap: PersistedValue<Record<string, boolean>>
 	private static _initialized = false
@@ -619,14 +620,20 @@ export class Gooey {
 		const sharedThemer = (this.opts as GooeyOptionsInternal)._themer
 		if (sharedThemer) {
 			this.themer = sharedThemer
-			// A themer only writes its css vars onto the targets it knows about, and a shared one
-			// was built around someone else's wrapper. Without this a child gooey renders with no
-			// vars at all — a zero-height header, with the content drawn over the title.
-			sharedThemer.addTarget(this.wrapper)
+			// A themer writes only onto the targets it knows about; a shared one was built
+			// around someone else's wrapper.
+			sharedThemer.attach(this.wrapper)
 		} else {
 			this.themer = this._createThemer(this.elements.settingsFolder)!
+			this._isThemerOwner = true
 		}
-		this.theme = this.opts.theme
+		// The themer stamps the wrapper; the root is this gooey's to stamp (`.gooey-root[mode]`).
+		const reflect = () => {
+			this.folder.element.setAttribute('theme', this.themer.theme.value.title)
+			this.folder.element.setAttribute('mode', this.themer.activeMode)
+		}
+		this.folder.evm.add(this.themer.theme.subscribe(reflect))
+		this.folder.evm.add(this.themer.mode.subscribe(reflect))
 		this.presetManager = this._createPresetManager(this.elements.settingsFolder)
 
 		this.windowManager ??= this._createWindowManager(this.opts, this.opts.storage)
@@ -666,13 +673,20 @@ export class Gooey {
 		return this.windowManager?.windows.get(this.folder.element.id)
 	}
 
-	set theme(theme: GooeyTheme) {
-		this._theme = theme
-		this.folder.element.setAttribute('theme', theme)
-		this.folder.element.setAttribute('mode', this.themer.mode.value)
+	/**
+	 * The active theme's title.  Setting it switches the {@link themer} — shared by every
+	 * gooey under the same {@link GooeyOptions.parentGooey|parentGooey}.
+	 */
+	get theme(): GooeyTheme {
+		return this.themer.theme.value.title
 	}
-	get theme() {
-		return this._theme!
+	set theme(title: GooeyTheme) {
+		const theme = this.themer.getTheme(title)
+		if (!theme) {
+			this._log.error(`theme "${title}" not found`, { themes: this.themer.themes.value })
+			return
+		}
+		this.themer.theme.set(theme)
 	}
 
 	/**
@@ -888,13 +902,12 @@ export class Gooey {
 			theme: this.opts.themes.find(t => t.title === this.opts.theme),
 			vars: GUI_VARS,
 		}
-		themerOptions.vars = deepMergeOpts([GUI_VARS, themerOptions.vars])
 
 		if (themer) {
 			finalThemer = themer
 		} else {
-			themerOptions.wrapper = this.wrapper
-			finalThemer = new Themer(this.folder.element, themerOptions)
+			// Vars land on the wrapper so a consumer's own var on `.gooey-root` shadows them.
+			finalThemer = new Themer(this.wrapper, themerOptions)
 		}
 
 		const uiFolder = folder.addFolder(
@@ -1201,8 +1214,11 @@ export class Gooey {
 
 	dispose = (): void => {
 		this._log.fn('dispose').debug(this)
-		this.themer?.dispose()
-		// this.themeEditor?.dispose()
+		if (this._isThemerOwner) {
+			this.themer?.dispose()
+		} else {
+			this.themer?.detach(this.wrapper)
+		}
 		if (this._isWindowManagerOwner) {
 			this.windowManager?.dispose()
 		}

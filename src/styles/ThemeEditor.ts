@@ -39,7 +39,7 @@ export class ThemeEditor {
 			throw new Error('Themer not found.')
 		}
 
-		this.targetGooey.themer.addTarget(this.gooey.wrapper)
+		this.targetGooey.themer.attach(this.gooey.wrapper)
 
 		this.folder.evm.add(
 			this.targetGooey.themer.theme.subscribe(t => {

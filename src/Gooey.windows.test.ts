@@ -76,6 +76,30 @@ describe('parentGooey', () => {
 		expect(headerHeight(child)).toBe(headerHeight(parent))
 	})
 
+	// The child root was stamped once from its own `theme` option (vanilla) and raw
+	// `mode.value` (possibly 'system'), then never again — its `.gooey-root[mode]` rules
+	// went stale on every flip.
+	test("a child's root follows the shared themer's theme and mode", () => {
+		const parent = make({ title: 'parent', storage: false, theme: 'scout' })
+		const child = make({ title: 'child', storage: false, parentGooey: parent })
+
+		const stamp = (gooey: Gooey) => [
+			gooey.folder.element.getAttribute('theme'),
+			gooey.folder.element.getAttribute('mode'),
+			gooey.wrapper.getAttribute('mode'),
+		]
+
+		expect(child.theme).toBe('scout')
+		expect(stamp(child)).toEqual(['scout', parent.themer.activeMode, parent.themer.activeMode])
+
+		parent.themer.mode.set('light')
+		expect(stamp(child)).toEqual(['scout', 'light', 'light'])
+
+		child.theme = 'flat'
+		expect(parent.theme).toBe('flat')
+		expect(stamp(parent)).toEqual(['flat', 'light', 'light'])
+	})
+
 	test('disposing a child leaves the parent alive', () => {
 		const parent = make({ title: 'parent', storage: false })
 		const child = make({ title: 'child', storage: false, parentGooey: parent })
