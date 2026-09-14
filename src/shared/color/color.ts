@@ -6,6 +6,7 @@ import type {
 	HslaColor,
 	HsvColor,
 	HsvaColor,
+	KelvinColor,
 	RgbColor,
 	RgbaColor,
 } from './types/objects'
@@ -13,7 +14,9 @@ import type {
 import type {
 	ColorString,
 	HexAlphaString,
+	HexAlphaStringShorthand,
 	HexString,
+	HexStringShorthand,
 	HslString,
 	HslaString,
 	RgbString,
@@ -40,6 +43,7 @@ import { hsvToRgb } from './conversions/hsvToRgb'
 
 import { parseHexInt } from './conversions/parseHexInt'
 import { parseUnit } from './conversions/parseUnit'
+import { intToHexDigit } from './conversions/intToHexDigit'
 import { intToHex } from './conversions/intToHex'
 
 export type ColorMode = 'hsv' | 'hsl' | 'rgb'
@@ -225,6 +229,14 @@ export class Color {
 	}
 	set kelvin(value: number) {
 		this.rgb = kelvinToRgb(value)
+	}
+
+	/** i.e. `{ kelvin: 6500 }` — the nearest color temperature. */
+	get kelvinColor(): KelvinColor {
+		return { kelvin: this.kelvin }
+	}
+	set kelvinColor(value: KelvinColor) {
+		this.kelvin = value.kelvin
 	}
 
 	get red(): number {
@@ -433,20 +445,37 @@ export class Color {
 		this.hexString = value
 	}
 
-	/** i.e. `'rgb(85, 0, 238)'` */
+	/** Shorthand hex string with no alpha channel, i.e. `'#50e'` — each channel rounded to one digit. */
+	get hex3String(): HexStringShorthand {
+		const { r, g, b } = this.rgb
+		return `#${intToHexDigit(r)}${intToHexDigit(g)}${intToHexDigit(b)}`
+	}
+	set hex3String(value: HexStringShorthand | (string & {})) {
+		this.hexString = value
+	}
+
+	/** Shorthand hex string with an alpha channel, i.e. `'#50ef'` — each channel rounded to one digit. */
+	get hex4String(): HexAlphaStringShorthand {
+		return `${this.hex3String}${intToHexDigit(Math.floor(this.alpha * 255))}`
+	}
+	set hex4String(value: HexAlphaStringShorthand | (string & {})) {
+		this.hexString = value
+	}
+
+	/** i.e. `'hsl(261, 100%, 47%)'` */
 	get hslString(): HslString {
 		const hsl = this.hsl
 		return `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`
 	}
 	set hslString(value: HslString | (string & {})) {
 		const match = REGEX_FUNCTIONAL_HSL.exec(value) || REGEX_FUNCTIONAL_HSLA.exec(value)
-		if (!match) throw new Error('Invalid rgb string: ' + value)
+		if (!match) throw new Error('Invalid hsl string: ' + value)
 
-		const [r, g, b, a = 1] = match
+		const [h, s, l, a = 1] = match
 			.slice(1)
-			.map((val, index) => parseUnit(val, index < 3 ? 255 : 1))
+			.map((val, index) => parseUnit(val, [360, 100, 100, 1][index]))
 
-		this.rgb = { r, g, b, a }
+		this.hsl = { h, s, l, a }
 	}
 
 	/** i.e. `'hsla(261, 100%, 47%, 1)'` */

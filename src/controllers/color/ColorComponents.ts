@@ -221,6 +221,7 @@ export class ColorComponents {
 			this.color.hue = v
 		}
 		this._locked = true
+		this.input.state.refresh()
 		this.input.refresh()
 	}
 
@@ -234,6 +235,7 @@ export class ColorComponents {
 			this.color.saturation = v
 		}
 		this._locked = true
+		this.input.state.refresh()
 		this.input.refresh()
 	}
 
@@ -254,6 +256,7 @@ export class ColorComponents {
 			this.color.lightness = v
 		}
 		this._locked = true
+		this.input.state.refresh()
 		this.input.refresh()
 	}
 
@@ -263,6 +266,7 @@ export class ColorComponents {
 	set d(v: number) {
 		this.color.alpha = v
 		this._locked = true
+		this.input.state.refresh()
 		this.input.refresh()
 	}
 

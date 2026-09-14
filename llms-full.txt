@@ -763,6 +763,58 @@ Hex string with an alpha channel, i.e. `'#5500eeff'`. Identical to [hex8String](
 
 `void`
 
+##### hex3String
+
+###### Get Signature
+
+> **get** **hex3String**(): `` `#${string}${string}${string}` ``
+
+Shorthand hex string with no alpha channel, i.e. `'#50e'` — each channel rounded to one digit.
+
+###### Returns
+
+`` `#${string}${string}${string}` ``
+
+###### Set Signature
+
+> **set** **hex3String**(`value`): `void`
+
+###### Parameters
+
+###### value
+
+`string` & `object` \| `` `#${string}${string}${string}` ``
+
+###### Returns
+
+`void`
+
+##### hex4String
+
+###### Get Signature
+
+> **get** **hex4String**(): `` `#${string}${string}${string}${string}` ``
+
+Shorthand hex string with an alpha channel, i.e. `'#50ef'` — each channel rounded to one digit.
+
+###### Returns
+
+`` `#${string}${string}${string}${string}` ``
+
+###### Set Signature
+
+> **set** **hex4String**(`value`): `void`
+
+###### Parameters
+
+###### value
+
+`string` & `object` \| `` `#${string}${string}${string}${string}` ``
+
+###### Returns
+
+`void`
+
 ##### hex8
 
 ###### Get Signature
@@ -909,7 +961,7 @@ i.e. `'hsla(261, 100%, 47%, 1)'`
 
 > **get** **hslString**(): `` `hsl(${number}, ${number}%, ${number}%)` ``
 
-i.e. `'rgb(85, 0, 238)'`
+i.e. `'hsl(261, 100%, 47%)'`
 
 ###### Returns
 
@@ -1026,6 +1078,32 @@ The value of `H` in `HSVA`.
 ###### value
 
 `number`
+
+###### Returns
+
+`void`
+
+##### kelvinColor
+
+###### Get Signature
+
+> **get** **kelvinColor**(): `KelvinColor`
+
+i.e. `{ kelvin: 6500 }` — the nearest color temperature.
+
+###### Returns
+
+`KelvinColor`
+
+###### Set Signature
+
+> **set** **kelvinColor**(`value`): `void`
+
+###### Parameters
+
+###### value
+
+`KelvinColor`
 
 ###### Returns
 
@@ -2106,7 +2184,7 @@ array.on('change', console.log)
 
 ###### value?
 
-`string` & `object` \| [`ColorFormat`](#colorformat)
+`string` & `object` \| [`ColorValue`](#colorvalue-1)
 
 ###### options?
 
@@ -2570,21 +2648,20 @@ Passes the function at `target[key]` to [addButton](#addbutton) as the `onclick`
 
 ##### bindColor()
 
-> **bindColor**\<`T`, `K`, `TValue`\>(`target`, `key`, `options?`): [`InputColor`](#inputcolor)
+> **bindColor**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputColor`](#inputcolor)
+
+Binds a color input to `target[key]`.  The field keeps the format it started in — a hex
+string stays that hex string, an `{ h, s, l }` object stays that object, a Color stays a Color.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\> \| [`Color`](#color)
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### TValue
+###### T
 
-`TValue` *extends* [`Color`](#color)
+`T` *extends* `Record`\<`K`, `string` & `object` \| [`ColorValue`](#colorvalue-1)\>
 
 ###### Parameters
 
@@ -3844,7 +3921,7 @@ array.on('change', console.log)
 
 ###### value?
 
-`string` & `object` \| [`ColorFormat`](#colorformat)
+`string` & `object` \| [`ColorValue`](#colorvalue-1)
 
 ###### options?
 
@@ -4336,21 +4413,20 @@ Passes the function at `target[key]` to [addButton](#addbutton) as the `onclick`
 
 ##### bindColor()
 
-> **bindColor**\<`T`, `K`, `TValue`\>(`target`, `key`, `options?`): [`InputColor`](#inputcolor)
+> **bindColor**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputColor`](#inputcolor)
+
+Binds a color input to `target[key]`.  The field keeps the format it started in — a hex
+string stays that hex string, an `{ h, s, l }` object stays that object, a Color stays a Color.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\> \| [`Color`](#color)
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### TValue
+###### T
 
-`TValue` *extends* [`Color`](#color)
+`T` *extends* `Record`\<`K`, `string` & `object` \| [`ColorValue`](#colorvalue-1)\>
 
 ###### Parameters
 

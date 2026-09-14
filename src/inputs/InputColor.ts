@@ -7,6 +7,7 @@ import type { Folder } from '../Folder'
 
 import { ColorComponents } from '../controllers/color/ColorComponents'
 import { ColorPicker } from '../controllers/color/ColorPicker'
+import { colorAccessorFor } from '../shared/color/projection'
 import { Color, isColor } from '../shared/color/color'
 import { CopyButton } from '../shared/CopyButton'
 import { create } from '../shared/create'
@@ -98,6 +99,11 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 	private _log: Logger
 
+	/**
+	 * The Color accessor that projects the input's color into the bound field's own format.
+	 */
+	private _accessor?: keyof Color
+
 	constructor(options: Partial<ColorInputOptions>, folder: Folder) {
 		const opts = Object.assign({}, COLOR_INPUT_DEFAULTS, options, {
 			__type: 'ColorInputOptions' as const,
@@ -111,12 +117,16 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 
 		//? Initialize state.
 		if (opts.binding) {
-			this.initialValue = new Color(opts.binding.target[opts.binding.key])
+			const { target, key } = opts.binding
+			const accessor = colorAccessorFor(target[key])
+			this._accessor = accessor
+
+			this.initialValue = new Color(target[key])
 			this.state = state(this.initialValue.clone())
 
 			this._evm.add(
-				this.state.subscribe(v => {
-					opts.binding!.target[opts.binding!.key] = v
+				this.state.subscribe(color => {
+					target[key] = color[accessor]
 				}),
 			)
 		} else {
@@ -211,6 +221,23 @@ export class InputColor extends Input<Color, ColorInputOptions, ColorControllerE
 		super.refresh(v)
 
 		return this
+	}
+
+	/**
+	 * The input owns the color and the field holds its projection, so the field is read only when
+	 * it differs from that projection — a write from outside lands, while what the field's format
+	 * can't hold (alpha on a `#rrggbb` field) stays with the input.
+	 */
+	protected readBinding() {
+		const binding = this.opts.binding
+		if (!binding || !this._accessor) return
+
+		const field = binding.target[binding.key]
+		if (JSON.stringify(field) === JSON.stringify(this.state.value[this._accessor])) return
+
+		this.state.value.set(field)
+		this.state.refresh()
+		this.refresh()
 	}
 
 	private _createCurrentColor(parent: HTMLDivElement) {

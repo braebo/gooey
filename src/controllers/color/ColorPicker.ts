@@ -230,12 +230,14 @@ export class ColorPicker {
 
 	set(v: ColorValue) {
 		this.input.value.set(v)
+		this.input.state.refresh()
 		this.input.refresh()
 		this.refresh()
 	}
 
 	setAlpha = (e: InputEvent) => {
 		this.input.state.value.alpha = Number((e.target as HTMLInputElement).value)
+		this.input.state.refresh()
 		this.input.refresh()
 		this.input.emit('change', this.input.state.value)
 		this.refresh()
@@ -342,6 +344,7 @@ export class ColorPicker {
 
 		this.input.value.saturation = s
 		this.input.value.value = v
+		this.input.state.refresh()
 		this.input.refresh()
 		this.input.emit('change', this.input.value)
 		this.refresh()
@@ -371,6 +374,7 @@ export class ColorPicker {
 		const hue = Number((e.target as HTMLInputElement).value)
 
 		this.input.value.hue = hue
+		this.input.state.refresh()
 		this.input.refresh()
 		this.input.emit('change', this.input.value)
 		this.refresh()

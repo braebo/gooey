@@ -722,14 +722,22 @@ export abstract class Input<
 
 		if (!this.opts.resettable) return this
 
-		if (this.opts.binding) {
-			this.state.set(this.opts.binding.target[this.opts.binding.key])
-		}
+		this.readBinding()
 
 		this.elements.resetBtn.classList.toggle('dirty', this._dirty())
 
 		this._evm.emit('refresh', v as TValueType)
 		return this
+	}
+
+	/**
+	 * Reads the bound field into state on {@link refresh}, so a write to the target from outside
+	 * gooey lands.
+	 */
+	protected readBinding() {
+		if (this.opts.binding) {
+			this.state.set(this.opts.binding.target[this.opts.binding.key])
+		}
 	}
 
 	save(overrides: Partial<InputPreset<TOptions>> = {}) {

@@ -9,6 +9,7 @@ import type {
 	ValidInputValue,
 } from './inputs/Input'
 import type { ColorFormat } from './shared/color/types/colorFormat'
+import type { ColorValue } from './shared/color/color'
 import type { LabeledOption, Option } from './controllers/Select'
 import type { ColorObject } from './shared/color/types/objects'
 import type { ColorString } from './shared/color/types/strings'
@@ -31,7 +32,7 @@ import {
 } from './inputs/InputButtonGrid'
 
 import { animateConnector, createFolderConnector, createFolderSvg } from './svg/createFolderSVG'
-import { Color, isColor, isColorFormat } from './shared/color/color'
+import { isColor, isColorFormat } from './shared/color/color'
 import { composedPathContains } from './shared/cancelClassFound'
 import { state, type State } from './shared/state'
 import { isLabeledOption } from './controllers/Select'
@@ -1721,20 +1722,24 @@ export class Folder {
 
 	addColor(
 		title: string,
-		value?: ColorFormat | (string & {}),
+		value?: ColorValue | (string & {}),
 		options?: ColorInputOptions,
 	): InputColor {
 		const opts = this._resolveOpts(title, value, options)
 		const input = new InputColor(opts, this)
 		return this._registerInput(input, opts.presetId)
 	}
-	bindColor<
-		T extends Record<string, any> | Color,
-		K extends keyof T,
-		TValue extends T[K] extends ColorFormat ? Color : InvalidBinding,
-	>(target: T, key: K, options?: Partial<ColorInputOptions>): InputColor {
+	/**
+	 * Binds a color input to `target[key]`.  The field keeps the format it started in — a hex
+	 * string stays that hex string, an `{ h, s, l }` object stays that object, a Color stays a Color.
+	 */
+	bindColor<K extends PropertyKey, T extends Record<K, ColorValue | (string & {})>>(
+		target: T,
+		key: K,
+		options?: Partial<ColorInputOptions>,
+	): InputColor {
 		const opts = this._resolveBinding(target, key, options)
-		return this.addColor(key as string, opts.value as TValue, opts)
+		return this.addColor(opts.title, opts.value, opts)
 	}
 
 	addButton(title: string, onclick: () => void, options?: ButtonInputOptions): InputButton {
