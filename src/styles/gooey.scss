@@ -1259,7 +1259,10 @@ input.gooey-search-input {
 .gooey-input-container {
 	position: relative;
 	display: flex;
-	align-items: center;
+	// `safe`: an element input taller than the room left under the root's max-height used to
+	// center on its overflow and bleed upward over the inputs above it — now it starts at the
+	// top and the root content scrolls.
+	align-items: safe center;
 
 	width: 100%;
 	height: 0%;

@@ -117,6 +117,21 @@ describe('width', () => {
 		expect(gooey.element.clientWidth).toBe(700)
 	})
 
+	// An element input taller than the room left under the root's max-height centered on its
+	// overflow and bled upward over the inputs above it (the board's card over the settings rows).
+	test('a tall element input starts at its row and the content scrolls', async () => {
+		const gooey = G.addGooey({ title: 'tall', maxHeight: 300 })
+		gooey.addNumber('above', 1)
+		const input = gooey.addElement('tall', el => {
+			el.style.height = '800px'
+		})
+		const row = input.elements.container.getBoundingClientRect()
+		const content = input.elements.content.getBoundingClientRect()
+		expect(content.top).toBeGreaterThanOrEqual(row.top)
+		const scroller = gooey.element.querySelector(':scope > .gooey-content-wrapper > .gooey-content')!
+		expect(scroller.scrollHeight).toBeGreaterThan(scroller.clientHeight)
+	})
+
 	// The 35rem cap used to keep a gooey inside any viewport by accident; with the cap
 	// lifted, the resizer has to follow its bounds itself.
 	test('a gooey wider than its bounds shrinks when the viewport does', async () => {
