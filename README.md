@@ -522,6 +522,8 @@ voice.on('change', () => knob.refresh())
 
 `storage: true` persists `closed`, `theme`, and `presets`; `position` and `size` are opt-in (`storage: { position: true }`); `hidden` is never persisted.
 
+`gui.window?.resize({ width, height })` sizes the panel from code — either dimension can be omitted, each clamps to the bounds and the root's own `min-width` / `max-width`, and the result persists like a drag on the grabber.
+
 The select dropdown portals to `<body>` at `z-index: 100` — a host panel at or above that hides its own open dropdowns.
 
 `registerWebMCP(gui)` registers one WebMCP tool per input plus a `<prefix>.state` reader, and unregisters on `dispose()`.

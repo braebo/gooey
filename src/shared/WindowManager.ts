@@ -1,4 +1,5 @@
 import type { ElementOrSelector, ElementsOrSelectors } from './select'
+import type { State } from './state'
 
 import { Resizable, RESIZABLE_DEFAULTS, type ResizableOptions } from './resizable'
 import { DRAGGABLE_DEFAULTS, Draggable, type DraggableOptions } from './draggable'
@@ -7,7 +8,6 @@ import { resolveOpts } from './resolveOpts'
 import { Logger } from './logger'
 import { nanoid } from './nanoid'
 import { isObject } from './is'
-import { state } from './state'
 
 export interface WindowManagerOptions {
 	__type?: 'WindowManagerOptions'
@@ -341,7 +341,12 @@ export class WindowInstance {
 	 */
 	storageId: string
 
-	size = state({ width: 0, height: 0 })
+	/**
+	 * The window's current size -- the {@link Resizable.size|resizable's own state}, so it
+	 * follows both a drag on a grabber and a call to {@link resize}, and persists with it.
+	 */
+	size: State<{ width: number; height: number }>
+
 	get position(): { x: number; y: number } {
 		return this.draggableInstance?.position ?? { x: 0, y: 0 }
 	}
@@ -351,6 +356,13 @@ export class WindowInstance {
 	}
 	moveTo: (position: { x: number; y: number }) => void
 	moveBy: (delta: { x?: number; y?: number }) => void
+
+	/**
+	 * Resizes the window, clamped to the bounds and the node's own css min / max values.  An
+	 * omitted dimension is left alone.
+	 * @see {@link Resizable.resize}
+	 */
+	resize: (size: { width?: number; height?: number }) => void
 
 	constructor(
 		public manager: WindowManager,
@@ -404,6 +416,8 @@ export class WindowInstance {
 
 		this.moveTo = this.draggableInstance.moveTo.bind(this.draggableInstance)
 		this.moveBy = this.draggableInstance.moveBy.bind(this.draggableInstance)
+		this.resize = this.resizableInstance.resize.bind(this.resizableInstance)
+		this.size = this.resizableInstance.size
 	}
 
 	dispose() {

@@ -485,6 +485,55 @@ export class Resizable {
 	}
 
 	/**
+	 * Resizes the {@link node} to the target size, clamped to the {@link bounds} and the
+	 * element's own computed `min-width` / `max-width` / `min-height` / `max-height` -- the same
+	 * clamps a drag on a grabber respects.  An omitted dimension is left alone, and `height` is
+	 * ignored unless a grabber could have changed it -- i.e. a vertical
+	 * {@link ResizableOptions.sides|side} or any {@link ResizableOptions.corners|corner}.
+	 *
+	 * @example
+	 * ```ts
+	 * resizable.resize({ width: 400 })
+	 * resizable.resize({ width: 400, height: 300 })
+	 * ```
+	 */
+	resize(target: { width?: number; height?: number }) {
+		if (this.disabled) return this
+
+		this.#log.fn('resize').debug('Resizing to:', target, { rect: this.rect })
+
+		if (
+			(typeof target.width === 'number' && !Number.isFinite(target.width)) ||
+			(typeof target.height === 'number' && !Number.isFinite(target.height))
+		) {
+			throw new Error('Invalid target size:', { cause: target })
+		}
+
+		// `resizeX` / `resizeY` read these, and only `onGrab` refreshes them -- without this, a
+		// resize before the first grab would clamp every dimension to 0.
+		this.#computedStyleValues()
+
+		if (typeof target.width === 'number') {
+			this.resizeX(this.rect.left + target.width)
+		}
+
+		if (typeof target.height === 'number' && this.#canResizeY) {
+			this.resizeY(this.rect.top + target.height)
+		}
+
+		this.node.dispatchEvent(new CustomEvent('resize'))
+
+		const size = { width: this.node.offsetWidth, height: this.node.offsetHeight }
+
+		this.size.set(size)
+		this.opts.onResize(size)
+
+		this.#log.fn('resize').debug('Resized to:', size)
+
+		return this
+	}
+
+	/**
 	 * This is where all the resizing logic happens.
 	 */
 	onMove = (e: PointerEvent) => {

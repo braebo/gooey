@@ -9,7 +9,7 @@ afterEach(() => {
 	localStorage.clear()
 })
 
-function createNode(id?: string) {
+function createNode(id?: string, parent: HTMLElement = document.body) {
 	const node = document.createElement('div')
 	if (id) node.id = id
 	node.style.position = 'absolute'
@@ -17,15 +17,26 @@ function createNode(id?: string) {
 	node.style.left = '0px'
 	node.style.width = '100px'
 	node.style.height = '100px'
-	document.body.appendChild(node)
+	parent.appendChild(node)
 	cleanup.push(() => node.remove())
 	return node
 }
 
-function createManager(key = 'test-wm') {
+/** A sized, positioned container to use as `bounds`. */
+function createBounds(width = 600, height = 600) {
+	const el = document.createElement('div')
+	el.style.position = 'relative'
+	el.style.width = `${width}px`
+	el.style.height = `${height}px`
+	document.body.appendChild(el)
+	cleanup.push(() => el.remove())
+	return el
+}
+
+function createManager(key = 'test-wm', bounds: HTMLElement = document.documentElement) {
 	const manager = new WindowManager({
 		localStorage: { key },
-		bounds: document.documentElement,
+		bounds,
 	})
 	cleanup.push(() => manager.dispose())
 	return manager
@@ -80,6 +91,64 @@ describe('localStorage keys', () => {
 		const window = addWindow(manager, createNode(), { id: `random-${Math.random()}` })
 
 		expect(window.draggableInstance?.opts.localStorageKey).toBe('test-wm::wm::0::position')
+	})
+})
+
+describe('resize', () => {
+	test('a window resizes before any grabber is touched', () => {
+		const bounds = createBounds()
+		const manager = createManager('test-wm', bounds)
+		const window = addWindow(manager, createNode(undefined, bounds), {
+			storageId: 'inspector',
+		})
+
+		window.resize({ width: 240, height: 180 })
+
+		expect(window.node.offsetWidth).toBe(240)
+		expect(window.node.offsetHeight).toBe(180)
+	})
+
+	test('`size` reflects the resizable', () => {
+		const bounds = createBounds()
+		const manager = createManager('test-wm', bounds)
+		const window = addWindow(manager, createNode(undefined, bounds), { storageId: 'inspector' })
+
+		expect(window.size).toBe(window.resizableInstance!.size)
+
+		window.resize({ width: 240, height: 180 })
+
+		expect(window.size.value).toEqual({ width: 240, height: 180 })
+	})
+
+	test('clamps to the bounds', () => {
+		const bounds = createBounds(600, 400)
+		const manager = createManager('test-wm', bounds)
+		const window = addWindow(manager, createNode(undefined, bounds), { storageId: 'inspector' })
+
+		window.resize({ width: 5000, height: 5000 })
+
+		// The window is draggable, so its edges are wherever the drag margin left them -- what
+		// matters is that they grew, and stopped at the bounds.
+		const node = window.node.getBoundingClientRect()
+		const box = bounds.getBoundingClientRect()
+
+		expect(node.width).toBeGreaterThan(100)
+		expect(node.height).toBeGreaterThan(100)
+		expect(node.right).toBeCloseTo(box.right, 0)
+		expect(node.bottom).toBeCloseTo(box.bottom, 0)
+	})
+
+	test('persists under the window size key', () => {
+		const bounds = createBounds()
+		const manager = createManager('test-wm', bounds)
+		const window = addWindow(manager, createNode(undefined, bounds), { storageId: 'inspector' })
+
+		window.resize({ width: 240, height: 180 })
+
+		expect(JSON.parse(localStorage.getItem('test-wm::wm::inspector::size')!)).toEqual({
+			width: 240,
+			height: 180,
+		})
 	})
 })
 

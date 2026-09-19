@@ -63,6 +63,17 @@ describe('parentGooey', () => {
 		expect(child.moveBy).toBe(windowOf(child)!.moveBy)
 	})
 
+	test("a child's window resizes from code", () => {
+		const parent = make({ title: 'parent', storage: false })
+		const child = make({ title: 'child', storage: false, parentGooey: parent, width: 400 })
+
+		expect(child.element.offsetWidth).toBe(400)
+
+		windowOf(child)!.resize({ width: 360 })
+
+		expect(child.element.offsetWidth).toBe(360)
+	})
+
 	// A shared themer was built around the parent's wrapper, so it wrote its css vars only
 	// there — a child rendered with no vars at all, header height included.
 	test("a child's wrapper is a target of the shared themer", () => {
