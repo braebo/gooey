@@ -1,5 +1,49 @@
 # gooey
 
+## 0.5.0
+
+### Minor Changes
+
+- A bound color field keeps the format it started in — `bindColor({ color: '#0000ff' }, 'color')` no longer overwrites the field with a `Color` object. ([`94c8741`](https://github.com/braebo/gooey/commit/94c874182328ea22229b8ae25a9a74c8269d34df))
+    - Hex (`#rrggbb`, `#rrggbbaa`, `#rgb`, `#rgba`), `rgb()`, `rgba()`, `hsl()`, `hsla()`, `{ r, g, b(, a) }`, `{ h, s, l(, a) }`, `{ h, s, v(, a) }`, and `{ kelvin }` fields stay in that format; a `Color` field stays a `Color`.
+    - The input keeps the full color: alpha set on a `#rrggbb` field holds, and a write to the field from outside lands on `refresh()`.
+    - `bindColor` rejects a field that isn't color-shaped at the type level.
+    - `hsl()` strings parse as hsl (they parsed as rgb).
+    - `Color` gains `hex3String`, `hex4String`, and `kelvinColor`.
+
+- `Resizable.resize({ width, height })` — a window can be sized from code, not only by dragging a grabber. ([`22fa344`](https://github.com/braebo/gooey/commit/22fa34417dbd5fa41fdad83e225e2e5923c9ce52))
+    - Either dimension can be omitted, and each is clamped to the `bounds` and the node's own computed `min-width` / `max-width` / `min-height` / `max-height`, exactly as a drag is. The min / max values used to be read only on the first grab, so a pre-grab resize would have clamped to `0`.
+    - `height` is ignored when no grabber could have changed it (no vertical `side`, no `corners`) — an inline height there pins the element forever.
+    - It writes the `size` state, so a `localStorageKey` persists the new size, and it fires `onResize` and the `resize` event a drag fires.
+    - `WindowInstance.resize` exposes it the way `moveTo` exposes the draggable's, and `WindowInstance.size` is now the resizable's own size state instead of a dead `{ width: 0, height: 0 }`.
+
+- `minWidth`, `maxWidth` and `maxHeight` options, and root sizing defaults move out of the theme. ([`a359682`](https://github.com/braebo/gooey/commit/a359682f7d12a6b5d9af473ad2ed5f644fa4d342))
+
+    `--gooey-root_width/min-width/max-width/max-height` used to be theme vars written onto `.gooey-wrapper` on every theme apply, so a mode change clobbered any sizing a gooey had set for itself. Their defaults now live in `gooey.scss` as zero-specificity `:where(.gooey-root)` custom properties, and the new options write inline on `.gooey-root`. Var names are unchanged, so a consumer overriding them keeps working.
+
+    Each option takes `number | string` — a number is pixels, a string is a css length, `'none'` is unbounded — and has a matching getter/setter on the instance. `width` now also applies when `resizable: false`.
+
+    A resizable gooey wider than its bounds now shrinks with them (a window resize, a zoom) so the grabbers stay reachable — the 35rem cap used to do that by accident.
+
+- Themer reseam — one writer per element, and user themes persist. ([`de15286`](https://github.com/braebo/gooey/commit/de152862b274d4bd28c2ba0c90494039da9b6f16))
+    - `Themer.attach(el)` / `detach(el)` replace `addTarget`; every target gets the css vars and the `theme` / `mode` attributes on each apply. `ThemerOptions.wrapper` is gone — the owning gooey builds its themer on `.gooey-wrapper`, and each gooey stamps its own `.gooey-root`, so a child under `parentGooey` now follows the shared theme and mode instead of freezing on its first stamp.
+    - `gooey.theme = 'scout'` switches the themer (shared across a `parentGooey` family) instead of only stamping an attribute; a child's `theme` option is ignored.
+    - Disposing a child no longer disposes the parent's themer.
+    - `Themer.userThemes` — themes added with `create()` persist under `<key>::themes` and merge over the code's themes by title. The old `save` / `load` / `toJSON` / `fromJSON` are removed: their keys never matched, and a stored array shadowed edits to themes in source.
+    - `create()` actually adds the theme now; a storage-less gooey no longer persists under a literal `'undefined'` key; `storage.theme: false` really disables theme persistence.
+
+### Patch Changes
+
+- The package ships `llms-full.txt` — the README plus the full API reference rendered from TSDoc — for agents that read a library's docs from `node_modules`. ([`3285807`](https://github.com/braebo/gooey/commit/32858071a28ec63914ddd36575bafc792014464e))
+
+- An element input taller than the room left under the root's `maxHeight` no longer bleeds upward over the rows above it — `.gooey-input-container` aligns `safe center`, so the content starts at its row and the root content scrolls. ([`29fbad8`](https://github.com/braebo/gooey/commit/29fbad879729af27a46bf6f1aaca46f311b68951))
+
+- An untitled input row's content is centered in its row instead of sitting against the left edge. ([`0e295e0`](https://github.com/braebo/gooey/commit/0e295e0b439d3702e60f83c2a0ba376662029b55))
+
+    An input with no title already zeroes `--gooey-input-section-1_width` to give the right side the full row, but the left column didn't actually collapse: `.gooey-input-title` keeps `padding-left: 4px` and `padding-right: 10px`, and `box-sizing: border-box` floors the element at that 14px however narrow the width says; the drawer toggle's `min-width: 0.33rem` added another 5px. Content mounted with `addElement('', node)` sat 19px from the left edge against 8px on the right.
+
+    The row now carries a `gooey-input-untitled` class that zeroes the title's padding and the toggle's width (a toggle with a description keeps its clickable strip), and gives the content area the same `0.5rem` on the left it already had on the right — measured 19.27px/8px before, 8px/8px after.
+
 ## 0.4.1
 
 ### Patch Changes
