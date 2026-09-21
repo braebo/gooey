@@ -1396,6 +1396,27 @@ input.gooey-search-input {
 		}
 	}
 
+	// An untitled row has no left column: `--gooey-input-section-1_width` is `0px`.  The title's
+	// own padding survived that (border-box floors the element at `padding-left + padding-right`)
+	// and the drawer toggle held its `min-width`, so content sat ~19px from the left edge against
+	// the content area's 8px on the right.  Collapse both, and give the left the same 0.5rem the
+	// right already has, so an untitled row's content is centered in its window.
+	&.gooey-input-untitled {
+		.gooey-input-title {
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		// A described input's toggle is the strip you click for the tooltip -- it keeps its width.
+		.gooey-input-drawer-toggle:not(.has-description) {
+			min-width: 0;
+		}
+
+		.gooey-input-content {
+			padding-left: 0.5rem;
+		}
+	}
+
 	&.disabled {
 		// opacity: 0.8;
 		// filter: brightness(0.8) contrast(1.2);

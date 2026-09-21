@@ -363,9 +363,12 @@ export abstract class Input<
 			parent: this.folder.elements.content,
 		})
 
-		// Make the right side full-width if the title is empty.
+		// Make the right side full-width if the title is empty.  The zero width alone doesn't
+		// clear the left column -- the title's own padding and the drawer toggle's min-width
+		// still reserve room against it -- so the class carries the rest of the collapse.
 		if (!this.title) {
 			this.element.style.setProperty('--gooey-input-section-1_width', '0px')
+			this.elements.container.classList.add('gooey-input-untitled')
 		}
 
 		const drawerToggleOptions = {

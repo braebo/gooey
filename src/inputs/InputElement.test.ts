@@ -90,6 +90,23 @@ describe('InputElement', () => {
 		expect(input.element.getBoundingClientRect().height).toBeGreaterThanOrEqual(200)
 	})
 
+	test('an untitled row sits the same distance from both edges', async () => {
+		const el = document.createElement('div')
+		el.style.height = '100px'
+
+		const input = gooey.addElement('', el)
+
+		await new Promise(resolve => setTimeout(resolve, 400))
+
+		const row = input.element.getBoundingClientRect()
+		const content = el.getBoundingClientRect()
+
+		// The left column is gone at `--gooey-input-section-1_width: 0px` -- the title's own
+		// padding used to floor it at 14px and the drawer toggle added 5 more, so content sat
+		// ~19px from the left against 8px on the right.
+		expect(content.left - row.left).toBeCloseTo(row.right - content.right, 1)
+	})
+
 	test('presets skip element inputs', () => {
 		const folder = gooey.addFolder('presets')
 		folder.addText('text', 'foo')
