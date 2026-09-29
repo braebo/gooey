@@ -44,6 +44,7 @@ import { create } from './shared/create'
 import { select } from './shared/select'
 import { Logger } from './shared/logger'
 import { nanoid } from './shared/nanoid'
+import { isObject } from './shared/is'
 import { defer } from './shared/defer'
 import { toFn } from './shared/toFn'
 import { dim, r } from './shared/l'
@@ -153,6 +154,41 @@ export type InferTargetKeys<TTarget> = TTarget extends object
 				  >
 		}[keyof TTarget]
 	: never
+
+/**
+ * The controls {@link Folder.addMany|`addMany`} and {@link Folder.bindMany|`bindMany`} read from
+ * the same options bag as the per-key input options.
+ */
+type ManyControls<TTarget> = {
+	/**
+	 * An array of keys to exclude from a target object when generating inputs.
+	 */
+	exclude?: InferTargetKeys<TTarget>[]
+	/**
+	 * An array of keys to include in a target object when generating inputs.
+	 */
+	include?: InferTargetKeys<TTarget>[]
+	/**
+	 * Maximum total number of properties to process across all depths (prevents browser crashes from large objects).
+	 * @default 50
+	 */
+	maxSize?: number
+}
+
+/**
+ * The options bag for {@link Folder.addMany|`addMany`} and {@link Folder.bindMany|`bindMany`}:
+ * per-key input options plus the {@link ManyControls}.  A target with a string index signature
+ * gives its per-key options an index signature too, which every control would have to satisfy —
+ * so there the index signature widens to admit the control values.
+ */
+type ManyOptions<TTarget, TOptions> = ManyControls<TTarget> &
+	(string extends keyof TTarget
+		? {
+				[K in keyof TOptions]:
+					| TOptions[K]
+					| ManyControls<TTarget>[keyof ManyControls<TTarget>]
+			}
+		: TOptions)
 
 /**
  * Resolves a target object to a type that represents the same structure, but with all values
@@ -1449,21 +1485,7 @@ export class Folder {
 		const TInputs extends InferInputs<T> = InferInputs<T>,
 	>(
 		target: T,
-		options?: TOptions & {
-			/**
-			 * An array of keys to exclude from a target object when generating inputs.
-			 */
-			exclude?: InferTargetKeys<T>[]
-			/**
-			 * An array of keys to include in a target object when generating inputs.
-			 */
-			include?: InferTargetKeys<T>[]
-			/**
-			 * Maximum total number of properties to process across all depths (prevents browser crashes from large objects).
-			 * @default 50
-			 */
-			maxSize?: number
-		},
+		options?: ManyOptions<T, TOptions>,
 	): { folders: InferFolders<T>; inputs: TInputs } {
 		this._log.fn('addMany').debug({ target, options }, this)
 
@@ -1483,21 +1505,7 @@ export class Folder {
 		const TInputs extends InferInputs<T> = InferInputs<T>,
 	>(
 		target: T,
-		options?: TOptions & {
-			/**
-			 * An array of keys to exclude from a target object when generating inputs.
-			 */
-			exclude?: InferTargetKeys<T>[]
-			/**
-			 * An array of keys to include in a target object when generating inputs.
-			 */
-			include?: InferTargetKeys<T>[]
-			/**
-			 * Maximum total number of properties to process across all depths (prevents browser crashes from large objects).
-			 * @default 50
-			 */
-			maxSize?: number
-		},
+		options?: ManyOptions<T, TOptions>,
 	): { inputs: TInputs; folders: InferFolders<T> } {
 		this._log.fn('bindMany').debug({ target, options }, this)
 
@@ -1558,7 +1566,12 @@ export class Folder {
 
 			let input: ValidInput | undefined = undefined
 
-			const inputOptions = (options[key as keyof T] as any as TOptions) || ({} as TOptions)
+			// Per-key options share the bag with `exclude`, `include`, and `maxSize`, so a target key of
+			// the same name finds a control value here — only an object is that key's options.
+			const keyOptions = options[key as keyof T]
+			const inputOptions = (
+				isObject(keyOptions) && !Array.isArray(keyOptions) ? keyOptions : {}
+			) as TOptions
 			let folderOptions = {} as FolderOptions
 
 			if (value === null) {

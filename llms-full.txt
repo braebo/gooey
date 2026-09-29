@@ -2282,7 +2282,7 @@ The object to generate inputs from.
 
 ###### options?
 
-`TOptions` & `object`
+`ManyOptions`\<`T`, `TOptions`\>
 
 Options to customize the inputs generated, as well as `include` and
 `exclude` arrays to omit certain keys.
@@ -2709,7 +2709,7 @@ string stays that hex string, an `{ h, s, l }` object stays that object, a Color
 
 ###### options?
 
-`TOptions` & `object`
+`ManyOptions`\<`T`, `TOptions`\>
 
 ###### Returns
 
@@ -4027,7 +4027,7 @@ The object to generate inputs from.
 
 ###### options?
 
-`TOptions` & `object`
+`ManyOptions`\<`T`, `TOptions`\>
 
 Options to customize the inputs generated, as well as `include` and
 `exclude` arrays to omit certain keys.
@@ -4478,7 +4478,7 @@ string stays that hex string, an `{ h, s, l }` object stays that object, a Color
 
 ###### options?
 
-`TOptions` & `object`
+`ManyOptions`\<`T`, `TOptions`\>
 
 ###### Returns
 

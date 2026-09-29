@@ -99,6 +99,47 @@ describe('addMany', () => {
 	inputs.number.on('change', v => console.log('number changed', v))
 })
 
+describe('bindMany', () => {
+	// `maxSize`, `exclude`, and `include` share the options bag with per-key options, so a target
+	// key of the same name used to have the control value read as its input options.
+	test('a control option named like a target key is not read as that key’s options', () => {
+		const gooey = G.addGooey({ title: 'bindMany collision' })
+		const target = { title: 'hello', maxSize: 3, exclude: 'kept', count: 1 }
+
+		const { inputs } = gooey.bindMany(target, { maxSize: 10, exclude: ['count'] })
+
+		expect(inputs.title?.value, '❌ Bad title value.').toBe('hello')
+		expect(inputs.maxSize?.value, '❌ Bad maxSize value.').toBe(3)
+		expect(inputs.exclude?.value, '❌ Bad exclude value.').toBe('kept')
+		expect(inputs.count, '❌ Excluded key was bound.').toBeUndefined()
+	})
+
+	test('a per-key option that is not an object is ignored, not crashed on', () => {
+		const gooey = G.addGooey({ title: 'bindMany stray option' })
+		const target = { title: 'hello', nested: { title: 'inner', maxSize: 2 } }
+
+		// A stray top-level `title` (say, meant for the folder) collides with `target.title`.
+		const { inputs } = gooey.bindMany(target, { title: 'Panel' } as any)
+
+		expect(inputs.title?.value, '❌ Bad title value.').toBe('hello')
+		expect(inputs.nested.title?.value, '❌ Bad nested title value.').toBe('inner')
+		expect(inputs.nested.maxSize?.value, '❌ Bad nested maxSize value.').toBe(2)
+	})
+
+	test('exclude and include type-check and apply on a string-index target', () => {
+		const gooey = G.addGooey({ title: 'bindMany index' })
+		const target: Record<string, string> = { a: 'a', b: 'b', c: 'c' }
+
+		const excluded = gooey.addFolder('excluded').bindMany(target, { exclude: ['b'] })
+		const included = gooey
+			.addFolder('included')
+			.bindMany(target, { include: ['c'], maxSize: 5 })
+
+		expect(Object.keys(excluded.inputs), '❌ exclude did not apply.').toEqual(['a', 'c'])
+		expect(Object.keys(included.inputs), '❌ include did not apply.').toEqual(['c'])
+	})
+})
+
 describe('nested folder collapse', () => {
 	const settle = (ms = 600) => new Promise(resolve => setTimeout(resolve, ms))
 
