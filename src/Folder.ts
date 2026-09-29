@@ -1389,11 +1389,11 @@ export class Folder {
 
 	// 	const sel1 = this.addSelect('sel3', 'foo', { options: ['foo', 'bar', 'baz'] }) // I like this API because it communicates the importance of the input.value being the selected option's value.
 	// 	sel1 //=>
-	// 	//^ InputSelect<unknown> (should be InputSelect<string>)
+	// 	//^ InputSelect<string> (asserted in InputSelect.test.ts)
 
 	// 	const sel3 = this.addSelect('sel1', { value: 'a', options: ['a', 'b', 'c'] }) //  I like this API because it doesn't require additional options.options to be specified.
-	// 	sel1 //=>
-	// 	//^ InputSelect<unknown> (should be InputSelect<string>)
+	// 	sel3 //=>
+	// 	//^ InputSelect<string> (asserted in InputSelect.test.ts)
 
 	// 	// This is a currently supported API, but it's no longer intuitive because `value` is no longer `LabeledOption<T>`, and is now just `T`, so it should probably be removed.
 	// 	const sel2 = this.addSelect('sel2', [{ value: 'a', label: 'Option A' }], { initialValue: { value: 'a', label: 'Option A' } })

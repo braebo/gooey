@@ -1,5 +1,6 @@
 import { GooeyTest } from '../tests/Gooey/GooeyTest'
-import { test, expect, describe } from 'vitest'
+import { test, expect, expectTypeOf, describe } from 'vitest'
+import type { InputSelect } from './InputSelect'
 
 const g = new GooeyTest()
 
@@ -48,6 +49,14 @@ describe('addSelect', () => {
 		expect(select.options).toStrictEqual(options)
 		expect(select.value).toBe('bar')
 		expect(select.selected.value).toStrictEqual(options[1])
+	})
+
+	test('infers InputSelect<string> for a string literal options array', () => {
+		const sel1 = gui.addSelect('sel1', 'foo', { options: ['foo', 'bar', 'baz'] })
+		const sel3 = gui.addSelect('sel3', { value: 'a', options: ['a', 'b', 'c'] })
+
+		expectTypeOf(sel1).toEqualTypeOf<InputSelect<string>>()
+		expectTypeOf(sel3).toEqualTypeOf<InputSelect<string>>()
 	})
 })
 
