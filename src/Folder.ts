@@ -52,7 +52,14 @@ import { Gooey } from './Gooey'
 
 //#region Types ··················································································¬
 
-type InvalidBinding = never
+/**
+ * The input a string that isn't a {@link ColorFormat} literal resolves to.  A string literal
+ * like `'hello'` is known to be text, but a wide `string` is only known at runtime, where a color
+ * string like `'#ff0000'` builds an {@link InputColor} — so its input is either.
+ */
+export type InferStringInput<T extends string> = string extends T
+	? InputText | InputColor
+	: InputText
 
 /**
  * Resolves the provided value to the corresponding {@link InputOptions} type associated with the type
@@ -88,7 +95,7 @@ export type InferInput<TValueType> = TValueType extends number
 		: TValueType extends ColorFormat
 			? InputColor
 			: TValueType extends string
-				? InputText
+				? InferStringInput<TValueType>
 				: TValueType extends () => void
 					? InputButton
 					: TValueType extends LabeledOption<infer U>[]
@@ -1350,7 +1357,7 @@ export class Folder {
 	// prettier-ignore
 	add<T extends ColorFormat>(title: string, initialValue: T, options?: ColorInputOptions): InputColor
 	// prettier-ignore
-	add<T extends string>(title: string, initialValue: T, options?: TextInputOptions): InputText
+	add<T extends string>(title: string, initialValue: T, options?: TextInputOptions): InferStringInput<T>
 	// prettier-ignore
 	add<T extends (() => void)>(title: string, initialValue: T, options?: ButtonInputOptions): InputButton
 	// prettier-ignore
@@ -1710,13 +1717,13 @@ export class Folder {
 		const input = new InputNumber(opts, this)
 		return this._registerInput(input, opts.presetId)
 	}
-	bindNumber<
-		const T extends Record<string, any>,
-		const K extends keyof T,
-		V extends T[K] extends number ? number : InvalidBinding,
-	>(target: T, key: K, options?: Partial<NumberInputOptions>): InputNumber {
+	bindNumber<K extends PropertyKey, T extends Record<K, number>>(
+		target: T,
+		key: K,
+		options?: Partial<NumberInputOptions>,
+	): InputNumber {
 		const opts = this._resolveBinding(target, key, options)
-		return this.addNumber(key as string, opts.value as V, opts)
+		return this.addNumber(opts.title, opts.value, opts)
 	}
 
 	addText(title: string, value?: string, options?: TextInputOptions): InputText {
@@ -1724,13 +1731,13 @@ export class Folder {
 		const input = new InputText(opts, this)
 		return this._registerInput(input, opts.presetId)
 	}
-	bindText<
-		T extends Record<string, any>,
-		K extends keyof T,
-		TValue extends T[K] extends string ? string : InvalidBinding,
-	>(target: T, key: K, options?: Partial<TextInputOptions>): InputText {
+	bindText<K extends PropertyKey, T extends Record<K, string>>(
+		target: T,
+		key: K,
+		options?: Partial<TextInputOptions>,
+	): InputText {
 		const opts = this._resolveBinding(target, key, options)
-		return this.addText(key as string, opts.value as TValue, opts)
+		return this.addText(opts.title, opts.value, opts)
 	}
 
 	addColor(
@@ -1764,12 +1771,12 @@ export class Folder {
 	/**
 	 * Passes the function at `target[key]` to {@link addButton} as the `onclick` handler.
 	 */
-	bindButton<
-		T extends Record<string, any>,
-		K extends keyof T,
-		TValue extends T[K] extends Function ? () => void : InvalidBinding,
-	>(target: T, key: K, options?: Partial<ButtonInputOptions>): InputButton {
-		return this.addButton(key as string, target[key] as TValue, options)
+	bindButton<K extends PropertyKey, T extends Record<K, () => void>>(
+		target: T,
+		key: K,
+		options?: Partial<ButtonInputOptions>,
+	): InputButton {
+		return this.addButton(String(key), target[key], options)
 	}
 
 	addButtonGrid(
@@ -1781,12 +1788,12 @@ export class Folder {
 		const input = new InputButtonGrid(opts, this)
 		return this._registerInput(input, opts.presetId)
 	}
-	bindButtonGrid<
-		T extends Record<string, any>,
-		K extends keyof T,
-		V extends T[K] extends ButtonGridArrays ? ButtonGridArrays : never,
-	>(target: T, key: K, options?: Partial<ButtonGridInputOptions>): InputButtonGrid {
-		return this.addButtonGrid(key as string, target[key] as V, options)
+	bindButtonGrid<K extends PropertyKey, T extends Record<K, ButtonGridArrays>>(
+		target: T,
+		key: K,
+		options?: Partial<ButtonGridInputOptions>,
+	): InputButtonGrid {
+		return this.addButtonGrid(String(key), target[key], options)
 	}
 
 	/**
@@ -1841,14 +1848,11 @@ export class Folder {
 	 * gui.bindSelect(params, 'theme', { options: ['light', 'dark'] })
 	 * ```
 	 */
-	bindSelect<
-		T extends Record<string, any>,
-		K extends keyof T,
-		V extends T[K] extends Option<infer U> ? U : InvalidBinding,
-		O extends SelectInputOptions<V> & {
-			options: Array<V>
-		},
-	>(target: T, key: K, options: O): InputSelect<V> {
+	bindSelect<K extends PropertyKey, T extends Record<K, unknown>>(
+		target: T,
+		key: K,
+		options: Partial<SelectInputOptions<T[K]>> & { options: Array<T[K]> },
+	): InputSelect<T[K]> {
 		const opts = this._resolveBinding(target, key, options)
 		if (!options.options) {
 			throw new Error(
@@ -1857,7 +1861,7 @@ export class Folder {
 		}
 		opts.options = options.options
 		opts.value = target[key]
-		return this.addSelect(key as string, opts.value as V, opts as any)
+		return this.addSelect(opts.title, opts.value, opts)
 	}
 
 	/**
@@ -1881,13 +1885,13 @@ export class Folder {
 	 * const switch = gui.bindSwitch(params, 'foo')
 	 * ```
 	 */
-	bindSwitch<
-		T extends Record<string, any>,
-		K extends keyof T,
-		V extends T[K] extends boolean ? boolean : InvalidBinding,
-	>(target: T, key: K, options?: Partial<SwitchInputOptions>): InputSwitch {
+	bindSwitch<K extends PropertyKey, T extends Record<K, boolean>>(
+		target: T,
+		key: K,
+		options?: Partial<SwitchInputOptions>,
+	): InputSwitch {
 		const opts = this._resolveBinding(target, key, options)
-		return this.addSwitch(key as string, opts.value as V, opts)
+		return this.addSwitch(opts.title, opts.value, opts)
 	}
 
 	/**
@@ -1912,13 +1916,13 @@ export class Folder {
 	 * const array = gui.bindArray(params, 'items')
 	 * ```
 	 */
-	bindArray<
-		T extends Record<string, any>,
-		K extends keyof T,
-		V extends T[K] extends Array<infer U> ? Array<U> : InvalidBinding,
-	>(target: T, key: K, options?: Partial<ArrayInputOptions>): InputArray {
+	bindArray<K extends PropertyKey, T extends Record<K, unknown[]>>(
+		target: T,
+		key: K,
+		options?: Partial<ArrayInputOptions<T[K][number]>>,
+	): InputArray<T[K][number]> {
 		const opts = this._resolveBinding(target, key, options)
-		return this.addArray(key as string, opts.value as V, opts)
+		return this.addArray(opts.title, opts.value, opts)
 	}
 
 	/**

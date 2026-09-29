@@ -1429,7 +1429,7 @@ hsv | hsl | rgb
 
 ###### channel
 
-`Mode` *extends* `"hsv"` ? `"s"` \| `"v"` \| `"h"` : `Mode` *extends* `"hsl"` ? `"s"` \| `"h"` \| `"l"` : `Mode` *extends* `"rgb"` ? `"b"` \| `"g"` \| `"r"` : `never`
+`Mode` *extends* `"hsv"` ? `"h"` \| `"s"` \| `"v"` : `Mode` *extends* `"hsl"` ? `"h"` \| `"s"` \| `"l"` : `Mode` *extends* `"rgb"` ? `"r"` \| `"b"` \| `"g"` : `never`
 
 Individual channel to set, for example, if format = hsl, chanel = h | s | l
 
@@ -2011,7 +2011,7 @@ the type of input created.
 
 ###### Call Signature
 
-> **add**\<`T`\>(`title`, `initialValue`, `options?`): [`InputText`](#inputtext)
+> **add**\<`T`\>(`title`, `initialValue`, `options?`): `InferStringInput`\<`T`\>
 
 ###### Type Parameters
 
@@ -2035,7 +2035,7 @@ the type of input created.
 
 ###### Returns
 
-[`InputText`](#inputtext)
+`InferStringInput`\<`T`\>
 
 ###### Call Signature
 
@@ -2531,23 +2531,19 @@ const switchInput = gui.bind(params, 'qux', { title: 'Kwucks' })
 
 ##### bindArray()
 
-> **bindArray**\<`T`, `K`, `V`\>(`target`, `key`, `options?`): [`InputArray`](#inputarray)
+> **bindArray**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputArray`](#inputarray)\<`T`\[`K`\]\[`number`\]\>
 
 Binds an [InputArray](#inputarray) to the array at the target object's key.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `unknown`[]
+`T` *extends* `Record`\<`K`, `unknown`[]\>
 
 ###### Parameters
 
@@ -2561,11 +2557,11 @@ Binds an [InputArray](#inputarray) to the array at the target object's key.
 
 ###### options?
 
-`Partial`\<[`ArrayInputOptions`](#arrayinputoptions)\>
+`Partial`\<[`ArrayInputOptions`](#arrayinputoptions)\<`T`\[`K`\]\[`number`\]\>\>
 
 ###### Returns
 
-[`InputArray`](#inputarray)
+[`InputArray`](#inputarray)\<`T`\[`K`\]\[`number`\]\>
 
 ###### Example
 
@@ -2576,23 +2572,19 @@ const array = gui.bindArray(params, 'items')
 
 ##### bindButton()
 
-> **bindButton**\<`T`, `K`, `TValue`\>(`target`, `key`, `options?`): [`InputButton`](#inputbutton)
+> **bindButton**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputButton`](#inputbutton)
 
 Passes the function at `target[key]` to [addButton](#addbutton) as the `onclick` handler.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### TValue
+###### T
 
-`TValue` *extends* () => `void`
+`T` *extends* `Record`\<`K`, () => `void`\>
 
 ###### Parameters
 
@@ -2614,21 +2606,17 @@ Passes the function at `target[key]` to [addButton](#addbutton) as the `onclick`
 
 ##### bindButtonGrid()
 
-> **bindButtonGrid**\<`T`, `K`, `V`\>(`target`, `key`, `options?`): [`InputButtonGrid`](#inputbuttongrid)
+> **bindButtonGrid**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputButtonGrid`](#inputbuttongrid)
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `ButtonGridArrays`
+`T` *extends* `Record`\<`K`, `ButtonGridArrays`\>
 
 ###### Parameters
 
@@ -2725,21 +2713,17 @@ string stays that hex string, an `{ h, s, l }` object stays that object, a Color
 
 ##### bindNumber()
 
-> **bindNumber**\<`T`, `K`, `V`\>(`target`, `key`, `options?`): [`InputNumber`](#inputnumber)
+> **bindNumber**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputNumber`](#inputnumber)
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `number`
+`T` *extends* `Record`\<`K`, `number`\>
 
 ###### Parameters
 
@@ -2761,28 +2745,20 @@ string stays that hex string, an `{ h, s, l }` object stays that object, a Color
 
 ##### bindSelect()
 
-> **bindSelect**\<`T`, `K`, `V`, `O`\>(`target`, `key`, `options`): [`InputSelect`](#inputselect)\<`V`\>
+> **bindSelect**\<`K`, `T`\>(`target`, `key`, `options`): [`InputSelect`](#inputselect)\<`T`\[`K`\]\>
 
 Binds an [InputSelect](#inputselect) to a target object property.
 Requires `options` array to be provided in the options parameter.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `unknown`
-
-###### O
-
-`O` *extends* `Omit`\<`InputOptions`\<`V` \| \{ `label`: `string`; `value`: `V`; \}\>, `"onChange"`\> & `object` & `object`
+`T` *extends* `Record`\<`K`, `unknown`\>
 
 ###### Parameters
 
@@ -2796,11 +2772,11 @@ Requires `options` array to be provided in the options parameter.
 
 ###### options
 
-`O`
+`Partial`\<[`SelectInputOptions`](#selectinputoptions)\<`T`\[`K`\]\>\> & `object`
 
 ###### Returns
 
-[`InputSelect`](#inputselect)\<`V`\>
+[`InputSelect`](#inputselect)\<`T`\[`K`\]\>
 
 ###### Example
 
@@ -2811,23 +2787,19 @@ gui.bindSelect(params, 'theme', { options: ['light', 'dark'] })
 
 ##### bindSwitch()
 
-> **bindSwitch**\<`T`, `K`, `V`\>(`target`, `key`, `options?`): [`InputSwitch`](#inputswitch)
+> **bindSwitch**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputSwitch`](#inputswitch)
 
 Binds an [InputSwitch](#inputswitch) to the `boolean` at the target object's key.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `boolean`
+`T` *extends* `Record`\<`K`, `boolean`\>
 
 ###### Parameters
 
@@ -2856,21 +2828,17 @@ const switch = gui.bindSwitch(params, 'foo')
 
 ##### bindText()
 
-> **bindText**\<`T`, `K`, `TValue`\>(`target`, `key`, `options?`): [`InputText`](#inputtext)
+> **bindText**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputText`](#inputtext)
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### TValue
+###### T
 
-`TValue` *extends* `string`
+`T` *extends* `Record`\<`K`, `string`\>
 
 ###### Parameters
 
@@ -3724,7 +3692,7 @@ the type of input created.
 
 ###### Call Signature
 
-> **add**\<`T`\>(`title`, `initialValue`, `options?`): [`InputText`](#inputtext)
+> **add**\<`T`\>(`title`, `initialValue`, `options?`): `InferStringInput`\<`T`\>
 
 ###### Type Parameters
 
@@ -3748,7 +3716,7 @@ the type of input created.
 
 ###### Returns
 
-[`InputText`](#inputtext)
+`InferStringInput`\<`T`\>
 
 ###### Inherited from
 
@@ -4284,23 +4252,19 @@ const switchInput = gui.bind(params, 'qux', { title: 'Kwucks' })
 
 ##### bindArray()
 
-> **bindArray**\<`T`, `K`, `V`\>(`target`, `key`, `options?`): [`InputArray`](#inputarray)
+> **bindArray**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputArray`](#inputarray)\<`T`\[`K`\]\[`number`\]\>
 
 Binds an [InputArray](#inputarray) to the array at the target object's key.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `unknown`[]
+`T` *extends* `Record`\<`K`, `unknown`[]\>
 
 ###### Parameters
 
@@ -4314,11 +4278,11 @@ Binds an [InputArray](#inputarray) to the array at the target object's key.
 
 ###### options?
 
-`Partial`\<[`ArrayInputOptions`](#arrayinputoptions)\>
+`Partial`\<[`ArrayInputOptions`](#arrayinputoptions)\<`T`\[`K`\]\[`number`\]\>\>
 
 ###### Returns
 
-[`InputArray`](#inputarray)
+[`InputArray`](#inputarray)\<`T`\[`K`\]\[`number`\]\>
 
 ###### Example
 
@@ -4333,23 +4297,19 @@ const array = gui.bindArray(params, 'items')
 
 ##### bindButton()
 
-> **bindButton**\<`T`, `K`, `TValue`\>(`target`, `key`, `options?`): [`InputButton`](#inputbutton)
+> **bindButton**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputButton`](#inputbutton)
 
 Passes the function at `target[key]` to [addButton](#addbutton) as the `onclick` handler.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### TValue
+###### T
 
-`TValue` *extends* () => `void`
+`T` *extends* `Record`\<`K`, () => `void`\>
 
 ###### Parameters
 
@@ -4375,21 +4335,17 @@ Passes the function at `target[key]` to [addButton](#addbutton) as the `onclick`
 
 ##### bindButtonGrid()
 
-> **bindButtonGrid**\<`T`, `K`, `V`\>(`target`, `key`, `options?`): [`InputButtonGrid`](#inputbuttongrid)
+> **bindButtonGrid**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputButtonGrid`](#inputbuttongrid)
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `ButtonGridArrays`
+`T` *extends* `Record`\<`K`, `ButtonGridArrays`\>
 
 ###### Parameters
 
@@ -4411,7 +4367,7 @@ Passes the function at `target[key]` to [addButton](#addbutton) as the `onclick`
 
 ###### Inherited from
 
-`Pick.bindButtonGrid`
+[`Folder`](#folder).[`bindButtonGrid`](#bindbuttongrid)
 
 ##### bindColor()
 
@@ -4498,21 +4454,17 @@ string stays that hex string, an `{ h, s, l }` object stays that object, a Color
 
 ##### bindNumber()
 
-> **bindNumber**\<`T`, `K`, `V`\>(`target`, `key`, `options?`): [`InputNumber`](#inputnumber)
+> **bindNumber**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputNumber`](#inputnumber)
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `number`
+`T` *extends* `Record`\<`K`, `number`\>
 
 ###### Parameters
 
@@ -4534,32 +4486,24 @@ string stays that hex string, an `{ h, s, l }` object stays that object, a Color
 
 ###### Inherited from
 
-`Pick.bindNumber`
+[`Folder`](#folder).[`bindNumber`](#bindnumber)
 
 ##### bindSelect()
 
-> **bindSelect**\<`T`, `K`, `V`, `O`\>(`target`, `key`, `options`): [`InputSelect`](#inputselect)\<`V`\>
+> **bindSelect**\<`K`, `T`\>(`target`, `key`, `options`): [`InputSelect`](#inputselect)\<`T`\[`K`\]\>
 
 Binds an [InputSelect](#inputselect) to a target object property.
 Requires `options` array to be provided in the options parameter.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `unknown`
-
-###### O
-
-`O` *extends* `Omit`\<`InputOptions`\<`V` \| \{ `label`: `string`; `value`: `V`; \}\>, `"onChange"`\> & `object` & `object`
+`T` *extends* `Record`\<`K`, `unknown`\>
 
 ###### Parameters
 
@@ -4573,11 +4517,11 @@ Requires `options` array to be provided in the options parameter.
 
 ###### options
 
-`O`
+`Partial`\<[`SelectInputOptions`](#selectinputoptions)\<`T`\[`K`\]\>\> & `object`
 
 ###### Returns
 
-[`InputSelect`](#inputselect)\<`V`\>
+[`InputSelect`](#inputselect)\<`T`\[`K`\]\>
 
 ###### Example
 
@@ -4592,23 +4536,19 @@ gui.bindSelect(params, 'theme', { options: ['light', 'dark'] })
 
 ##### bindSwitch()
 
-> **bindSwitch**\<`T`, `K`, `V`\>(`target`, `key`, `options?`): [`InputSwitch`](#inputswitch)
+> **bindSwitch**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputSwitch`](#inputswitch)
 
 Binds an [InputSwitch](#inputswitch) to the `boolean` at the target object's key.
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### V
+###### T
 
-`V` *extends* `boolean`
+`T` *extends* `Record`\<`K`, `boolean`\>
 
 ###### Parameters
 
@@ -4637,25 +4577,21 @@ const switch = gui.bindSwitch(params, 'foo')
 
 ###### Inherited from
 
-`Pick.bindSwitch`
+[`Folder`](#folder).[`bindSwitch`](#bindswitch)
 
 ##### bindText()
 
-> **bindText**\<`T`, `K`, `TValue`\>(`target`, `key`, `options?`): [`InputText`](#inputtext)
+> **bindText**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputText`](#inputtext)
 
 ###### Type Parameters
 
-###### T
-
-`T` *extends* `Record`\<`string`, `any`\>
-
 ###### K
 
-`K` *extends* `string` \| `number` \| `symbol`
+`K` *extends* `PropertyKey`
 
-###### TValue
+###### T
 
-`TValue` *extends* `string`
+`T` *extends* `Record`\<`K`, `string`\>
 
 ###### Parameters
 
@@ -4677,7 +4613,7 @@ const switch = gui.bindSwitch(params, 'foo')
 
 ###### Inherited from
 
-`Pick.bindText`
+[`Folder`](#folder).[`bindText`](#bindtext)
 
 ##### close()
 
@@ -5339,11 +5275,11 @@ Whether the tooltip is currently showing.
 
 ###### Get Signature
 
-> **get** **placement**(): `"top"` \| `"right"` \| `"bottom"` \| `"left"`
+> **get** **placement**(): `"bottom"` \| `"left"` \| `"right"` \| `"top"`
 
 ###### Returns
 
-`"top"` \| `"right"` \| `"bottom"` \| `"left"`
+`"bottom"` \| `"left"` \| `"right"` \| `"top"`
 
 ###### Set Signature
 
@@ -5353,7 +5289,7 @@ Whether the tooltip is currently showing.
 
 ###### v
 
-`"top"` \| `"right"` \| `"bottom"` \| `"left"`
+`"bottom"` \| `"left"` \| `"right"` \| `"top"`
 
 ###### Returns
 
@@ -6429,7 +6365,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -6437,7 +6373,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -6526,7 +6462,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -6664,7 +6600,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -6945,7 +6881,7 @@ false
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`bound`](#bound-6)
+`Input.bound`
 
 ##### bubble
 
@@ -6956,7 +6892,7 @@ If false, the next update will be silent, after which the flag will be reset to 
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`bubble`](#bubble-6)
+`Input.bubble`
 
 ##### button
 
@@ -7026,7 +6962,7 @@ Unique identifier for the input. Also used for saving and loading presets.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`id`](#id-11)
+`Input.id`
 
 ##### initialValue
 
@@ -7049,7 +6985,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -7057,7 +6993,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -7150,7 +7086,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -7249,7 +7185,7 @@ Input.elements\|\`elements\`.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`element`](#element-9)
+`Input.element`
 
 ##### hidden
 
@@ -7288,7 +7224,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -7378,7 +7314,7 @@ The title displayed on this Input's label.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`undoManager`](#undomanager-6)
+`Input.undoManager`
 
 ##### value
 
@@ -7607,7 +7543,7 @@ false
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`bound`](#bound-6)
+`Input.bound`
 
 ##### bubble
 
@@ -7618,7 +7554,7 @@ If false, the next update will be silent, after which the flag will be reset to 
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`bubble`](#bubble-6)
+`Input.bubble`
 
 ##### buttonGrid
 
@@ -7678,7 +7614,7 @@ All HTMLElement's created by this input.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`folder`](#folder-8)
+`Input.folder`
 
 ##### id
 
@@ -7692,7 +7628,7 @@ Unique identifier for the input. Also used for saving and loading presets.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`id`](#id-11)
+`Input.id`
 
 ##### initialValue
 
@@ -7715,7 +7651,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -7723,7 +7659,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -7812,7 +7748,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -7926,7 +7862,7 @@ Input.elements\|\`elements\`.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`element`](#element-9)
+`Input.element`
 
 ##### hidden
 
@@ -7965,7 +7901,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -8031,7 +7967,7 @@ The title displayed on this Input's label.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`undoManager`](#undomanager-6)
+`Input.undoManager`
 
 ##### value
 
@@ -8429,7 +8365,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -8437,7 +8373,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -8526,7 +8462,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -8670,7 +8606,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -8957,7 +8893,7 @@ Updates the Input's state to the given value.
 
 ###### v
 
-[`Color`](#color) \| [`ColorFormat`](#colorformat)
+[`ColorFormat`](#colorformat) \| [`Color`](#color)
 
 ###### Returns
 
@@ -9122,7 +9058,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -9130,7 +9066,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -9219,7 +9155,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -9369,7 +9305,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -9770,7 +9706,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -9778,7 +9714,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -9875,7 +9811,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -10013,7 +9949,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -10406,7 +10342,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -10414,7 +10350,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -10539,7 +10475,7 @@ If neither exist, an error will be thrown.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -10692,7 +10628,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -11118,7 +11054,7 @@ false
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`bound`](#bound-6)
+`Input.bound`
 
 ##### bubble
 
@@ -11129,7 +11065,7 @@ If false, the next update will be silent, after which the flag will be reset to 
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`bubble`](#bubble-6)
+`Input.bubble`
 
 ##### elements
 
@@ -11195,7 +11131,7 @@ Unique identifier for the input. Also used for saving and loading presets.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`id`](#id-11)
+`Input.id`
 
 ##### initialValue
 
@@ -11218,7 +11154,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -11226,7 +11162,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -11315,7 +11251,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -11414,7 +11350,7 @@ Input.elements\|\`elements\`.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`element`](#element-9)
+`Input.element`
 
 ##### hidden
 
@@ -11453,7 +11389,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -11519,7 +11455,7 @@ The title displayed on this Input's label.
 
 ###### Inherited from
 
-[`InputSelect`](#inputselect).[`undoManager`](#undomanager-6)
+`Input.undoManager`
 
 ##### value
 
@@ -11844,7 +11780,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TTarget
 
-`TTarget` *extends* `Element` \| `Window` \| `Document`
+`TTarget` *extends* `Window` \| `Document` \| `Element`
 
 ###### TEventName
 
@@ -11852,7 +11788,7 @@ Add an event listener to an HTMLElement that will be removed when [dispose](#dis
 
 ###### TEventInstance
 
-`TEventInstance` *extends* `Event` \| (Event \| ProgressEvent\<EventTarget\> \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| ... 13 more ... \| WheelEvent) & \{ ...; \}
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
 
 ###### Parameters
 
@@ -11941,7 +11877,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"SelectInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
 
 ###### Inherited from
 
@@ -12079,7 +12015,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-9)'s order style property.
+value will update the input's [\`element\`](#element-5)'s order style property.
 
 ###### Returns
 
@@ -12336,7 +12272,7 @@ Removes the disabled state from the input and any associated controllers.
 
 ##### bg?
 
-> `optional` **bg?**: `"aliceblue"` \| `"antiquewhite"` \| `"aqua"` \| `"aquamarine"` \| `"azure"` \| `"beige"` \| `"bisque"` \| `"black"` \| `"blanchedalmond"` \| `"blue"` \| `"blueviolet"` \| `"brown"` \| `"burlywood"` \| `"cadetblue"` \| `"chartreuse"` \| `"chocolate"` \| `"coral"` \| `"cornflowerblue"` \| `"cornsilk"` \| `"crimson"` \| `"cyan"` \| `"darkblue"` \| `"darkcyan"` \| `"darkgoldenrod"` \| `"darkgray"` \| `"darkgreen"` \| `"darkgrey"` \| `"darkkhaki"` \| `"darkmagenta"` \| `"darkolivegreen"` \| `"darkorange"` \| `"darkorchid"` \| `"darkred"` \| `"darksalmon"` \| `"darkseagreen"` \| `"darkslateblue"` \| `"darkslategray"` \| `"darkslategrey"` \| `"darkturquoise"` \| `"darkviolet"` \| `"deeppink"` \| `"deepskyblue"` \| `"dimgray"` \| `"dimgrey"` \| `"dodgerblue"` \| `"firebrick"` \| `"floralwhite"` \| `"forestgreen"` \| `"fuchsia"` \| `"gainsboro"` \| `"ghostwhite"` \| `"goldenrod"` \| `"gold"` \| `"gray"` \| `"green"` \| `"greenyellow"` \| `"grey"` \| `"honeydew"` \| `"hotpink"` \| `"indianred"` \| `"indigo"` \| `"ivory"` \| `"khaki"` \| `"lavenderblush"` \| `"lavender"` \| `"lawngreen"` \| `"lemonchiffon"` \| `"lightblue"` \| `"lightcoral"` \| `"lightcyan"` \| `"lightgoldenrodyellow"` \| `"lightgray"` \| `"lightgreen"` \| `"lightgrey"` \| `"lightpink"` \| `"lightsalmon"` \| `"lightseagreen"` \| `"lightskyblue"` \| `"lightslategray"` \| `"lightslategrey"` \| `"lightsteelblue"` \| `"lightyellow"` \| `"lime"` \| `"limegreen"` \| `"linen"` \| `"magenta"` \| `"maroon"` \| `"mediumaquamarine"` \| `"mediumblue"` \| `"mediumorchid"` \| `"mediumpurple"` \| `"mediumseagreen"` \| `"mediumslateblue"` \| `"mediumspringgreen"` \| `"mediumturquoise"` \| `"mediumvioletred"` \| `"midnightblue"` \| `"mintcream"` \| `"mistyrose"` \| `"moccasin"` \| `"navajowhite"` \| `"navy"` \| `"oldlace"` \| `"olive"` \| `"olivedrab"` \| `"orange"` \| `"orangered"` \| `"orchid"` \| `"palegoldenrod"` \| `"palegreen"` \| `"paleturquoise"` \| `"palevioletred"` \| `"papayawhip"` \| `"peachpuff"` \| `"peru"` \| `"pink"` \| `"plum"` \| `"powderblue"` \| `"purple"` \| `"rebeccapurple"` \| `"red"` \| `"rosybrown"` \| `"royalblue"` \| `"saddlebrown"` \| `"salmon"` \| `"sandybrown"` \| `"seagreen"` \| `"seashell"` \| `"sienna"` \| `"silver"` \| `"skyblue"` \| `"slateblue"` \| `"slategray"` \| `"slategrey"` \| `"snow"` \| `"springgreen"` \| `"steelblue"` \| `"tan"` \| `"teal"` \| `"thistle"` \| `"tomato"` \| `"turquoise"` \| `"violet"` \| `"wheat"` \| `"white"` \| `"whitesmoke"` \| `"yellow"` \| `"yellowgreen"` \| `string` & `object`
+> `optional` **bg?**: `string` & `object` \| `"red"` \| `"green"` \| `"blue"` \| `"aliceblue"` \| `"antiquewhite"` \| `"aqua"` \| `"aquamarine"` \| `"azure"` \| `"beige"` \| `"bisque"` \| `"black"` \| `"blanchedalmond"` \| `"blueviolet"` \| `"brown"` \| `"burlywood"` \| `"cadetblue"` \| `"chartreuse"` \| `"chocolate"` \| `"coral"` \| `"cornflowerblue"` \| `"cornsilk"` \| `"crimson"` \| `"cyan"` \| `"darkblue"` \| `"darkcyan"` \| `"darkgoldenrod"` \| `"darkgray"` \| `"darkgreen"` \| `"darkgrey"` \| `"darkkhaki"` \| `"darkmagenta"` \| `"darkolivegreen"` \| `"darkorange"` \| `"darkorchid"` \| `"darkred"` \| `"darksalmon"` \| `"darkseagreen"` \| `"darkslateblue"` \| `"darkslategray"` \| `"darkslategrey"` \| `"darkturquoise"` \| `"darkviolet"` \| `"deeppink"` \| `"deepskyblue"` \| `"dimgray"` \| `"dimgrey"` \| `"dodgerblue"` \| `"firebrick"` \| `"floralwhite"` \| `"forestgreen"` \| `"fuchsia"` \| `"gainsboro"` \| `"ghostwhite"` \| `"goldenrod"` \| `"gold"` \| `"gray"` \| `"greenyellow"` \| `"grey"` \| `"honeydew"` \| `"hotpink"` \| `"indianred"` \| `"indigo"` \| `"ivory"` \| `"khaki"` \| `"lavenderblush"` \| `"lavender"` \| `"lawngreen"` \| `"lemonchiffon"` \| `"lightblue"` \| `"lightcoral"` \| `"lightcyan"` \| `"lightgoldenrodyellow"` \| `"lightgray"` \| `"lightgreen"` \| `"lightgrey"` \| `"lightpink"` \| `"lightsalmon"` \| `"lightseagreen"` \| `"lightskyblue"` \| `"lightslategray"` \| `"lightslategrey"` \| `"lightsteelblue"` \| `"lightyellow"` \| `"lime"` \| `"limegreen"` \| `"linen"` \| `"magenta"` \| `"maroon"` \| `"mediumaquamarine"` \| `"mediumblue"` \| `"mediumorchid"` \| `"mediumpurple"` \| `"mediumseagreen"` \| `"mediumslateblue"` \| `"mediumspringgreen"` \| `"mediumturquoise"` \| `"mediumvioletred"` \| `"midnightblue"` \| `"mintcream"` \| `"mistyrose"` \| `"moccasin"` \| `"navajowhite"` \| `"navy"` \| `"oldlace"` \| `"olive"` \| `"olivedrab"` \| `"orange"` \| `"orangered"` \| `"orchid"` \| `"palegoldenrod"` \| `"palegreen"` \| `"paleturquoise"` \| `"palevioletred"` \| `"papayawhip"` \| `"peachpuff"` \| `"peru"` \| `"pink"` \| `"plum"` \| `"powderblue"` \| `"purple"` \| `"rebeccapurple"` \| `"rosybrown"` \| `"royalblue"` \| `"saddlebrown"` \| `"salmon"` \| `"sandybrown"` \| `"seagreen"` \| `"seashell"` \| `"sienna"` \| `"silver"` \| `"skyblue"` \| `"slateblue"` \| `"slategray"` \| `"slategrey"` \| `"snow"` \| `"springgreen"` \| `"steelblue"` \| `"tan"` \| `"teal"` \| `"thistle"` \| `"tomato"` \| `"turquoise"` \| `"violet"` \| `"wheat"` \| `"white"` \| `"whitesmoke"` \| `"yellow"` \| `"yellowgreen"`
 
 The background color of the log.
 
@@ -12403,7 +12339,7 @@ TODO Not yet implemented.
 
 ##### fg?
 
-> `optional` **fg?**: `"aliceblue"` \| `"antiquewhite"` \| `"aqua"` \| `"aquamarine"` \| `"azure"` \| `"beige"` \| `"bisque"` \| `"black"` \| `"blanchedalmond"` \| `"blue"` \| `"blueviolet"` \| `"brown"` \| `"burlywood"` \| `"cadetblue"` \| `"chartreuse"` \| `"chocolate"` \| `"coral"` \| `"cornflowerblue"` \| `"cornsilk"` \| `"crimson"` \| `"cyan"` \| `"darkblue"` \| `"darkcyan"` \| `"darkgoldenrod"` \| `"darkgray"` \| `"darkgreen"` \| `"darkgrey"` \| `"darkkhaki"` \| `"darkmagenta"` \| `"darkolivegreen"` \| `"darkorange"` \| `"darkorchid"` \| `"darkred"` \| `"darksalmon"` \| `"darkseagreen"` \| `"darkslateblue"` \| `"darkslategray"` \| `"darkslategrey"` \| `"darkturquoise"` \| `"darkviolet"` \| `"deeppink"` \| `"deepskyblue"` \| `"dimgray"` \| `"dimgrey"` \| `"dodgerblue"` \| `"firebrick"` \| `"floralwhite"` \| `"forestgreen"` \| `"fuchsia"` \| `"gainsboro"` \| `"ghostwhite"` \| `"goldenrod"` \| `"gold"` \| `"gray"` \| `"green"` \| `"greenyellow"` \| `"grey"` \| `"honeydew"` \| `"hotpink"` \| `"indianred"` \| `"indigo"` \| `"ivory"` \| `"khaki"` \| `"lavenderblush"` \| `"lavender"` \| `"lawngreen"` \| `"lemonchiffon"` \| `"lightblue"` \| `"lightcoral"` \| `"lightcyan"` \| `"lightgoldenrodyellow"` \| `"lightgray"` \| `"lightgreen"` \| `"lightgrey"` \| `"lightpink"` \| `"lightsalmon"` \| `"lightseagreen"` \| `"lightskyblue"` \| `"lightslategray"` \| `"lightslategrey"` \| `"lightsteelblue"` \| `"lightyellow"` \| `"lime"` \| `"limegreen"` \| `"linen"` \| `"magenta"` \| `"maroon"` \| `"mediumaquamarine"` \| `"mediumblue"` \| `"mediumorchid"` \| `"mediumpurple"` \| `"mediumseagreen"` \| `"mediumslateblue"` \| `"mediumspringgreen"` \| `"mediumturquoise"` \| `"mediumvioletred"` \| `"midnightblue"` \| `"mintcream"` \| `"mistyrose"` \| `"moccasin"` \| `"navajowhite"` \| `"navy"` \| `"oldlace"` \| `"olive"` \| `"olivedrab"` \| `"orange"` \| `"orangered"` \| `"orchid"` \| `"palegoldenrod"` \| `"palegreen"` \| `"paleturquoise"` \| `"palevioletred"` \| `"papayawhip"` \| `"peachpuff"` \| `"peru"` \| `"pink"` \| `"plum"` \| `"powderblue"` \| `"purple"` \| `"rebeccapurple"` \| `"red"` \| `"rosybrown"` \| `"royalblue"` \| `"saddlebrown"` \| `"salmon"` \| `"sandybrown"` \| `"seagreen"` \| `"seashell"` \| `"sienna"` \| `"silver"` \| `"skyblue"` \| `"slateblue"` \| `"slategray"` \| `"slategrey"` \| `"snow"` \| `"springgreen"` \| `"steelblue"` \| `"tan"` \| `"teal"` \| `"thistle"` \| `"tomato"` \| `"turquoise"` \| `"violet"` \| `"wheat"` \| `"white"` \| `"whitesmoke"` \| `"yellow"` \| `"yellowgreen"` \| `string` & `object`
+> `optional` **fg?**: `string` & `object` \| `"red"` \| `"green"` \| `"blue"` \| `"aliceblue"` \| `"antiquewhite"` \| `"aqua"` \| `"aquamarine"` \| `"azure"` \| `"beige"` \| `"bisque"` \| `"black"` \| `"blanchedalmond"` \| `"blueviolet"` \| `"brown"` \| `"burlywood"` \| `"cadetblue"` \| `"chartreuse"` \| `"chocolate"` \| `"coral"` \| `"cornflowerblue"` \| `"cornsilk"` \| `"crimson"` \| `"cyan"` \| `"darkblue"` \| `"darkcyan"` \| `"darkgoldenrod"` \| `"darkgray"` \| `"darkgreen"` \| `"darkgrey"` \| `"darkkhaki"` \| `"darkmagenta"` \| `"darkolivegreen"` \| `"darkorange"` \| `"darkorchid"` \| `"darkred"` \| `"darksalmon"` \| `"darkseagreen"` \| `"darkslateblue"` \| `"darkslategray"` \| `"darkslategrey"` \| `"darkturquoise"` \| `"darkviolet"` \| `"deeppink"` \| `"deepskyblue"` \| `"dimgray"` \| `"dimgrey"` \| `"dodgerblue"` \| `"firebrick"` \| `"floralwhite"` \| `"forestgreen"` \| `"fuchsia"` \| `"gainsboro"` \| `"ghostwhite"` \| `"goldenrod"` \| `"gold"` \| `"gray"` \| `"greenyellow"` \| `"grey"` \| `"honeydew"` \| `"hotpink"` \| `"indianred"` \| `"indigo"` \| `"ivory"` \| `"khaki"` \| `"lavenderblush"` \| `"lavender"` \| `"lawngreen"` \| `"lemonchiffon"` \| `"lightblue"` \| `"lightcoral"` \| `"lightcyan"` \| `"lightgoldenrodyellow"` \| `"lightgray"` \| `"lightgreen"` \| `"lightgrey"` \| `"lightpink"` \| `"lightsalmon"` \| `"lightseagreen"` \| `"lightskyblue"` \| `"lightslategray"` \| `"lightslategrey"` \| `"lightsteelblue"` \| `"lightyellow"` \| `"lime"` \| `"limegreen"` \| `"linen"` \| `"magenta"` \| `"maroon"` \| `"mediumaquamarine"` \| `"mediumblue"` \| `"mediumorchid"` \| `"mediumpurple"` \| `"mediumseagreen"` \| `"mediumslateblue"` \| `"mediumspringgreen"` \| `"mediumturquoise"` \| `"mediumvioletred"` \| `"midnightblue"` \| `"mintcream"` \| `"mistyrose"` \| `"moccasin"` \| `"navajowhite"` \| `"navy"` \| `"oldlace"` \| `"olive"` \| `"olivedrab"` \| `"orange"` \| `"orangered"` \| `"orchid"` \| `"palegoldenrod"` \| `"palegreen"` \| `"paleturquoise"` \| `"palevioletred"` \| `"papayawhip"` \| `"peachpuff"` \| `"peru"` \| `"pink"` \| `"plum"` \| `"powderblue"` \| `"purple"` \| `"rebeccapurple"` \| `"rosybrown"` \| `"royalblue"` \| `"saddlebrown"` \| `"salmon"` \| `"sandybrown"` \| `"seagreen"` \| `"seashell"` \| `"sienna"` \| `"silver"` \| `"skyblue"` \| `"slateblue"` \| `"slategray"` \| `"slategrey"` \| `"snow"` \| `"springgreen"` \| `"steelblue"` \| `"tan"` \| `"teal"` \| `"thistle"` \| `"tomato"` \| `"turquoise"` \| `"violet"` \| `"wheat"` \| `"white"` \| `"whitesmoke"` \| `"yellow"` \| `"yellowgreen"`
 
 The foreground color of the log.
 
@@ -12663,7 +12599,7 @@ document.body
 
 ##### placement
 
-> **placement**: `"top"` \| `"right"` \| `"bottom"` \| `"left"`
+> **placement**: `"bottom"` \| `"left"` \| `"right"` \| `"top"`
 
 The placement of the tooltip relative to the element.  Can be `'top'`, `'bottom'`, `'left'`, or `'right'`.
 
