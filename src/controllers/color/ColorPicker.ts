@@ -272,6 +272,8 @@ export class ColorPicker {
 	}
 
 	draw = () => {
+		// The deferred first draw can land after a dispose.
+		if (!this._ctx) return
 		this._fill(`hsl(${this.hue}, 100%, 50%)`)
 		this._fill(this._gradientWhite)
 		this._fill(this._gradientBlack)
