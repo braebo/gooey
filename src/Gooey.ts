@@ -1094,8 +1094,10 @@ export class Gooey {
 
 			const { window } = windowManager.add(this.folder.element, {
 				id: this.id,
-				resizable: resizeOpts,
-				draggable: dragOpts,
+				// `?? false`: an undefined here resolves to the manager's defaults, which turns a
+				// `draggable: false` gooey into one whose whole root is the drag handle.
+				resizable: resizeOpts ?? false,
+				draggable: dragOpts ?? false,
 				storageId: storageOpts ? storageOpts.key : undefined,
 			})
 
@@ -1120,10 +1122,13 @@ export class Gooey {
 			.fn('_createWindowManager')
 			.debug({ windowManagerOpts, options, opts: this.opts, dragOpts, resizeOpts })
 
+		// `?? false`, as above: undefined means "the defaults" to the window manager, so a gooey
+		// built with `draggable: false` captured every pointerdown on its root and swallowed the
+		// click on each input's reset button.
 		const windowManager = new WindowManager({
 			...windowManagerOpts,
-			draggable: dragOpts,
-			resizable: resizeOpts,
+			draggable: dragOpts ?? false,
+			resizable: resizeOpts ?? false,
 		})
 		this._isWindowManagerOwner = true
 

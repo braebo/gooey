@@ -1,5 +1,7 @@
 import { describe, test, expect, afterEach } from 'vitest'
 
+import { userEvent } from '@vitest/browser/context'
+
 import { Gooey, type GooeyOptions } from './Gooey'
 
 const guis = [] as Gooey[]
@@ -144,5 +146,25 @@ describe('settingsFolder: false', () => {
 
 		expect(gooey.folder.element.querySelector('.gooey-settings-button')).toBeTruthy()
 		expect(gooey.elements.settingsFolder.hidden).toBe(false)
+	})
+})
+
+describe('draggable: false / resizable: false', () => {
+	test('leaves the window neither draggable nor resizable', () => {
+		const gooey = make({ title: 'still', storage: false, draggable: false, resizable: false })
+		const w = windowOf(gooey)!
+
+		expect(w.draggableInstance?.disabled).toBe(true)
+		expect(w.resizableInstance?.disabled).toBe(true)
+	})
+
+	test('a real click on an input reset button resets it', async () => {
+		const gooey = make({ title: 'still', storage: false, draggable: false, resizable: false })
+		const n = gooey.addNumber('n', 1, { min: 0, max: 10, step: 1 })
+		n.set(5)
+
+		await userEvent.click(n.elements.resetBtn)
+
+		expect(n.value).toBe(1)
 	})
 })

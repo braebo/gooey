@@ -371,6 +371,11 @@ export class Draggable {
 		this.x = startPosition.x
 		this.y = startPosition.y
 
+		// `disabled` was only ever read by the svelte action's `update`, so a Draggable built with
+		// `{ disabled: true }` (the window manager's stand-in when dragging is off) still captured
+		// every pointerdown on its node.
+		this.disabled = !!this.opts.disabled
+
 		// Prevents mobile touch-event jank.
 		this.node.style.setProperty('touch-action', 'none')
 
