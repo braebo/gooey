@@ -1,5 +1,20 @@
 # gooey
 
+## 0.6.0
+
+### Minor Changes
+
+- `bind()` and the `bind*` methods are typed by what they build and what they accept. ([`9adc98a`](https://github.com/braebo/gooey/commit/9adc98aa93730bc4e905d9ae303dcb0dd2e0864a))
+    - `bind()` and `add()` on a `string` field return `InputText | InputColor`: a color string like `'#ff0000'` builds an `InputColor` at runtime, which the type used to hide. A color-typed field (`'#ff0000'` as a literal, or a `ColorString` type) is still `InputColor`, and a text literal is still `InputText`.
+    - `bindNumber`, `bindText`, `bindSwitch`, `bindArray`, `bindButton`, `bindButtonGrid`, and `bindSelect` reject a field of another type at the type level, as `bindColor` does.
+    - `bindArray` returns `InputArray` typed by the field's items, and `bindSelect` returns `InputSelect` typed by the field.
+
+### Patch Changes
+
+- `ColorPicker` no longer throws when its deferred first draw lands after it was disposed. ([`3fca87a`](https://github.com/braebo/gooey/commit/3fca87a07792fb3baecd6cc39658e10baed9117a))
+
+- A gooey built with `draggable: false` no longer makes its whole panel a drag handle. The pointer capture that came with it swallowed clicks inside the panel, including the reset-to-default button on every input. `resizable: false` is honoured the same way. ([`35d93fa`](https://github.com/braebo/gooey/commit/35d93fab459e3945bc98d70b68933a57065abf6c))
+
 ## 0.5.0
 
 ### Minor Changes
