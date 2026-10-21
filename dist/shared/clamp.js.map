@@ -1,0 +1,1 @@
+{"version":3,"file":"clamp.js","names":[],"sources":["../../src/shared/clamp.ts"],"sourcesContent":["/**\n * Clamps a value between a min and max.\n */\nexport const clamp = (value: number, min: number, max: number) => {\n\treturn Math.max(Math.min(value, max), min)\n}\n"],"mappings":";;;;AAGA,MAAa,SAAS,OAAe,KAAa,QAAgB;AACjE,QAAO,KAAK,IAAI,KAAK,IAAI,OAAO,IAAI,EAAE,IAAI"}
