@@ -54,9 +54,9 @@
 		"sort": "bunx sort-package-json && cd www && pnpm dlx sort-package-json",
 		"sync-version": "changeset version && bunx sync-version jsr.json",
 		"test": "bun vitest --run --browser.headless",
-		"test:ui": "bun vitest --run",
+		"test:ui": "bun vitest --run --browser.headless=false",
 		"test:watch": "bun vitest --browser.headless",
-		"test:watch:ui": "bun vitest"
+		"test:watch:ui": "bun vitest --browser.headless=false"
 	},
 	"dependencies": {
 		"esm-env": "^1.2.2"

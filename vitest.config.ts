@@ -8,7 +8,7 @@ export default defineConfig({
 					name: 'gooey',
 					include: ['src/**/*.test.ts'],
 					browser: {
-						// headless: true,
+						headless: true,
 						provider: 'playwright',
 						enabled: true,
 						viewport: { width: 800, height: 1000 },
