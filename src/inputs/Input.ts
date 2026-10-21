@@ -7,6 +7,7 @@ import type { InputNumber, NumberInputOptions } from './InputNumber'
 // import type { InputEmpty, EmptyInputOptions } from './InputEmpty'
 import type { InputElement, ElementInputOptions } from './InputElement'
 import type { InputArray, ArrayInputOptions } from './InputArray'
+import type { InputBezier, BezierInputOptions } from './InputBezier'
 import type { InputColor, ColorInputOptions } from './InputColor'
 import type { InputText, TextInputOptions } from './InputText'
 
@@ -43,6 +44,7 @@ export const INPUT_TYPE_MAP = Object.freeze({
 	InputSwitch: 'SwitchInputOptions',
 	InputArray: 'ArrayInputOptions',
 	InputElement: 'ElementInputOptions',
+	InputBezier: 'BezierInputOptions',
 	// InputEmpty: 'EmptyInputOptions',
 })
 
@@ -185,6 +187,7 @@ export type ValidInputOptions =
 	| SwitchInputOptions
 	| ArrayInputOptions
 	| ElementInputOptions
+	| BezierInputOptions
 
 export type ValidInput =
 	| InputText
@@ -198,6 +201,7 @@ export type ValidInput =
 	| InputSwitch
 	| InputArray
 	| InputElement
+	| InputBezier
 
 export type InputEvents<T extends ValidInputValue = ValidInputValue> = {
 	/**

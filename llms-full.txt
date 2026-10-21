@@ -499,6 +499,17 @@ gooey.bind(data, 'size') // -> InputNumber
 gooey.bind(data, 'color') // -> InputColor
 ```
 
+A curve has no type of its own to infer — `[0.4, 0, 0.2, 1]` is just an array — so the bézier editor is added by name. Its value is `[x1, y1, x2, y2]`, and it takes a `'cubic-bezier(...)'` string or a CSS keyword too:
+
+```typescript
+const ease = gooey.addBezier('ease', [0.16, 1, 0.3, 1])
+
+el.style.transitionTimingFunction = bezierToString(ease.value) // 'cubic-bezier(0.16, 1, 0.3, 1)'
+const eased = cubicBezier(...ease.value) // (progress) => eased progress
+
+gooey.bindBezier({ ease: 'ease-out' }, 'ease') // a string field is written back as a string
+```
+
 <br>
 
 ## In an app
@@ -547,7 +558,7 @@ Other, similar projects:
 
 -   [ ] Graph / Monitor Input
 -   [ ] LFO / Envelope Manager
--   [ ] Bezier Curve Editor Input
+-   [x] Bezier Curve Editor Input
 -   [ ] Plugins
 -   [ ] Framework Wrappers (svelte 5 runes "just work", but other frameworks need wrappers)
 
@@ -2130,6 +2141,39 @@ const array = gui.addArray('Items', ['a', 'b', 'c'])
 array.on('change', console.log)
 ```
 
+##### addBezier()
+
+> **addBezier**(`title`, `value?`, `options?`): [`InputBezier`](#inputbezier)
+
+Adds a new [InputBezier](#inputbezier) to the folder: a cubic bézier curve editor whose value is
+`[x1, y1, x2, y2]`, the arguments of CSS `cubic-bezier()`.  Also takes a
+`'cubic-bezier(...)'` string or a CSS easing keyword like `'ease-out'`.
+
+###### Parameters
+
+###### title
+
+`string`
+
+###### value?
+
+[`BezierValue`](#beziervalue) \| [`BezierString`](#bezierstring)
+
+###### options?
+
+`Partial`\<[`BezierInputOptions`](#bezierinputoptions)\>
+
+###### Returns
+
+[`InputBezier`](#inputbezier)
+
+###### Example
+
+```ts
+const ease = gui.addBezier('ease', [0.16, 1, 0.3, 1])
+ease.on('change', ([x1, y1, x2, y2]) => console.log(x1, y1, x2, y2))
+```
+
 ##### addButton()
 
 > **addButton**(`title`, `onclick`, `options?`): [`InputButton`](#inputbutton)
@@ -2568,6 +2612,49 @@ Binds an [InputArray](#inputarray) to the array at the target object's key.
 ```ts
 const params = { items: ['a', 'b', 'c'] }
 const array = gui.bindArray(params, 'items')
+```
+
+##### bindBezier()
+
+> **bindBezier**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputBezier`](#inputbezier)
+
+Binds an [InputBezier](#inputbezier) to the curve at the target object's key.  The field keeps the
+shape it started in -- an `[x1, y1, x2, y2]` array stays an array, and a string is written
+back as a `cubic-bezier()` string.
+
+###### Type Parameters
+
+###### K
+
+`K` *extends* `PropertyKey`
+
+###### T
+
+`T` *extends* `Record`\<`K`, `string` \| `number`[] \| [`BezierValue`](#beziervalue)\>
+
+###### Parameters
+
+###### target
+
+`T`
+
+###### key
+
+`K`
+
+###### options?
+
+`Partial`\<[`BezierInputOptions`](#bezierinputoptions)\>
+
+###### Returns
+
+[`InputBezier`](#inputbezier)
+
+###### Example
+
+```ts
+const params = { ease: 'cubic-bezier(0.4, 0, 0.2, 1)' }
+gui.bindBezier(params, 'ease')
 ```
 
 ##### bindButton()
@@ -3827,6 +3914,43 @@ array.on('change', console.log)
 
 [`Folder`](#folder).[`addArray`](#addarray)
 
+##### addBezier()
+
+> **addBezier**(`title`, `value?`, `options?`): [`InputBezier`](#inputbezier)
+
+Adds a new [InputBezier](#inputbezier) to the folder: a cubic bézier curve editor whose value is
+`[x1, y1, x2, y2]`, the arguments of CSS `cubic-bezier()`.  Also takes a
+`'cubic-bezier(...)'` string or a CSS easing keyword like `'ease-out'`.
+
+###### Parameters
+
+###### title
+
+`string`
+
+###### value?
+
+[`BezierValue`](#beziervalue) \| [`BezierString`](#bezierstring)
+
+###### options?
+
+`Partial`\<[`BezierInputOptions`](#bezierinputoptions)\>
+
+###### Returns
+
+[`InputBezier`](#inputbezier)
+
+###### Example
+
+```ts
+const ease = gui.addBezier('ease', [0.16, 1, 0.3, 1])
+ease.on('change', ([x1, y1, x2, y2]) => console.log(x1, y1, x2, y2))
+```
+
+###### Inherited from
+
+`Pick.addBezier`
+
 ##### addButton()
 
 > **addButton**(`title`, `onclick`, `options?`): [`InputButton`](#inputbutton)
@@ -4294,6 +4418,53 @@ const array = gui.bindArray(params, 'items')
 ###### Inherited from
 
 `Pick.bindArray`
+
+##### bindBezier()
+
+> **bindBezier**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputBezier`](#inputbezier)
+
+Binds an [InputBezier](#inputbezier) to the curve at the target object's key.  The field keeps the
+shape it started in -- an `[x1, y1, x2, y2]` array stays an array, and a string is written
+back as a `cubic-bezier()` string.
+
+###### Type Parameters
+
+###### K
+
+`K` *extends* `PropertyKey`
+
+###### T
+
+`T` *extends* `Record`\<`K`, `string` \| `number`[] \| [`BezierValue`](#beziervalue)\>
+
+###### Parameters
+
+###### target
+
+`T`
+
+###### key
+
+`K`
+
+###### options?
+
+`Partial`\<[`BezierInputOptions`](#bezierinputoptions)\>
+
+###### Returns
+
+[`InputBezier`](#inputbezier)
+
+###### Example
+
+```ts
+const params = { ease: 'cubic-bezier(0.4, 0, 0.2, 1)' }
+gui.bindBezier(params, 'ease')
+```
+
+###### Inherited from
+
+`Pick.bindBezier`
 
 ##### bindButton()
 
@@ -6462,7 +6633,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -6472,7 +6643,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `ArrayState`\<`T`\>
 
-A [State](#state-9) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -6600,7 +6771,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -6851,6 +7022,662 @@ Removes the disabled state from the input and any associated controllers.
 
 ***
 
+### InputBezier
+
+A cubic bézier curve editor: a graph with two draggable control points, a field for each of the
+four numbers, and a dropdown of named easings.  Its value is `[x1, y1, x2, y2]`, the arguments
+of CSS `cubic-bezier()`; it also accepts a `'cubic-bezier(...)'` string or a CSS easing keyword.
+
+A field bound with [\`bindBezier\`](#bindbezier) keeps the shape it started in -- an
+array stays an array, a string is written back as a `cubic-bezier()` string.
+
+#### Example
+
+```ts
+const ease = gooey.addBezier('ease', [0.16, 1, 0.3, 1])
+ease.on('change', v => (el.style.transitionTimingFunction = bezierToString(v)))
+
+const params = { ease: 'cubic-bezier(0.4, 0, 0.2, 1)' }
+gooey.bindBezier(params, 'ease')
+```
+
+#### Extends
+
+- `Input`\<[`BezierValue`](#beziervalue), [`BezierInputOptions`](#bezierinputoptions), `BezierInputElements`\>
+
+#### Properties
+
+##### \_\_type
+
+> `readonly` **\_\_type**: `"InputBezier"`
+
+###### Overrides
+
+`Input.__type`
+
+##### bound
+
+> **bound**: `boolean` = `false`
+
+Whether the input was initialized with a bind target/key.
+
+###### Default
+
+```ts
+false
+```
+
+###### Inherited from
+
+`Input.bound`
+
+##### bubble
+
+> **bubble**: `boolean` = `false`
+
+Whether the controllers should bubble their events up to the input and it's listeners.
+If false, the next update will be silent, after which the flag will be reset to true.
+
+###### Inherited from
+
+`Input.bubble`
+
+##### elements
+
+> **elements**: `object`
+
+All HTMLElement's created by this input.
+
+###### container
+
+> **container**: `HTMLElement`
+
+###### content
+
+> **content**: `HTMLElement`
+
+###### controllers
+
+> **controllers**: `BezierInputElements`
+
+###### drawer
+
+> **drawer**: `HTMLElement`
+
+###### drawerToggle
+
+> **drawerToggle**: `HTMLElement` & `object`
+
+###### Type Declaration
+
+###### tooltip
+
+> **tooltip**: [`Tooltip`](#tooltip)
+
+###### resetBtn
+
+> **resetBtn**: `HTMLElement`
+
+###### title
+
+> **title**: `HTMLElement`
+
+###### Inherited from
+
+`Input.elements`
+
+##### folder
+
+> **folder**: [`Folder`](#folder)
+
+###### Inherited from
+
+`Input.folder`
+
+##### id
+
+> **id**: `string`
+
+Unique identifier for the input. Also used for saving and loading presets.
+
+###### Default
+
+`<folder_title>:<input_type>:<input_title>`
+
+###### Inherited from
+
+`Input.id`
+
+##### initialValue
+
+> **initialValue**: [`BezierValue`](#beziervalue)
+
+The initial value of the input when it was created, used for things like dirty checking and
+the "reset to default" button.
+
+###### Overrides
+
+`Input.initialValue`
+
+##### listen
+
+> **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
+
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-6) is called.
+
+###### Type Parameters
+
+###### TTarget
+
+`TTarget` *extends* `Window` \| `Document` \| `Element`
+
+###### TEventName
+
+`TEventName` *extends* `string` & `object` \| keyof GlobalEventHandlersEventMap
+
+###### TEventInstance
+
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
+
+###### Parameters
+
+###### element
+
+`TTarget`
+
+The element to add the listener to.
+
+###### event
+
+`TEventName`
+
+The event to listen for.
+
+###### callback
+
+(`e`) => `void`
+
+The callback function to execute when the event is fired.
+
+###### options?
+
+`AddEventListenerOptions`
+
+Optional event listener options.
+
+###### groupId?
+
+`string`
+
+Optional group ID to add the listener to (for batch removal).
+
+###### Returns
+
+`string`
+
+###### Inherited from
+
+`Input.listen`
+
+##### numberControllers
+
+> **numberControllers**: `NumberController`\<`ValidInput`, `InputOptions`\>[] = `[]`
+
+The four number fields, in `[x1, y1, x2, y2]` order.
+
+##### on
+
+> **on**: \<`K`\>(`event`, `callback`) => `string`
+
+Register a new event listener.
+
+###### Type Parameters
+
+###### K
+
+`K` *extends* keyof `InputEvents`\<[`BezierValue`](#beziervalue)\>
+
+###### Parameters
+
+###### event
+
+`K`
+
+The name of the event to listen for.
+
+###### callback
+
+`EventCallback`\<`InputEvents`\<[`BezierValue`](#beziervalue)\>\[`K`\]\>
+
+The callback function to execute when the event is fired.
+
+###### Returns
+
+`string`
+
+The ID of the listener (for use via unlisten to remove the listener).
+
+###### Inherited from
+
+`Input.on`
+
+##### opts
+
+> `readonly` **opts**: [`BezierInputOptions`](#bezierinputoptions) & `object`
+
+The options object used to create this input.  More specifically, the input's default
+options merged with the options passed by the consumer.
+
+###### Type Declaration
+
+###### \_\_type
+
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+
+###### Inherited from
+
+`Input.opts`
+
+##### selectController?
+
+> `optional` **selectController?**: `Select`\<[`BezierValue`](#beziervalue)\>
+
+The dropdown of named easings, absent when `easings` is `false`.
+
+##### state
+
+> `readonly` **state**: `ArrayState`\<`number`\>
+
+A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+to with State.subscribe to listen for changes.
+
+###### Overrides
+
+`Input.state`
+
+#### Accessors
+
+##### description
+
+###### Get Signature
+
+> **get** **description**(): `string`
+
+The description of the input, displayed when hovering over the thin
+tab element found on the far left of the input's row.
+
+###### Returns
+
+`string`
+
+###### Set Signature
+
+> **set** **description**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`string` \| (() => `string`)
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.description`
+
+##### disabled
+
+###### Get Signature
+
+> **get** **disabled**(): `boolean`
+
+Whether the input is disabled (non-interactive / dimmed).
+
+For dynamic disabled states, assign this to a function and it will be called whenever
+[refresh](#refresh-3) is called.  Keep in mind that calling [enable](#enable-1) or [disable](#disable-1)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-3).
+
+###### Returns
+
+`boolean`
+
+###### Set Signature
+
+> **set** **disabled**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`boolean` \| (() => `boolean`)
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.disabled`
+
+##### element
+
+###### Get Signature
+
+> **get** **element**(): `HTMLElement`
+
+The main Element.  Usually a container div for the rest of the Input's
+Input.elements\|\`elements\`.
+
+###### Returns
+
+`HTMLElement`
+
+###### Inherited from
+
+`Input.element`
+
+##### hidden
+
+###### Get Signature
+
+> **get** **hidden**(): `boolean`
+
+Completely hides the Input from view when set to `true`.
+
+###### Returns
+
+`boolean`
+
+###### Set Signature
+
+> **set** **hidden**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`boolean` \| (() => `boolean`)
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.hidden`
+
+##### index
+
+###### Get Signature
+
+> **get** **index**(): `number`
+
+The index of the input in the folder relative to other inputs.  Setting or changing this
+value will update the input's [\`element\`](#element-6)'s order style property.
+
+###### Returns
+
+`number`
+
+###### Set Signature
+
+> **set** **index**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`number`
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.index`
+
+##### title
+
+###### Get Signature
+
+> **get** **title**(): `string`
+
+The title displayed on this Input's label.
+
+###### Returns
+
+`string`
+
+###### Set Signature
+
+> **set** **title**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`string`
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.title`
+
+##### undoManager
+
+###### Get Signature
+
+> **get** **undoManager**(): `UndoManager` \| `undefined`
+
+###### Returns
+
+`UndoManager` \| `undefined`
+
+###### Inherited from
+
+`Input.undoManager`
+
+##### value
+
+###### Get Signature
+
+> **get** **value**(): `TValueType`
+
+###### Returns
+
+`TValueType`
+
+###### Set Signature
+
+> **set** **value**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`TValueType`
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.value`
+
+#### Methods
+
+##### commit()
+
+> **commit**(`commit`): `void`
+
+Commits a change to the input's value to the undo manager.
+
+###### Parameters
+
+###### commit
+
+`Partial`\<`Commit`\>
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.commit`
+
+##### disable()
+
+> **disable**(): [`InputBezier`](#inputbezier)
+
+Disables the input and any associated controllers. A disabled input can't be interacted
+with, and its state can't be changed.
+
+###### Returns
+
+[`InputBezier`](#inputbezier)
+
+###### Inherited from
+
+`Input.disable`
+
+##### dispose()
+
+> **dispose**(): `void`
+
+###### Returns
+
+`void`
+
+###### Overrides
+
+`Input.dispose`
+
+##### emit()
+
+> **emit**(`event`, `v?`): [`InputBezier`](#inputbezier)
+
+Called from subclasses at the end of their `set` method to emit the `change` event.
+
+###### Parameters
+
+###### event
+
+keyof `InputEvents`\<[`BezierValue`](#beziervalue)\>
+
+###### v?
+
+[`BezierValue`](#beziervalue) = `...`
+
+###### Returns
+
+[`InputBezier`](#inputbezier)
+
+###### Inherited from
+
+`Input.emit`
+
+##### enable()
+
+> **enable**(): [`InputBezier`](#inputbezier)
+
+Removes the disabled state from the input and any associated controllers.
+
+###### Returns
+
+[`InputBezier`](#inputbezier)
+
+###### Inherited from
+
+`Input.enable`
+
+##### load()
+
+> **load**(`json`): `void`
+
+###### Parameters
+
+###### json
+
+`string` \| `InputPreset`\<[`BezierInputOptions`](#bezierinputoptions)\>
+
+###### Returns
+
+`void`
+
+###### Overrides
+
+`Input.load`
+
+##### refresh()
+
+> **refresh**(`v?`): `this`
+
+Refreshes the value of any controllers to match the current input state.
+
+###### Parameters
+
+###### v?
+
+[`BezierValue`](#beziervalue)
+
+###### Returns
+
+`this`
+
+###### Overrides
+
+`Input.refresh`
+
+##### save()
+
+> **save**(`overrides?`): `Omit`\<`InputOptions`\<`any`, `Record`\<`any`, `any`\>\>, `"title"` \| `"saveable"`\> & `object` & `Partial`\<`InputPreset`\<[`BezierInputOptions`](#bezierinputoptions)\>\>
+
+###### Parameters
+
+###### overrides?
+
+`Partial`\<`InputPreset`\<[`BezierInputOptions`](#bezierinputoptions)\>\> = `{}`
+
+###### Returns
+
+`Omit`\<`InputOptions`\<`any`, `Record`\<`any`, `any`\>\>, `"title"` \| `"saveable"`\> & `object` & `Partial`\<`InputPreset`\<[`BezierInputOptions`](#bezierinputoptions)\>\>
+
+###### Overrides
+
+`Input.save`
+
+##### set()
+
+> **set**(`v`): `this`
+
+Sets the curve.  Takes `[x1, y1, x2, y2]`, a `'cubic-bezier(...)'` string, or a CSS easing
+keyword; `x1` and `x2` are clamped into `0..1`.
+
+###### Parameters
+
+###### v
+
+`number`[] \| [`BezierValue`](#beziervalue) \| [`BezierString`](#bezierstring) \| readonly \[`number`, `number`, `number`, `number`\]
+
+###### Returns
+
+`this`
+
+###### Overrides
+
+`Input.set`
+
+***
+
 ### InputButton
 
 #### Extends
@@ -6979,7 +7806,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-6) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-7) is called.
 
 ###### Type Parameters
 
@@ -7086,7 +7913,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -7096,7 +7923,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `PrimitiveState`\<`ButtonController`\>
 
-A [State](#state-9) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -7145,8 +7972,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-3) is called.  Keep in mind that calling [enable](#enable-1) or [disable](#disable-1)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-3).
+[refresh](#refresh-4) is called.  Keep in mind that calling [enable](#enable-2) or [disable](#disable-2)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-4).
 
 ###### Returns
 
@@ -7224,7 +8051,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -7645,7 +8472,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-7) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-8) is called.
 
 ###### Type Parameters
 
@@ -7748,7 +8575,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -7822,8 +8649,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-4) is called.  Keep in mind that calling [enable](#enable-2) or [disable](#disable-2)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-4).
+[refresh](#refresh-5) is called.  Keep in mind that calling [enable](#enable-3) or [disable](#disable-3)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-5).
 
 ###### Returns
 
@@ -7901,7 +8728,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -8359,7 +9186,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-8) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-9) is called.
 
 ###### Type Parameters
 
@@ -8462,7 +9289,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -8478,7 +9305,7 @@ The color picker instance.
 
 > **state**: `PrimitiveState`\<[`Color`](#color)\>
 
-A [State](#state-9) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -8527,8 +9354,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-5) is called.  Keep in mind that calling [enable](#enable-3) or [disable](#disable-3)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-5).
+[refresh](#refresh-6) is called.  Keep in mind that calling [enable](#enable-4) or [disable](#disable-4)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-6).
 
 ###### Returns
 
@@ -8606,7 +9433,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -9052,7 +9879,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-9) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-10) is called.
 
 ###### Type Parameters
 
@@ -9155,7 +9982,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -9165,7 +9992,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `UnionState`\<[`ElementContent`](#elementcontent)\>
 
-A [State](#state-9) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -9226,8 +10053,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-6) is called.  Keep in mind that calling [enable](#enable-4) or [disable](#disable-4)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-6).
+[refresh](#refresh-7) is called.  Keep in mind that calling [enable](#enable-5) or [disable](#disable-5)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-7).
 
 ###### Returns
 
@@ -9305,7 +10132,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -9700,7 +10527,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-10) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-11) is called.
 
 ###### Type Parameters
 
@@ -9811,7 +10638,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -9821,7 +10648,7 @@ options merged with the options passed by the consumer.
 
 > **state**: `PrimitiveState`\<`number`\>
 
-A [State](#state-9) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -9870,8 +10697,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-7) is called.  Keep in mind that calling [enable](#enable-5) or [disable](#disable-5)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-7).
+[refresh](#refresh-8) is called.  Keep in mind that calling [enable](#enable-6) or [disable](#disable-6)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-8).
 
 ###### Returns
 
@@ -9949,7 +10776,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -10336,7 +11163,7 @@ The currently selected option as a labeled option.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-11) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-12) is called.
 
 ###### Type Parameters
 
@@ -10475,7 +11302,7 @@ If neither exist, an error will be thrown.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -10497,7 +11324,7 @@ automatically updated with the raw value.
 
 ##### state
 
-> **state**: [`State`](#state-9)\<`TValueType`\>
+> **state**: [`State`](#state-10)\<`TValueType`\>
 
 Reactive state containing the raw value (T, not LabeledOption<T>).
 This is automatically kept in sync with `selected`.
@@ -10549,8 +11376,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-8) is called.  Keep in mind that calling [enable](#enable-6) or [disable](#disable-6)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-8).
+[refresh](#refresh-9) is called.  Keep in mind that calling [enable](#enable-7) or [disable](#disable-7)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-9).
 
 ###### Returns
 
@@ -10628,7 +11455,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -11148,7 +11975,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-12) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-13) is called.
 
 ###### Type Parameters
 
@@ -11251,7 +12078,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -11261,7 +12088,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `UnionState`\<`boolean`\>
 
-A [State](#state-9) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -11310,8 +12137,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-9) is called.  Keep in mind that calling [enable](#enable-7) or [disable](#disable-7)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-9).
+[refresh](#refresh-10) is called.  Keep in mind that calling [enable](#enable-8) or [disable](#disable-8)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-10).
 
 ###### Returns
 
@@ -11389,7 +12216,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -11774,7 +12601,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-13) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-14) is called.
 
 ###### Type Parameters
 
@@ -11877,7 +12704,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
 
 ###### Inherited from
 
@@ -11887,7 +12714,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `PrimitiveState`\<`string`\>
 
-A [State](#state-9) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -11936,8 +12763,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-10) is called.  Keep in mind that calling [enable](#enable-8) or [disable](#disable-8)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-10).
+[refresh](#refresh-11) is called.  Keep in mind that calling [enable](#enable-9) or [disable](#disable-9)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-11).
 
 ###### Returns
 
@@ -12015,7 +12842,7 @@ Completely hides the Input from view when set to `true`.
 > **get** **index**(): `number`
 
 The index of the input in the folder relative to other inputs.  Setting or changing this
-value will update the input's [\`element\`](#element-5)'s order style property.
+value will update the input's [\`element\`](#element-6)'s order style property.
 
 ###### Returns
 
@@ -12951,6 +13778,118 @@ small note is displayed instead.  They remain part of the array's value.
 
 ***
 
+### BezierInputOptions
+
+> **BezierInputOptions** = `InputOptions`\<[`BezierValue`](#beziervalue)\> & `object`
+
+#### Type Declaration
+
+##### \_\_type?
+
+> `readonly` `optional` **\_\_type?**: `"BezierInputOptions"`
+
+##### easings?
+
+> `optional` **easings?**: `Record`\<`string`, [`BezierValue`](#beziervalue)\> \| `false`
+
+The named curves in the input's dropdown.  Picking one sets the curve; hovering one in the
+open dropdown previews it.  `false` hides the dropdown.
+
+###### Default
+
+[BEZIER\_EASINGS](#bezier_easings)
+
+##### preview?
+
+> `optional` **preview?**: `boolean`
+
+Whether a dot runs along the curve after each change, to show how the easing feels.
+
+###### Default
+
+```ts
+true
+```
+
+##### previewDuration?
+
+> `optional` **previewDuration?**: `number`
+
+How long one `preview` run lasts, in milliseconds.
+
+###### Default
+
+```ts
+750
+```
+
+##### step?
+
+> `optional` **step?**: `number`
+
+The increment a drag snaps to, and the step of the number fields.  Hold `shift` while
+dragging a control point to snap to `0.05`.
+
+###### Default
+
+```ts
+0.01
+```
+
+##### yMax?
+
+> `optional` **yMax?**: `number`
+
+The highest `y` a control point can be dragged to.  Above `1` makes room for overshoot
+("back") curves.
+
+###### Default
+
+```ts
+1.5
+```
+
+##### yMin?
+
+> `optional` **yMin?**: `number`
+
+The lowest `y` a control point can be dragged to.  Below `0` makes room for anticipation
+curves.  Only dragging is clamped -- `set` takes any `y`, as CSS does.
+
+###### Default
+
+```ts
+-0.5
+```
+
+***
+
+### BezierKeyword
+
+> **BezierKeyword** = `"linear"` \| `"ease"` \| `"ease-in"` \| `"ease-out"` \| `"ease-in-out"`
+
+The CSS easing keywords that are cubic béziers.
+
+***
+
+### BezierString
+
+> **BezierString** = `` `cubic-bezier(${string})` `` \| [`BezierKeyword`](#bezierkeyword)
+
+A CSS easing string an [InputBezier](#inputbezier) accepts in place of a [BezierValue](#beziervalue):
+`'cubic-bezier(0.25, 0.1, 0.25, 1)'`, or one of the [BezierKeyword](#bezierkeyword)s.
+
+***
+
+### BezierValue
+
+> **BezierValue** = \[`number`, `number`, `number`, `number`\]
+
+The control points of a cubic bézier easing curve, `[x1, y1, x2, y2]` -- the four arguments of
+CSS `cubic-bezier()`.  The curve runs from `(0, 0)` to `(1, 1)`.
+
+***
+
 ### ButtonGridInputOptions
 
 > **ButtonGridInputOptions** = `object` & `InputOptions`\<`ButtonGridArrays`\>
@@ -13471,6 +14410,15 @@ undefined
 
 ## Variables
 
+### BEZIER\_EASINGS
+
+> `const` **BEZIER\_EASINGS**: `Readonly`\<\{ `ease`: readonly \[`0.25`, `0.1`, `0.25`, `1`\]; `ease-in`: readonly \[`0.42`, `0`, `1`, `1`\]; `ease-in-out`: readonly \[`0.42`, `0`, `0.58`, `1`\]; `ease-out`: readonly \[`0`, `0`, `0.58`, `1`\]; `linear`: readonly \[`0`, `0`, `1`, `1`\]; `out-back`: readonly \[`0.34`, `1.56`, `0.64`, `1`\]; `out-expo`: readonly \[`0.16`, `1`, `0.3`, `1`\]; `out-quint`: readonly \[`0.22`, `1`, `0.36`, `1`\]; \}\>
+
+The curves offered by default in an [InputBezier](#inputbezier)'s dropdown: the CSS keywords, plus a few
+common out-curves.
+
+***
+
 ### GUI\_DEFAULTS
 
 > `const` **GUI\_DEFAULTS**: `object`
@@ -13657,6 +14605,69 @@ The default values for [GooeyOptions](#gooeyoptions).
 
 ## Functions
 
+### bezierToString()
+
+> **bezierToString**(`v`): `` `cubic-bezier(${string})` ``
+
+Renders a [BezierValue](#beziervalue) as a CSS `cubic-bezier()` string.
+
+#### Parameters
+
+##### v
+
+readonly \[`number`, `number`, `number`, `number`\]
+
+#### Returns
+
+`` `cubic-bezier(${string})` ``
+
+***
+
+### cubicBezier()
+
+> **cubicBezier**(`x1`, `y1`, `x2`, `y2`): (`t`) => `number`
+
+Creates an easing function from the control points of a cubic bézier curve, the same curve CSS
+draws for `cubic-bezier(x1, y1, x2, y2)`.  The curve starts at `(0, 0)` and ends at `(1, 1)`;
+the returned function maps a progress `t` in `0..1` to the curve's `y` at `x = t`.
+
+`x1` and `x2` must be in `0..1` (as in CSS) for the curve to be a function of `x`; `y1` and `y2`
+can overshoot for back / anticipate style easings.
+
+#### Parameters
+
+##### x1
+
+`number`
+
+##### y1
+
+`number`
+
+##### x2
+
+`number`
+
+##### y2
+
+`number`
+
+#### Returns
+
+(`t`) => `number`
+
+#### Example
+
+```ts
+const ease = cubicBezier(0.25, 0.1, 0.25, 1)
+ease(0.5) // ~0.8
+
+// A value from an `InputBezier` spreads straight in:
+const curve = cubicBezier(...gooey.addBezier('ease', [0.16, 1, 0.3, 1]).value)
+```
+
+***
+
 ### isColor()
 
 > **isColor**(`color`): `color is Color`
@@ -13767,7 +14778,7 @@ const agentDoor = registerWebMCP(gooey)
 
 ### state()
 
-> **state**\<`T`\>(`defaultValue`, `options?`): [`State`](#state-9)\<`T`\>
+> **state**\<`T`\>(`defaultValue`, `options?`): [`State`](#state-10)\<`T`\>
 
 An advanced store factory with additional features:
 
@@ -13798,7 +14809,7 @@ StateOptions
 
 #### Returns
 
-[`State`](#state-9)\<`T`\>
+[`State`](#state-10)\<`T`\>
 
 #### Example
 
@@ -13820,6 +14831,25 @@ StateOptions
 
 <h1>{$foo} {$bar} {$baz}</h1>
 ```
+
+***
+
+### toBezier()
+
+> **toBezier**(`v`): [`BezierValue`](#beziervalue)
+
+Normalizes a [BezierValue](#beziervalue) or [BezierString](#bezierstring) into a fresh `[x1, y1, x2, y2]` array,
+clamping `x1` and `x2` into `0..1`.  Throws on anything else.
+
+#### Parameters
+
+##### v
+
+`unknown`
+
+#### Returns
+
+[`BezierValue`](#beziervalue)
 
 ***
 

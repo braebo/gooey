@@ -2279,6 +2279,123 @@ input.gooey-search-input {
 		height: unset;
 	}
 
+	&:has(.gooey-input-bezier-container) {
+		height: unset;
+	}
+
+	.gooey-input-content {
+		//? Bezier Input
+		.gooey-input-bezier-container {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+
+			width: 100%;
+			padding: 0.25rem 0;
+
+			.gooey-input-bezier-select {
+				height: 1.25rem;
+			}
+
+			.gooey-input-bezier-graph {
+				display: block;
+				width: 100%;
+				aspect-ratio: 1;
+				overflow: hidden;
+
+				background: var(--gooey-controller-dim_background);
+				border-radius: var(--gooey-radius-sm);
+				outline: var(--gooey-controller_outline);
+
+				touch-action: none;
+				user-select: none;
+				-webkit-user-select: none;
+
+				transition-duration: var(--gooey-transition-duration);
+				transition-property: background;
+
+				&:hover,
+				&.dragging {
+					background: var(--gooey-controller_background);
+				}
+				&.dragging {
+					cursor: grabbing;
+				}
+			}
+
+			.gooey-input-bezier-frame {
+				fill: none;
+				stroke: var(--gooey-bg-d);
+				stroke-width: 1;
+				stroke-dasharray: 2 3;
+			}
+
+			.gooey-input-bezier-diagonal {
+				stroke: var(--gooey-bg-d);
+				stroke-width: 1;
+				opacity: 0.5;
+			}
+
+			.gooey-input-bezier-arm {
+				stroke: var(--gooey-fg-d);
+				stroke-width: 1;
+				opacity: 0.6;
+			}
+
+			.gooey-input-bezier-curve {
+				fill: none;
+				stroke: var(--gooey-theme-a);
+				stroke-width: 2;
+				stroke-linecap: round;
+			}
+
+			.gooey-input-bezier-anchor {
+				fill: var(--gooey-fg-d);
+			}
+
+			.gooey-input-bezier-handle {
+				fill: var(--gooey-bg-a);
+				stroke: var(--gooey-fg-c);
+				stroke-width: 1.5;
+				cursor: grab;
+
+				transition-duration: var(--gooey-transition-duration);
+				transition-property: fill, stroke;
+
+				&:hover,
+				&.active {
+					fill: var(--gooey-theme-a);
+					stroke: var(--gooey-theme-a);
+				}
+			}
+
+			.gooey-input-bezier-dot {
+				fill: var(--gooey-theme-a);
+				opacity: 0;
+				pointer-events: none;
+				transition: opacity 0.2s;
+			}
+
+			.previewing .gooey-input-bezier-dot {
+				opacity: 1;
+				transition: none;
+			}
+
+			.gooey-input-bezier-fields {
+				display: grid;
+				grid-template-columns: repeat(4, minmax(0, 1fr));
+				gap: 0.25rem;
+
+				.gooey-controller-number {
+					min-width: 0;
+					max-width: unset;
+					text-align: center;
+					font-size: calc(var(--gooey-font-size) * 0.75);
+				}
+			}
+		}
+	}
+
 	.gooey-input-content {
 		//? ButtonGrid Input
 		.gooey-input-buttongrid-container {

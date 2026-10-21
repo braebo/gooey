@@ -26,6 +26,12 @@ import { InputArray, type ArrayInputOptions } from './inputs/InputArray'
 import { InputText, type TextInputOptions } from './inputs/InputText'
 import { InputElement, type ElementInputOptions, type ElementContent } from './inputs/InputElement'
 import {
+	InputBezier,
+	type BezierInputOptions,
+	type BezierString,
+	type BezierValue,
+} from './inputs/InputBezier'
+import {
 	InputButtonGrid,
 	type ButtonGridInputOptions,
 	type ButtonGridArrays,
@@ -1947,6 +1953,44 @@ export class Folder {
 		const input = new InputElement(opts, this)
 		return this._registerInput(input, opts.presetId)
 	}
+
+	/**
+	 * Adds a new {@link InputBezier} to the folder: a cubic bézier curve editor whose value is
+	 * `[x1, y1, x2, y2]`, the arguments of CSS `cubic-bezier()`.  Also takes a
+	 * `'cubic-bezier(...)'` string or a CSS easing keyword like `'ease-out'`.
+	 * @example
+	 * ```ts
+	 * const ease = gui.addBezier('ease', [0.16, 1, 0.3, 1])
+	 * ease.on('change', ([x1, y1, x2, y2]) => console.log(x1, y1, x2, y2))
+	 * ```
+	 */
+	addBezier(
+		title: string,
+		value?: BezierValue | BezierString,
+		options?: Partial<BezierInputOptions>,
+	): InputBezier {
+		const opts = this._resolveOpts(title, value as BezierValue | undefined, options)
+		const input = new InputBezier(opts, this)
+		return this._registerInput(input, opts.presetId)
+	}
+	/**
+	 * Binds an {@link InputBezier} to the curve at the target object's key.  The field keeps the
+	 * shape it started in -- an `[x1, y1, x2, y2]` array stays an array, and a string is written
+	 * back as a `cubic-bezier()` string.
+	 * @example
+	 * ```ts
+	 * const params = { ease: 'cubic-bezier(0.4, 0, 0.2, 1)' }
+	 * gui.bindBezier(params, 'ease')
+	 * ```
+	 */
+	bindBezier<K extends PropertyKey, T extends Record<K, BezierValue | number[] | string>>(
+		target: T,
+		key: K,
+		options?: Partial<BezierInputOptions>,
+	): InputBezier {
+		const opts = this._resolveBinding(target, key, options)
+		return this.addBezier(opts.title, opts.value as BezierValue, opts)
+	}
 	//#endregion Adders
 
 	//#region Helpers ························································¬
@@ -2035,6 +2079,8 @@ export class Folder {
 				return new InputButtonGrid(options as ButtonGridInputOptions, this)
 			case 'InputArray':
 				return new InputArray(options as ArrayInputOptions, this)
+			case 'InputBezier':
+				return new InputBezier(options as BezierInputOptions, this)
 		}
 
 		throw new Error('Invalid input type: ' + type + ' for options: ' + options)
@@ -2074,6 +2120,11 @@ export class Folder {
 
 		if ('onClick' in options) {
 			return 'InputButton'
+		}
+
+		// A curve is a 4-number array (or a string) like any other -- only an explicit type says bezier.
+		if (options.__type === 'BezierInputOptions') {
+			return 'InputBezier'
 		}
 
 		// Check for inline { value, options } pattern before other checks.

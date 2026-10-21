@@ -5,12 +5,14 @@ import type { InputSwitch } from './inputs/InputSwitch'
 import type { InputButton } from './inputs/InputButton'
 import type { InputColor } from './inputs/InputColor'
 import type { InputArray } from './inputs/InputArray'
+import type { InputBezier } from './inputs/InputBezier'
 import type { InputText } from './inputs/InputText'
 import type { ColorFormat } from './shared/color/types/colorFormat'
 import type { ValidInput } from './inputs/Input'
 import type { Folder } from './Folder'
 import type { Gooey } from './Gooey'
 
+import { bezierToString } from './inputs/InputBezier'
 import { Logger } from './shared/logger'
 
 //· WebMCP types ······································································¬
@@ -477,6 +479,20 @@ function toolsFor(target: Target, name: string): WebMCPTool[] {
 				v => (input as InputArray).set(Array.isArray(v) ? v : [v]),
 			)
 
+		case 'InputBezier':
+			return setter(
+				'easing curve',
+				{
+					type: 'array',
+					items: { type: 'number' },
+					minItems: 4,
+					maxItems: 4,
+					description:
+						'The cubic-bezier control points [x1, y1, x2, y2]; x1 and x2 within 0..1, i.e. [0.42, 0, 0.58, 1].',
+				},
+				v => (input as InputBezier).set(v),
+			)
+
 		case 'InputButton':
 			return [
 				{
@@ -539,6 +555,9 @@ function readValue(input: ValidInput): string {
 			const active = [...(input as InputButtonGrid).active]
 			return active.length ? active.join(', ') : '(none active)'
 		}
+
+		case 'InputBezier':
+			return bezierToString((input as InputBezier).value)
 
 		case 'InputArray':
 			return truncate(JSON.stringify((input as InputArray).state.value))

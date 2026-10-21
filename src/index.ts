@@ -34,6 +34,15 @@ export type { InputColor, ColorInputOptions } from './inputs/InputColor'
 export type { InputArray, ArrayInputOptions } from './inputs/InputArray'
 export type { InputElement, ElementInputOptions, ElementContent } from './inputs/InputElement'
 export type { InputText, TextInputOptions } from './inputs/InputText'
+export type {
+	InputBezier,
+	BezierInputOptions,
+	BezierValue,
+	BezierString,
+	BezierKeyword,
+} from './inputs/InputBezier'
+export { BEZIER_EASINGS, bezierToString, toBezier } from './inputs/InputBezier'
+export { cubicBezier } from './shared/cubicBezier'
 
 // Shared
 

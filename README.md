@@ -499,6 +499,17 @@ gooey.bind(data, 'size') // -> InputNumber
 gooey.bind(data, 'color') // -> InputColor
 ```
 
+A curve has no type of its own to infer — `[0.4, 0, 0.2, 1]` is just an array — so the bézier editor is added by name. Its value is `[x1, y1, x2, y2]`, and it takes a `'cubic-bezier(...)'` string or a CSS keyword too:
+
+```typescript
+const ease = gooey.addBezier('ease', [0.16, 1, 0.3, 1])
+
+el.style.transitionTimingFunction = bezierToString(ease.value) // 'cubic-bezier(0.16, 1, 0.3, 1)'
+const eased = cubicBezier(...ease.value) // (progress) => eased progress
+
+gooey.bindBezier({ ease: 'ease-out' }, 'ease') // a string field is written back as a string
+```
+
 <br>
 
 ## In an app
@@ -547,6 +558,6 @@ Other, similar projects:
 
 -   [ ] Graph / Monitor Input
 -   [ ] LFO / Envelope Manager
--   [ ] Bezier Curve Editor Input
+-   [x] Bezier Curve Editor Input
 -   [ ] Plugins
 -   [ ] Framework Wrappers (svelte 5 runes "just work", but other frameworks need wrappers)
