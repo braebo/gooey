@@ -84,20 +84,21 @@ export class PresetManager {
 		this._log.fn('constructor').debug({ options, this: this })
 
 		this.opts = options
-		this.opts.localStorageKey ??= 'gooey::presets'
+		// No key, no storage — as documented on `localStorageKey`.  A fallback key here used to be
+		// shared by every gooey whose `storage.presets` was off, so one gooey's active preset was
+		// loaded into another on construction, `hidden` included: a gooey born hidden came up shown.
 		const storageKey = this.opts.localStorageKey
 
-		this._validateVersion(storageKey)
+		if (storageKey) this._validateVersion(storageKey)
 
-		this.activePreset = state(this.opts.defaultPreset ?? ({} as GooeyPreset), {
-			key: storageKey + '::active',
-		})
+		this.activePreset = state(
+			this.opts.defaultPreset ?? ({} as GooeyPreset),
+			storageKey ? { key: storageKey + '::active' } : undefined,
+		)
 
 		this._log.fn('constructor').debug('activePreset', this.activePreset.value)
 
-		this.presets = state(this.opts.presets ?? [], {
-			key: storageKey,
-		})
+		this.presets = state(this.opts.presets ?? [], storageKey ? { key: storageKey } : undefined)
 
 		if (this.opts.autoInit !== false) {
 			this.init()
