@@ -85,7 +85,32 @@ const MODIFIER_KEY_DATA = {
 		}
 	}
 };
+/**
+* The `<input>` types that hold editable text, and so carry the browser's own undo stack. A
+* range, checkbox or colour well has none: Cmd/Ctrl+Z there belongs to gooey's undo.
+*/
+const TEXT_INPUT_TYPES = new Set([
+	"text",
+	"search",
+	"url",
+	"tel",
+	"email",
+	"password",
+	"number"
+]);
+/**
+* `true` when a keyboard event comes from a field with its own native text undo: a writable
+* `<textarea>`, a text-type `<input>`, or a `contenteditable` element.  Read through
+* `composedPath()`, so a field inside a shadow root is still seen from a `window` listener.
+*/
+function isEditableTextTarget(event) {
+	const target = event.composedPath?.()[0] ?? event.target;
+	if (!target || typeof target !== "object") return false;
+	if (target instanceof HTMLTextAreaElement) return !target.readOnly && !target.disabled;
+	if (target instanceof HTMLInputElement) return !target.readOnly && !target.disabled && TEXT_INPUT_TYPES.has(target.type);
+	return Boolean(target.isContentEditable);
+}
 
 //#endregion
-export { modIcon, modKey };
+export { isEditableTextTarget, modIcon, modKey };
 //# sourceMappingURL=keys.js.map

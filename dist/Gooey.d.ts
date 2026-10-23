@@ -359,6 +359,14 @@ declare class Gooey {
    * @internal
    */
   _undoManager: UndoManager;
+  /**
+   * Cmd/Ctrl+Z undoes and Cmd+Shift+Z / Ctrl+Y redoes gooey's history, from anywhere on the
+   * page -- except where the key is already spoken for: a handler nearer the target claimed it
+   * (`defaultPrevented`, i.e. a code editor with its own undo model), or focus is in a text
+   * field, whose native undo belongs to the person typing.
+   * @internal
+   */
+  private _handleUndoRedo;
   themer: Themer;
   windowManager?: WindowManager;
   moveTo: (position: {

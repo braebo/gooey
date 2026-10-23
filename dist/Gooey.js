@@ -17,6 +17,7 @@ import { Themer } from "./styles/themer/Themer.js";
 import settings_icon_default from "./svg/settings-icon.js";
 import { GUI_VARS } from "./styles/GOOEY_VARS.js";
 import { UndoManager } from "./UndoManager.js";
+import { isEditableTextTarget } from "./shared/keys.js";
 import { Folder } from "./Folder.js";
 
 //#region src/Gooey.ts
@@ -163,6 +164,32 @@ var Gooey = class Gooey {
 	* @internal
 	*/
 	_undoManager = new UndoManager();
+	/**
+	* Cmd/Ctrl+Z undoes and Cmd+Shift+Z / Ctrl+Y redoes gooey's history, from anywhere on the
+	* page -- except where the key is already spoken for: a handler nearer the target claimed it
+	* (`defaultPrevented`, i.e. a code editor with its own undo model), or focus is in a text
+	* field, whose native undo belongs to the person typing.
+	* @internal
+	*/
+	_handleUndoRedo = (e) => {
+		if (e.defaultPrevented || e.altKey || isEditableTextTarget(e)) return;
+		const key = e.key?.toLowerCase();
+		if (globalThis.navigator?.userAgent?.match(/mac/i)) {
+			if (e.metaKey && key === "z") {
+				e.preventDefault();
+				e.shiftKey ? this._undoManager.redo() : this._undoManager.undo();
+			}
+		} else if (e.ctrlKey) {
+			if (key === "z") {
+				e.preventDefault();
+				e.shiftKey ? this._undoManager.redo() : this._undoManager.undo();
+			}
+			if (key === "y") {
+				e.preventDefault();
+				this._undoManager.redo();
+			}
+		}
+	};
 	themer;
 	windowManager;
 	moveTo = () => {};
@@ -237,25 +264,7 @@ var Gooey = class Gooey {
 			presetId: this.opts.title
 		});
 		for (const key of FORWARDED_METHODS) this[key] = this.folder[key].bind(this.folder);
-		const handleUndoRedo = (e) => {
-			if (globalThis.navigator?.userAgent?.match(/mac/i)) {
-				if (e.metaKey && e.key === "z") {
-					e.preventDefault();
-					e.shiftKey ? this._undoManager.redo() : this._undoManager.undo();
-				}
-			} else if (e.ctrlKey) {
-				if (e.key === "z") {
-					e.preventDefault();
-					this._undoManager.undo();
-				}
-				if (e.key === "y") {
-					e.preventDefault();
-					this._undoManager.redo();
-				}
-			}
-		};
-		removeEventListener("keydown", handleUndoRedo);
-		addEventListener("keydown", handleUndoRedo);
+		addEventListener("keydown", this._handleUndoRedo);
 		const settingsOpts = opts.settingsFolder === false ? void 0 : opts.settingsFolder;
 		this._settingsFolderOpts = settingsOpts;
 		let updateIcon = () => {};
@@ -703,6 +712,7 @@ var Gooey = class Gooey {
 	};
 	dispose = () => {
 		this._log.fn("dispose").debug(this);
+		removeEventListener("keydown", this._handleUndoRedo);
 		if (this._isThemerOwner) this.themer?.dispose();
 		else this.themer?.detach(this.wrapper);
 		if (this._isWindowManagerOwner) this.windowManager?.dispose();
