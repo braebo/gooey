@@ -123,6 +123,33 @@ describe('undo keys', () => {
 		gooey.dispose()
 	})
 
+	test('a real Cmd+Shift+Z (key "Z") redoes on mac', () => {
+		const ua = vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('Macintosh')
+		const gooey = G.addGooey({ title: 'undo-mac-shift' })
+		const spy = spyUndo(gooey)
+
+		const e = undoKey(document.body, { key: 'Z', shiftKey: true, ctrlKey: false })
+		expect(e.defaultPrevented).toBe(true)
+		expect(spy.redo).toHaveBeenCalledTimes(1)
+		expect(spy.undo).not.toHaveBeenCalled()
+		gooey.dispose()
+		ua.mockRestore()
+	})
+
+	test('off mac, Ctrl+Z undoes, and Ctrl+Shift+Z and Ctrl+Y redo', () => {
+		const ua = vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('Windows NT 10.0')
+		const gooey = G.addGooey({ title: 'undo-off-mac' })
+		const spy = spyUndo(gooey)
+
+		undoKey(document.body, { metaKey: false })
+		undoKey(document.body, { key: 'Z', shiftKey: true, metaKey: false })
+		undoKey(document.body, { key: 'y', metaKey: false })
+		expect(spy.undo).toHaveBeenCalledTimes(1)
+		expect(spy.redo).toHaveBeenCalledTimes(2)
+		gooey.dispose()
+		ua.mockRestore()
+	})
+
 	test('dispose removes the window listener', () => {
 		const gooey = G.addGooey({ title: 'undo-disposed' })
 		const spy = spyUndo(gooey)
