@@ -168,11 +168,14 @@ var Gooey = class Gooey {
 	* Cmd/Ctrl+Z undoes and Cmd+Shift+Z / Ctrl+Y redoes gooey's history, from anywhere on the
 	* page -- except where the key is already spoken for: a handler nearer the target claimed it
 	* (`defaultPrevented`, i.e. a code editor with its own undo model), or focus is in a text
-	* field, whose native undo belongs to the person typing.
+	* field, whose native undo belongs to the person typing.  Gooey's own number field is the
+	* exception: the browser doesn't undo its arrow, spinner or wheel steps, and every one of them
+	* is already in gooey's history.
 	* @internal
 	*/
 	_handleUndoRedo = (e) => {
-		if (e.defaultPrevented || e.altKey || isEditableTextTarget(e)) return;
+		if (e.defaultPrevented || e.altKey) return;
+		if (isEditableTextTarget(e) && !isGooeyNumberField(e)) return;
 		const key = e.key?.toLowerCase();
 		if (globalThis.navigator?.userAgent?.match(/mac/i)) {
 			if (e.metaKey && key === "z") {
@@ -721,6 +724,11 @@ var Gooey = class Gooey {
 		this.folder?.dispose();
 	};
 };
+/** `true` when a key comes from a gooey number field (`.gooey-controller-number`). */
+function isGooeyNumberField(e) {
+	const target = e.composedPath?.()[0] ?? e.target;
+	return target instanceof HTMLInputElement && target.classList.contains("gooey-controller-number");
+}
 
 //#endregion
 export { GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS, Gooey };
