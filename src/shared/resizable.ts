@@ -197,6 +197,8 @@ export class Resizable {
 
 	#activeGrabber: HTMLElement | null = null
 	#listeners: (() => void)[] = []
+	/** The instance's own `<style>` in `document.head`, removed on dispose. */
+	#styleEl?: HTMLStyleElement
 	#cleanupGrabListener: (() => void) | null = null
 	#cornerGrabberSize: number
 
@@ -738,6 +740,7 @@ export class Resizable {
 		styleEl.innerHTML = css
 
 		document.head.appendChild(styleEl)
+		this.#styleEl = styleEl
 	}
 
 	dispose() {
@@ -745,6 +748,7 @@ export class Resizable {
 			cleanup()
 		}
 		this.#cleanupGrabListener?.()
+		this.#styleEl?.remove()
 	}
 }
 

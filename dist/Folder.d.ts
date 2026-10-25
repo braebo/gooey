@@ -397,6 +397,8 @@ declare class Folder {
     isRoot: true;
   };
   addFolder(title?: string, options?: Partial<FolderOptions>): Folder;
+  /** {@link _handleClick} bound once, so dispose removes the same function the header got. */
+  private _onHeaderPointerdown;
   private _handleClick;
   private _disableClicks;
   private _resetClicks;

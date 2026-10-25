@@ -69,6 +69,8 @@ var Resizable = class {
 	size;
 	#activeGrabber = null;
 	#listeners = [];
+	/** The instance's own `<style>` in `document.head`, removed on dispose. */
+	#styleEl;
 	#cleanupGrabListener = null;
 	#cornerGrabberSize;
 	#log;
@@ -464,10 +466,12 @@ var Resizable = class {
 		const styleEl = document.createElement("style");
 		styleEl.innerHTML = css;
 		document.head.appendChild(styleEl);
+		this.#styleEl = styleEl;
 	}
 	dispose() {
 		for (const cleanup of this.#listeners) cleanup();
 		this.#cleanupGrabListener?.();
+		this.#styleEl?.remove();
 	}
 };
 

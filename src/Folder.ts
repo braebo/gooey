@@ -887,6 +887,9 @@ export class Folder {
 		return folder
 	}
 
+	/** {@link _handleClick} bound once, so dispose removes the same function the header got. */
+	private _onHeaderPointerdown = (event: PointerEvent): void => this._handleClick(event)
+
 	private _handleClick(event: PointerEvent): void {
 		if (event.button !== 0) return
 
@@ -2227,7 +2230,7 @@ export class Folder {
 			parent: element,
 			classes: ['gooey-header'],
 		})
-		header.addEventListener('pointerdown', this._handleClick.bind(this))
+		header.addEventListener('pointerdown', this._onHeaderPointerdown)
 
 		const title = create('div', {
 			parent: header,
@@ -2360,9 +2363,12 @@ export class Folder {
 			return
 		}
 		this.elements.header.removeEventListener('click', this.toggle)
-		this.elements.header.addEventListener('pointerdown', this._handleClick)
+		this.elements.header.removeEventListener('pointerdown', this._onHeaderPointerdown)
 
 		this.element.remove()
+		// Its subscriptions (a child gooey's on the shared themer among them) would otherwise keep
+		// the disposed folder, its DOM, and everything it holds reachable for the page's life.
+		this.evm.clear()
 
 		for (const input of this.inputs.values()) {
 			input.dispose()

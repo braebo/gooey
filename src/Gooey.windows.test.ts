@@ -138,6 +138,30 @@ describe('parentGooey', () => {
 
 		expect(parent.windowManager!.windows.size).toBe(before)
 	})
+
+	test('disposing a child leaves no <style> of its own in the head', () => {
+		const parent = make({ title: 'parent', storage: false })
+		const styles = document.head.querySelectorAll('style').length
+
+		for (let i = 0; i < 5; i++) {
+			new Gooey({ title: `child ${i}`, storage: false, parentGooey: parent }).dispose()
+		}
+
+		expect(document.head.querySelectorAll('style').length).toBe(styles)
+	})
+
+	// The child's root folder subscribed to the shared themer through its evm, and dispose never
+	// cleared it: the parent's themer held every disposed child alive.
+	test("a disposed child stops following the shared themer", () => {
+		const parent = make({ title: 'parent', storage: false })
+		const child = new Gooey({ title: 'child', storage: false, parentGooey: parent })
+		child.dispose()
+
+		const stamped = child.folder.element.getAttribute('mode')
+		parent.themer.mode.set(stamped === 'light' ? 'dark' : 'light')
+
+		expect(child.folder.element.getAttribute('mode')).toBe(stamped)
+	})
 })
 
 describe('settingsFolder: false', () => {

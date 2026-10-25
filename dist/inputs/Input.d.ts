@@ -34,8 +34,8 @@ declare const INPUT_TYPE_MAP: Readonly<{
   InputElement: "ElementInputOptions";
   InputBezier: "BezierInputOptions";
 }>;
-declare const INPUT_TYPES: readonly ("InputNumber" | "InputText" | "InputTextArea" | "InputColor" | "InputSelect" | "InputButton" | "InputButtonGrid" | "InputSwitch" | "InputArray" | "InputElement" | "InputBezier")[];
-declare const INPUT_OPTION_TYPES: readonly ("TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "ButtonGridInputOptions" | "SwitchInputOptions" | "ArrayInputOptions" | "ElementInputOptions" | "BezierInputOptions")[];
+declare const INPUT_TYPES: readonly ("InputButtonGrid" | "InputText" | "InputTextArea" | "InputNumber" | "InputColor" | "InputSelect" | "InputButton" | "InputSwitch" | "InputArray" | "InputElement" | "InputBezier")[];
+declare const INPUT_OPTION_TYPES: readonly ("ButtonGridInputOptions" | "TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "SwitchInputOptions" | "ArrayInputOptions" | "ElementInputOptions" | "BezierInputOptions")[];
 type BindTarget = Record<any, any>;
 type BindableObject<T extends BindTarget, K extends keyof T = keyof T> = {
   target: T;

@@ -338,6 +338,8 @@ var Folder = class Folder {
 		this.gooey?.refreshPosition();
 		return folder;
 	}
+	/** {@link _handleClick} bound once, so dispose removes the same function the header got. */
+	_onHeaderPointerdown = (event) => this._handleClick(event);
 	_handleClick(event) {
 		if (event.button !== 0) return;
 		this._log.fn("#handleClick").debug({
@@ -1163,7 +1165,7 @@ var Folder = class Folder {
 			parent: element,
 			classes: ["gooey-header"]
 		});
-		header.addEventListener("pointerdown", this._handleClick.bind(this));
+		header.addEventListener("pointerdown", this._onHeaderPointerdown);
 		const title = create("div", {
 			parent: header,
 			classes: ["gooey-title"],
@@ -1256,8 +1258,9 @@ var Folder = class Folder {
 			return;
 		}
 		this.elements.header.removeEventListener("click", this.toggle);
-		this.elements.header.addEventListener("pointerdown", this._handleClick);
+		this.elements.header.removeEventListener("pointerdown", this._onHeaderPointerdown);
 		this.element.remove();
+		this.evm.clear();
 		for (const input of this.inputs.values()) input.dispose();
 		for (const child of this.children) child.dispose();
 		try {
