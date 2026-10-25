@@ -123,6 +123,21 @@ describe('parentGooey', () => {
 		expect(parent.folder.element.isConnected).toBe(true)
 		expect(parent.windowManager!.windows.size).toBeGreaterThanOrEqual(1)
 	})
+
+	// A disposed child stayed in the shared manager: its entry, its grab listener, and the
+	// drag/resize ResizeObservers on its detached element, one more set per open and close.
+	test('disposing a child takes its window out of the shared manager', () => {
+		const parent = make({ title: 'parent', storage: false })
+		const before = parent.windowManager!.windows.size
+
+		for (let i = 0; i < 5; i++) {
+			const child = new Gooey({ title: `child ${i}`, storage: false, parentGooey: parent })
+			expect(parent.windowManager!.windows.size).toBe(before + 1)
+			child.dispose()
+		}
+
+		expect(parent.windowManager!.windows.size).toBe(before)
+	})
 })
 
 describe('settingsFolder: false', () => {

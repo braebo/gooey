@@ -204,6 +204,8 @@ var Gooey = class Gooey {
 	* @internal
 	*/
 	_isWindowManagerOwner = false;
+	/** Takes this gooey's window out of a shared {@link WindowManager} it doesn't own. @internal */
+	_leaveWindowManager;
 	/** {@link GooeyOptions.settingsFolder}, with the `false` case narrowed away. */
 	_settingsFolderOpts;
 	_isThemerOwner = false;
@@ -618,7 +620,7 @@ var Gooey = class Gooey {
 		if (resizeOpts && this.opts.width) resizeOpts.initialSize = { width: this.opts.width };
 		if (options?._windowManager instanceof WindowManager) {
 			const windowManager$1 = options._windowManager;
-			const { window: window$1 } = windowManager$1.add(this.folder.element, {
+			const { window: window$1, destroy } = windowManager$1.add(this.folder.element, {
 				id: this.id,
 				resizable: resizeOpts ?? false,
 				draggable: dragOpts ?? false,
@@ -626,6 +628,7 @@ var Gooey = class Gooey {
 			});
 			this.moveTo = window$1.moveTo;
 			this.moveBy = window$1.moveBy;
+			this._leaveWindowManager = destroy;
 			return windowManager$1;
 		}
 		const windowManagerOpts = resolveOpts({
@@ -719,6 +722,10 @@ var Gooey = class Gooey {
 		if (this._isThemerOwner) this.themer?.dispose();
 		else this.themer?.detach(this.wrapper);
 		if (this._isWindowManagerOwner) this.windowManager?.dispose();
+		else {
+			this._leaveWindowManager?.();
+			this._leaveWindowManager = void 0;
+		}
 		this.presetManager?.folder?.dispose();
 		this.elements.settingsFolder?.dispose();
 		this.folder?.dispose();

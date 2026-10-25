@@ -485,6 +485,8 @@ export class Gooey {
 	 * @internal
 	 */
 	private _isWindowManagerOwner = false
+	/** Takes this gooey's window out of a shared {@link WindowManager} it doesn't own. @internal */
+	private _leaveWindowManager?: () => void
 	/** {@link GooeyOptions.settingsFolder}, with the `false` case narrowed away. */
 	private _settingsFolderOpts?: Exclude<GooeyOptions['settingsFolder'], false>
 
@@ -1104,7 +1106,7 @@ export class Gooey {
 		if ((options as GooeyOptionsInternal)?._windowManager instanceof WindowManager) {
 			const windowManager = (options as GooeyOptionsInternal)._windowManager!
 
-			const { window } = windowManager.add(this.folder.element, {
+			const { window, destroy } = windowManager.add(this.folder.element, {
 				id: this.id,
 				// `?? false`: an undefined here resolves to the manager's defaults, which turns a
 				// `draggable: false` gooey into one whose whole root is the drag handle.
@@ -1117,6 +1119,9 @@ export class Gooey {
 			// the no-op defaults stay, and `moveTo` silently does nothing on every child.
 			this.moveTo = window.moveTo
 			this.moveBy = window.moveBy
+			// The manager outlives this gooey, so its entry has to be taken out by hand: left in,
+			// it keeps the window's drag/resize observers live on a detached element.
+			this._leaveWindowManager = destroy
 
 			return windowManager
 		}
@@ -1241,6 +1246,9 @@ export class Gooey {
 		}
 		if (this._isWindowManagerOwner) {
 			this.windowManager?.dispose()
+		} else {
+			this._leaveWindowManager?.()
+			this._leaveWindowManager = undefined
 		}
 		this.presetManager?.folder?.dispose()
 		this.elements.settingsFolder?.dispose()

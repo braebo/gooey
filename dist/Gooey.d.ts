@@ -386,6 +386,8 @@ declare class Gooey {
    * @internal
    */
   private _isWindowManagerOwner;
+  /** Takes this gooey's window out of a shared {@link WindowManager} it doesn't own. @internal */
+  private _leaveWindowManager?;
   /** {@link GooeyOptions.settingsFolder}, with the `false` case narrowed away. */
   private _settingsFolderOpts?;
   private _isThemerOwner;
