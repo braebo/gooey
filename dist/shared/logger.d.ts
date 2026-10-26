@@ -39,9 +39,9 @@ interface LoggerOptions {
    */
   browser?: boolean;
   /**
-   * Whether to only run the logger in development mode.
+   * Keep `debug` and `trace` output to development builds (esm-env's `DEV`), whatever the log
+   * level, so a debug level set for a consumer's dev server doesn't reach its production build.
    * @default true
-   * TODO Not yet implemented.
    */
   devOnly?: boolean;
   /**

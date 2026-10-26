@@ -1,5 +1,7 @@
 import type { CSSColorName } from './css-colors'
 
+import { DEV } from 'esm-env'
+
 import { CSS_COLORS, randomCSSColorName } from './css-colors'
 import { r, y, gr, dim, hex } from './l'
 import { stringify } from './stringify'
@@ -44,9 +46,9 @@ export interface LoggerOptions {
 	 */
 	browser?: boolean
 	/**
-	 * Whether to only run the logger in development mode.
+	 * Keep `debug` and `trace` output to development builds (esm-env's `DEV`), whatever the log
+	 * level, so a debug level set for a consumer's dev server doesn't reach its production build.
 	 * @default true
-	 * TODO Not yet implemented.
 	 */
 	devOnly?: boolean
 	/**
@@ -146,13 +148,19 @@ export class Logger {
 	}
 
 	trace(...args: any[]) {
+		if (this.#devOnlyQuiet) return this
 		console.trace(...args)
 		return this
 	}
 
+	/** Outside dev, a `devOnly` logger drops `debug` and `trace`. */
+	get #devOnlyQuiet() {
+		return !DEV && this.options.devOnly !== false
+	}
+
 	debug(...args: any[]) {
 		// if (import.meta?.env?.VITE_FRACTILS_LOG_LEVEL === 'debug') this.flush('🐞', ...args)
-		if (LOG_LEVELS.indexOf(this.logLevel) > LOG_LEVELS.indexOf('debug')) {
+		if (this.#devOnlyQuiet || LOG_LEVELS.indexOf(this.logLevel) > LOG_LEVELS.indexOf('debug')) {
 			return this
 		}
 

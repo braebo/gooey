@@ -3,6 +3,7 @@ import { dim, gr, hex, r, y } from "./l.js";
 import { stringify } from "./stringify.js";
 import { defer } from "./defer.js";
 import { tldr } from "./tldr.js";
+import { DEV } from "esm-env";
 
 //#region src/shared/logger.ts
 const LOG_LEVELS = [
@@ -61,11 +62,16 @@ var Logger = class Logger {
 		this.buffer = [];
 	};
 	trace(...args) {
+		if (this.#devOnlyQuiet) return this;
 		console.trace(...args);
 		return this;
 	}
+	/** Outside dev, a `devOnly` logger drops `debug` and `trace`. */
+	get #devOnlyQuiet() {
+		return !DEV && this.options.devOnly !== false;
+	}
 	debug(...args) {
-		if (LOG_LEVELS.indexOf(this.logLevel) > LOG_LEVELS.indexOf("debug")) return this;
+		if (this.#devOnlyQuiet || LOG_LEVELS.indexOf(this.logLevel) > LOG_LEVELS.indexOf("debug")) return this;
 		this.flush("🐞", ...args);
 		return this;
 	}
@@ -133,9 +139,9 @@ var Logger = class Logger {
 	}
 	static createLogger(title, options) {
 		options ??= {};
-		const BROWSER = typeof globalThis.window !== "undefined";
-		const SERVER = !BROWSER;
-		if (!BROWSER || options.browser === false) return () => void 0;
+		const BROWSER$1 = typeof globalThis.window !== "undefined";
+		const SERVER = !BROWSER$1;
+		if (!BROWSER$1 || options.browser === false) return () => void 0;
 		if (SERVER && options.server !== true) return () => void 0;
 		const fg = options.fg || randomCSSColorName();
 		const bg = options.bg || "transparent";

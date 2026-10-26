@@ -44,7 +44,7 @@ Gooey is designed for creating interactive control panels that work seamlessly i
 
 <p align="center">
 
-&nbsp; &nbsp; &nbsp;&nbsp; Preset Manager &nbsp;&nbsp; · &nbsp; Theme Manager &nbsp;&nbsp; · &nbsp; Draggable / Resizable / Placeable &nbsp;&nbsp; · &nbsp; Local Storage Integration &nbsp;&nbsp; · &nbsp; Generators &nbsp;&nbsp; · &nbsp; Reset Mechanism &nbsp;&nbsp; · &nbsp; Undo/Redo History &nbsp;&nbsp; · &nbsp; Flexible API &nbsp;&nbsp; · &nbsp; Fully Typed &nbsp;&nbsp; · &nbsp; Zero Dependencies
+&nbsp; &nbsp; &nbsp;&nbsp; Preset Manager &nbsp;&nbsp; · &nbsp; Theme Manager &nbsp;&nbsp; · &nbsp; Draggable / Resizable / Placeable &nbsp;&nbsp; · &nbsp; Local Storage Integration &nbsp;&nbsp; · &nbsp; Generators &nbsp;&nbsp; · &nbsp; Per-Input Reset &nbsp;&nbsp; · &nbsp; Undo/Redo History &nbsp;&nbsp; · &nbsp; Flexible API &nbsp;&nbsp; · &nbsp; Fully Typed &nbsp;&nbsp; · &nbsp; One Dependency (esm-env)
 
 </p>
 
