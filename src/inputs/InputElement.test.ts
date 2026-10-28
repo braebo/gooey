@@ -90,6 +90,22 @@ describe('InputElement', () => {
 		expect(input.element.getBoundingClientRect().height).toBeGreaterThanOrEqual(200)
 	})
 
+	test('the row keeps its height when the panel outgrows its max-height', async () => {
+		const short = new Gooey({ title: 'short', storage: false, maxHeight: '160px' })
+		const tall = document.createElement('div')
+		tall.style.height = '200px'
+
+		const input = short.addElement('', tall)
+		for (let i = 0; i < 8; i++) short.addNumber(`n${i}`, i)
+
+		await new Promise(resolve => setTimeout(resolve, 400))
+
+		// The folder content is a flex column; past the cap its rows shrink, and this one's
+		// one-line `min-height` floor let it collapse under its content.
+		expect(input.element.getBoundingClientRect().height).toBeGreaterThanOrEqual(200)
+		short.dispose()
+	})
+
 	test('an untitled row sits the same distance from both edges', async () => {
 		const el = document.createElement('div')
 		el.style.height = '100px'

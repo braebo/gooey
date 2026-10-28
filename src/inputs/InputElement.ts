@@ -88,6 +88,11 @@ export class InputElement extends Input<
 		// onto its neighbors and steals their pointer events.  Custom content sets its own
 		// height, so let the row grow to it.
 		this.elements.container.style.setProperty('height', 'auto')
+		// The folder's content is a flex column capped by the root's max-height, so once the panel
+		// is taller than that every row shrinks toward its `min-height`.  A controller's floor is its
+		// own height; this row's floor is one line, so it collapses and its content spills over the
+		// rows below.  Hold it at the content's height and let the root scroll instead.
+		this.elements.container.style.setProperty('flex-shrink', '0')
 
 		this.elements.controllers = {
 			container: create('div', {
