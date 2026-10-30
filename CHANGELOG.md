@@ -1,5 +1,48 @@
 # gooey
 
+## 0.6.0
+
+### Minor Changes
+
+- `addBezier` / `bindBezier`: a cubic bézier curve editor input. Its value is `[x1, y1, x2, y2]`, the arguments of CSS `cubic-bezier()`, and it also takes a `'cubic-bezier(...)'` string or a CSS easing keyword. ([`a4d329c`](https://github.com/braebo/gooey/commit/a4d329c87dc94cb9a4f9de678b3a3ccc5472cc94))
+    - A graph with two draggable control points (`x` held to `0..1`, `y` free to overshoot within `yMin` / `yMax`), a number field per coordinate, and a dropdown of named easings that previews each on hover. A drag, a field drag, or an open dropdown is one undo step.
+    - It saves to presets and resets to its default like every other input.
+    - A bound string field is written back as a `cubic-bezier()` string; a bound array stays an array.
+    - `cubicBezier(x1, y1, x2, y2)` returns the easing function for a curve, and `bezierToString` / `toBezier` convert between the array and the CSS string.
+
+- `bind()` and the `bind*` methods are typed by what they build and what they accept. ([`9adc98a`](https://github.com/braebo/gooey/commit/9adc98aa93730bc4e905d9ae303dcb0dd2e0864a))
+    - `bind()` and `add()` on a `string` field return `InputText | InputColor`: a color string like `'#ff0000'` builds an `InputColor` at runtime, which the type used to hide. A color-typed field (`'#ff0000'` as a literal, or a `ColorString` type) is still `InputColor`, and a text literal is still `InputText`.
+    - `bindNumber`, `bindText`, `bindSwitch`, `bindArray`, `bindButton`, `bindButtonGrid`, and `bindSelect` reject a field of another type at the type level, as `bindColor` does.
+    - `bindArray` returns `InputArray` typed by the field's items, and `bindSelect` returns `InputSelect` typed by the field.
+
+- `ThemeEditor` is exported: `new ThemeEditor(gooey)` opens a window that edits the gooey's themes, previews the draft live, and saves it into `themer.userThemes`. ([`1c45366`](https://github.com/braebo/gooey/commit/1c453661bad5fcf073d0c53e4f583449f232b9b2))
+
+### Patch Changes
+
+- Disposing a child gooey (one built with `parentGooey`, or with a shared window manager) now frees it. Before this fix, a disposed child left four things behind. First, its window stayed in the shared manager's `windows` map with its grab listener, and its drag and resize ResizeObservers kept watching the detached element. Second, its folders' subscriptions stayed live on the shared themer, which kept the whole child and its DOM reachable. Third, its resizable `<style>` stayed in `document.head`. Fourth, every disposed folder gained a `pointerdown` listener on its header, because dispose added one where it should have removed it. Each child opened and closed added another set. ([`e0c3cc7`](https://github.com/braebo/gooey/commit/e0c3cc7dfb566e465cc9df4ed650f665f0602365))
+
+- `ColorPicker` no longer throws when its deferred first draw lands after it was disposed. ([`3fca87a`](https://github.com/braebo/gooey/commit/3fca87a07792fb3baecd6cc39658e10baed9117a))
+
+- Gooey's debug and trace logging stays out of production builds. Its internal loggers checked only the log level, so an app that set `VITE_FRACTILS_LOG_LEVEL="debug"` (which Vite ships to the production build too) printed a debug line for every new event listener, input and folder in production, each carrying a whole object. Debug and trace output now runs only when `esm-env`'s `DEV` is true; info, warn and error are unchanged. ([`578c8bd`](https://github.com/braebo/gooey/commit/578c8bd3a24ac454a1267798ee0cdbd16da7a483))
+
+- A gooey built with `draggable: false` no longer makes its whole panel a drag handle. The pointer capture that came with it swallowed clicks inside the panel, including the reset-to-default button on every input. `resizable: false` is honoured the same way. ([`35d93fa`](https://github.com/braebo/gooey/commit/35d93fab459e3945bc98d70b68933a57065abf6c))
+
+- An `addElement` row keeps its content's height when the panel is taller than the root's max-height. The folder content is a flex column, so past the cap every row shrank toward its `min-height`; a controller's floor is its own height, but an element row's is one line, so it collapsed and its content spilled over the rows below it. The row no longer shrinks, and the root scrolls instead. ([`83856e0`](https://github.com/braebo/gooey/commit/83856e0ed6cfca87dee7f1d1fa063f980a22fe0a))
+
+- `storage: { presets: false }` now turns preset storage off, as `PresetManager`'s `localStorageKey` documents. It used to fall back to a shared `gooey::presets` key, so every gooey with presets off read and wrote the same active preset, and on construction loaded whatever another gooey had left there, `hidden` included. A gooey created with `hidden: true` would then come up shown. ([`28338ff`](https://github.com/braebo/gooey/commit/28338ffda9061a9b381fefb34446dcf42b175cb4))
+
+    A gooey that relied on presets surviving a reload with `presets: false` should set `storage: { presets: true }`, which gives it its own key.
+
+- Opening a `ThemeEditor` no longer marks its draft dirty and repaints the target (the inputs it builds emit their starting values, and those aren't edits), and closing one with unsaved edits paints the stored theme again. ([`1c45366`](https://github.com/braebo/gooey/commit/1c453661bad5fcf073d0c53e4f583449f232b9b2))
+
+- The settings folder's theme picker sets the themer's current copy of the picked theme, by title, so a theme a consumer replaced in `themer.themes` after construction (a live-synced palette) is the one that paints. ([`6c22813`](https://github.com/braebo/gooey/commit/6c228135652a8b1fcc571cef40c91a01847e35f6))
+
+- Cmd/Ctrl+Z no longer swallows native undo in the page's text fields. Gooey's undo listener on `window` used to `preventDefault()` every Cmd+Z, whatever had focus, so a `<textarea>`, a text-type `<input>` or a `contenteditable` anywhere on a page with a gooey lost its own undo and redo. Those fields (inside shadow roots too, closed ones included) now keep the browser's undo, and so does any key a nearer handler already claimed, like a code editor's. Sliders, checkboxes, gooey's own number fields and the rest of gooey's controls keep gooey's undo. ([`120d169`](https://github.com/braebo/gooey/commit/120d169da7fab6804166a0a5e40c44ea6a879723))
+    - `dispose()` now removes the listener. It used to stay on `window`, so a disposed gooey still answered Cmd+Z.
+    - Ctrl+Shift+Z redoes off mac, the same as Ctrl+Y.
+    - Gooey's number field keeps gooey's undo even though it's a text-type input: the browser doesn't undo its arrow, spinner or wheel steps, and gooey's history already holds each one.
+    - A key from inside a closed shadow root (an extension's UI, a closed web component) is left to the browser, since gooey can't see which field has focus there. An element with a `tabindex` (a skip-link `<main tabindex="-1">`, a dialog panel) still gets gooey's undo when it's focused, so a closed host that sets `tabindex` and holds a text field is the one case that still loses its native undo.
+
 ## 0.5.0
 
 ### Minor Changes
