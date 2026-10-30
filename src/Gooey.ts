@@ -943,8 +943,10 @@ export class Gooey {
 				// }, { labelKey: 'title' })
 			})
 
+			// By title: the option is the theme as it was when the select was built, and a
+			// consumer may have replaced that theme in `themes` since (a live-synced palette).
 			themeInput.on('change', v => {
-				finalThemer.theme.set(v)
+				finalThemer.theme.set(finalThemer.getTheme(v.title) ?? v)
 			})
 
 			const modeButtons = uiFolder.addButtonGrid(

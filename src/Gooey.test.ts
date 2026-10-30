@@ -1,6 +1,9 @@
 import { GooeyTest } from './tests/Gooey/GooeyTest'
 import { describe, expect, test, vi } from 'vitest'
 import { page } from '@vitest/browser/context'
+import type { InputSelect } from './inputs/InputSelect'
+import type { Theme } from './styles/themer/types'
+
 import { Gooey } from './Gooey'
 
 const G = new GooeyTest()
@@ -161,5 +164,22 @@ describe('width', () => {
 		gooey.themer.mode.set('light')
 		gooey.themer.mode.set('dark')
 		expect(gooey.element.clientWidth).toBe(100)
+	})
+})
+
+describe('theme picker', () => {
+	test("picks the themer's current copy of a theme, not the one it was built with", () => {
+		const gooey = G.addGooey({ title: 'theme picker', storage: false })
+		const ui = gooey.elements.settingsFolder.children.find(f => f.title === 'ui')!
+		const picker = [...ui.inputs.values()].find(i => i.title === 'theme') as InputSelect<Theme>
+		const built = gooey.themer.getTheme('flat')!
+		// A consumer keeping a palette live replaces the theme in `themes` under the same title.
+		const live = { ...built }
+		gooey.themer.themes.set(gooey.themer.themes.value.map(t => (t === built ? live : t)))
+
+		picker.select({ label: 'flat', value: built })
+
+		expect(gooey.themer.theme.value).toBe(live)
+		gooey.dispose()
 	})
 })
