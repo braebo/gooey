@@ -5330,6 +5330,222 @@ Logs any args as well as any logs in the current buffer.
 
 ***
 
+### ThemeEditor
+
+A gooey window that edits the [targetGooey](#targetgooey)'s themes.
+
+Edits land on a working copy of the active theme and preview live on every gooey the
+themer styles.  Saving writes the copy into Themer.userThemes, which persists it.
+A theme from code is never overwritten: saving one stores an edited copy beside it, since
+the code is its record.
+
+#### Constructors
+
+##### Constructor
+
+> **new ThemeEditor**(`targetGooey`): [`ThemeEditor`](#themeeditor)
+
+###### Parameters
+
+###### targetGooey
+
+[`Gooey`](#gooey-1)
+
+###### Returns
+
+[`ThemeEditor`](#themeeditor)
+
+#### Properties
+
+##### gooey
+
+> **gooey**: [`Gooey`](#gooey-1)
+
+##### targetGooey
+
+> **targetGooey**: [`Gooey`](#gooey-1)
+
+#### Accessors
+
+##### dirty
+
+###### Get Signature
+
+> **get** **dirty**(): `boolean`
+
+Whether the draft has edits that aren't saved.
+
+###### Returns
+
+`boolean`
+
+##### folder
+
+###### Get Signature
+
+> **get** **folder**(): [`Folder`](#folder)
+
+###### Returns
+
+[`Folder`](#folder)
+
+##### isUserTheme
+
+###### Get Signature
+
+> **get** **isUserTheme**(): `boolean`
+
+Whether the theme being edited is one of the Themer.userThemes.
+
+###### Returns
+
+`boolean`
+
+##### themer
+
+###### Get Signature
+
+> **get** **themer**(): `Themer`
+
+###### Returns
+
+`Themer`
+
+##### vars
+
+###### Get Signature
+
+> **get** **vars**(): `object` & `object`
+
+The vars of the theme being edited.
+
+###### Returns
+
+`object` & `object`
+
+#### Methods
+
+##### create()
+
+> **create**(`title?`): [`ThemeEditor`](#themeeditor)
+
+Adds a new user theme copied from the draft (unsaved edits included) and selects it.
+
+###### Parameters
+
+###### title?
+
+`string` = `...`
+
+Defaults to the title field; suffixed if taken.
+
+###### Returns
+
+[`ThemeEditor`](#themeeditor)
+
+##### delete()
+
+> **delete**(): [`ThemeEditor`](#themeeditor)
+
+Deletes the theme being edited, if it's a user theme.  Themes from code can't be deleted.
+
+###### Returns
+
+[`ThemeEditor`](#themeeditor)
+
+##### dispose()
+
+> **dispose**(): `void`
+
+Closes the editor; unsaved edits stop painting.
+
+###### Returns
+
+`void`
+
+##### generate()
+
+> **generate**(): `void`
+
+(Re)builds a folder of inputs per var group.
+
+###### Returns
+
+`void`
+
+##### revert()
+
+> **revert**(): [`ThemeEditor`](#themeeditor)
+
+Drops unsaved edits.
+
+###### Returns
+
+[`ThemeEditor`](#themeeditor)
+
+##### save()
+
+> **save**(): [`ThemeEditor`](#themeeditor)
+
+Stores the draft in Themer.userThemes.  A user theme is updated in place (and
+renamed, if the title field changed); a theme from code is stored as a copy.
+
+###### Returns
+
+[`ThemeEditor`](#themeeditor)
+
+##### select()
+
+> **select**(`title`): [`ThemeEditor`](#themeeditor)
+
+Makes a theme the active one, dropping unsaved edits.
+
+###### Parameters
+
+###### title
+
+`string`
+
+###### Returns
+
+[`ThemeEditor`](#themeeditor)
+
+##### setVar()
+
+> **setVar**(`group`, `mode`, `key`, `value`): [`ThemeEditor`](#themeeditor)
+
+Sets one var on the draft and previews it.
+
+###### Parameters
+
+###### group
+
+`string`
+
+The theme's var group, i.e. `color` or `core`.
+
+###### mode
+
+keyof `VariableDefinition`
+
+`base`, `dark`, or `light`.
+
+###### key
+
+`string`
+
+The var's key without the prefix, i.e. `bg-a`.
+
+###### value
+
+`string`
+
+###### Returns
+
+[`ThemeEditor`](#themeeditor)
+
+***
+
 ### Tooltip
 
 #### Constructors
@@ -6530,7 +6746,7 @@ Individual inputs for each (rendered) array item.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-5) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-6) is called.
 
 ###### Type Parameters
 
@@ -7163,7 +7379,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-6) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-7) is called.
 
 ###### Type Parameters
 
@@ -7806,7 +8022,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-7) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-8) is called.
 
 ###### Type Parameters
 
@@ -8472,7 +8688,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-8) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-9) is called.
 
 ###### Type Parameters
 
@@ -9186,7 +9402,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-9) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-10) is called.
 
 ###### Type Parameters
 
@@ -9879,7 +10095,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-10) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-11) is called.
 
 ###### Type Parameters
 
@@ -10527,7 +10743,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-11) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-12) is called.
 
 ###### Type Parameters
 
@@ -11163,7 +11379,7 @@ The currently selected option as a labeled option.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-12) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-13) is called.
 
 ###### Type Parameters
 
@@ -11975,7 +12191,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-13) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-14) is called.
 
 ###### Type Parameters
 
@@ -12601,7 +12817,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-14) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-15) is called.
 
 ###### Type Parameters
 

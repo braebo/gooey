@@ -32,6 +32,25 @@ describe('ThemeEditor', () => {
 		expect(titles).toContain('core')
 	})
 
+	test('opening it edits nothing: the inputs it builds emit their starting values', async () => {
+		const { editor, themer } = setup()
+		const theme = themer.theme.value
+		await tick()
+
+		expect(editor.dirty).toBe(false)
+		expect(themer.theme.value).toBe(theme)
+	})
+
+	test('closing it with unsaved edits paints the stored theme again', () => {
+		const { gooey, editor, themer } = setup()
+		const source = themer.theme.value.title
+
+		editor.setVar('color', 'base', 'theme-a', '#ff0000').dispose()
+
+		expect(themer.theme.value).toBe(themer.getTheme(source))
+		expect(gooey.wrapper.style.getPropertyValue('--gooey-theme-a')).not.toBe('#ff0000')
+	})
+
 	test('an edit previews on the target without touching the stored theme', () => {
 		const { gooey, editor, themer } = setup()
 		const source = themer.theme.value.title

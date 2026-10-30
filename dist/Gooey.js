@@ -515,7 +515,7 @@ var Gooey = class Gooey {
 				value: finalThemer.theme.value,
 				options: finalThemer.themes.value
 			}).on("change", (v) => {
-				finalThemer.theme.set(v);
+				finalThemer.theme.set(finalThemer.getTheme(v.title) ?? v);
 			});
 			const modeButtons = uiFolder.addButtonGrid("mode", [[
 				"light",

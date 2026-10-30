@@ -9,6 +9,8 @@ export { Gooey, GUI_DEFAULTS, GUI_STORAGE_DEFAULTS, GUI_WINDOWMANAGER_DEFAULTS }
 
 export { Folder } from './Folder'
 
+export { ThemeEditor } from './styles/ThemeEditor'
+
 export type {
 	WebMCPOptions,
 	WebMCPHandle,

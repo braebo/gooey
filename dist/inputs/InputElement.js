@@ -49,6 +49,7 @@ var InputElement = class extends Input {
 		this.initialValue = opts.value;
 		this.state = state(opts.value);
 		this.elements.container.style.setProperty("height", "auto");
+		this.elements.container.style.setProperty("flex-shrink", "0");
 		this.elements.controllers = { container: create("div", {
 			classes: ["gooey-input-element-container"],
 			parent: this.elements.content,

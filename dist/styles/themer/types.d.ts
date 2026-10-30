@@ -101,5 +101,5 @@ interface ModeColors {
   'fg-e': string;
 }
 //#endregion
-export { ExtendedVars, ModeColors, Theme, ThemeDefinition, ThemeMode, ThemeTitle };
+export { ColorTheme, ExtendedVars, ModeColors, Theme, ThemeDefinition, ThemeMode, ThemeTitle, VariableDefinition };
 //# sourceMappingURL=types.d.ts.map

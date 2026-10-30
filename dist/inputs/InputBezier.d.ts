@@ -144,7 +144,7 @@ declare class InputBezier extends Input<BezierValue, BezierInputOptions, BezierI
    * since an array never compares equal in the store and would re-notify forever.
    */
   protected readBinding(): void;
-  save(overrides?: Partial<InputPreset<BezierInputOptions>>): Omit<InputOptions<any, Record<any, any>>, "title" | "saveable"> & {
+  save(overrides?: Partial<InputPreset<BezierInputOptions>>): Omit<InputOptions<any, Record<any, any>>, "saveable" | "title"> & {
     __type: InputOptionType;
     presetId: string;
     title: string;

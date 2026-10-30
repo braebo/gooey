@@ -93,7 +93,7 @@ declare class InputColor extends Input<Color, ColorInputOptions, ColorController
   private _unlock;
   enable(): this;
   disable(): this;
-  save(): Omit<InputOptions<any, Record<any, any>>, "title" | "saveable"> & {
+  save(): Omit<InputOptions<any, Record<any, any>>, "saveable" | "title"> & {
     __type: InputOptionType;
     presetId: string;
     title: string;

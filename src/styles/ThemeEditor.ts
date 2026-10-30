@@ -32,6 +32,10 @@ export class ThemeEditor {
 	private _title!: string
 	private _dirty = false
 	private _ready = false
+	/** {@link generate} is building inputs, which emit their starting values; those aren't edits. */
+	private _generating = false
+	/** The first {@link generate}, a tick after construction. */
+	private _firstGenerate: ReturnType<typeof setTimeout>
 
 	private _themeInput: InputSelect<string>
 	private _titleInput: InputText
@@ -123,13 +127,16 @@ export class ThemeEditor {
 			}),
 		)
 
-		setTimeout(() => {
+		this._firstGenerate = setTimeout(() => {
 			this._ready = true
 			this.generate()
 		}, 0)
 	}
 
+	/** Closes the editor; unsaved edits stop painting. */
 	dispose() {
+		clearTimeout(this._firstGenerate)
+		if (this._dirty) this.revert()
 		this.gooey.dispose()
 	}
 
@@ -222,6 +229,15 @@ export class ThemeEditor {
 	 * (Re)builds a folder of inputs per var group.
 	 */
 	generate = () => {
+		this._generating = true
+		try {
+			this.#generate()
+		} finally {
+			this._generating = false
+		}
+	}
+
+	#generate() {
 		for (const folder of this._varFolders.splice(0)) folder.dispose()
 
 		for (const [group, def] of entries(this._draft.vars)) {
@@ -247,6 +263,7 @@ export class ThemeEditor {
 					}
 
 					this.#addInput(parent, key.slice(i + 1), this.#display(value), v => {
+						if (this._generating) return
 						if (isColor(v)) v = v.hex8String
 						this.setVar(group, mode, key, String(v))
 					})
