@@ -108,6 +108,14 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
  * that isn't a colour.
  */
 function toColorString(v: unknown): string {
+	// A hex already in the stored shape passes through: Color's round trip can move a channel, and a
+	// drag re-normalizes every stop on every move, so going through it would walk each colour.
+	if (typeof v === 'string') {
+		const hex = v.trim().toLowerCase()
+		if (/^#[0-9a-f]{6}$/.test(hex)) return hex
+		if (/^#[0-9a-f]{8}$/.test(hex)) return hex.endsWith('ff') ? hex.slice(0, 7) : hex
+	}
+
 	let color: Color | undefined
 
 	if (isColor(v)) {

@@ -39,7 +39,7 @@ declare class ColorComponents {
   get color(): Color;
   get mode(): ColorMode;
   set mode(v: ColorMode);
-  updateMode: (v?: "rgba" | "rgbaString" | "hsla" | "hslaString" | "hex" | "hex8") => void;
+  updateMode: (v?: "hex" | "rgba" | "rgbaString" | "hsla" | "hslaString" | "hex8") => void;
   get a(): number;
   set a(v: number);
   get b(): number;

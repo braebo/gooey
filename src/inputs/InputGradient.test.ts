@@ -65,6 +65,19 @@ describe('value', () => {
 		expect(input.value[0].color).toBe('#ff00007f')
 	})
 
+	test('a hex already in the stored shape is kept exactly, through repeated sets', () => {
+		const stops = [
+			{ offset: 0, color: '#a0d195' },
+			{ offset: 1, color: '#FF5F56' },
+		]
+		const input = gooey.addGradient('hex', stops)
+		for (let i = 0; i < 5; i++) input.set(input.value)
+		expect(input.value.map(s => s.color)).toEqual(['#a0d195', '#ff5f56'])
+		expect(
+			gooey.addGradient('opaque8', ['#112233ff', '#11223380']).value.map(s => s.color),
+		).toEqual(['#112233', '#11223380'])
+	})
+
 	test('stops are sorted by offset and clamped into 0..1', () => {
 		const input = gooey.addGradient('sort', [
 			{ offset: 2, color: '#ff0000' },

@@ -31,6 +31,11 @@ const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
 * that isn't a colour.
 */
 function toColorString(v) {
+	if (typeof v === "string") {
+		const hex = v.trim().toLowerCase();
+		if (/^#[0-9a-f]{6}$/.test(hex)) return hex;
+		if (/^#[0-9a-f]{8}$/.test(hex)) return hex.endsWith("ff") ? hex.slice(0, 7) : hex;
+	}
 	let color;
 	if (isColor(v)) color = v;
 	else if (typeof v === "string") {

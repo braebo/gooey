@@ -36,8 +36,8 @@ declare const INPUT_TYPE_MAP: Readonly<{
   InputBezier: "BezierInputOptions";
   InputGradient: "GradientInputOptions";
 }>;
-declare const INPUT_TYPES: readonly ("InputNumber" | "InputText" | "InputTextArea" | "InputColor" | "InputSelect" | "InputButton" | "InputButtonGrid" | "InputSwitch" | "InputArray" | "InputElement" | "InputBezier" | "InputGradient")[];
-declare const INPUT_OPTION_TYPES: readonly ("TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "ButtonGridInputOptions" | "SwitchInputOptions" | "ArrayInputOptions" | "ElementInputOptions" | "BezierInputOptions" | "GradientInputOptions")[];
+declare const INPUT_TYPES: readonly ("InputButtonGrid" | "InputText" | "InputTextArea" | "InputNumber" | "InputColor" | "InputSelect" | "InputButton" | "InputSwitch" | "InputArray" | "InputElement" | "InputBezier" | "InputGradient")[];
+declare const INPUT_OPTION_TYPES: readonly ("ButtonGridInputOptions" | "TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "SwitchInputOptions" | "ArrayInputOptions" | "ElementInputOptions" | "BezierInputOptions" | "GradientInputOptions")[];
 type BindTarget = Record<any, any>;
 type BindableObject<T extends BindTarget, K extends keyof T = keyof T> = {
   target: T;
