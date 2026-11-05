@@ -18,7 +18,8 @@ const INPUT_TYPE_MAP = Object.freeze({
 	InputSwitch: "SwitchInputOptions",
 	InputArray: "ArrayInputOptions",
 	InputElement: "ElementInputOptions",
-	InputBezier: "BezierInputOptions"
+	InputBezier: "BezierInputOptions",
+	InputGradient: "GradientInputOptions"
 });
 const INPUT_TYPES = Object.freeze(keys(INPUT_TYPE_MAP));
 const INPUT_OPTION_TYPES = Object.freeze(values(INPUT_TYPE_MAP));

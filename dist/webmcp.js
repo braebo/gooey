@@ -1,5 +1,6 @@
 import { Logger } from "./shared/logger.js";
 import { bezierToString } from "./inputs/InputBezier.js";
+import { gradientToString } from "./inputs/InputGradient.js";
 
 //#region src/webmcp.ts
 const DISABLED_HANDLE = Object.freeze({
@@ -294,6 +295,23 @@ function toolsFor(target, name) {
 			maxItems: 4,
 			description: "The cubic-bezier control points [x1, y1, x2, y2]; x1 and x2 within 0..1, i.e. [0.42, 0, 0.58, 1]."
 		}, (v) => input.set(v));
+		case "InputGradient": return setter("gradient", {
+			type: "array",
+			minItems: 2,
+			items: {
+				type: "object",
+				properties: {
+					offset: {
+						type: "number",
+						minimum: 0,
+						maximum: 1
+					},
+					color: { type: "string" }
+				},
+				required: ["offset", "color"]
+			},
+			description: "The color stops, i.e. [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#ef4444' }]; offset within 0..1, color a hex, rgb() or hsl() string."
+		}, (v) => input.set(v));
 		case "InputButton": return [{
 			name,
 			description: `Click the "${label}" button ${where}.${note}`,
@@ -339,6 +357,7 @@ function readValue(input) {
 			return active.length ? active.join(", ") : "(none active)";
 		}
 		case "InputBezier": return bezierToString(input.value);
+		case "InputGradient": return gradientToString(input.value);
 		case "InputArray": return truncate(JSON.stringify(input.state.value));
 		default: return truncate(String(input.state.value));
 	}

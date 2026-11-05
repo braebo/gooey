@@ -16,6 +16,7 @@ import { ArrayInputOptions, InputArray } from "./inputs/InputArray.js";
 import { InputText, TextInputOptions } from "./inputs/InputText.js";
 import { ElementContent, ElementInputOptions, InputElement } from "./inputs/InputElement.js";
 import { BezierInputOptions, BezierString, BezierValue, InputBezier } from "./inputs/InputBezier.js";
+import { GradientInputOptions, GradientStopLike, InputGradient } from "./inputs/InputGradient.js";
 import { ButtonGridArrays, ButtonGridInputOptions, InputButtonGrid } from "./inputs/InputButtonGrid.js";
 import { InputOptions, InputPreset, ValidInput, ValidInputValue } from "./inputs/Input.js";
 import { Gooey } from "./Gooey.js";
@@ -680,6 +681,27 @@ declare class Folder {
    * ```
    */
   bindBezier<K$1 extends PropertyKey, T extends Record<K$1, BezierValue | number[] | string>>(target: T, key: K$1, options?: Partial<BezierInputOptions>): InputBezier;
+  /**
+   * Adds a new {@link InputGradient} to the folder: a gradient editor whose value is a list of
+   * `{ offset, color }` stops, sorted by `offset` (`0..1`).  Also takes bare colours, spaced
+   * evenly.
+   * @example
+   * ```ts
+   * const heat = gui.addGradient('heat', ['#3b82f6', '#eab308', '#ef4444'])
+   * heat.on('change', stops => (el.style.background = gradientToString(stops)))
+   * ```
+   */
+  addGradient(title: string, value?: ReadonlyArray<GradientStopLike>, options?: Partial<GradientInputOptions>): InputGradient;
+  /**
+   * Binds an {@link InputGradient} to the stops at the target object's key.  The field is written
+   * back as `{ offset, color }` stops.
+   * @example
+   * ```ts
+   * const theme = { usage: [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#ef4444' }] }
+   * gui.bindGradient(theme, 'usage')
+   * ```
+   */
+  bindGradient<K$1 extends PropertyKey, T extends Record<K$1, ReadonlyArray<GradientStopLike>>>(target: T, key: K$1, options?: Partial<GradientInputOptions>): InputGradient;
   /**
    * Does validation / error handling.
    * If no title was provided, this method will also assign the binding key to the title.

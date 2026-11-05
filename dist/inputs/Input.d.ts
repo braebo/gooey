@@ -14,6 +14,7 @@ import { ArrayInputOptions, InputArray } from "./InputArray.js";
 import { InputText, TextInputOptions } from "./InputText.js";
 import { ElementInputOptions, InputElement } from "./InputElement.js";
 import { BezierInputOptions, InputBezier } from "./InputBezier.js";
+import { GradientInputOptions, InputGradient } from "./InputGradient.js";
 import { Folder } from "../Folder.js";
 import { ButtonGridInputOptions, InputButtonGrid } from "./InputButtonGrid.js";
 import { InputTextArea, TextAreaInputOptions } from "./InputTextArea.js";
@@ -33,9 +34,10 @@ declare const INPUT_TYPE_MAP: Readonly<{
   InputArray: "ArrayInputOptions";
   InputElement: "ElementInputOptions";
   InputBezier: "BezierInputOptions";
+  InputGradient: "GradientInputOptions";
 }>;
-declare const INPUT_TYPES: readonly ("InputSelect" | "InputText" | "InputTextArea" | "InputNumber" | "InputColor" | "InputButton" | "InputButtonGrid" | "InputSwitch" | "InputArray" | "InputElement" | "InputBezier")[];
-declare const INPUT_OPTION_TYPES: readonly ("TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "ButtonGridInputOptions" | "SwitchInputOptions" | "ArrayInputOptions" | "ElementInputOptions" | "BezierInputOptions")[];
+declare const INPUT_TYPES: readonly ("InputNumber" | "InputText" | "InputTextArea" | "InputColor" | "InputSelect" | "InputButton" | "InputButtonGrid" | "InputSwitch" | "InputArray" | "InputElement" | "InputBezier" | "InputGradient")[];
+declare const INPUT_OPTION_TYPES: readonly ("TextInputOptions" | "TextAreaInputOptions" | "NumberInputOptions" | "ColorInputOptions" | "SelectInputOptions" | "ButtonInputOptions" | "ButtonGridInputOptions" | "SwitchInputOptions" | "ArrayInputOptions" | "ElementInputOptions" | "BezierInputOptions" | "GradientInputOptions")[];
 type BindTarget = Record<any, any>;
 type BindableObject<T extends BindTarget, K extends keyof T = keyof T> = {
   target: T;
@@ -139,8 +141,8 @@ interface ElementMap<T = unknown> {
   [key: string]: HTMLElement | HTMLInputElement | ElementMap | T;
 }
 type ValidInputValue = string | number | Color | ColorFormat | Option<any> | LabeledOption<any> | any[] | (() => void);
-type ValidInputOptions = TextInputOptions | TextAreaInputOptions | NumberInputOptions | ColorInputOptions | SelectInputOptions<Option<any>> | ButtonInputOptions | ButtonGridInputOptions | SwitchInputOptions | ArrayInputOptions | ElementInputOptions | BezierInputOptions;
-type ValidInput = InputText | InputTextArea | InputNumber | InputColor | InputSelect<Option<any>> | InputButton | InputButtonGrid | InputSwitch | InputArray | InputElement | InputBezier;
+type ValidInputOptions = TextInputOptions | TextAreaInputOptions | NumberInputOptions | ColorInputOptions | SelectInputOptions<Option<any>> | ButtonInputOptions | ButtonGridInputOptions | SwitchInputOptions | ArrayInputOptions | ElementInputOptions | BezierInputOptions | GradientInputOptions;
+type ValidInput = InputText | InputTextArea | InputNumber | InputColor | InputSelect<Option<any>> | InputButton | InputButtonGrid | InputSwitch | InputArray | InputElement | InputBezier | InputGradient;
 type InputEvents<T extends ValidInputValue = ValidInputValue> = {
   /**
    * Called when the input's value changes, providing the new value.
@@ -335,7 +337,7 @@ declare abstract class Input<TValueType extends ValidInputValue = ValidInputValu
    * gooey lands.
    */
   protected readBinding(): void;
-  save(overrides?: Partial<InputPreset<TOptions>>): Omit<InputOptions<any, Record<any, any>>, "saveable" | "title"> & {
+  save(overrides?: Partial<InputPreset<TOptions>>): Omit<InputOptions<any, Record<any, any>>, "title" | "saveable"> & {
     __type: InputOptionType;
     presetId: string;
     title: string;

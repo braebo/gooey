@@ -19,6 +19,7 @@ import { InputArray } from "./inputs/InputArray.js";
 import { InputText } from "./inputs/InputText.js";
 import { InputElement } from "./inputs/InputElement.js";
 import { InputBezier } from "./inputs/InputBezier.js";
+import { InputGradient } from "./inputs/InputGradient.js";
 import { InputButtonGrid } from "./inputs/InputButtonGrid.js";
 import { animateConnector, createFolderConnector, createFolderSvg } from "./svg/createFolderSVG.js";
 import { composedPathContains } from "./shared/cancelClassFound.js";
@@ -1031,6 +1032,34 @@ var Folder = class Folder {
 		return this.addBezier(opts.title, opts.value, opts);
 	}
 	/**
+	* Adds a new {@link InputGradient} to the folder: a gradient editor whose value is a list of
+	* `{ offset, color }` stops, sorted by `offset` (`0..1`).  Also takes bare colours, spaced
+	* evenly.
+	* @example
+	* ```ts
+	* const heat = gui.addGradient('heat', ['#3b82f6', '#eab308', '#ef4444'])
+	* heat.on('change', stops => (el.style.background = gradientToString(stops)))
+	* ```
+	*/
+	addGradient(title, value, options) {
+		const opts = this._resolveOpts(title, value, options);
+		const input = new InputGradient(opts, this);
+		return this._registerInput(input, opts.presetId);
+	}
+	/**
+	* Binds an {@link InputGradient} to the stops at the target object's key.  The field is written
+	* back as `{ offset, color }` stops.
+	* @example
+	* ```ts
+	* const theme = { usage: [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#ef4444' }] }
+	* gui.bindGradient(theme, 'usage')
+	* ```
+	*/
+	bindGradient(target, key, options) {
+		const opts = this._resolveBinding(target, key, options);
+		return this.addGradient(opts.title, opts.value, opts);
+	}
+	/**
 	* Does validation / error handling.
 	* If no title was provided, this method will also assign the binding key to the title.
 	* @returns The processed options.
@@ -1074,6 +1103,7 @@ var Folder = class Folder {
 			case "InputButtonGrid": return new InputButtonGrid(options, this);
 			case "InputArray": return new InputArray(options, this);
 			case "InputBezier": return new InputBezier(options, this);
+			case "InputGradient": return new InputGradient(options, this);
 		}
 		throw new Error("Invalid input type: " + type + " for options: " + options);
 	}
@@ -1098,6 +1128,7 @@ var Folder = class Folder {
 		let value = options.value ?? options.binding?.target[options.binding.key];
 		if ("onClick" in options) return "InputButton";
 		if (options.__type === "BezierInputOptions") return "InputBezier";
+		if (options.__type === "GradientInputOptions") return "InputGradient";
 		if (value && typeof value === "object" && !Array.isArray(value) && "value" in value && "options" in value) return "InputSelect";
 		if ("options" in options && Array.isArray(options.options) || isLabeledOption(value)) {
 			value ??= options.options[0];

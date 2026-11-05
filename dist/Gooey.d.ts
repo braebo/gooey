@@ -322,7 +322,7 @@ declare const GUI_DEFAULTS: {
  * Methods inherited from {@link Folder} to forward to the gooey.
  * @remarks Gooey _used to_ extend {@link Folder}, but that caused more problems than it solved...
  */
-declare const FORWARDED_METHODS: ["on", "add", "addMany", "addButtonGrid", "addSelect", "addButton", "addText", "addNumber", "addSwitch", "addColor", "addArray", "addElement", "addBezier", "bind", "bindMany", "bindButtonGrid", "bindSelect", "bindButton", "bindText", "bindNumber", "bindSwitch", "bindColor", "bindArray", "bindBezier", "open", "close", "show", "hide", "toggle", "toggleHidden"];
+declare const FORWARDED_METHODS: ["on", "add", "addMany", "addButtonGrid", "addSelect", "addButton", "addText", "addNumber", "addSwitch", "addColor", "addArray", "addElement", "addBezier", "addGradient", "bind", "bindMany", "bindButtonGrid", "bindSelect", "bindButton", "bindText", "bindNumber", "bindSwitch", "bindColor", "bindArray", "bindBezier", "bindGradient", "open", "close", "show", "hide", "toggle", "toggleHidden"];
 interface Gooey extends Pick<Folder, (typeof FORWARDED_METHODS)[number]> {}
 /**
  * A customizable GUI toolkit for quickly creating interactive controls panels.
