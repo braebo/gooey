@@ -6,6 +6,7 @@ import type { InputButton } from './inputs/InputButton'
 import type { InputColor } from './inputs/InputColor'
 import type { InputArray } from './inputs/InputArray'
 import type { InputBezier } from './inputs/InputBezier'
+import type { InputGradient } from './inputs/InputGradient'
 import type { InputText } from './inputs/InputText'
 import type { ColorFormat } from './shared/color/types/colorFormat'
 import type { ValidInput } from './inputs/Input'
@@ -13,6 +14,7 @@ import type { Folder } from './Folder'
 import type { Gooey } from './Gooey'
 
 import { bezierToString } from './inputs/InputBezier'
+import { gradientToString } from './inputs/InputGradient'
 import { Logger } from './shared/logger'
 
 //· WebMCP types ······································································¬
@@ -493,6 +495,26 @@ function toolsFor(target: Target, name: string): WebMCPTool[] {
 				v => (input as InputBezier).set(v),
 			)
 
+		case 'InputGradient':
+			return setter(
+				'gradient',
+				{
+					type: 'array',
+					minItems: 2,
+					items: {
+						type: 'object',
+						properties: {
+							offset: { type: 'number', minimum: 0, maximum: 1 },
+							color: { type: 'string' },
+						},
+						required: ['offset', 'color'],
+					},
+					description:
+						"The color stops, i.e. [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#ef4444' }]; offset within 0..1, color a hex, rgb() or hsl() string.",
+				},
+				v => (input as InputGradient).set(v),
+			)
+
 		case 'InputButton':
 			return [
 				{
@@ -558,6 +580,9 @@ function readValue(input: ValidInput): string {
 
 		case 'InputBezier':
 			return bezierToString((input as InputBezier).value)
+
+		case 'InputGradient':
+			return gradientToString((input as InputGradient).value)
 
 		case 'InputArray':
 			return truncate(JSON.stringify((input as InputArray).state.value))

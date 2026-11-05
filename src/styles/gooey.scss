@@ -29,6 +29,23 @@
 
 // Scrollable
 
+// A checkerboard behind a colour, so its transparency shows.
+@mixin checkerboard($size: 8px, $color: var(--gooey-bg-a)) {
+	$size2: $size * 2;
+
+	background-image:
+		linear-gradient(45deg, $color 25%, transparent 25%),
+		linear-gradient(-45deg, $color 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, $color 75%),
+		linear-gradient(-45deg, transparent 75%, $color 75%);
+	background-size: $size2 $size2;
+	background-position:
+		0 0,
+		0 $size,
+		$size (-$size),
+		(-$size) 0px;
+}
+
 @mixin scrollbar {
 	width: 5px;
 	height: 0px;
@@ -1764,25 +1781,11 @@ input.gooey-search-input {
 			}
 
 			.gooey-input-color-current-color-background {
-				$size: 8px;
-				$size2: $size * 2;
-				$color: var(--gooey-bg-a);
-
 				width: var(--gooey-input-section-2_width);
 				min-width: var(--gooey-input-section-2_width);
 				height: 1.5rem;
 
-				background-image:
-					linear-gradient(45deg, $color 25%, transparent 25%),
-					linear-gradient(-45deg, $color 25%, transparent 25%),
-					linear-gradient(45deg, transparent 75%, $color 75%),
-					linear-gradient(-45deg, transparent 75%, $color 75%);
-				background-size: $size2 $size2;
-				background-position:
-					0 0,
-					0 $size,
-					$size (-$size),
-					(-$size) 0px;
+				@include checkerboard;
 				border-radius: var(--gooey-radius-sm);
 				overflow: hidden;
 
@@ -2391,6 +2394,140 @@ input.gooey-search-input {
 					max-width: unset;
 					text-align: center;
 					font-size: calc(var(--gooey-font-size) * 0.75);
+				}
+			}
+		}
+	}
+
+	&:has(.gooey-input-gradient-container) {
+		height: unset;
+	}
+
+	.gooey-input-content {
+		//? Gradient Input
+		.gooey-input-gradient-container {
+			display: flex;
+			flex-direction: column;
+			gap: 0.125rem;
+
+			width: 100%;
+			padding: 0.25rem 0;
+
+			.gooey-input-gradient-track {
+				--handle-width: 0.625rem;
+
+				position: relative;
+				height: 1.5rem;
+
+				cursor: copy;
+				touch-action: none;
+				user-select: none;
+				-webkit-user-select: none;
+
+				&.dragging {
+					cursor: grabbing;
+				}
+			}
+
+			.gooey-input-gradient-strip {
+				position: absolute;
+				inset: 0.25rem 0;
+
+				@include checkerboard(6px);
+				border-radius: var(--gooey-radius-sm);
+				outline: var(--gooey-controller_outline);
+				overflow: hidden;
+
+				&::after {
+					content: '';
+					position: absolute;
+					inset: 0;
+					background: var(--gradient);
+				}
+			}
+
+			// Inset by half a handle, so a stop at 0 or 1 sits on the strip's edge, not past it.
+			.gooey-input-gradient-stops {
+				position: absolute;
+				inset: 0 calc(var(--handle-width) / 2);
+			}
+
+			.gooey-input-gradient-stop {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+
+				width: var(--handle-width);
+				translate: -50% 0;
+
+				background: var(--color);
+				border: 2px solid var(--gooey-bg-a);
+				border-radius: var(--gooey-radius-sm);
+				box-shadow: 0 0 0 1px var(--gooey-fg-d);
+				outline: none;
+
+				cursor: grab;
+
+				transition-duration: var(--gooey-transition-duration);
+				transition-property: box-shadow, opacity, translate;
+
+				&:hover {
+					box-shadow: 0 0 0 1px var(--gooey-fg-b);
+				}
+
+				&.selected {
+					z-index: 1;
+					box-shadow: 0 0 0 1.5px var(--gooey-theme-a);
+				}
+
+				&:focus-visible {
+					box-shadow: 0 0 0 2px var(--gooey-theme-a);
+				}
+
+				&.dragging {
+					cursor: grabbing;
+				}
+
+				// Dragged off the strip: it goes on release.
+				&.removing {
+					opacity: 0.35;
+					translate: -50% 0.5rem;
+				}
+			}
+
+			.gooey-input-gradient-editor {
+				display: flex;
+				align-items: center;
+				gap: 0.25rem;
+
+				// Level with the colour row's swatch, and kept there when its picker opens below.
+				.gooey-input-gradient-offset {
+					align-self: flex-start;
+					flex-shrink: 0;
+					height: 1.25rem;
+					margin-top: calc((var(--gooey-input_height) - 1.25rem) / 2);
+					width: 3rem;
+					min-width: 0;
+					max-width: unset;
+					text-align: center;
+					font-size: calc(var(--gooey-font-size) * 0.75);
+				}
+
+				// The selected stop's colour input: a whole colour row, without the row around it.
+				.gooey-input-gradient-color {
+					flex: 1;
+					min-width: 0;
+					min-height: unset;
+					outline: none;
+
+					.gooey-input-title,
+					.gooey-input-drawer-toggle {
+						display: none;
+					}
+
+					.gooey-input-content {
+						padding: 0;
+					}
 				}
 			}
 		}

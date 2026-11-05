@@ -510,6 +510,20 @@ const eased = cubicBezier(...ease.value) // (progress) => eased progress
 gooey.bindBezier({ ease: 'ease-out' }, 'ease') // a string field is written back as a string
 ```
 
+A gradient is added by name too. Its value is `{ offset, color }` stops sorted by `offset` (`0..1`), colours as hex — plain data that saves and serializes as-is. Drag a stop to move it, press the strip to add one, drag one off (or press `Delete`) to remove it; the selected stop's colour is edited with the colour picker:
+
+```typescript
+const heat = gooey.addGradient('heat', [
+	{ offset: 0, color: '#3b82f6' },
+	{ offset: 0.6, color: '#eab308' },
+	{ offset: 1, color: '#ef4444' },
+])
+gooey.addGradient('sunset', ['#ff7e5f', '#feb47b', '#86a8e7']) // bare colours are spaced evenly
+
+el.style.background = gradientToString(heat.value) // 'linear-gradient(to right, #3b82f6 0%, ...)'
+const color = sampleGradient(heat.value, 0.29) // the colour 29% along, as hex
+```
+
 <br>
 
 ## In an app
@@ -559,5 +573,6 @@ Other, similar projects:
 -   [ ] Graph / Monitor Input
 -   [ ] LFO / Envelope Manager
 -   [x] Bezier Curve Editor Input
+-   [x] Gradient Stops Input
 -   [ ] Plugins
 -   [ ] Framework Wrappers (svelte 5 runes "just work", but other frameworks need wrappers)

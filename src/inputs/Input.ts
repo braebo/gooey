@@ -8,6 +8,7 @@ import type { InputNumber, NumberInputOptions } from './InputNumber'
 import type { InputElement, ElementInputOptions } from './InputElement'
 import type { InputArray, ArrayInputOptions } from './InputArray'
 import type { InputBezier, BezierInputOptions } from './InputBezier'
+import type { InputGradient, GradientInputOptions } from './InputGradient'
 import type { InputColor, ColorInputOptions } from './InputColor'
 import type { InputText, TextInputOptions } from './InputText'
 
@@ -45,6 +46,7 @@ export const INPUT_TYPE_MAP = Object.freeze({
 	InputArray: 'ArrayInputOptions',
 	InputElement: 'ElementInputOptions',
 	InputBezier: 'BezierInputOptions',
+	InputGradient: 'GradientInputOptions',
 	// InputEmpty: 'EmptyInputOptions',
 })
 
@@ -188,6 +190,7 @@ export type ValidInputOptions =
 	| ArrayInputOptions
 	| ElementInputOptions
 	| BezierInputOptions
+	| GradientInputOptions
 
 export type ValidInput =
 	| InputText
@@ -202,6 +205,7 @@ export type ValidInput =
 	| InputArray
 	| InputElement
 	| InputBezier
+	| InputGradient
 
 export type InputEvents<T extends ValidInputValue = ValidInputValue> = {
 	/**

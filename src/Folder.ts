@@ -32,6 +32,12 @@ import {
 	type BezierValue,
 } from './inputs/InputBezier'
 import {
+	InputGradient,
+	type GradientInputOptions,
+	type GradientStopLike,
+	type GradientValue,
+} from './inputs/InputGradient'
+import {
 	InputButtonGrid,
 	type ButtonGridInputOptions,
 	type ButtonGridArrays,
@@ -1994,6 +2000,43 @@ export class Folder {
 		const opts = this._resolveBinding(target, key, options)
 		return this.addBezier(opts.title, opts.value as BezierValue, opts)
 	}
+
+	/**
+	 * Adds a new {@link InputGradient} to the folder: a gradient editor whose value is a list of
+	 * `{ offset, color }` stops, sorted by `offset` (`0..1`).  Also takes bare colours, spaced
+	 * evenly.
+	 * @example
+	 * ```ts
+	 * const heat = gui.addGradient('heat', ['#3b82f6', '#eab308', '#ef4444'])
+	 * heat.on('change', stops => (el.style.background = gradientToString(stops)))
+	 * ```
+	 */
+	addGradient(
+		title: string,
+		value?: ReadonlyArray<GradientStopLike>,
+		options?: Partial<GradientInputOptions>,
+	): InputGradient {
+		const opts = this._resolveOpts(title, value as GradientValue | undefined, options)
+		const input = new InputGradient(opts, this)
+		return this._registerInput(input, opts.presetId)
+	}
+	/**
+	 * Binds an {@link InputGradient} to the stops at the target object's key.  The field is written
+	 * back as `{ offset, color }` stops.
+	 * @example
+	 * ```ts
+	 * const theme = { usage: [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#ef4444' }] }
+	 * gui.bindGradient(theme, 'usage')
+	 * ```
+	 */
+	bindGradient<K extends PropertyKey, T extends Record<K, ReadonlyArray<GradientStopLike>>>(
+		target: T,
+		key: K,
+		options?: Partial<GradientInputOptions>,
+	): InputGradient {
+		const opts = this._resolveBinding(target, key, options)
+		return this.addGradient(opts.title, opts.value as GradientValue, opts)
+	}
 	//#endregion Adders
 
 	//#region Helpers ························································¬
@@ -2084,6 +2127,8 @@ export class Folder {
 				return new InputArray(options as ArrayInputOptions, this)
 			case 'InputBezier':
 				return new InputBezier(options as BezierInputOptions, this)
+			case 'InputGradient':
+				return new InputGradient(options as GradientInputOptions, this)
 		}
 
 		throw new Error('Invalid input type: ' + type + ' for options: ' + options)
@@ -2128,6 +2173,11 @@ export class Folder {
 		// A curve is a 4-number array (or a string) like any other -- only an explicit type says bezier.
 		if (options.__type === 'BezierInputOptions') {
 			return 'InputBezier'
+		}
+
+		// Stops are an array of objects like any other -- only an explicit type says gradient.
+		if (options.__type === 'GradientInputOptions') {
+			return 'InputGradient'
 		}
 
 		// Check for inline { value, options } pattern before other checks.

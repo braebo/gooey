@@ -3,6 +3,7 @@
 	import Button from './Button.svelte'
 	import ButtonGrid from './ButtonGrid.svelte'
 	import Color from './Color.svelte'
+	import Gradient from './Gradient.svelte'
 	import Number from './Number.svelte'
 	import Select from './Select.svelte'
 	import Switch from './Switch.svelte'
@@ -23,6 +24,8 @@
 <TextArea />
 
 <Color />
+
+<Gradient />
 
 <Select />
 

@@ -510,6 +510,20 @@ const eased = cubicBezier(...ease.value) // (progress) => eased progress
 gooey.bindBezier({ ease: 'ease-out' }, 'ease') // a string field is written back as a string
 ```
 
+A gradient is added by name too. Its value is `{ offset, color }` stops sorted by `offset` (`0..1`), colours as hex — plain data that saves and serializes as-is. Drag a stop to move it, press the strip to add one, drag one off (or press `Delete`) to remove it; the selected stop's colour is edited with the colour picker:
+
+```typescript
+const heat = gooey.addGradient('heat', [
+	{ offset: 0, color: '#3b82f6' },
+	{ offset: 0.6, color: '#eab308' },
+	{ offset: 1, color: '#ef4444' },
+])
+gooey.addGradient('sunset', ['#ff7e5f', '#feb47b', '#86a8e7']) // bare colours are spaced evenly
+
+el.style.background = gradientToString(heat.value) // 'linear-gradient(to right, #3b82f6 0%, ...)'
+const color = sampleGradient(heat.value, 0.29) // the colour 29% along, as hex
+```
+
 <br>
 
 ## In an app
@@ -559,6 +573,7 @@ Other, similar projects:
 -   [ ] Graph / Monitor Input
 -   [ ] LFO / Envelope Manager
 -   [x] Bezier Curve Editor Input
+-   [x] Gradient Stops Input
 -   [ ] Plugins
 -   [ ] Framework Wrappers (svelte 5 runes "just work", but other frameworks need wrappers)
 
@@ -2294,6 +2309,39 @@ gui.addElement('Notes', container => {
 
 [`Folder`](#folder)
 
+##### addGradient()
+
+> **addGradient**(`title`, `value?`, `options?`): [`InputGradient`](#inputgradient)
+
+Adds a new [InputGradient](#inputgradient) to the folder: a gradient editor whose value is a list of
+`{ offset, color }` stops, sorted by `offset` (`0..1`).  Also takes bare colours, spaced
+evenly.
+
+###### Parameters
+
+###### title
+
+`string`
+
+###### value?
+
+readonly [`GradientStopLike`](#gradientstoplike)[]
+
+###### options?
+
+`Partial`\<[`GradientInputOptions`](#gradientinputoptions)\>
+
+###### Returns
+
+[`InputGradient`](#inputgradient)
+
+###### Example
+
+```ts
+const heat = gui.addGradient('heat', ['#3b82f6', '#eab308', '#ef4444'])
+heat.on('change', stops => (el.style.background = gradientToString(stops)))
+```
+
 ##### addMany()
 
 > **addMany**\<`T`, `TOptions`, `TInputs`\>(`target`, `options?`): `object`
@@ -2757,6 +2805,48 @@ string stays that hex string, an `{ h, s, l }` object stays that object, a Color
 ###### Returns
 
 [`InputColor`](#inputcolor)
+
+##### bindGradient()
+
+> **bindGradient**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputGradient`](#inputgradient)
+
+Binds an [InputGradient](#inputgradient) to the stops at the target object's key.  The field is written
+back as `{ offset, color }` stops.
+
+###### Type Parameters
+
+###### K
+
+`K` *extends* `PropertyKey`
+
+###### T
+
+`T` *extends* `Record`\<`K`, readonly [`GradientStopLike`](#gradientstoplike)[]\>
+
+###### Parameters
+
+###### target
+
+`T`
+
+###### key
+
+`K`
+
+###### options?
+
+`Partial`\<[`GradientInputOptions`](#gradientinputoptions)\>
+
+###### Returns
+
+[`InputGradient`](#inputgradient)
+
+###### Example
+
+```ts
+const theme = { usage: [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#ef4444' }] }
+gui.bindGradient(theme, 'usage')
+```
 
 ##### bindMany()
 
@@ -4087,6 +4177,43 @@ gui.addElement('Notes', container => {
 
 [`Folder`](#folder)
 
+##### addGradient()
+
+> **addGradient**(`title`, `value?`, `options?`): [`InputGradient`](#inputgradient)
+
+Adds a new [InputGradient](#inputgradient) to the folder: a gradient editor whose value is a list of
+`{ offset, color }` stops, sorted by `offset` (`0..1`).  Also takes bare colours, spaced
+evenly.
+
+###### Parameters
+
+###### title
+
+`string`
+
+###### value?
+
+readonly [`GradientStopLike`](#gradientstoplike)[]
+
+###### options?
+
+`Partial`\<[`GradientInputOptions`](#gradientinputoptions)\>
+
+###### Returns
+
+[`InputGradient`](#inputgradient)
+
+###### Example
+
+```ts
+const heat = gui.addGradient('heat', ['#3b82f6', '#eab308', '#ef4444'])
+heat.on('change', stops => (el.style.background = gradientToString(stops)))
+```
+
+###### Inherited from
+
+[`Folder`](#folder).[`addGradient`](#addgradient)
+
 ##### addMany()
 
 > **addMany**\<`T`, `TOptions`, `TInputs`\>(`target`, `options?`): `object`
@@ -4578,6 +4705,52 @@ string stays that hex string, an `{ h, s, l }` object stays that object, a Color
 ###### Inherited from
 
 `Pick.bindColor`
+
+##### bindGradient()
+
+> **bindGradient**\<`K`, `T`\>(`target`, `key`, `options?`): [`InputGradient`](#inputgradient)
+
+Binds an [InputGradient](#inputgradient) to the stops at the target object's key.  The field is written
+back as `{ offset, color }` stops.
+
+###### Type Parameters
+
+###### K
+
+`K` *extends* `PropertyKey`
+
+###### T
+
+`T` *extends* `Record`\<`K`, readonly [`GradientStopLike`](#gradientstoplike)[]\>
+
+###### Parameters
+
+###### target
+
+`T`
+
+###### key
+
+`K`
+
+###### options?
+
+`Partial`\<[`GradientInputOptions`](#gradientinputoptions)\>
+
+###### Returns
+
+[`InputGradient`](#inputgradient)
+
+###### Example
+
+```ts
+const theme = { usage: [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#ef4444' }] }
+gui.bindGradient(theme, 'usage')
+```
+
+###### Inherited from
+
+[`Folder`](#folder).[`bindGradient`](#bindgradient)
 
 ##### bindMany()
 
@@ -6849,7 +7022,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -6859,7 +7032,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `ArrayState`\<`T`\>
 
-A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -7488,7 +7661,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -7504,7 +7677,7 @@ The dropdown of named easings, absent when `easings` is `false`.
 
 > `readonly` **state**: `ArrayState`\<`number`\>
 
-A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -8129,7 +8302,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -8139,7 +8312,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `PrimitiveState`\<`ButtonController`\>
 
-A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -8791,7 +8964,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -9505,7 +9678,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -9521,7 +9694,7 @@ The color picker instance.
 
 > **state**: `PrimitiveState`\<[`Color`](#color)\>
 
-A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -10198,7 +10371,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -10208,7 +10381,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `UnionState`\<[`ElementContent`](#elementcontent)\>
 
-A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -10601,6 +10774,695 @@ Replaces the mounted content, running the previous mount function's cleanup firs
 
 ***
 
+### InputGradient
+
+A gradient editor: a strip of the gradient with a handle per colour stop, and the selected
+stop's offset and colour below it.  The colour is edited with gooey's own colour picker.  Its
+value is a list of `{ offset, color }` stops, sorted by `offset` -- plain data that serializes
+as-is, and that [gradientToString](#gradienttostring) and [sampleGradient](#samplegradient) read.
+
+- Drag a stop to move it, or press the strip to add one there (it takes the colour already
+  under it, and can be dragged straight away).
+- Drag a stop off the strip, or press `Delete` / `Backspace` on a focused one, to remove it.
+  A gradient keeps at least two stops.
+- The arrow keys move a focused stop, by ten steps with `shift`.
+
+#### Example
+
+```ts
+const heat = gooey.addGradient('heat', [
+	{ offset: 0, color: '#3b82f6' },
+	{ offset: 0.5, color: '#eab308' },
+	{ offset: 1, color: '#ef4444' },
+])
+heat.on('change', stops => (el.style.background = gradientToString(stops)))
+```
+
+#### Extends
+
+- `Input`\<[`GradientValue`](#gradientvalue), [`GradientInputOptions`](#gradientinputoptions), `GradientInputElements`\>
+
+#### Properties
+
+##### \_\_type
+
+> `readonly` **\_\_type**: `"InputGradient"`
+
+###### Overrides
+
+`Input.__type`
+
+##### bound
+
+> **bound**: `boolean` = `false`
+
+Whether the input was initialized with a bind target/key.
+
+###### Default
+
+```ts
+false
+```
+
+###### Inherited from
+
+`Input.bound`
+
+##### bubble
+
+> **bubble**: `boolean` = `false`
+
+Whether the controllers should bubble their events up to the input and it's listeners.
+If false, the next update will be silent, after which the flag will be reset to true.
+
+###### Inherited from
+
+`Input.bubble`
+
+##### colorInput
+
+> **colorInput**: [`InputColor`](#inputcolor)
+
+The selected stop's colour input.
+
+##### elements
+
+> **elements**: `object`
+
+All HTMLElement's created by this input.
+
+###### container
+
+> **container**: `HTMLElement`
+
+###### content
+
+> **content**: `HTMLElement`
+
+###### controllers
+
+> **controllers**: `GradientInputElements`
+
+###### drawer
+
+> **drawer**: `HTMLElement`
+
+###### drawerToggle
+
+> **drawerToggle**: `HTMLElement` & `object`
+
+###### Type Declaration
+
+###### tooltip
+
+> **tooltip**: [`Tooltip`](#tooltip)
+
+###### resetBtn
+
+> **resetBtn**: `HTMLElement`
+
+###### title
+
+> **title**: `HTMLElement`
+
+###### Inherited from
+
+`Input.elements`
+
+##### folder
+
+> **folder**: [`Folder`](#folder)
+
+###### Inherited from
+
+`Input.folder`
+
+##### id
+
+> **id**: `string`
+
+Unique identifier for the input. Also used for saving and loading presets.
+
+###### Default
+
+`<folder_title>:<input_type>:<input_title>`
+
+###### Inherited from
+
+`Input.id`
+
+##### initialValue
+
+> **initialValue**: [`GradientValue`](#gradientvalue)
+
+The initial value of the input when it was created, used for things like dirty checking and
+the "reset to default" button.
+
+###### Overrides
+
+`Input.initialValue`
+
+##### listen
+
+> **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
+
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-12) is called.
+
+###### Type Parameters
+
+###### TTarget
+
+`TTarget` *extends* `Window` \| `Document` \| `Element`
+
+###### TEventName
+
+`TEventName` *extends* `string` & `object` \| keyof GlobalEventHandlersEventMap
+
+###### TEventInstance
+
+`TEventInstance` *extends* `Event` \| (Event \| UIEvent \| AnimationEvent \| PointerEvent \| MouseEvent \| InputEvent \| ToggleEvent \| ... 12 more ... \| WheelEvent) & \{ ...; \}
+
+###### Parameters
+
+###### element
+
+`TTarget`
+
+The element to add the listener to.
+
+###### event
+
+`TEventName`
+
+The event to listen for.
+
+###### callback
+
+(`e`) => `void`
+
+The callback function to execute when the event is fired.
+
+###### options?
+
+`AddEventListenerOptions`
+
+Optional event listener options.
+
+###### groupId?
+
+`string`
+
+Optional group ID to add the listener to (for batch removal).
+
+###### Returns
+
+`string`
+
+###### Inherited from
+
+`Input.listen`
+
+##### offsetController
+
+> **offsetController**: `NumberController`
+
+The selected stop's offset field.
+
+##### on
+
+> **on**: \<`K`\>(`event`, `callback`) => `string`
+
+Register a new event listener.
+
+###### Type Parameters
+
+###### K
+
+`K` *extends* keyof `InputEvents`\<[`GradientValue`](#gradientvalue)\>
+
+###### Parameters
+
+###### event
+
+`K`
+
+The name of the event to listen for.
+
+###### callback
+
+`EventCallback`\<`InputEvents`\<[`GradientValue`](#gradientvalue)\>\[`K`\]\>
+
+The callback function to execute when the event is fired.
+
+###### Returns
+
+`string`
+
+The ID of the listener (for use via unlisten to remove the listener).
+
+###### Inherited from
+
+`Input.on`
+
+##### opts
+
+> `readonly` **opts**: [`GradientInputOptions`](#gradientinputoptions) & `object`
+
+The options object used to create this input.  More specifically, the input's default
+options merged with the options passed by the consumer.
+
+###### Type Declaration
+
+###### \_\_type
+
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
+
+###### Inherited from
+
+`Input.opts`
+
+##### state
+
+> `readonly` **state**: `ArrayState`\<[`GradientStop`](#gradientstop)\>
+
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
+to with State.subscribe to listen for changes.
+
+###### Overrides
+
+`Input.state`
+
+#### Accessors
+
+##### description
+
+###### Get Signature
+
+> **get** **description**(): `string`
+
+The description of the input, displayed when hovering over the thin
+tab element found on the far left of the input's row.
+
+###### Returns
+
+`string`
+
+###### Set Signature
+
+> **set** **description**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`string` \| (() => `string`)
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.description`
+
+##### disabled
+
+###### Get Signature
+
+> **get** **disabled**(): `boolean`
+
+Whether the input is disabled (non-interactive / dimmed).
+
+For dynamic disabled states, assign this to a function and it will be called whenever
+[refresh](#refresh-8) is called.  Keep in mind that calling [enable](#enable-6) or [disable](#disable-6)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-8).
+
+###### Returns
+
+`boolean`
+
+###### Set Signature
+
+> **set** **disabled**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`boolean` \| (() => `boolean`)
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.disabled`
+
+##### element
+
+###### Get Signature
+
+> **get** **element**(): `HTMLElement`
+
+The main Element.  Usually a container div for the rest of the Input's
+Input.elements\|\`elements\`.
+
+###### Returns
+
+`HTMLElement`
+
+###### Inherited from
+
+`Input.element`
+
+##### hidden
+
+###### Get Signature
+
+> **get** **hidden**(): `boolean`
+
+Completely hides the Input from view when set to `true`.
+
+###### Returns
+
+`boolean`
+
+###### Set Signature
+
+> **set** **hidden**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`boolean` \| (() => `boolean`)
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.hidden`
+
+##### index
+
+###### Get Signature
+
+> **get** **index**(): `number`
+
+The index of the input in the folder relative to other inputs.  Setting or changing this
+value will update the input's [\`element\`](#element-6)'s order style property.
+
+###### Returns
+
+`number`
+
+###### Set Signature
+
+> **set** **index**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`number`
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.index`
+
+##### selected
+
+###### Get Signature
+
+> **get** **selected**(): `number`
+
+The index of the selected stop -- the one the editor below the strip shows.
+
+###### Returns
+
+`number`
+
+##### title
+
+###### Get Signature
+
+> **get** **title**(): `string`
+
+The title displayed on this Input's label.
+
+###### Returns
+
+`string`
+
+###### Set Signature
+
+> **set** **title**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`string`
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.title`
+
+##### undoManager
+
+###### Get Signature
+
+> **get** **undoManager**(): `UndoManager` \| `undefined`
+
+###### Returns
+
+`UndoManager` \| `undefined`
+
+###### Inherited from
+
+`Input.undoManager`
+
+##### value
+
+###### Get Signature
+
+> **get** **value**(): `TValueType`
+
+###### Returns
+
+`TValueType`
+
+###### Set Signature
+
+> **set** **value**(`v`): `void`
+
+###### Parameters
+
+###### v
+
+`TValueType`
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.value`
+
+#### Methods
+
+##### commit()
+
+> **commit**(`commit`): `void`
+
+Commits a change to the input's value to the undo manager.
+
+###### Parameters
+
+###### commit
+
+`Partial`\<`Commit`\>
+
+###### Returns
+
+`void`
+
+###### Inherited from
+
+`Input.commit`
+
+##### disable()
+
+> **disable**(): [`InputGradient`](#inputgradient)
+
+Disables the input and any associated controllers. A disabled input can't be interacted
+with, and its state can't be changed.
+
+###### Returns
+
+[`InputGradient`](#inputgradient)
+
+###### Overrides
+
+`Input.disable`
+
+##### dispose()
+
+> **dispose**(): `void`
+
+###### Returns
+
+`void`
+
+###### Overrides
+
+`Input.dispose`
+
+##### emit()
+
+> **emit**(`event`, `v?`): [`InputGradient`](#inputgradient)
+
+Called from subclasses at the end of their `set` method to emit the `change` event.
+
+###### Parameters
+
+###### event
+
+keyof `InputEvents`\<[`GradientValue`](#gradientvalue)\>
+
+###### v?
+
+[`GradientValue`](#gradientvalue) = `...`
+
+###### Returns
+
+[`InputGradient`](#inputgradient)
+
+###### Inherited from
+
+`Input.emit`
+
+##### enable()
+
+> **enable**(): [`InputGradient`](#inputgradient)
+
+Removes the disabled state from the input and any associated controllers.
+
+###### Returns
+
+[`InputGradient`](#inputgradient)
+
+###### Overrides
+
+`Input.enable`
+
+##### load()
+
+> **load**(`json`): `void`
+
+###### Parameters
+
+###### json
+
+`string` \| `InputPreset`\<[`GradientInputOptions`](#gradientinputoptions)\>
+
+###### Returns
+
+`void`
+
+###### Overrides
+
+`Input.load`
+
+##### refresh()
+
+> **refresh**(`v?`): `this`
+
+Refreshes the value of any controllers to match the current input state.
+
+###### Parameters
+
+###### v?
+
+[`GradientValue`](#gradientvalue)
+
+###### Returns
+
+`this`
+
+###### Overrides
+
+`Input.refresh`
+
+##### save()
+
+> **save**(`overrides?`): `Omit`\<`InputOptions`\<`any`, `Record`\<`any`, `any`\>\>, `"title"` \| `"saveable"`\> & `object` & `Partial`\<`InputPreset`\<[`GradientInputOptions`](#gradientinputoptions)\>\>
+
+###### Parameters
+
+###### overrides?
+
+`Partial`\<`InputPreset`\<[`GradientInputOptions`](#gradientinputoptions)\>\> = `{}`
+
+###### Returns
+
+`Omit`\<`InputOptions`\<`any`, `Record`\<`any`, `any`\>\>, `"title"` \| `"saveable"`\> & `object` & `Partial`\<`InputPreset`\<[`GradientInputOptions`](#gradientinputoptions)\>\>
+
+###### Overrides
+
+`Input.save`
+
+##### select()
+
+> **select**(`index`): `this`
+
+Selects the stop at `index`, so the offset field and colour picker edit it.
+
+###### Parameters
+
+###### index
+
+`number`
+
+###### Returns
+
+`this`
+
+##### set()
+
+> **set**(`v`): `this`
+
+Sets the gradient.  Takes `{ offset, color }` stops in any order, stops without an offset,
+or bare colours (spaced evenly).  The value is stored sorted by offset, colours as hex.
+
+###### Parameters
+
+###### v
+
+readonly [`GradientStopLike`](#gradientstoplike)[]
+
+###### Returns
+
+`this`
+
+###### Overrides
+
+`Input.set`
+
+***
+
 ### InputNumber
 
 A combined input with a traditional text input, increment/decrement buttons, and a slider.
@@ -10743,7 +11605,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-12) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-13) is called.
 
 ###### Type Parameters
 
@@ -10854,7 +11716,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -10864,7 +11726,7 @@ options merged with the options passed by the consumer.
 
 > **state**: `PrimitiveState`\<`number`\>
 
-A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -10913,8 +11775,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-8) is called.  Keep in mind that calling [enable](#enable-6) or [disable](#disable-6)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-8).
+[refresh](#refresh-9) is called.  Keep in mind that calling [enable](#enable-7) or [disable](#disable-7)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-9).
 
 ###### Returns
 
@@ -11379,7 +12241,7 @@ The currently selected option as a labeled option.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-13) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-14) is called.
 
 ###### Type Parameters
 
@@ -11518,7 +12380,7 @@ If neither exist, an error will be thrown.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -11540,7 +12402,7 @@ automatically updated with the raw value.
 
 ##### state
 
-> **state**: [`State`](#state-10)\<`TValueType`\>
+> **state**: [`State`](#state-11)\<`TValueType`\>
 
 Reactive state containing the raw value (T, not LabeledOption<T>).
 This is automatically kept in sync with `selected`.
@@ -11592,8 +12454,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-9) is called.  Keep in mind that calling [enable](#enable-7) or [disable](#disable-7)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-9).
+[refresh](#refresh-10) is called.  Keep in mind that calling [enable](#enable-8) or [disable](#disable-8)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-10).
 
 ###### Returns
 
@@ -12191,7 +13053,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-14) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-15) is called.
 
 ###### Type Parameters
 
@@ -12294,7 +13156,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -12304,7 +13166,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `UnionState`\<`boolean`\>
 
-A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -12353,8 +13215,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-10) is called.  Keep in mind that calling [enable](#enable-8) or [disable](#disable-8)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-10).
+[refresh](#refresh-11) is called.  Keep in mind that calling [enable](#enable-9) or [disable](#disable-9)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-11).
 
 ###### Returns
 
@@ -12817,7 +13679,7 @@ the "reset to default" button.
 
 > **listen**: \<`TTarget`, `TEventName`, `TEventInstance`\>(`element`, `event`, `callback`, `options?`, `groupId?`) => `string`
 
-Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-15) is called.
+Add an event listener to an HTMLElement that will be removed when [dispose](#dispose-16) is called.
 
 ###### Type Parameters
 
@@ -12920,7 +13782,7 @@ options merged with the options passed by the consumer.
 
 ###### \_\_type
 
-> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"`
+> **\_\_type**: `"SelectInputOptions"` \| `"TextInputOptions"` \| `"TextAreaInputOptions"` \| `"NumberInputOptions"` \| `"ColorInputOptions"` \| `"ButtonInputOptions"` \| `"ButtonGridInputOptions"` \| `"SwitchInputOptions"` \| `"ArrayInputOptions"` \| `"ElementInputOptions"` \| `"BezierInputOptions"` \| `"GradientInputOptions"`
 
 ###### Inherited from
 
@@ -12930,7 +13792,7 @@ options merged with the options passed by the consumer.
 
 > `readonly` **state**: `PrimitiveState`\<`string`\>
 
-A [State](#state-10) observable, the source of truth for the input's value.  It can be subscribed
+A [State](#state-11) observable, the source of truth for the input's value.  It can be subscribed
 to with State.subscribe to listen for changes.
 
 ###### Overrides
@@ -12979,8 +13841,8 @@ tab element found on the far left of the input's row.
 Whether the input is disabled (non-interactive / dimmed).
 
 For dynamic disabled states, assign this to a function and it will be called whenever
-[refresh](#refresh-11) is called.  Keep in mind that calling [enable](#enable-9) or [disable](#disable-9)
-will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-11).
+[refresh](#refresh-12) is called.  Keep in mind that calling [enable](#enable-10) or [disable](#disable-10)
+will not prevent a dynamic disabled state function from running on the next [refresh](#refresh-12).
 
 ###### Returns
 
@@ -14305,6 +15167,96 @@ The element or mount function to render in the input's content area.
 
 ***
 
+### GradientInputOptions
+
+> **GradientInputOptions** = `InputOptions`\<[`GradientValue`](#gradientvalue)\> & `object`
+
+#### Type Declaration
+
+##### \_\_type?
+
+> `readonly` `optional` **\_\_type?**: `"GradientInputOptions"`
+
+##### expanded?
+
+> `optional` **expanded?**: `boolean`
+
+Whether the selected stop's colour picker starts open.
+
+###### Default
+
+```ts
+false
+```
+
+##### mode?
+
+> `optional` **mode?**: `ColorMode`
+
+The format of the selected stop's colour fields.
+
+###### Default
+
+```ts
+'hex'
+```
+
+##### step?
+
+> `optional` **step?**: `number`
+
+The increment a dragged stop snaps to, the step of the offset field, and the distance an
+arrow key moves the focused stop.  Hold `shift` to move by `0.05` while dragging, or by ten
+steps with the arrow keys.
+
+###### Default
+
+```ts
+0.01
+```
+
+***
+
+### GradientStop
+
+> **GradientStop** = `object`
+
+One stop of a [GradientValue](#gradientvalue): a colour at a position along the gradient.
+
+#### Properties
+
+##### color
+
+> **color**: `string`
+
+The stop's colour: `'#rrggbb'`, or `'#rrggbbaa'` when it isn't opaque.
+
+##### offset
+
+> **offset**: `number`
+
+Where the stop sits along the gradient, from `0` (the start) to `1` (the end).
+
+***
+
+### GradientStopLike
+
+> **GradientStopLike** = `string` \| [`Color`](#color) \| [`ColorValue`](#colorvalue-1) \| \{ `color`: `string` \| [`Color`](#color) \| [`ColorValue`](#colorvalue-1); `offset?`: `number`; \}
+
+What an [InputGradient](#inputgradient) accepts as a stop: a full [GradientStop](#gradientstop), a stop whose
+`offset` is left out, or a bare colour.  A missing offset spaces the stops evenly.  A colour is
+a hex, `rgb()` or `hsl()` string, a CSS colour name, a colour object, or a [Color](#color).
+
+***
+
+### GradientValue
+
+> **GradientValue** = [`GradientStop`](#gradientstop)[]
+
+A gradient's colour stops, sorted by `offset`.  Plain data, so it serializes as-is.
+
+***
+
 ### LogLevel
 
 > **LogLevel** = *typeof* `LOG_LEVELS`\[`number`\]
@@ -14884,6 +15836,43 @@ const curve = cubicBezier(...gooey.addBezier('ease', [0.16, 1, 0.3, 1]).value)
 
 ***
 
+### gradientToString()
+
+> **gradientToString**(`stops`, `direction?`): `` `linear-gradient(${string})` ``
+
+Renders a [GradientValue](#gradientvalue) as a CSS `linear-gradient()`.
+
+#### Parameters
+
+##### stops
+
+readonly [`GradientStop`](#gradientstop)[]
+
+##### direction?
+
+`string` = `'to right'`
+
+The gradient line's direction, as CSS takes it: `'90deg'`, `'to bottom'`...
+
+#### Returns
+
+`` `linear-gradient(${string})` ``
+
+#### Default
+
+```ts
+'to right'
+```
+
+#### Example
+
+```ts
+gradientToString([{ offset: 0, color: '#000000' }, { offset: 1, color: '#ffffff' }])
+// 'linear-gradient(to right, #000000 0%, #ffffff 100%)'
+```
+
+***
+
 ### isColor()
 
 > **isColor**(`color`): `color is Color`
@@ -14992,9 +15981,41 @@ const agentDoor = registerWebMCP(gooey)
 
 ***
 
+### sampleGradient()
+
+> **sampleGradient**(`stops`, `t`): `string`
+
+The colour a [GradientValue](#gradientvalue) has at `t` (`0..1`), as `'#rrggbb'` or `'#rrggbbaa'`.
+Blends in premultiplied sRGB, the way CSS paints a `linear-gradient()` of hex colours, so the
+colour matches what the strip shows.  Before the first stop is the first colour, after the last
+is the last.
+
+#### Parameters
+
+##### stops
+
+readonly [`GradientStop`](#gradientstop)[]
+
+##### t
+
+`number`
+
+#### Returns
+
+`string`
+
+#### Example
+
+```ts
+const usage = gooey.addGradient('usage', ['#3b82f6', '#22c55e', '#eab308', '#ef4444'])
+circle.style.color = sampleGradient(usage.value, 0.29)
+```
+
+***
+
 ### state()
 
-> **state**\<`T`\>(`defaultValue`, `options?`): [`State`](#state-10)\<`T`\>
+> **state**\<`T`\>(`defaultValue`, `options?`): [`State`](#state-11)\<`T`\>
 
 An advanced store factory with additional features:
 
@@ -15025,7 +16046,7 @@ StateOptions
 
 #### Returns
 
-[`State`](#state-10)\<`T`\>
+[`State`](#state-11)\<`T`\>
 
 #### Example
 
@@ -15066,6 +16087,26 @@ clamping `x1` and `x2` into `0..1`.  Throws on anything else.
 #### Returns
 
 [`BezierValue`](#beziervalue)
+
+***
+
+### toGradient()
+
+> **toGradient**(`v`): [`GradientValue`](#gradientvalue)
+
+Normalizes anything an [InputGradient](#inputgradient) accepts into a fresh, sorted [GradientValue](#gradientvalue):
+offsets clamped into `0..1` (a missing one spaces the stops evenly), colours as hex.  Throws on
+anything else, and on fewer than two stops.
+
+#### Parameters
+
+##### v
+
+`unknown`
+
+#### Returns
+
+[`GradientValue`](#gradientvalue)
 
 ***
 

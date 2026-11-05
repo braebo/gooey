@@ -45,6 +45,14 @@ export type {
 } from './inputs/InputBezier'
 export { BEZIER_EASINGS, bezierToString, toBezier } from './inputs/InputBezier'
 export { cubicBezier } from './shared/cubicBezier'
+export type {
+	InputGradient,
+	GradientInputOptions,
+	GradientValue,
+	GradientStop,
+	GradientStopLike,
+} from './inputs/InputGradient'
+export { gradientToString, sampleGradient, toGradient } from './inputs/InputGradient'
 
 // Shared
 
