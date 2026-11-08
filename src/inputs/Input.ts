@@ -311,6 +311,12 @@ export abstract class Input<
 	private lockCommit = {} as Commit
 
 	/**
+	 * How many {@link refresh}es have emitted, so a refresh can tell its read of the binding
+	 * re-entered it.
+	 */
+	private _refreshes = 0
+
+	/**
 	 * The input's {@link EventManager}.
 	 */
 	protected _dirty: () => boolean
@@ -730,13 +736,18 @@ export abstract class Input<
 		this._refreshDisabled()
 		this._refreshHidden()
 
+		// A read that moves state re-enters `refresh` through the state's subscriber, which renders
+		// and emits the new value; this frame's `v` was taken before the read, so it stops here.
+		const refreshes = this._refreshes
 		this.readBinding()
+		if (this._refreshes !== refreshes) return this
 
 		// Only the reset button's dirty mark belongs to `resettable`.
 		if (this.opts.resettable) {
 			this.elements.resetBtn.classList.toggle('dirty', this._dirty())
 		}
 
+		this._refreshes++
 		this._evm.emit('refresh', v as TValueType)
 		return this
 	}

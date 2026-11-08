@@ -188,16 +188,17 @@ describe('refresh() re-reads a bound field, resettable or not', () => {
 				const target = { v: from }
 				const input: any = bind(target, { resettable })
 				let changes = 0
-				let refreshes = 0
+				const refreshes: unknown[] = []
 				input.on('change', () => changes++)
-				input.on('refresh', () => refreshes++)
+				input.on('refresh', (v: unknown) => refreshes.push(v))
 
 				target.v = to
 				input.refresh()
 
 				expect(read(input)).toEqual(want)
 				expect(changes).toBe(0)
-				expect(refreshes).toBeGreaterThan(0)
+				// Once, with what it read: not the new value and then the stale one.
+				expect(refreshes).toEqual([input.value])
 			})
 		}
 	}
