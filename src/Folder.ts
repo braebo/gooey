@@ -78,11 +78,24 @@ export type InferStringInput<T extends string> = string extends T
  * and {@link Folder.bindMany|`bindMany`} infer their target `const`, so an inline string keeps
  * the literal that tells a color from text; the same inference makes an inline array a readonly
  * tuple of literals, whose items {@link Widen} back to what a mutable array holds (`[1, 2]` holds
- * numbers, as it does for {@link Folder.add|`add`}).  A mutable array's items keep their type.
+ * numbers, as it does for {@link Folder.add|`add`}).  An array declared `T[]` or `readonly T[]`
+ * keeps its item type; a declared `as const` tuple reads as inline and widens too.
  */
 type ItemValue<TArray extends readonly unknown[], TItem> = TArray extends unknown[]
 	? TItem
-	: Widen<TItem>
+	: number extends TArray['length']
+		? TItem
+		: Widen<TItem>
+
+/**
+ * The value type of a `{ value, options }` select: its labeled options' values, or its value and
+ * plain options.  With no options, the value alone.
+ */
+type SelectValue<V, O extends readonly unknown[]> = [O[number]] extends [never]
+	? ItemValue<O, V>
+	: O extends readonly LabeledOption<unknown>[]
+		? ItemValue<O, O[number]['value']>
+		: ItemValue<O, V | O[number]>
 
 /** A `const`-inferred type as plain inference would have it: literals widened, arrays mutable. */
 type Widen<T> = T extends string
@@ -170,24 +183,19 @@ export type InferTargetOptions<TTarget> = {
 		? Partial<SelectInputOptions<ItemValue<TTarget[K], U>>>
 		: TTarget[K] extends LabeledOption<infer U>
 			? Partial<SelectInputOptions<U>>
-			: TTarget[K] extends {
-						value: unknown
-						options: infer O extends readonly LabeledOption<unknown>[]
-				  }
-				? Partial<SelectInputOptions<ItemValue<O, O[number]['value']>>>
-				: TTarget[K] extends { value: infer V; options: infer O extends readonly unknown[] }
-					? Partial<SelectInputOptions<ItemValue<O, V | O[number]>>>
-					: TTarget[K] extends readonly (infer U)[]
-						? Partial<ArrayInputOptions<ItemValue<TTarget[K], U>>>
-						: TTarget[K] extends Function
-							? Partial<ButtonInputOptions>
-							: TTarget[K] extends ColorFormat
-								? Partial<ColorInputOptions>
-								: TTarget[K] extends object
-									? InferTargetOptions<TTarget[K]> & {
-											folderOptions?: Partial<FolderOptions>
-										}
-									: Partial<InferOptions<TTarget[K]>>
+			: TTarget[K] extends { value: infer V; options: infer O extends readonly unknown[] }
+				? Partial<SelectInputOptions<SelectValue<V, O>>>
+				: TTarget[K] extends readonly (infer U)[]
+					? Partial<ArrayInputOptions<ItemValue<TTarget[K], U>>>
+					: TTarget[K] extends Function
+						? Partial<ButtonInputOptions>
+						: TTarget[K] extends ColorFormat
+							? Partial<ColorInputOptions>
+							: TTarget[K] extends object
+								? InferTargetOptions<TTarget[K]> & {
+										folderOptions?: Partial<FolderOptions>
+									}
+								: Partial<InferOptions<TTarget[K]>>
 }
 
 /**
@@ -260,25 +268,19 @@ export type InferInputs<TTarget> =
 								: TTarget[K] extends readonly LabeledOption<infer U>[]
 									? InputSelect<ItemValue<TTarget[K], U>>
 									: TTarget[K] extends {
-												value: unknown
-												options: infer O extends
-													readonly LabeledOption<unknown>[]
+												value: infer V
+												options: infer O extends readonly unknown[]
 										  }
-										? InputSelect<ItemValue<O, O[number]['value']>>
-										: TTarget[K] extends {
-													value: infer V
-													options: infer O extends readonly unknown[]
-											  }
-											? InputSelect<ItemValue<O, V | O[number]>>
-											: TTarget[K] extends readonly (infer U)[]
-												? InputArray<ItemValue<TTarget[K], U>>
-												: TTarget[K] extends () => void
-													? InputButton
-													: TTarget[K] extends object
-														? InferInputs<TTarget[K]> & {
-																folder: Folder
-															}
-														: never
+										? InputSelect<SelectValue<V, O>>
+										: TTarget[K] extends readonly (infer U)[]
+											? InputArray<ItemValue<TTarget[K], U>>
+											: TTarget[K] extends () => void
+												? InputButton
+												: TTarget[K] extends object
+													? InferInputs<TTarget[K]> & {
+															folder: Folder
+														}
+													: never
 			}
 		: never
 

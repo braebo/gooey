@@ -207,4 +207,24 @@ describe('events', () => {
 		expect(heard.map(([event]) => event)).toEqual(['open', 'preview', 'close', 'cancel'])
 		expect(select.value).toBe('foo')
 	})
+
+	test('a click outside or on the menu itself cancels the way escape does', () => {
+		const select = gui.addSelect('dismissed', { value: 'foo', options: ['foo', 'bar'] })
+		const heard = record(select)
+
+		select.selectController.elements.selected.click()
+		option(select, 'bar').dispatchEvent(new MouseEvent('mouseenter'))
+		document.body.click()
+
+		expect(heard.map(([event]) => event)).toEqual(['open', 'preview', 'close', 'cancel'])
+		expect(select.value).toBe('foo')
+
+		heard.length = 0
+		select.selectController.elements.selected.click()
+		option(select, 'bar').dispatchEvent(new MouseEvent('mouseenter'))
+		select.selectController.elements.selected.click()
+
+		expect(heard.map(([event]) => event)).toEqual(['open', 'preview', 'close', 'cancel'])
+		expect(select.value).toBe('foo')
+	})
 })

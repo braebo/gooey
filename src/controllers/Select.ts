@@ -409,13 +409,13 @@ export class Select<T> {
 	}
 
 	/**
-	 * Toggles the dropdown's visibility.
+	 * Toggles the dropdown's visibility.  Closing it this way is a cancel, as Escape is: a hover's
+	 * preview is put back.
 	 */
 	toggle = () => {
 		this._log.fn('toggle').debug({ this: this })
 		if (this.expanded) {
-			this._evm.emit('cancel')
-			this.close()
+			this._cancel()
 		} else {
 			this.open()
 		}

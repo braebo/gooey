@@ -197,6 +197,24 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 		}
 	})
 
+	test('a declared readonly select or array keeps its item type too', () => {
+		type Mode = 'light' | 'dark'
+		type Target = { mode: { value: Mode; options: readonly Mode[] }; modes: readonly Mode[] }
+
+		expectTypeOf(() => gooey.addMany({} as Target).inputs.mode).returns.toEqualTypeOf<
+			InputSelect<Mode>
+		>()
+		expectTypeOf(() => gooey.bindMany({} as Target).inputs.modes).returns.toEqualTypeOf<
+			InputArray<Mode>
+		>()
+	})
+
+	test('an inline select with no options yet is typed by its value', () => {
+		expectTypeOf(
+			() => gooey.addMany({ sel: { value: 'a', options: [] } }).inputs.sel,
+		).returns.toEqualTypeOf<InputSelect<string>>()
+	})
+
 	test('the options bag takes a mutable options array for an inline select', () => {
 		const { inputs } = gooey.addMany(inline(), {
 			sel: { __type: 'SelectInputOptions', options: ['a', 'b', 'c'] },
