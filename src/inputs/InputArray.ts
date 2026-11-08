@@ -165,11 +165,17 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 
 		// The item's undo step is the array's: an undo sets the whole array back, so it still lands
 		// after the items are rebuilt (an outside write, or `set`) and this input is gone.  Each
-		// replay sets a copy, so an outside write to the array it restored can't rewrite the step.
+		// replay sets a shallow copy, so a push or an index write to the array it restored can't
+		// rewrite the step (a write inside an object item still can).
 		const commit = input.commit.bind(input)
-		input.commit = ({ from = input.state.value, to = input.state.value }) =>
+		input.commit = ({ from, to = input.state.value }) =>
 			commit({
-				from: this._withItem(index, toItem(from)),
+				// A plain edit commits before it lands and names no `from`, so the array as it stands
+				// is the one before, its items exact.  A drag names the item value it started from.
+				from:
+					from === undefined
+						? [...this.state.value]
+						: this._withItem(index, toItem(from)),
 				to: this._withItem(index, toItem(to)),
 				target: this as Input<any>,
 				setter: v => this.set([...(v as T[])]),

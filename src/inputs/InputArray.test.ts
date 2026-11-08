@@ -168,6 +168,20 @@ describe('InputArray', () => {
 			expect(target).toEqual({ flags: [true], objs: [{ a: 1 }] })
 		})
 
+		test('an undo gives back the items exactly, not as their text', () => {
+			const g = fresh()
+			const when = new Date(0)
+			const target = { arr: [null, { when }] as unknown[] }
+			const input = g.bindArray(target, 'arr')
+
+			;(input.items[0] as InputText).set('x')
+			;(input.items[1] as InputText).set('{}')
+			g._undoManager.undo()
+			g._undoManager.undo()
+			expect(target.arr[0]).toBeNull()
+			expect((target.arr[1] as { when: Date }).when).toBe(when)
+		})
+
 		test('an outside write to an array an undo restored leaves the history alone', () => {
 			const g = fresh()
 			const target = { arr: [1, 2] }
