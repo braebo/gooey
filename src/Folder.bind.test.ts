@@ -348,6 +348,61 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 		expect(ok.inputs.sel.value).toBe('a')
 	})
 
+	test('a key the walk skips lifts the refusal: exclude, or left out of include', () => {
+		const labeled = () => ({
+			n: 1,
+			arr: [
+				{ label: 'one', value: 1 },
+				{ label: 'two', value: 2 },
+			],
+		})
+
+		expect(Object.keys(gooey.bindMany(labeled(), { exclude: ['arr'] }).inputs)).toEqual(['n'])
+		expect(Object.keys(gooey.bindMany(labeled(), { include: ['n'] }).inputs)).toEqual(['n'])
+		expect(gooey.bindMany({ f: labeled() }, { exclude: ['f'] }).inputs).toEqual({})
+
+		// @ts-expect-error - excluding another key leaves the array refused
+		expectTypeOf(() => gooey.bindMany(labeled(), { exclude: ['n'] })).toBeFunction()
+		// @ts-expect-error - and so does including it
+		expectTypeOf(() => gooey.bindMany(labeled(), { include: ['arr'] })).toBeFunction()
+		// @ts-expect-error - an exclude still names a key of the target
+		expectTypeOf(() => gooey.bindMany({ n: 1 }, { exclude: ['nope'] })).toBeFunction()
+
+		// A type argument given by hand takes the exclude it always did.
+		expect(gooey.bindMany<{ n: number }>({ n: 1 }, { exclude: ['n'] }).inputs).toEqual({})
+	})
+
+	test('a target bindMany refuses throws before any of it is built', () => {
+		const folder = gooey.addFolder('refused')
+
+		const labeled = { n: 1, f: { m: 2 }, arr: [{ label: 'one', value: 1 }] }
+		expect(() => folder.bindMany(labeled as any)).toThrow(/labeled options/)
+		expect(() => folder.bindMany({ n: 1, f: { m: 2, arr: labeled.arr } } as any)).toThrow(
+			/labeled options/,
+		)
+		expect(() => folder.bindMany({ n: 1, f: { m: 2 }, nothing: null })).toThrow(
+			/Invalid binding/,
+		)
+
+		expect(folder.inputs.size).toBe(0)
+		expect(folder.children).toHaveLength(0)
+
+		// A refused key the walk never reaches doesn't throw.
+		expect(Object.keys(folder.bindMany(labeled as any, { maxSize: 2 }).inputs)).toEqual([
+			'n',
+			'f',
+		])
+	})
+
+	test('a generic wrapper gets past the type-level refusal with a type argument and a cast', () => {
+		function bindAll<V extends { n: number }>(v: { x: V; list: V[] }) {
+			return gooey.bindMany<typeof v>(v as any)
+		}
+		const { inputs } = bindAll({ x: { n: 1 }, list: [{ n: 2 }] })
+		expectTypeOf(inputs.list).toEqualTypeOf<InputArray<{ n: number }>>()
+		expect(inputs.x.n.value).toBe(1)
+	})
+
 	test('an array of { label, value, ...more } is data, an InputArray, and binds', () => {
 		const rows = () => ({ rows: [{ label: 'one', value: 1, note: 'x' }] })
 

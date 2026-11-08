@@ -328,17 +328,36 @@ type UnbindableLabeledOptions =
 	'bindMany() has no field to write a pick to in a bare labeled-options array: bind { value, options } instead, or addMany() it'
 
 /**
+ * The runtime twin of {@link UnbindableLabeledOptions}, for a target cast past it.
+ */
+function unbindableLabeledOptions(key: string) {
+	return new Error(
+		`bindMany(): "${key}" is an array of labeled options, which has no field to write a pick to. Bind { value, options } instead, or addMany() it.`,
+	)
+}
+
+/**
  * A {@link Folder.bindMany|`bindMany`} target, with each bare labeled-options array in it (nested
  * folders included) swapped for {@link UnbindableLabeledOptions}.  `addMany` builds a select from
  * one, but a bound select writes its pick to the field, and here the field is the options.
  */
-export type BindableTarget<T> = {
-	[K in keyof T]: IsLabeledOptions<T[K]> extends true
-		? UnbindableLabeledOptions
-		: K extends FolderKeys<T>
-			? BindableTarget<T[K]>
-			: T[K]
+export type BindableTarget<T, TSkipped extends PropertyKey = never> = {
+	[K in keyof T]: K extends TSkipped
+		? T[K]
+		: IsLabeledOptions<T[K]> extends true
+			? UnbindableLabeledOptions
+			: K extends FolderKeys<T>
+				? BindableTarget<T[K]>
+				: T[K]
 }
+
+/**
+ * The keys at the top of a {@link Folder.bindMany|`bindMany`} target that `_walk` never reaches:
+ * those its `exclude` names, and those an `include` leaves out.
+ */
+type SkippedKeys<T, TExclude, TInclude> =
+	| TExclude
+	| ([TInclude] extends [never] ? never : Exclude<keyof T, TInclude>)
 
 /**
  * The folders {@link Folder.addMany|`addMany`} and {@link Folder.bindMany|`bindMany`} build, keyed
@@ -1623,24 +1642,52 @@ export class Folder {
 		)
 	}
 
+	/**
+	 * Binds an input to each of a target object's keys, the way {@link Folder.addMany|`addMany`}
+	 * adds them, so a change writes back to the target.  Nested objects become child folders.
+	 *
+	 * A bare array of labeled options (`[{ label, value }, …]`) is refused, by type and at runtime:
+	 * a bound select writes its pick to the field, and that field holds the options.  Bind an inline
+	 * `{ value, options }` instead, or {@link Folder.addMany|`addMany`} it.  A key that `exclude`
+	 * names, or that an `include` leaves out, is never walked, so it isn't refused.  A refused
+	 * target throws before any input is built.
+	 *
+	 * Inside a generic function the target's type is still open, so the refusal can't be checked
+	 * and the call doesn't compile.  Pass the type and cast the target to get past it:
+	 * ```ts
+	 * function bindAll<V extends { n: number }>(v: { x: V; list: V[] }) {
+	 * 	return gui.bindMany<typeof v>(v as any)
+	 * }
+	 * ```
+	 * @param target - The object to bind inputs to.
+	 * @param options - Options for the inputs, keyed like the target, plus `include`, `exclude`
+	 * and `maxSize`.
+	 * @example
+	 * ```ts
+	 * const params = { speed: 1, color: '#ff0000', shape: { sides: 3 } }
+	 * const { inputs, folders } = gui.bindMany(params, { speed: { min: 0, max: 10 } })
+	 * ```
+	 */
 	bindMany<
 		const T extends object,
 		const TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
 		const TInputs extends InferInputs<T> = InferInputs<T>,
+		const TExclude extends InferTargetKeys<T> = never,
+		const TInclude extends InferTargetKeys<T> = never,
 	>(
-		target: T & BindableTarget<T>,
-		options?: ManyOptions<T, TOptions>,
+		target: T & BindableTarget<T, SkippedKeys<T, TExclude, TInclude>>,
+		options?: ManyOptions<T, TOptions> & {
+			exclude?: [TExclude] extends [never] ? InferTargetKeys<T>[] : readonly TExclude[]
+			include?: [TInclude] extends [never] ? InferTargetKeys<T>[] : readonly TInclude[]
+		},
 	): { inputs: TInputs; folders: InferFolders<T> } {
 		this._log.fn('bindMany').debug({ target, options }, this)
 
 		const maxSize = options?.maxSize ?? Folder._DEFAULT_MAX_SIZE
-		return this._walk(
-			target as T,
-			{ ...(((options as any) || undefined) ?? {}), maxSize },
-			this,
-			new Set(),
-			'bind',
-		)
+		const opts = { ...(((options as any) || undefined) ?? {}), maxSize }
+		// A dry run first, so a target that can't be bound throws before any of it is built.
+		this._walk(target as T, opts, this, new Set(), 'check')
+		return this._walk(target as T, opts, this, new Set(), 'bind')
 	}
 	//#endregion Bind
 
@@ -1658,7 +1705,11 @@ export class Folder {
 		},
 		folder: Folder,
 		seen: Set<any>,
-		mode: 'bind' | 'add',
+		/**
+		 * `check` walks a `bind` without building anything: the same keys, in the same order, to
+		 * the same `maxSize`, throwing where the bind would.
+		 */
+		mode: 'bind' | 'add' | 'check',
 		/**
 		 * Counts the total number of properties processed to prevent browser crashes from large objects with nested objects firing recursive calls to {@link bindMany}/{@link addMany}.
 		 */
@@ -1672,12 +1723,14 @@ export class Folder {
 
 		for (let [key, value] of Object.entries(target)) {
 			if (_count.value >= maxSize) {
-				this._log
-					.fn('_walk')
-					.warn(
-						`Reached maxSize limit (${maxSize}). Stopping processing.`,
-						`Skipped properties: ${Object.keys(target).join(', ')}`,
-					)
+				if (mode !== 'check') {
+					this._log
+						.fn('_walk')
+						.warn(
+							`Reached maxSize limit (${maxSize}). Stopping processing.`,
+							`Skipped properties: ${Object.keys(target).join(', ')}`,
+						)
+				}
 				break
 			}
 
@@ -1705,7 +1758,7 @@ export class Folder {
 					value = inputOptions['value']
 				}
 
-				if (!hasValue && mode === 'bind') {
+				if (!hasValue && mode !== 'add') {
 					console.error(
 						`bindMany() error: target object's key "${key}" is \`${value}\`, and no valid initial "value" option was provided.`,
 						{ key, value, inputOptions },
@@ -1718,6 +1771,25 @@ export class Folder {
 			if (value === undefined) {
 				value = 'undefined'
 				this._log.fn('_walk').debug(`Converting undefined to string for property: ${key}`)
+			}
+
+			if (mode === 'check') {
+				// The branches below, for what can throw: a bare labeled-options array, and a folder.
+				if (
+					typeof value === 'object' &&
+					value !== null &&
+					!('value' in value && 'options' in value && Array.isArray(value.options)) &&
+					!('options' in inputOptions) &&
+					!isColor(value)
+				) {
+					if (!Array.isArray(value)) {
+						this._walk(value, { ...inputOptions, maxSize }, folder, seen, mode, _count)
+					} else if (value.length > 0 && isLabeledOption(value[0])) {
+						throw unbindableLabeledOptions(key)
+					}
+				}
+				_count.value++
+				continue
 			}
 
 			if (typeof value === 'object' && value !== null) {
@@ -1749,11 +1821,7 @@ export class Folder {
 					if (value.length > 0 && isLabeledOption(value[0])) {
 						//? InputSelect (array of labeled options) - treat as { value, options } shape
 						// A bound select writes its pick to the field, and this field is the options.
-						if (mode === 'bind') {
-							throw new Error(
-								`bindMany(): "${key}" is an array of labeled options, which has no field to write a pick to. Bind { value, options } instead, or addMany() it.`,
-							)
-						}
+						if (mode === 'bind') throw unbindableLabeledOptions(key)
 						input = folder.addSelect(key, {
 							value: value[0].value,
 							options: value,

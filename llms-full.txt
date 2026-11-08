@@ -2850,7 +2850,24 @@ gui.bindGradient(theme, 'usage')
 
 ##### bindMany()
 
-> **bindMany**\<`T`, `TOptions`, `TInputs`\>(`target`, `options?`): `object`
+> **bindMany**\<`T`, `TOptions`, `TInputs`, `TExclude`, `TInclude`\>(`target`, `options?`): `object`
+
+Binds an input to each of a target object's keys, the way [\`addMany\`](#addmany)
+adds them, so a change writes back to the target.  Nested objects become child folders.
+
+A bare array of labeled options (`[{ label, value }, …]`) is refused, by type and at runtime:
+a bound select writes its pick to the field, and that field holds the options.  Bind an inline
+`{ value, options }` instead, or [\`addMany\`](#addmany) it.  A key that `exclude`
+names, or that an `include` leaves out, is never walked, so it isn't refused.  A refused
+target throws before any input is built.
+
+Inside a generic function the target's type is still open, so the refusal can't be checked
+and the call doesn't compile.  Pass the type and cast the target to get past it:
+```ts
+function bindAll<V extends { n: number }>(v: { x: V; list: V[] }) {
+	return gui.bindMany<typeof v>(v as any)
+}
+```
 
 ###### Type Parameters
 
@@ -2866,15 +2883,28 @@ gui.bindGradient(theme, 'usage')
 
 `TInputs` *extends* `object` = `InferInputs`\<`T`\>
 
+###### TExclude
+
+`TExclude` = `never`
+
+###### TInclude
+
+`TInclude` = `never`
+
 ###### Parameters
 
 ###### target
 
-`T` & `BindableTarget`\<`T`\>
+`T` & `BindableTarget`\<`T`, `SkippedKeys`\<`T`, `TExclude`, `TInclude`\>\>
+
+The object to bind inputs to.
 
 ###### options?
 
-`ManyOptions`\<`T`, `TOptions`\>
+`ManyControls`\<`T`\> & `string` *extends* keyof `T` ? \{ \[K in string \| number \| symbol\]: number \| InferTargetKeys\<T\>\[\] \| TOptions\[K\] \| undefined \} : `TOptions` & `object`
+
+Options for the inputs, keyed like the target, plus `include`, `exclude`
+and `maxSize`.
 
 ###### Returns
 
@@ -2887,6 +2917,13 @@ gui.bindGradient(theme, 'usage')
 ###### inputs
 
 > **inputs**: `TInputs`
+
+###### Example
+
+```ts
+const params = { speed: 1, color: '#ff0000', shape: { sides: 3 } }
+const { inputs, folders } = gui.bindMany(params, { speed: { min: 0, max: 10 } })
+```
 
 ##### bindNumber()
 
@@ -4754,7 +4791,24 @@ gui.bindGradient(theme, 'usage')
 
 ##### bindMany()
 
-> **bindMany**\<`T`, `TOptions`, `TInputs`\>(`target`, `options?`): `object`
+> **bindMany**\<`T`, `TOptions`, `TInputs`, `TExclude`, `TInclude`\>(`target`, `options?`): `object`
+
+Binds an input to each of a target object's keys, the way [\`addMany\`](#addmany)
+adds them, so a change writes back to the target.  Nested objects become child folders.
+
+A bare array of labeled options (`[{ label, value }, …]`) is refused, by type and at runtime:
+a bound select writes its pick to the field, and that field holds the options.  Bind an inline
+`{ value, options }` instead, or [\`addMany\`](#addmany) it.  A key that `exclude`
+names, or that an `include` leaves out, is never walked, so it isn't refused.  A refused
+target throws before any input is built.
+
+Inside a generic function the target's type is still open, so the refusal can't be checked
+and the call doesn't compile.  Pass the type and cast the target to get past it:
+```ts
+function bindAll<V extends { n: number }>(v: { x: V; list: V[] }) {
+	return gui.bindMany<typeof v>(v as any)
+}
+```
 
 ###### Type Parameters
 
@@ -4770,15 +4824,28 @@ gui.bindGradient(theme, 'usage')
 
 `TInputs` *extends* `object` = `InferInputs`\<`T`\>
 
+###### TExclude
+
+`TExclude` = `never`
+
+###### TInclude
+
+`TInclude` = `never`
+
 ###### Parameters
 
 ###### target
 
-`T` & `BindableTarget`\<`T`\>
+`T` & `BindableTarget`\<`T`, `SkippedKeys`\<`T`, `TExclude`, `TInclude`\>\>
+
+The object to bind inputs to.
 
 ###### options?
 
-`ManyOptions`\<`T`, `TOptions`\>
+`ManyControls`\<`T`\> & `string` *extends* keyof `T` ? \{ \[K in string \| number \| symbol\]: number \| InferTargetKeys\<T\>\[\] \| TOptions\[K\] \| undefined \} : `TOptions` & `object`
+
+Options for the inputs, keyed like the target, plus `include`, `exclude`
+and `maxSize`.
 
 ###### Returns
 
@@ -4791,6 +4858,13 @@ gui.bindGradient(theme, 'usage')
 ###### inputs
 
 > **inputs**: `TInputs`
+
+###### Example
+
+```ts
+const params = { speed: 1, color: '#ff0000', shape: { sides: 3 } }
+const { inputs, folders } = gui.bindMany(params, { speed: { min: 0, max: 10 } })
+```
 
 ###### Inherited from
 
