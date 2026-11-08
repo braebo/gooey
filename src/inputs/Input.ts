@@ -726,16 +726,16 @@ export abstract class Input<
 	 * Refreshes the value of any controllers to match the current input state.
 	 */
 	refresh(v = this.state.value as TValueType) {
-		// Dynamic `disabled` / `hidden` state functions re-evaluate on every refresh -- before the
-		// `resettable` bail, since they have nothing to do with the reset button.
+		// Dynamic `disabled` / `hidden` state functions re-evaluate on every refresh.
 		this._refreshDisabled()
 		this._refreshHidden()
 
-		if (!this.opts.resettable) return this
-
 		this.readBinding()
 
-		this.elements.resetBtn.classList.toggle('dirty', this._dirty())
+		// Only the reset button's dirty mark belongs to `resettable`.
+		if (this.opts.resettable) {
+			this.elements.resetBtn.classList.toggle('dirty', this._dirty())
+		}
 
 		this._evm.emit('refresh', v as TValueType)
 		return this
