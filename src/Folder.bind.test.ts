@@ -93,6 +93,43 @@ describe('bind() on a string field says what runtime builds', () => {
 		expect(folders.myFolder.folder).toBeInstanceOf(Folder)
 	})
 
+	test('a nested folder is typed where it is: folders.a.subFolders.b.folder', () => {
+		const target = {
+			n: 1,
+			a: {
+				sel: { value: 'x', options: ['x', 'y'] },
+				b: { c: 2 },
+			},
+		}
+
+		for (const { folders } of [gooey.addMany(target), gooey.bindMany(target)]) {
+			expectTypeOf(folders.a.folder).toEqualTypeOf<Folder>()
+			expectTypeOf(folders.a.subFolders.b.folder).toEqualTypeOf<Folder>()
+			expectTypeOf(folders.a.subFolders.b.subFolders).toEqualTypeOf<{}>()
+			expect(folders.a.folder).toBeInstanceOf(Folder)
+			expect(folders.a.subFolders.b.folder).toBeInstanceOf(Folder)
+			expect(folders.a.subFolders.b.folder.title).toBe('b')
+			expect(Object.keys(folders)).toEqual(['a'])
+			expect(Object.keys(folders.a.subFolders)).toEqual(['b'])
+		}
+	})
+
+	test('only a field that makes a folder is in folders', () => {
+		const { folders } = gooey.addMany({
+			n: 1,
+			on: true,
+			text: 'gooey',
+			color: '#ff0000',
+			list: [1, 2],
+			sel: { value: 'x', options: ['x', 'y'] },
+			click: () => {},
+			f: { n: 2 },
+		})
+
+		expectTypeOf(folders).toEqualTypeOf<{ f: { folder: Folder; subFolders: {} } }>()
+		expect(Object.keys(folders)).toEqual(['f'])
+	})
+
 	test('addMany() on a plain string field is typed as either, like add()', () => {
 		const target: { bg: string } = { bg: '#ff0000' }
 

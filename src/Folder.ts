@@ -285,16 +285,38 @@ export type InferInputs<TTarget> =
 		: never
 
 /**
- * Given a target object, recursively resolves all keys that are objects into a union of all
- * object keys.
+ * The keys of a target whose values {@link Folder.addMany|`addMany`} and
+ * {@link Folder.bindMany|`bindMany`} turn into folders: the nested objects that aren't a color, an
+ * array, or an inline `{ value, options }` select.
  */
 export type FolderKeys<T> = {
-	[K in keyof T]: T[K] extends ValidInputValue ? K : never
+	[K in keyof T]-?: T[K] extends
+		| number
+		| boolean
+		| string
+		| ColorObject
+		| readonly unknown[]
+		| ((...args: any[]) => any)
+		| { value: unknown; options: readonly unknown[] }
+		? never
+		: T[K] extends object
+			? K
+			: never
 }[keyof T]
 
-export type InferFolders<T> = T extends object
-	? { [K in FolderKeys<T>]: InferFolders<T[K]> & { folder: Folder } }
-	: never
+/**
+ * The folders {@link Folder.addMany|`addMany`} and {@link Folder.bindMany|`bindMany`} build, keyed
+ * like the target: each nested object's `folder`, and the folders nested in it under `subFolders`,
+ * so a folder or input named `folder` can't collide with it.
+ * @example
+ * ```ts
+ * const { folders } = gooey.addMany({ a: { b: { n: 1 } } })
+ * folders.a.subFolders.b.folder // -> Folder
+ * ```
+ */
+export type InferFolders<T> = {
+	-readonly [K in FolderKeys<T>]: { folder: Folder; subFolders: InferFolders<T[K]> }
+}
 
 export interface FolderOptions {
 	__type?: 'FolderOptions'
