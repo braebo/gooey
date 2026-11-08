@@ -34,6 +34,23 @@ export interface ArrayControllerElements extends ElementMap {
 	content: HTMLElement
 }
 
+/**
+ * An array as JSON that can't throw, for comparing what's on screen with the field: a bigint
+ * item writes as its digits, and an object met twice (a cycle) as a marker.  Plain
+ * `JSON.stringify` throws on both, and the array is snapshotted whole, past `maxItems` too.
+ */
+function snapshot(array: unknown[]): string {
+	const seen = new WeakSet<object>()
+	return JSON.stringify(array, (_, v) => {
+		if (typeof v === 'bigint') return `${v}n`
+		if (typeof v === 'object' && v !== null) {
+			if (seen.has(v)) return '[seen]'
+			seen.add(v)
+		}
+		return v
+	})
+}
+
 export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayControllerElements> {
 	readonly __type = 'InputArray' as const
 	readonly initialValue: T[]
@@ -99,7 +116,7 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 	}
 
 	private _createArrayItems(array = this.state.value): void {
-		this.#rendered = JSON.stringify(array)
+		this.#rendered = snapshot(array)
 		const count = Math.min(array.length, this.opts.maxItems!)
 		this.items = []
 
@@ -155,7 +172,7 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 		const currentArray = [...this.state.value]
 		currentArray[index] = newValue
 		// The item already shows it, so the refresh this set runs doesn't rebuild it mid-edit.
-		this.#rendered = JSON.stringify(currentArray)
+		this.#rendered = snapshot(currentArray)
 
 		// The binding target (if any) is synced by the state subscription in the constructor.
 		this.state.set(currentArray)
@@ -192,7 +209,7 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 		if (!binding) return
 
 		const next = binding.target[binding.key]
-		if (!Array.isArray(next) || JSON.stringify(next) === this.#rendered) return
+		if (!Array.isArray(next) || snapshot(next) === this.#rendered) return
 
 		this._recreateItems(next)
 		this.state.set(next)

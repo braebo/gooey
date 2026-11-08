@@ -58,6 +58,21 @@ describe('InputArray', () => {
 		expect(gooey._undoManager.stack.length).toBe(steps)
 	})
 
+	test('an array JSON can not hold still builds, and a bound one still re-reads', () => {
+		const loop: { self?: unknown } = {}
+		loop.self = loop
+		// A cycle past `maxItems` is never shown, and a bigint shows as text.
+		expect(() => gooey.addArray('cycle', [1, loop], { maxItems: 1 })).not.toThrow()
+
+		const target = { arr: [1n, 2n] as unknown[] }
+		const input = gooey.bindArray(target, 'arr')
+		expect(input.items.map(item => item.value)).toEqual(['1', '2'])
+
+		target.arr.push(3n)
+		input.refresh()
+		expect(input.items.map(item => item.value)).toEqual(['1', '2', '3'])
+	})
+
 	test('an item edit on a bound array keeps the item inputs', () => {
 		const target = { arr: ['a', 'b'] }
 		const input = gooey.bindArray(target, 'arr')

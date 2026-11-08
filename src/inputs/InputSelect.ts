@@ -516,7 +516,9 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		this.readBinding()
 		this.selectController.select(this.selected.value, false)
 
-		super.refresh()
+		// `state` follows `selected` through a subscriber, which a store queues when this refresh
+		// runs inside another notification, so the value comes from `selected`.
+		super.refresh(this.selected.value.value)
 		return this
 	}
 

@@ -212,6 +212,28 @@ describe('refresh() re-reads a bound field, resettable or not', () => {
 				expect(refreshes).toEqual([input.value])
 			})
 		}
+
+		// A select's `change` handler runs inside a store notification, where the store queues the
+		// re-entry a moved state makes: the refresh still fires once, with the value it read.
+		test(`${kind}, refreshed from a select's change handler`, () => {
+			const target = { v: from }
+			const input: any = bind(target, {})
+			const mode = gooey.addSelect('mode', 'a', { options: ['a', 'b'] })
+			let changes = 0
+			const refreshes: unknown[] = []
+			input.on('change', () => changes++)
+			input.on('refresh', (v: unknown) => refreshes.push(v))
+
+			mode.on('change', () => {
+				target.v = to
+				input.refresh()
+			})
+			mode.set('b')
+
+			expect(read(input)).toEqual(want)
+			expect(changes).toBe(0)
+			expect(refreshes).toEqual([input.value])
+		})
 	}
 
 	// A function field binds as a button whose state isn't the field: reading it back into state
