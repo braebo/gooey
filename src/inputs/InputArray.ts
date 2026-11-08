@@ -136,41 +136,57 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 	private _createItemInput(index: number, value: T): ValidInput {
 		// Empty titles keep the controllers full-width.  `_registerInput` de-dupes the keys.
 		const title = ''
+		let input: ValidInput
+		/** The array item an item input's value stands for. */
+		let toItem = (v: any): T => v
 
 		if (typeof value === 'boolean') {
-			const input = this.folder.addSwitch(title, value)
-			input.on('change', newValue => this._updateArrayItem(index, newValue))
-			return input
+			input = this.folder.addSwitch(title, value)
 		} else if (typeof value === 'number') {
-			const input = this.folder.addNumber(title, value)
-			input.on('change', newValue => this._updateArrayItem(index, newValue))
-			return input
+			input = this.folder.addNumber(title, value)
 		} else if (typeof value === 'string') {
-			const input = this.folder.addText(title, value)
-			input.on('change', newValue => this._updateArrayItem(index, newValue))
-			return input
+			input = this.folder.addText(title, value)
 		} else if (typeof value === 'object' && value !== null) {
 			// Objects are edited as JSON text until nested folders are supported.
-			const input = this.folder.addText(title, JSON.stringify(value))
-			input.on('change', newValue => {
+			input = this.folder.addText(title, JSON.stringify(value))
+			toItem = v => {
 				try {
-					this._updateArrayItem(index, JSON.parse(newValue))
+					return JSON.parse(v)
 				} catch {
 					// Invalid JSON - keep the raw string so the user's typing isn't lost.
-					this._updateArrayItem(index, newValue as any)
+					return v
 				}
-			})
-			return input
+			}
 		} else {
-			const input = this.folder.addText(title, String(value))
-			input.on('change', newValue => this._updateArrayItem(index, newValue as any))
-			return input
+			input = this.folder.addText(title, String(value))
 		}
+
+		input.on('change', (newValue: unknown) => this._updateArrayItem(index, toItem(newValue)))
+
+		// The item's undo step is the array's: an undo sets the whole array back, so it still lands
+		// after the items are rebuilt (an outside write, or `set`) and this input is gone.  Each
+		// replay sets a copy, so an outside write to the array it restored can't rewrite the step.
+		const commit = input.commit.bind(input)
+		input.commit = ({ from = input.state.value, to = input.state.value }) =>
+			commit({
+				from: this._withItem(index, toItem(from)),
+				to: this._withItem(index, toItem(to)),
+				target: this as Input<any>,
+				setter: v => this.set([...(v as T[])]),
+			})
+
+		return input
 	}
 
-	private _updateArrayItem(index: number, newValue: any): void {
-		const currentArray = [...this.state.value]
-		currentArray[index] = newValue
+	/** The array as it stands, with one item swapped. */
+	private _withItem(index: number, item: T): T[] {
+		const array = [...this.state.value]
+		array[index] = item
+		return array
+	}
+
+	private _updateArrayItem(index: number, newValue: T): void {
+		const currentArray = this._withItem(index, newValue)
 		// The item already shows it, so the refresh this set runs doesn't rebuild it mid-edit.
 		this.#rendered = snapshot(currentArray)
 

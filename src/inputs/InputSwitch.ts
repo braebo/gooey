@@ -157,12 +157,7 @@ export class InputSwitch extends Input<boolean, SwitchInputOptions, SwitchInputE
 		this.#log.fn('set').debug({ v, this: this })
 
 		if (typeof v === 'boolean') {
-			this.undoManager?.commit({
-				// @ts-expect-error - // TODO
-				target: this,
-				from: this.state.value,
-				to: v,
-			})
+			this.commit({ to: v })
 			this.state.set(v)
 		} else {
 			throw new Error(

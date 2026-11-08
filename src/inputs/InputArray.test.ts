@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'vitest'
 
+import { InputNumber } from './InputNumber'
+import { InputSwitch } from './InputSwitch'
 import { InputArray } from './InputArray'
 import { InputText } from './InputText'
 import { Gooey } from '../Gooey'
@@ -83,6 +85,103 @@ describe('InputArray', () => {
 
 		expect(input.items[0]).toBe(first)
 		expect(target.arr).toEqual(['z', 'b'])
+	})
+
+	describe('an item edit is the array’s undo step', () => {
+		const fresh = () => new Gooey({ title: 'array undo', storage: false })
+
+		test('undo and redo set the array, items and target', () => {
+			const g = fresh()
+			const target = { arr: [1, 2] }
+			const input = g.bindArray(target, 'arr')
+
+			;(input.items[0] as InputNumber).set(5)
+			expect(g._undoManager.stack).toHaveLength(1)
+
+			g._undoManager.undo()
+			expect(target.arr).toEqual([1, 2])
+			expect(input.items.map(item => item.value)).toEqual([1, 2])
+
+			g._undoManager.redo()
+			expect(target.arr).toEqual([5, 2])
+			expect(input.items.map(item => item.value)).toEqual([5, 2])
+		})
+
+		test('a drag on a number item is one step', () => {
+			const g = fresh()
+			const input = g.addArray('arr', [1, 2])
+			const item = input.items[0] as InputNumber
+			const slider = item.elements.controllers.input
+
+			slider.dispatchEvent(new Event('dragStart'))
+			item.set(3)
+			item.set(4)
+			slider.dispatchEvent(new Event('dragEnd'))
+			expect(g._undoManager.stack).toHaveLength(1)
+
+			input.set([0])
+			g._undoManager.undo()
+			expect(input.value).toEqual([1, 2])
+		})
+
+		test('after an outside write and refresh rebuilt the items', () => {
+			const g = fresh()
+			const target = { arr: [1, 2] }
+			const input = g.bindArray(target, 'arr')
+
+			;(input.items[0] as InputNumber).set(5)
+			target.arr = [7, 8, 9]
+			input.refresh()
+
+			g._undoManager.undo()
+			expect(target.arr).toEqual([1, 2])
+			expect(input.items.map(item => item.value)).toEqual([1, 2])
+			expect(g._undoManager.pointer).toBe(-1)
+		})
+
+		test('after set() rebuilt the items', () => {
+			const g = fresh()
+			const input = g.addArray('arr', [1, 2])
+
+			;(input.items[1] as InputNumber).set(5)
+			input.set([9])
+
+			g._undoManager.undo()
+			expect(input.value).toEqual([1, 2])
+			expect(input.items.map(item => item.value)).toEqual([1, 2])
+		})
+
+		test('a switch item and a JSON object item undo to the array’s own values', () => {
+			const g = fresh()
+			const target = { flags: [true], objs: [{ a: 1 }] }
+			const flags = g.bindArray(target, 'flags')
+			const objs = g.bindArray(target, 'objs')
+
+			;(flags.items[0] as InputSwitch).set(false)
+			;(objs.items[0] as InputText).set('{"a":2}')
+			expect(target).toEqual({ flags: [false], objs: [{ a: 2 }] })
+
+			target.flags = [false, false]
+			flags.refresh()
+			g._undoManager.undo()
+			g._undoManager.undo()
+			expect(target).toEqual({ flags: [true], objs: [{ a: 1 }] })
+		})
+
+		test('an outside write to an array an undo restored leaves the history alone', () => {
+			const g = fresh()
+			const target = { arr: [1, 2] }
+			const input = g.bindArray(target, 'arr')
+
+			;(input.items[0] as InputNumber).set(5)
+			g._undoManager.undo()
+			target.arr.push(3)
+			input.refresh()
+
+			g._undoManager.redo()
+			g._undoManager.undo()
+			expect(target.arr).toEqual([1, 2])
+		})
 	})
 
 	test('maxItems caps rendered items without truncating the value', () => {
