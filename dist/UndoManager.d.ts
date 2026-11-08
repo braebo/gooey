@@ -16,17 +16,23 @@ declare class UndoManager {
   maxHistory: number;
   stack: Commit[];
   /**
-   * Ignores's all commits while `true`.
+   * Ignores all commits while `true`.
    */
   lockedExternally: boolean;
   /**
-   * Ignores's all commits while `true`.
+   * `true` while an undo or redo replays a commit, so the replay isn't recorded as a change.
    */
-  private _lockedInternally;
+  private _replaying;
   constructor();
   commit<V>(commit: Commit<V>, _debounce?: number): void;
   undo: () => void;
   redo: () => void;
+  /**
+   * Writes a commit's value back.  The lock spans the write alone, so a replay that commits
+   * nothing (a color's setter writes its state directly) can't leave it set for the next real
+   * change to be swallowed by.
+   */
+  private _replay;
   clear(): void;
 }
 //#endregion

@@ -1,13 +1,3 @@
-/*
- * // todo - There's still an off-by-one error in the undo manager.
- * repro:
- * - change 2 different inputs
- * - undo once
- * - change 1 input
- * Things will be out of sync.
- * Also, when undoing all the way, the pointer is -1, but the stack still has 1 commit.
- */
-
 import type { Input, ValidInputValue } from './inputs/Input'
 
 /**
@@ -26,20 +16,19 @@ export class UndoManager {
 	stack: Commit[] = []
 
 	/**
-	 * Ignores's all commits while `true`.
+	 * Ignores all commits while `true`.
 	 */
 	lockedExternally = false
 
 	/**
-	 * Ignores's all commits while `true`.
+	 * `true` while an undo or redo replays a commit, so the replay isn't recorded as a change.
 	 */
-	private _lockedInternally = false
+	private _replaying = false
 
 	constructor() {}
 
 	commit<V>(commit: Commit<V>, _debounce = 100) {
-		if (this._lockedInternally || this.lockedExternally) {
-			this._lockedInternally = false
+		if (this._replaying || this.lockedExternally) {
 			return
 		}
 
@@ -63,16 +52,8 @@ export class UndoManager {
 			return
 		}
 
-		this._lockedInternally = true
-
 		const commit = this.stack[this.pointer]
-
-		if (commit.setter) {
-			commit.setter(commit.from)
-		} else {
-			commit.target.set(commit.from)
-		}
-
+		this._replay(commit, commit.from)
 		this.pointer--
 	}
 
@@ -81,17 +62,27 @@ export class UndoManager {
 			return
 		}
 
-		this._lockedInternally = true
-
 		const commit = this.stack[this.pointer + 1]
-
-		if (commit.setter) {
-			commit.setter(commit.to)
-		} else {
-			commit.target.set(commit.to)
-		}
-
+		this._replay(commit, commit.to)
 		this.pointer++
+	}
+
+	/**
+	 * Writes a commit's value back.  The lock spans the write alone, so a replay that commits
+	 * nothing (a color's setter writes its state directly) can't leave it set for the next real
+	 * change to be swallowed by.
+	 */
+	private _replay(commit: Commit, value: ValidInputValue) {
+		this._replaying = true
+		try {
+			if (commit.setter) {
+				commit.setter(value)
+			} else {
+				commit.target.set(value)
+			}
+		} finally {
+			this._replaying = false
+		}
 	}
 
 	clear() {
