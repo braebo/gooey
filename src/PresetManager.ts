@@ -54,6 +54,9 @@ export interface PresetManagerOptions {
 	folderOptions?: Partial<FolderOptions>
 }
 
+/** The values and the active preset at a moment: one side of a pick's undo step. */
+type PickState = { state: GooeyPreset; active: GooeyPreset }
+
 export class PresetManager {
 	readonly __type = Object.freeze('PresetManager')
 	readonly __version = '2' // todo - this needs to be settable externally (added to GooeyOptions)
@@ -67,7 +70,8 @@ export class PresetManager {
 	private _defaultPresetId = 'gooey-default-preset'
 	private _defaultPresetTitle = 'default'
 
-	private _presetSnapshot?: GooeyPreset
+	/** What the preset menu opened over, until a pick or a cancel ends the gesture. */
+	private _presetSnapshot?: PickState
 
 	private _presetsInput!: InputSelect<GooeyPreset>
 	private _manageInput!: InputButtonGrid
@@ -500,24 +504,40 @@ export class PresetManager {
 			}
 			if (this._replaying) return
 			this._log.fn('_presetsInput.on(change)').debug({ value, this: this })
-			if (!this._refreshing) this._recordPick(value)
+			if (this._clicking && !this._refreshing) {
+				this._recordPick(this._presetSnapshot ?? this._pickState(), value)
+				this._presetSnapshot = undefined
+			}
 			this.gooey.load(value)
 			this.activePreset.set(value)
 			this._refreshInputs()
 		})
 
-		this._presetsInput.on('open', () => {
-			this._log.fn('_presetsInput.on(open)').debug()
-			this._presetSnapshot = this.gooey.save('__snapshot__')
+		// The controller's own events: InputSelect's `open` and `cancel` re-emit DOM events the
+		// controller never dispatches, so listening there hears nothing.
+		const menu = this._presetsInput.selectController
+
+		// A hover previews an option by loading it, so what the menu opened over is kept here: it's
+		// what a cancel puts back and what undoing the pick brings back.
+		menu.on('open', () => {
+			this._log.fn('menu.on(open)').debug()
+			this._presetSnapshot = this._pickState()
 		})
 
-		this._presetsInput.on('cancel', () => {
-			this._log.fn('_presetsInput.on(cancel)').debug()
-			if (this._presetSnapshot) {
-				this.gooey.load(this._presetSnapshot)
-				this._refreshInputs()
-			}
+		// Escape, a click outside, or a click on the menu itself.
+		menu.on('cancel', () => {
+			this._log.fn('menu.on(cancel)').debug()
+			const snapshot = this._presetSnapshot
+			this._presetSnapshot = undefined
+			if (snapshot) this._restore(snapshot)
 		})
+
+		// A click on an option is the pick; hovers and a cancel's reselect move the menu too, and
+		// they only preview.  Capture runs before the option's own listener, bubble after it.
+		this._presetsInput.listen(menu.elements.dropdown, 'click', () => (this._clicking = true), {
+			capture: true,
+		})
+		this._presetsInput.listen(menu.elements.dropdown, 'click', () => (this._clicking = false))
 
 		//? New Preset Button
 		const newPresetButton = new SaveSVG()
@@ -760,33 +780,49 @@ export class PresetManager {
 	private _refreshing = false
 
 	/**
-	 * `true` while an undo or redo puts a pick back, so the menu's change doesn't load over it.
+	 * `true` while an undo, a redo or a cancel puts a state back, so the menu's change doesn't
+	 * load the active preset over it.
 	 */
 	private _replaying = false
+
+	/**
+	 * `true` while a click on one of the menu's options is dispatched: the one change a person's
+	 * pick makes, where a hover's or a cancel's change is a preview.
+	 */
+	private _clicking = false
+
+	/** The values and the active preset as they stand. */
+	private _pickState(): PickState {
+		return { state: this.gooey.save('__undo__'), active: this.activePreset.value }
+	}
+
+	/** Puts back a {@link _pickState}: its values, its active preset, and the menu on it. */
+	private _restore({ state, active }: PickState) {
+		this._replaying = true
+		try {
+			this.gooey.load(state)
+			this.activePreset.set(active)
+			this._refresh()
+		} finally {
+			this._replaying = false
+		}
+	}
 
 	/**
 	 * Records a person's pick in the preset menu as one undo step: undo brings back the values and
 	 * the active preset from before it, unsaved changes included, and redo the pick.
 	 */
-	private _recordPick(value: GooeyPreset) {
-		type Pick = { state: GooeyPreset; active: GooeyPreset }
-		const from: Pick = { state: this.gooey.save('__undo__'), active: this.activePreset.value }
-		const to: Pick = { state: value, active: value }
+	private _recordPick(from: PickState, value: GooeyPreset) {
+		const unchanged =
+			from.active.id === value.id &&
+			JSON.stringify(from.state.data) === JSON.stringify(value.data)
+		if (unchanged) return
 
 		this.gooey._undoManager.commit({
 			target: this._presetsInput,
 			from,
-			to,
-			setter: ({ state, active }: Pick) => {
-				this._replaying = true
-				try {
-					this.gooey.load(state)
-					this.activePreset.set(active)
-					this._refresh()
-				} finally {
-					this._replaying = false
-				}
-			},
+			to: { state: value, active: value },
+			setter: (pick: PickState) => this._restore(pick),
 		} as unknown as Commit)
 	}
 

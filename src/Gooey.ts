@@ -822,10 +822,14 @@ export class Gooey {
 		this.dirty = false
 
 		this._undoManager.lockedExternally = true
-		this.folder.load(preset.data)
-		Promise.resolve().then(() => {
-			this._undoManager.lockedExternally = false
-		})
+		try {
+			this.folder.load(preset.data)
+		} finally {
+			// Scheduled even when the load throws, or the history would stay locked for good.
+			Promise.resolve().then(() => {
+				this._undoManager.lockedExternally = false
+			})
+		}
 	}
 
 	private _loadFonts() {
