@@ -12239,7 +12239,7 @@ the "reset to default" button.
 
 > **labeledSelection**: `LabeledOption`\<`TValueType`\>
 
-The currently selected option as a labeled option.
+The option the input was created on, which the dirty check compares [selected](#selected-1) to.
 
 ##### listen
 

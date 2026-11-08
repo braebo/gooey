@@ -228,3 +228,107 @@ describe('events', () => {
 		expect(select.value).toBe('foo')
 	})
 })
+
+describe('a bound select after an outside write', () => {
+	const gui = g.addGooey()
+
+	test('refresh() moves value, selected and the menu to what the target holds, silently', () => {
+		const target = { mode: 'a' }
+		const select = gui.bindSelect(target, 'mode', { options: ['a', 'b', 'c'] })
+		const changes: unknown[] = []
+		select.on('change', v => changes.push(v))
+
+		select.value = 'c'
+		expect(target.mode).toBe('c')
+		changes.length = 0
+
+		target.mode = 'b'
+		select.refresh()
+
+		expect(select.value).toBe('b')
+		expect(select.selected.value).toStrictEqual({ label: 'b', value: 'b' })
+		expect(select.selectController.selected).toStrictEqual({ label: 'b', value: 'b' })
+		expect(select.selectController.elements.selected.innerHTML).toBe('b')
+		expect(target.mode).toBe('b')
+		expect(changes).toEqual([])
+	})
+
+	test('a pick after the refresh writes the target as before', () => {
+		const target = { mode: 'a' }
+		const select = gui.bindSelect(target, 'mode', { options: ['a', 'b', 'c'] })
+
+		target.mode = 'b'
+		select.refresh()
+		select.value = 'c'
+
+		expect(target.mode).toBe('c')
+		expect(select.selectController.selected.label).toBe('c')
+	})
+})
+
+describe('undo', () => {
+	const gui = g.addGooey()
+	const um = gui._undoManager
+
+	function option(select: InputSelect<string>, label: string): HTMLElement {
+		for (const [, { option, element }] of select.selectController.optionMap)
+			if (option.label === label) return element
+		throw new Error(`no option labeled ${label}`)
+	}
+
+	/** Opens the menu, hovers each of `hovers`, then clicks `pick`, the way a person does. */
+	async function pick(select: InputSelect<string>, pick: string, ...hovers: string[]) {
+		select.selectController.elements.selected.click()
+		for (const label of hovers)
+			option(select, label).dispatchEvent(new MouseEvent('mouseenter'))
+		option(select, pick).click()
+		// The pick is committed a microtask after the menu closes.
+		await Promise.resolve()
+	}
+
+	test('a pick in the menu is one undo step, however many options it hovered', async () => {
+		um.clear()
+		const target = { mode: 'a' }
+		const select = gui.bindSelect(target, 'mode', { options: ['a', 'b', 'c'] })
+
+		await pick(select, 'c', 'b', 'c')
+		expect(um.stack).toHaveLength(1)
+
+		um.undo()
+		expect(select.value).toBe('a')
+		expect(target.mode).toBe('a')
+		expect(select.selectController.selected.label).toBe('a')
+
+		um.redo()
+		expect(select.value).toBe('c')
+		expect(target.mode).toBe('c')
+	})
+
+	test('a cancelled menu records nothing', async () => {
+		um.clear()
+		const select = gui.addSelect('cancel-undo', { value: 'a', options: ['a', 'b'] })
+
+		select.selectController.elements.selected.click()
+		option(select, 'b').dispatchEvent(new MouseEvent('mouseenter'))
+		window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+		await Promise.resolve()
+
+		expect(select.value).toBe('a')
+		expect(um.stack).toHaveLength(0)
+	})
+
+	test('set() from code is an undo step, like the other inputs; a refresh is not', () => {
+		um.clear()
+		const target = { mode: 'a' }
+		const select = gui.bindSelect(target, 'mode', { options: ['a', 'b', 'c'] })
+
+		select.set('b')
+		target.mode = 'c'
+		select.refresh()
+		expect(um.stack.map(c => [c.from, c.to])).toEqual([['a', 'b']])
+
+		um.undo()
+		expect(select.value).toBe('a')
+		expect(target.mode).toBe('a')
+	})
+})

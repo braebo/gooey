@@ -147,7 +147,7 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 	#stopPropagation = true
 
 	/**
-	 * The currently selected option as a labeled option.
+	 * The option the input was created on, which the dirty check compares {@link selected} to.
 	 */
 	labeledSelection: LabeledOption<TValueType>
 
@@ -281,9 +281,17 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		// }
 
 		// The menu's gesture events come off the controller's own emitter; it dispatches no DOM events.
+		// `close` fires before a click's or a cancel's own selection lands, so the commit waits a
+		// microtask for it.
 		this.selectController.on('preview', v => this._evm.emit('preview', v))
-		this.selectController.on('open', () => this._evm.emit('open'))
-		this.selectController.on('close', () => this._evm.emit('close'))
+		this.selectController.on('open', () => {
+			this.#gestureFrom = this.selected.value
+			this._evm.emit('open')
+		})
+		this.selectController.on('close', () => {
+			queueMicrotask(() => this.#endGesture())
+			this._evm.emit('close')
+		})
 		this.selectController.on('cancel', () => this._evm.emit('cancel'))
 
 		// Override the default dirty check to use an option's `label` for equality checks.
@@ -427,7 +435,34 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 	 * This accepts the raw value and finds the corresponding option.
 	 */
 	set(v: TValueType): void {
+		const from = this.selected.value
 		this.value = v
+		const to = this.selected.value
+		if (this._undoable && to.label !== from.label)
+			this.commit({ from: from.value, to: to.value })
+	}
+
+	/**
+	 * Whether a pick or a {@link set} records an undo step.  The preset menu records its own.
+	 * @internal
+	 */
+	_undoable = true
+
+	/**
+	 * The option the open menu was opened over, or `null` while it's closed.
+	 */
+	#gestureFrom: LabeledOption<TValueType> | null = null
+
+	/**
+	 * An open menu is one gesture: hovers preview options without an undo step, and closing commits
+	 * whatever it landed on.  A cancel lands back on {@link #gestureFrom}, so it commits nothing.
+	 */
+	#endGesture() {
+		const from = this.#gestureFrom
+		this.#gestureFrom = null
+		const to = this.selected.value
+		if (!from || !this._undoable || to.label === from.label) return
+		this.commit({ from: from.value, to: to.value })
 	}
 
 	/**
@@ -477,10 +512,33 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		for (const option of newOptions) {
 			this.selectController.add(option)
 		}
-		this.selectController.select(this.labeledSelection, false)
+
+		this.readBinding()
+		this.selectController.select(this.selected.value, false)
 
 		super.refresh()
 		return this
+	}
+
+	/**
+	 * Reads the bound field into {@link selected}, which `state` follows, so a write to the target
+	 * from outside gooey lands in the menu too.  Silent: no `change`, and no undo step.
+	 */
+	protected override readBinding() {
+		if (!this.opts.binding) return
+
+		const v = fromState(this.targetValue)
+		if (this.selected.value.value === v) return
+
+		const vStr = JSON.stringify(v)
+		const option =
+			this.options.find(o => o.value === v) ??
+			this.options.find(o => JSON.stringify(o.value) === vStr)
+		if (!option || option.label === this.selected.value.label) return
+
+		// Consumed by the `selected` subscriber, so the read isn't echoed back as a change.
+		this.#stopPropagation = true
+		this.selected.set(option)
 	}
 
 	dispose() {

@@ -490,6 +490,8 @@ export class PresetManager {
 			value: this.activePreset.value,
 			options: this.presets.value,
 		})
+		// `_recordPick` records a pick with the values it loaded; the menu's own step would be a second.
+		this._presetsInput._undoable = false
 
 		// console.log('this._presetsInput.options', this._presetsInput.options)
 
