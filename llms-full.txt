@@ -7441,13 +7441,21 @@ Removes the disabled state from the input and any associated controllers.
 
 ##### refresh()
 
-> **refresh**(): `this`
+> **refresh**(`v?`): [`InputArray`](#inputarray)\<`T`\>
+
+Refreshes the value of any controllers to match the current input state.
+
+###### Parameters
+
+###### v?
+
+`T`[] = `...`
 
 ###### Returns
 
-`this`
+[`InputArray`](#inputarray)\<`T`\>
 
-###### Overrides
+###### Inherited from
 
 `Input.refresh`
 
