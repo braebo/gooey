@@ -52,6 +52,7 @@ import { EventManager } from './shared/EventManager'
 import { ToolbarButton } from './svg/ToolbarButton'
 import { TerminalSvg } from './svg/TerminalSvg'
 import { Search } from './toolbar/Search'
+import { titleText } from './shared/titleText'
 import { create } from './shared/create'
 import { select } from './shared/select'
 import { Logger } from './shared/logger'
@@ -909,36 +910,16 @@ export class Folder {
 	set title(v: string) {
 		if (v === this._title) return
 		this._title = v
-		this.elements.title.animate(
-			{
-				opacity: 0,
-				transform: 'translateY(-0.33rem)',
-			},
-			{
+		const title = this.elements.title
+		// The text lands now.  Written only at the end of an animation, it never landed on a hidden
+		// window or a background tab, where the animation doesn't run to its end.
+		title.textContent = titleText(v)
+		// Only where it can be seen, and with no `fill`, so the title's own styles hold once it ends.
+		if (title.isConnected && !this.hidden && title.checkVisibility?.() !== false) {
+			title.animate([{ opacity: 0, transform: 'translateY(.33rem)' }, {}], {
 				duration: 75,
-				easing: 'ease-out',
-				fill: 'forwards',
-			},
-		).onfinish = () => {
-			this.elements.title.innerHTML = v.replaceAll(/-|_/g, ' ')
-			this.elements.title.animate(
-				[
-					{
-						opacity: 0,
-						transform: 'translateY(.33rem)',
-					},
-					{
-						opacity: 1,
-						transform: 'translateY(0rem)',
-					},
-				],
-				{
-					delay: 0,
-					duration: 75,
-					easing: 'ease-in',
-					fill: 'forwards',
-				},
-			)
+				easing: 'ease-in',
+			})
 		}
 	}
 
@@ -1316,7 +1297,10 @@ export class Folder {
 				folder = folder.parentFolder
 			}
 
-			parts.unshift(this.root.title)
+			// The root's id, fixed when it was built, not its title: a renamed root
+			// (`gooey.title = …`) would otherwise move every id derived after the rename, and with
+			// it each folder's stored `closed` state.  The two are the same until a rename.
+			parts.unshift(this.root.presetId ?? this.root.title)
 		}
 
 		id ??= [...parts, ...identifiers].join('__')
@@ -2475,7 +2459,7 @@ export class Folder {
 		const title = create('div', {
 			parent: header,
 			classes: ['gooey-title'],
-			innerHTML: this.title.replaceAll(/-|_/g, ' '),
+			textContent: titleText(this.title),
 		})
 
 		const toolbar = create('div', {

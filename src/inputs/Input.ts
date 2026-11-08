@@ -25,6 +25,7 @@ import type { Folder } from '../Folder'
 import { EventManager } from '../shared/EventManager'
 import { isState, state } from '../shared/state'
 import { keys, values } from '../shared/object'
+import { titleText } from '../shared/titleText'
 import { create } from '../shared/create'
 import { Logger } from '../shared/logger'
 import { toFn } from '../shared/toFn'
@@ -412,7 +413,7 @@ export abstract class Input<
 		this.elements.title = create('div', {
 			classes: ['gooey-input-title'],
 			parent: this.elements.container,
-			innerHTML: this.title.replaceAll(/-|_/g, ' '),
+			innerHTML: titleText(this.title),
 		})
 
 		this.elements.content = create('div', {
@@ -524,7 +525,7 @@ export abstract class Input<
 	}
 	set title(v: string) {
 		this._title = v
-		this.elements.title.innerHTML = v.replaceAll(/-|_/g, ' ')
+		this.elements.title.innerHTML = titleText(v)
 	}
 
 	/**

@@ -206,6 +206,45 @@ describe('nested folder collapse', () => {
 	})
 })
 
+describe('title', () => {
+	test('a hidden window takes its new title at once, as text', async () => {
+		const gooey = G.addGooey({ title: 'title hidden', storage: false, hidden: true })
+
+		gooey.title = '¯\\_(ツ)_/¯ <b>'
+
+		expect(gooey.title).toBe('¯\\_(ツ)_/¯ <b>')
+		expect(gooey.folder.elements.title.textContent).toBe('¯\\_(ツ)_/¯ <b>')
+		expect(gooey.folder.elements.title.querySelector('b')).toBeNull()
+		// Past the hide's own animation, whose `commitStyles` throws on a disposed root.
+		await new Promise(resolve => setTimeout(resolve, 100))
+		gooey.dispose()
+	})
+
+	test('a key-shaped title reads with spaces, any other as written', () => {
+		const gooey = G.addGooey({ title: 'title shapes', storage: false })
+		const folder = gooey.addFolder('font_size')
+
+		expect(folder.elements.title.textContent).toBe('font size')
+		folder.title = 'x-offset (px)'
+		expect(folder.elements.title.textContent).toBe('x-offset (px)')
+		folder.title = 'line-height'
+		expect(folder.elements.title.textContent).toBe('line height')
+		gooey.dispose()
+	})
+
+	test('a renamed root leaves the ids derived after it where they were', () => {
+		const gooey = G.addGooey({ title: 'title ids', storage: false })
+		const before = gooey.addFolder('kept')
+
+		gooey.title = '(⌐■_■)'
+		const after = gooey.addFolder('later')
+
+		expect(before.presetId).toBe('title ids__kept')
+		expect(after.presetId).toBe('title ids__later')
+		gooey.dispose()
+	})
+})
+
 const wow = new Gooey()
 const folder = wow.addFolder('asd')
 
