@@ -123,6 +123,15 @@ describe('InputElement', () => {
 		expect(content.left - row.left).toBeCloseTo(row.right - content.right, 1)
 	})
 
+	test('mounted content can be selected inside a root that is not', () => {
+		const el = document.createElement('p')
+		el.textContent = 'a sha to copy'
+		gooey.addElement('selectable', el)
+
+		expect(getComputedStyle(gooey.element).userSelect).toBe('none')
+		expect(getComputedStyle(el).userSelect).not.toBe('none')
+	})
+
 	test('presets skip element inputs', () => {
 		const folder = gooey.addFolder('presets')
 		folder.addText('text', 'foo')

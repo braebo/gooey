@@ -1273,6 +1273,14 @@ input.gooey-search-input {
 	transition-property: color;
 }
 
+// The root is `user-select: none` so dragging a control never selects its label, but what
+// `addElement` mounts is content — a card, a preview — that is read and copied from.  One class
+// deep, so a host's own lock (`.some-mode .gooey-root *`) still outranks it.
+.gooey-input-element-container {
+	user-select: text;
+	-webkit-user-select: text;
+}
+
 .gooey-input-container {
 	position: relative;
 	display: flex;
