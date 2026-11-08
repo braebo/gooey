@@ -182,4 +182,50 @@ describe('theme picker', () => {
 		expect(gooey.themer.theme.value).toBe(live)
 		gooey.dispose()
 	})
+
+	const pickerOf = (gooey: Gooey) => {
+		const ui = gooey.elements.settingsFolder.children.find(f => f.title === 'ui')!
+		return [...ui.inputs.values()].find(i => i.title === 'theme') as InputSelect<Theme>
+	}
+
+	test('lists a theme created after it was built, by its title', () => {
+		const gooey = G.addGooey({ title: 'theme picker created', storage: false })
+		const picker = pickerOf(gooey)
+
+		gooey.themer.create({ ...gooey.themer.theme.value, title: 'mine' })
+
+		expect(picker.options.map(o => o.label)).toContain('mine')
+		const menu = picker.selectController.elements.options.map(el => el.innerText)
+		expect(menu).toContain('mine')
+		expect(menu).toHaveLength(gooey.themer.themes.value.length)
+		// A refresh adds only what the menu lacks.
+		picker.refresh()
+		expect(picker.selectController.elements.options).toHaveLength(menu.length)
+		gooey.dispose()
+	})
+
+	test('shows a theme switched elsewhere', () => {
+		const gooey = G.addGooey({ title: 'theme picker switched', storage: false })
+		const picker = pickerOf(gooey)
+		const other = gooey.themer.themes.value.find(t => t.title !== gooey.theme)!
+
+		gooey.theme = other.title
+
+		expect(picker.selected.value.label).toBe(other.title)
+		expect(picker.selectController.elements.selected.textContent).toBe(other.title)
+		gooey.dispose()
+	})
+
+	test('leaves a draft previewing under the active title alone', () => {
+		const gooey = G.addGooey({ title: 'theme picker draft', storage: false })
+		const picker = pickerOf(gooey)
+		const stored = gooey.themer.theme.value
+		const draft = structuredClone(stored)
+		gooey.themer.theme.set(draft)
+
+		picker.select(picker.options.find(o => o.label === stored.title)!)
+
+		expect(gooey.themer.theme.value).toBe(draft)
+		gooey.dispose()
+	})
 })

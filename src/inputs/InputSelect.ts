@@ -3,7 +3,7 @@
  */
 
 import type { ElementMap, InputEvents, InputOptions, ValidInputValue } from './Input'
-import type { Option, LabeledOption } from '../controllers/Select'
+import type { LabeledOption } from '../controllers/Select'
 import type { State } from '../shared/state'
 import type { Folder } from '../Folder'
 
@@ -125,8 +125,10 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 
 		this.selectController.clear()
 
-		for (const option of fromState(this.#options())) {
-			this.selectController.add(option as Option<TValueType>)
+		// Labeled the way the constructor labels them (`labelKey`, then `label`, then `title`), so an
+		// object option reads as its name rather than its JSON.
+		for (const option of this.options) {
+			this.selectController.add(option)
 		}
 	}
 	/**

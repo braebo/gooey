@@ -186,7 +186,9 @@ export class Select<T> {
 		}
 
 		this._selected = this._currentSelection = this.initialValue = this._opts.selected
-		this.options = this.initialOptions = this._opts.options
+		this.initialOptions = this._opts.options
+		// Filled by `add` below, which is what keeps it matching the menu.
+		this.options = []
 
 		const container = create('div', {
 			classes: ['gooey-controller-select-container'],
@@ -217,7 +219,7 @@ export class Select<T> {
 			options: [],
 		}
 
-		for (const option of this.options) {
+		for (const option of this.initialOptions) {
 			this.add(option)
 		}
 
@@ -279,6 +281,7 @@ export class Select<T> {
 		})
 
 		this.elements.options.push(el)
+		this.options.push(opt)
 
 		this._log.fn('add').debug({ option, added: this.optionMap.get(id), id, this: this })
 

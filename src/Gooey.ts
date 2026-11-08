@@ -915,11 +915,30 @@ export class Gooey {
 			// The panel's own setting, like the mode buttons beside it: undo is for the person's values.
 			themeInput._undoable = false
 
-			// By title: the option is the theme as it was when the select was built, and a
-			// consumer may have replaced that theme in `themes` since (a live-synced palette).
+			// By title: the themer's current copy of the theme, which a consumer may have replaced in
+			// `themes` (a live-synced palette).  Nothing when that title is already the active one:
+			// the picker showing a switch made elsewhere fires this too, and re-setting the stored
+			// copy then would drop a draft the theme editor is previewing under the same title.
 			themeInput.on('change', v => {
+				if (v.title === finalThemer.theme.value.title) return
 				finalThemer.theme.set(finalThemer.getTheme(v.title) ?? v)
 			})
+
+			// The picker follows the themer, so a theme switched or saved elsewhere (the theme
+			// editor, a consumer's `gooey.theme = …`) is listed and shown without a reload.
+			const showActive = () => {
+				const title = finalThemer.theme.value.title
+				if (themeInput.selected.value.label === title) return
+				const option = themeInput.options.find(o => o.label === title)
+				if (option) themeInput.select(option)
+			}
+			uiFolder.evm.add(
+				finalThemer.themes.subscribe(themes => {
+					themeInput.options = themes
+					showActive()
+				}),
+			)
+			uiFolder.evm.add(finalThemer.theme.subscribe(showActive))
 
 			const modeButtons = uiFolder.addButtonGrid(
 				'mode',
