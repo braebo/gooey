@@ -429,10 +429,10 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 			/labeled options/,
 		)
 		expect(() => folder.bindMany({ n: 1, f: { m: 2 }, nothing: null })).toThrow(
-			/Invalid binding/,
+			/bindMany\(\): "nothing" is `null`/,
 		)
 		expect(() => folder.bindMany({ n: 1, f: { m: 2 }, nothing: undefined })).toThrow(
-			/Invalid binding/,
+			/bindMany\(\): "nothing" is `undefined`/,
 		)
 
 		expect(folder.inputs.size).toBe(0)
@@ -443,6 +443,38 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 			'n',
 			'f',
 		])
+	})
+
+	test('addMany takes a null or undefined field from its value option, and refuses one without', () => {
+		const target = { n: 1, z: null, u: undefined } as {
+			n: number
+			z: number | null
+			u: string | undefined
+		}
+		const { inputs } = gooey.addMany(target, { z: { value: 3 }, u: { value: '' } })
+
+		expectTypeOf(inputs.z).toEqualTypeOf<InputNumber>()
+		expect(inputs.z).toBeInstanceOf(InputNumber)
+		expect(inputs.u).toBeInstanceOf(InputText)
+		expect([inputs.z.value, inputs.u.value]).toEqual([3, ''])
+		// addMany never writes to its target.
+		expect(target).toEqual({ n: 1, z: null, u: undefined })
+
+		const folder = gooey.addFolder('refused-add')
+		const optional = { n: 1, f: { m: 2 }, u: undefined } as {
+			n: number
+			f: { m: number }
+			u: number | undefined
+		}
+		expect(() => folder.addMany(optional)).toThrow(/addMany\(\): "u" is `undefined`/)
+		expect(() => folder.addMany({ n: 1, f: { m: 2, z: null } })).toThrow(
+			/addMany\(\): "z" is `null`/,
+		)
+		expect(folder.inputs.size).toBe(0)
+		expect(folder.children).toHaveLength(0)
+
+		// A key that `exclude` names is never walked, so it isn't refused.
+		expect(Object.keys(folder.addMany(optional, { exclude: ['u'] }).inputs)).toEqual(['n', 'f'])
 	})
 
 	test('a generic wrapper gets past the type-level refusal with a type argument and a cast', () => {

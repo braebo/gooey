@@ -261,8 +261,8 @@ export type InferInputs<TTarget> =
 
 /**
  * The input {@link InferInputs} gives a target's field.  A `null` or `undefined` in the field's
- * type says nothing about its input: a nullish field binds through its `value` option, which
- * {@link InferTargetOptions} types as the rest of the field's type, so a `number | null` field
+ * type says nothing about its input: its `value` option builds it (both verbs refuse it without),
+ * typed by {@link InferTargetOptions} as the rest of the field's type, so a `number | null` field
  * gets an {@link InputNumber}.  A field typed only `null` or `undefined` could be any input.
  */
 type FieldInput<TTarget, K extends keyof TTarget> = [NonNullable<TTarget[K]>] extends [never]
@@ -1616,6 +1616,11 @@ export class Folder {
 	 * Takes an object and generates a set of inputs based on the object's keys and values.  Any
 	 * nested objects will result in child folders being created.  Options can be passed to
 	 * customize the inputs generated, and to exclude/include specific keys.
+	 *
+	 * A `null` or `undefined` field says nothing about its input, so its `value` option builds it
+	 * (`{ count: { value: 0 } }` for a `number | undefined` field).  A null or undefined field with
+	 * no `value` option throws, before any input is built, as it does in
+	 * {@link Folder.bindMany|`bindMany`}.
 	 * @param target - The object to generate inputs from.
 	 * @param options - Options to customize the inputs generated, as well as `include` and
 	 * `exclude` arrays to omit certain keys.
@@ -1646,13 +1651,9 @@ export class Folder {
 		this._log.fn('addMany').debug({ target, options }, this)
 
 		const maxSize = options?.maxSize ?? Folder._DEFAULT_MAX_SIZE
-		return this._walk(
-			target,
-			{ ...(((options as any) || undefined) ?? {}), maxSize },
-			this,
-			new Set(),
-			'add',
-		)
+		const opts = { ...(((options as any) || undefined) ?? {}), maxSize }
+		this._walk(target, opts, this, new Set(), 'add', true)
+		return this._walk(target, opts, this, new Set(), 'add')
 	}
 
 	/**
@@ -1661,9 +1662,11 @@ export class Folder {
 	 *
 	 * A bare array of labeled options (`[{ label, value }, …]`) is refused, by type and at runtime:
 	 * a bound select writes its pick to the field, and that field holds the options.  Bind an inline
-	 * `{ value, options }` instead, or {@link Folder.addMany|`addMany`} it.  A key that `exclude`
-	 * names, or that an `include` leaves out, is never walked, so it isn't refused.  A refused
-	 * target throws before any input is built.
+	 * `{ value, options }` instead, or {@link Folder.addMany|`addMany`} it.  A `null` or `undefined`
+	 * field with no `value` option is refused too, at runtime only, since its type can't say what it
+	 * holds; with one, the option is written to the field and builds its input.  A key that
+	 * `exclude` names, or that an `include` leaves out, is never walked, so it isn't refused.  A
+	 * refused target throws before any input is built.
 	 *
 	 * Inside a generic function the target's type is still open, so the refusal can't be checked
 	 * and the call doesn't compile.  Pass the type and cast the target to get past it:
@@ -1698,8 +1701,7 @@ export class Folder {
 
 		const maxSize = options?.maxSize ?? Folder._DEFAULT_MAX_SIZE
 		const opts = { ...(((options as any) || undefined) ?? {}), maxSize }
-		// A dry run first, so a target that can't be bound throws before any of it is built.
-		this._walk(target as T, opts, this, new Set(), 'check')
+		this._walk(target as T, opts, this, new Set(), 'bind', true)
 		return this._walk(target as T, opts, this, new Set(), 'bind')
 	}
 	//#endregion Bind
@@ -1718,11 +1720,13 @@ export class Folder {
 		},
 		folder: Folder,
 		seen: Set<any>,
+		/** The verb walking: `add` builds inputs, `bind` binds them to the target. */
+		mode: 'bind' | 'add',
 		/**
-		 * `check` walks a `bind` without building anything: the same keys, in the same order, to
-		 * the same `maxSize`, throwing where the bind would.
+		 * A dry run builds nothing: the same keys, in the same order, to the same `maxSize`,
+		 * throwing where the walk would, so a refused target throws before any of it is built.
 		 */
-		mode: 'bind' | 'add' | 'check',
+		dry = false,
 		/**
 		 * Counts the total number of properties processed to prevent browser crashes from large objects with nested objects firing recursive calls to {@link bindMany}/{@link addMany}.
 		 */
@@ -1736,7 +1740,7 @@ export class Folder {
 
 		for (let [key, value] of Object.entries(target)) {
 			if (_count.value >= maxSize) {
-				if (mode !== 'check') {
+				if (!dry) {
 					this._log
 						.fn('_walk')
 						.warn(
@@ -1764,31 +1768,23 @@ export class Folder {
 			) as TOptions
 			let folderOptions = {} as FolderOptions
 
-			// A bound null or undefined field says nothing about its input, so it takes its type from
-			// a `value` option, written to the field because the bound input reads the field.
-			if (value == null && mode !== 'add') {
+			// A null or undefined field says nothing about its input, so it takes its type from a
+			// `value` option, and is refused without one.  A bound field gets the option written to
+			// it, because the bound input reads the field.
+			if (value == null) {
 				if (inputOptions['value'] == null) {
-					console.error(
-						`bindMany() error: target object's key "${key}" is \`${value}\`, and no valid initial "value" option was provided.`,
-						{ key, value, inputOptions },
+					throw new Error(
+						`${mode}Many(): "${key}" is \`${value}\`, which says nothing about its input. Give it a "value" option.`,
+						{ cause: { key, value, inputOptions } },
 					)
-					throw new Error('Invalid binding.')
 				}
 
 				value = inputOptions['value']
-				if (mode === 'bind') (target as Record<string, unknown>)[key] = value
-			} else if (value === null && 'value' in inputOptions) {
-				value = inputOptions['value']
+				if (mode === 'bind' && !dry) (target as Record<string, unknown>)[key] = value
 			}
 
-			// Convert undefined to string for text input.
-			if (value === undefined) {
-				value = 'undefined'
-				this._log.fn('_walk').debug(`Converting undefined to string for property: ${key}`)
-			}
-
-			if (mode === 'check') {
-				// The branches below, for what can throw: a bare labeled-options array, and a folder.
+			if (dry) {
+				// The branches below, for what can throw: a bound bare labeled-options array, and a folder.
 				if (
 					typeof value === 'object' &&
 					value !== null &&
@@ -1797,8 +1793,16 @@ export class Folder {
 					!isColor(value)
 				) {
 					if (!Array.isArray(value)) {
-						this._walk(value, { ...inputOptions, maxSize }, folder, seen, mode, _count)
-					} else if (value.length > 0 && isLabeledOption(value[0])) {
+						this._walk(
+							value,
+							{ ...inputOptions, maxSize },
+							folder,
+							seen,
+							mode,
+							dry,
+							_count,
+						)
+					} else if (mode === 'bind' && value.length > 0 && isLabeledOption(value[0])) {
 						throw unbindableLabeledOptions(key)
 					}
 				}
@@ -1868,6 +1872,7 @@ export class Folder {
 						newFolder,
 						seen,
 						mode,
+						dry,
 						_count,
 					)
 

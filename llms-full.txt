@@ -2350,6 +2350,11 @@ Takes an object and generates a set of inputs based on the object's keys and val
 nested objects will result in child folders being created.  Options can be passed to
 customize the inputs generated, and to exclude/include specific keys.
 
+A `null` or `undefined` field says nothing about its input, so its `value` option builds it
+(`{ count: { value: 0 } }` for a `number | undefined` field).  A null or undefined field with
+no `value` option throws, before any input is built, as it does in
+[\`bindMany\`](#bindmany).
+
 ###### Type Parameters
 
 ###### T
@@ -2857,9 +2862,11 @@ adds them, so a change writes back to the target.  Nested objects become child f
 
 A bare array of labeled options (`[{ label, value }, …]`) is refused, by type and at runtime:
 a bound select writes its pick to the field, and that field holds the options.  Bind an inline
-`{ value, options }` instead, or [\`addMany\`](#addmany) it.  A key that `exclude`
-names, or that an `include` leaves out, is never walked, so it isn't refused.  A refused
-target throws before any input is built.
+`{ value, options }` instead, or [\`addMany\`](#addmany) it.  A `null` or `undefined`
+field with no `value` option is refused too, at runtime only, since its type can't say what it
+holds; with one, the option is written to the field and builds its input.  A key that
+`exclude` names, or that an `include` leaves out, is never walked, so it isn't refused.  A
+refused target throws before any input is built.
 
 Inside a generic function the target's type is still open, so the refusal can't be checked
 and the call doesn't compile.  Pass the type and cast the target to get past it:
@@ -4259,6 +4266,11 @@ Takes an object and generates a set of inputs based on the object's keys and val
 nested objects will result in child folders being created.  Options can be passed to
 customize the inputs generated, and to exclude/include specific keys.
 
+A `null` or `undefined` field says nothing about its input, so its `value` option builds it
+(`{ count: { value: 0 } }` for a `number | undefined` field).  A null or undefined field with
+no `value` option throws, before any input is built, as it does in
+[\`bindMany\`](#bindmany).
+
 ###### Type Parameters
 
 ###### T
@@ -4798,9 +4810,11 @@ adds them, so a change writes back to the target.  Nested objects become child f
 
 A bare array of labeled options (`[{ label, value }, …]`) is refused, by type and at runtime:
 a bound select writes its pick to the field, and that field holds the options.  Bind an inline
-`{ value, options }` instead, or [\`addMany\`](#addmany) it.  A key that `exclude`
-names, or that an `include` leaves out, is never walked, so it isn't refused.  A refused
-target throws before any input is built.
+`{ value, options }` instead, or [\`addMany\`](#addmany) it.  A `null` or `undefined`
+field with no `value` option is refused too, at runtime only, since its type can't say what it
+holds; with one, the option is written to the field and builds its input.  A key that
+`exclude` names, or that an `include` leaves out, is never walked, so it isn't refused.  A
+refused target throws before any input is built.
 
 Inside a generic function the target's type is still open, so the refusal can't be checked
 and the call doesn't compile.  Pass the type and cast the target to get past it:
