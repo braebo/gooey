@@ -71,6 +71,11 @@ export type SelectElements = {
 interface SelectInputEvents<T> {
 	change: LabeledOption<T>
 	refresh: void
+	/**
+	 * The pointer moved onto an option while the dropdown is open, which selects it until a pick
+	 * or a cancel ends the gesture.
+	 */
+	preview: LabeledOption<T>
 	open: void
 	close: void
 	cancel: void
@@ -149,6 +154,7 @@ export class Select<T> {
 	private _evm = new EventManager<SelectInputEvents<T>>([
 		'change',
 		'refresh',
+		'preview',
 		'cancel',
 		'open',
 		'close',
@@ -446,6 +452,7 @@ export class Select<T> {
 						.fn('on(mouseenter)')
 						.debug('currentSelection', { option, element }, this)
 					this.select(option)
+					this._evm.emit('preview', option)
 				}
 				this._evm.listen(element, 'mouseenter', select, {}, 'dropdown')
 			}

@@ -280,18 +280,11 @@ export class InputSelect<TValueType extends ValidInputValue = any> extends Input
 		// 	)
 		// }
 
-		this.listen(this.selectController.element, 'preview', () => {
-			this.emit('preview')
-		})
-		this.listen(this.selectController.element, 'open', () => {
-			this.emit('open')
-		})
-		this.listen(this.selectController.element, 'close', () => {
-			this.emit('close')
-		})
-		this.listen(this.selectController.element, 'cancel', () => {
-			this.emit('cancel')
-		})
+		// The menu's gesture events come off the controller's own emitter; it dispatches no DOM events.
+		this.selectController.on('preview', v => this._evm.emit('preview', v))
+		this.selectController.on('open', () => this._evm.emit('open'))
+		this.selectController.on('close', () => this._evm.emit('close'))
+		this.selectController.on('cancel', () => this._evm.emit('cancel'))
 
 		// Override the default dirty check to use an option's `label` for equality checks.
 		this._dirty = () => this.selected.value.label !== this.labeledSelection.label

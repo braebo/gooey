@@ -161,3 +161,50 @@ describe('addMany', () => {
 		expect(input.selected.value).toMatchObject({ label: 'foo', value: 'foo' })
 	})
 })
+
+describe('events', () => {
+	const gui = g.addGooey()
+
+	/** Records every menu event the input emits, in order, with its payload. */
+	function record(select: InputSelect<string>) {
+		const heard: [string, unknown][] = []
+		for (const event of ['open', 'close', 'cancel', 'preview'] as const) {
+			select.on(event, (v: unknown) => heard.push([event, v]))
+		}
+		return heard
+	}
+
+	function option(select: InputSelect<string>, label: string): HTMLElement {
+		for (const [, { option, element }] of select.selectController.optionMap)
+			if (option.label === label) return element
+		throw new Error(`no option labeled ${label}`)
+	}
+
+	test('opening, hovering and picking emit open, preview and close', () => {
+		const select = gui.addSelect('picked', { value: 'foo', options: ['foo', 'bar', 'baz'] })
+		const heard = record(select)
+
+		select.selectController.elements.selected.click()
+		option(select, 'bar').dispatchEvent(new MouseEvent('mouseenter'))
+		option(select, 'baz').click()
+
+		expect(heard).toEqual([
+			['open', undefined],
+			['preview', { label: 'bar', value: 'bar' }],
+			['close', undefined],
+		])
+		expect(select.value).toBe('baz')
+	})
+
+	test('escape cancels: close, then cancel, and the value is what the menu opened over', () => {
+		const select = gui.addSelect('cancelled', { value: 'foo', options: ['foo', 'bar'] })
+		const heard = record(select)
+
+		select.selectController.elements.selected.click()
+		option(select, 'bar').dispatchEvent(new MouseEvent('mouseenter'))
+		window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+
+		expect(heard.map(([event]) => event)).toEqual(['open', 'preview', 'close', 'cancel'])
+		expect(select.value).toBe('foo')
+	})
+})

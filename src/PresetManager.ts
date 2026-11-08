@@ -513,8 +513,7 @@ export class PresetManager {
 			this._refreshInputs()
 		})
 
-		// The controller's own events: InputSelect's `open` and `cancel` re-emit DOM events the
-		// controller never dispatches, so listening there hears nothing.
+		// The preset menu's controller: its gesture events, and the dropdown its options live in.
 		const menu = this._presetsInput.selectController
 
 		// A hover previews an option by loading it, so what the menu opened over is kept here: it's

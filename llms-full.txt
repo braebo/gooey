@@ -2574,7 +2574,7 @@ object's key when the input value changes.
 
 ###### TOptions
 
-`TOptions` *extends* [`TextInputOptions`](#textinputoptions) \| [`NumberInputOptions`](#numberinputoptions) \| [`ColorInputOptions`](#colorinputoptions) \| [`SelectInputOptions`](#selectinputoptions)\<`any`\> \| [`SwitchInputOptions`](#switchinputoptions) \| [`SelectInputOptions`](#selectinputoptions)\<`unknown`\>
+`TOptions` *extends* [`SelectInputOptions`](#selectinputoptions)\<`any`\> \| [`TextInputOptions`](#textinputoptions) \| [`NumberInputOptions`](#numberinputoptions) \| [`ColorInputOptions`](#colorinputoptions) \| [`SwitchInputOptions`](#switchinputoptions) \| [`SelectInputOptions`](#selectinputoptions)\<`unknown`\>
 
 ###### TInput
 
@@ -4450,7 +4450,7 @@ object's key when the input value changes.
 
 ###### TOptions
 
-`TOptions` *extends* [`TextInputOptions`](#textinputoptions) \| [`NumberInputOptions`](#numberinputoptions) \| [`ColorInputOptions`](#colorinputoptions) \| [`SelectInputOptions`](#selectinputoptions)\<`any`\> \| [`SwitchInputOptions`](#switchinputoptions) \| [`SelectInputOptions`](#selectinputoptions)\<`unknown`\>
+`TOptions` *extends* [`SelectInputOptions`](#selectinputoptions)\<`any`\> \| [`TextInputOptions`](#textinputoptions) \| [`NumberInputOptions`](#numberinputoptions) \| [`ColorInputOptions`](#colorinputoptions) \| [`SwitchInputOptions`](#switchinputoptions) \| [`SelectInputOptions`](#selectinputoptions)\<`unknown`\>
 
 ###### TInput
 
@@ -5039,6 +5039,10 @@ false
 > **load**(`preset`): `void`
 
 Loads a given preset into the gooey, updating all inputs.
+
+A load records no undo step, and the inputs' own commits as it sets them are dropped until
+the microtask after.  A person's pick in the preset menu is the undoable load, and the
+PresetManager records it.
 
 ###### Parameters
 
@@ -12141,7 +12145,7 @@ false
 
 ###### Inherited from
 
-`Input.bound`
+[`InputButtonGrid`](#inputbuttongrid).[`bound`](#bound-3)
 
 ##### bubble
 
@@ -12152,7 +12156,7 @@ If false, the next update will be silent, after which the flag will be reset to 
 
 ###### Inherited from
 
-`Input.bubble`
+[`InputButtonGrid`](#inputbuttongrid).[`bubble`](#bubble-3)
 
 ##### elements
 
@@ -12218,7 +12222,7 @@ Unique identifier for the input. Also used for saving and loading presets.
 
 ###### Inherited from
 
-`Input.id`
+[`InputButtonGrid`](#inputbuttongrid).[`id`](#id-8)
 
 ##### initialValue
 
@@ -12494,7 +12498,7 @@ Input.elements\|\`elements\`.
 
 ###### Inherited from
 
-`Input.element`
+[`InputButtonGrid`](#inputbuttongrid).[`element`](#element-6)
 
 ##### hidden
 
@@ -12669,7 +12673,7 @@ The title displayed on this Input's label.
 
 ###### Inherited from
 
-`Input.undoManager`
+[`InputButtonGrid`](#inputbuttongrid).[`undoManager`](#undomanager-3)
 
 ##### value
 
