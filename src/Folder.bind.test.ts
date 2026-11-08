@@ -368,6 +368,11 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 		// @ts-expect-error - an exclude still names a key of the target
 		expectTypeOf(() => gooey.bindMany({ n: 1 }, { exclude: ['nope'] })).toBeFunction()
 
+		// An index signature's keys can't be listed, so an include there lifts nothing.
+		const index: Record<string, { label: string; value: number }[]> = {}
+		// @ts-expect-error - include doesn't lift the refusal from an index signature
+		expectTypeOf(() => gooey.bindMany(index, { include: ['a'] })).toBeFunction()
+
 		// A type argument given by hand takes the exclude it always did.
 		expect(gooey.bindMany<{ n: number }>({ n: 1 }, { exclude: ['n'] }).inputs).toEqual({})
 	})

@@ -353,11 +353,16 @@ export type BindableTarget<T, TSkipped extends PropertyKey = never> = {
 
 /**
  * The keys at the top of a {@link Folder.bindMany|`bindMany`} target that `_walk` never reaches:
- * those its `exclude` names, and those an `include` leaves out.
+ * those its `exclude` names, and those an `include` leaves out.  An index signature's keys can't be
+ * listed, so an `include` lifts nothing there.
  */
 type SkippedKeys<T, TExclude, TInclude> =
 	| TExclude
-	| ([TInclude] extends [never] ? never : Exclude<keyof T, TInclude>)
+	| ([TInclude] extends [never]
+			? never
+			: string extends keyof T
+				? never
+				: Exclude<keyof T, TInclude>)
 
 /**
  * The folders {@link Folder.addMany|`addMany`} and {@link Folder.bindMany|`bindMany`} build, keyed

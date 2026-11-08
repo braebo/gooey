@@ -138,6 +138,13 @@ export class InputButton extends Input<
 		return this
 	}
 
+	/**
+	 * A bound button's field is its click handler, and its state is the {@link ButtonController},
+	 * so there's nothing to read back.  The base read would set the function as state, and a
+	 * function never compares equal in the store, so each read would re-run this refresh.
+	 */
+	protected override readBinding() {}
+
 	dispose() {
 		this.button.dispose()
 		super.dispose()

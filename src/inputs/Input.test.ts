@@ -201,4 +201,22 @@ describe('refresh() re-reads a bound field, resettable or not', () => {
 			})
 		}
 	}
+
+	// A function field binds as a button whose state isn't the field: reading it back into state
+	// would re-notify forever, since the store never finds two functions equal.
+	for (const resettable of [true, false]) {
+		test(`a bound button refreshes without re-reading its handler, resettable: ${resettable}`, () => {
+			let clicks = 0
+			const target = { go: () => clicks++ }
+			const { inputs } = gooey.bindMany(target, { go: { resettable } })
+			const button = gooey.bind(target, 'go', { resettable })
+
+			for (const input of [inputs.go, button]) {
+				input.refresh()
+				input.click()
+			}
+
+			expect(clicks).toBe(2)
+		})
+	}
 })
