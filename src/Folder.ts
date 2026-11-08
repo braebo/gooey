@@ -225,7 +225,7 @@ export type InferInputs<TTarget> =
 						: TTarget[K] extends ColorString | ColorObject
 							? InputColor
 							: TTarget[K] extends string
-								? InputText
+								? InferStringInput<TTarget[K]>
 								: TTarget[K] extends LabeledOption<infer U>[]
 									? InputSelect<U>
 									: TTarget[K] extends { value: infer V; options: Array<infer V> }

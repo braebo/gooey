@@ -106,7 +106,7 @@ type ManyOptions<TTarget, TOptions> = ManyControls<TTarget> & (string extends ke
  * {@link Folder.addMany|`addMany`} or {@link Folder.bindMany|`bindMany`}.
  * @template TTarget - The target object being used to generate inputs.
  */
-type InferInputs<TTarget> = TTarget extends Record<string, any> ? { [K in keyof TTarget]: TTarget[K] extends number ? InputNumber : TTarget[K] extends boolean ? InputSwitch : TTarget[K] extends ColorString | ColorObject ? InputColor : TTarget[K] extends string ? InputText : TTarget[K] extends LabeledOption<infer U>[] ? InputSelect<U> : TTarget[K] extends {
+type InferInputs<TTarget> = TTarget extends Record<string, any> ? { [K in keyof TTarget]: TTarget[K] extends number ? InputNumber : TTarget[K] extends boolean ? InputSwitch : TTarget[K] extends ColorString | ColorObject ? InputColor : TTarget[K] extends string ? InferStringInput<TTarget[K]> : TTarget[K] extends LabeledOption<infer U>[] ? InputSelect<U> : TTarget[K] extends {
   value: infer V;
   options: Array<infer V>;
 } ? InputSelect<V> : TTarget[K] extends Array<infer U> ? InputArray<U> : TTarget[K] extends (() => void) ? InputButton : TTarget[K] extends object ? InferInputs<TTarget[K]> & {

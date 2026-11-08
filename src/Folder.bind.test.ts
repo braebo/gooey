@@ -60,6 +60,30 @@ describe('bind() on a string field says what runtime builds', () => {
 		expectTypeOf(gooey.add('text', 'gooey')).toEqualTypeOf<InputText>()
 		expect(gooey.add('loose', loose)).toBeInstanceOf(InputColor)
 	})
+
+	test('addMany() on a plain string is typed as either, like add()', () => {
+		const { inputs } = gooey.addMany({
+			bg: '#ff0000',
+			name: 'gooey',
+			nested: { fg: '#00ff00' },
+		})
+
+		expectTypeOf(inputs.bg).toEqualTypeOf<InputText | InputColor>()
+		expectTypeOf(inputs.name).toEqualTypeOf<InputText | InputColor>()
+		expectTypeOf(inputs.nested.fg).toEqualTypeOf<InputText | InputColor>()
+		expect(inputs.bg).toBeInstanceOf(InputColor)
+		expect(inputs.name).toBeInstanceOf(InputText)
+		expect(inputs.nested.fg).toBeInstanceOf(InputColor)
+	})
+
+	test('addMany() on a color-typed field is an InputColor', () => {
+		const target: { bg: HexString; fg: '#00ff00' } = { bg: '#ff0000', fg: '#00ff00' }
+
+		const { inputs } = gooey.addMany(target)
+
+		expectTypeOf(inputs.bg).toEqualTypeOf<InputColor>()
+		expectTypeOf(inputs.fg).toEqualTypeOf<InputColor>()
+	})
 })
 
 describe('bind* siblings accept only the field type they bind', () => {
