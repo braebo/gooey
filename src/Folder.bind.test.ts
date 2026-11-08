@@ -377,6 +377,18 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 		expect(gooey.bindMany<{ n: number }>({ n: 1 }, { exclude: ['n'] }).inputs).toEqual({})
 	})
 
+	test('a null or undefined field binds through its value option', () => {
+		const target: { n: number; z: number | null; u?: string } = { n: 1, z: null, u: undefined }
+		// A nullable field's input types as `never` today, so the inputs are read untyped.
+		const { inputs } = gooey.bindMany(target, { z: { value: 3 }, u: { value: 'hi' } }) as any
+
+		expect([inputs.z.value, inputs.u.value]).toEqual([3, 'hi'])
+		expect(target).toEqual({ n: 1, z: 3, u: 'hi' })
+
+		inputs.z.set(4)
+		expect(target.z).toBe(4)
+	})
+
 	test('a target bindMany refuses throws before any of it is built', () => {
 		const folder = gooey.addFolder('refused')
 
@@ -386,6 +398,9 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 			/labeled options/,
 		)
 		expect(() => folder.bindMany({ n: 1, f: { m: 2 }, nothing: null })).toThrow(
+			/Invalid binding/,
+		)
+		expect(() => folder.bindMany({ n: 1, f: { m: 2 }, nothing: undefined })).toThrow(
 			/Invalid binding/,
 		)
 

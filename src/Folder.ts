@@ -1756,20 +1756,21 @@ export class Folder {
 			) as TOptions
 			let folderOptions = {} as FolderOptions
 
-			if (value === null) {
-				const hasValue = 'value' in inputOptions
-
-				if (hasValue) {
-					value = inputOptions['value']
-				}
-
-				if (!hasValue && mode !== 'add') {
+			// A bound null or undefined field says nothing about its input, so it takes its type from
+			// a `value` option, written to the field because the bound input reads the field.
+			if (value == null && mode !== 'add') {
+				if (inputOptions['value'] == null) {
 					console.error(
 						`bindMany() error: target object's key "${key}" is \`${value}\`, and no valid initial "value" option was provided.`,
 						{ key, value, inputOptions },
 					)
 					throw new Error('Invalid binding.')
 				}
+
+				value = inputOptions['value']
+				if (mode === 'bind') (target as Record<string, unknown>)[key] = value
+			} else if (value === null && 'value' in inputOptions) {
+				value = inputOptions['value']
 			}
 
 			// Convert undefined to string for text input.
