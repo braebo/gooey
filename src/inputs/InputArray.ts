@@ -51,6 +51,11 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 
 	#overflowNote?: HTMLElement
 	#log: Logger
+	/**
+	 * The array the items were built from, as JSON, so a {@link readBinding} can tell an outside
+	 * write (a new array, or the same one changed in place) from what's already on screen.
+	 */
+	#rendered = ''
 
 	constructor(options: Partial<ArrayInputOptions<T>>, folder: Folder) {
 		const opts = Object.assign({}, ARRAY_INPUT_DEFAULTS, options)
@@ -93,8 +98,8 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 		)
 	}
 
-	private _createArrayItems(): void {
-		const array = this.state.value
+	private _createArrayItems(array = this.state.value): void {
+		this.#rendered = JSON.stringify(array)
 		const count = Math.min(array.length, this.opts.maxItems!)
 		this.items = []
 
@@ -149,6 +154,8 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 	private _updateArrayItem(index: number, newValue: any): void {
 		const currentArray = [...this.state.value]
 		currentArray[index] = newValue
+		// The item already shows it, so the refresh this set runs doesn't rebuild it mid-edit.
+		this.#rendered = JSON.stringify(currentArray)
 
 		// The binding target (if any) is synced by the state subscription in the constructor.
 		this.state.set(currentArray)
@@ -156,13 +163,14 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 	}
 
 	set = (v: T[]): this => {
+		// Items first: the set's refresh then finds `v` on screen and leaves it.
+		this._recreateItems(v)
 		this.state.set(v)
-		this._recreateItems()
 		this.emit('change', v)
 		return this
 	}
 
-	private _recreateItems(): void {
+	private _recreateItems(array = this.state.value): void {
 		for (const item of this.items) {
 			item.dispose()
 		}
@@ -171,18 +179,23 @@ export class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, ArrayC
 		this.#overflowNote?.remove()
 		this.#overflowNote = undefined
 
-		this._createArrayItems()
+		this._createArrayItems(array)
 	}
 
-	refresh = (): this => {
-		// Suspend the binding around `super.refresh` - it pulls the target back into state, and
-		// arrays always fail the store's `safe_not_equal` check, re-notifying subscribers (and
-		// this method) infinitely.  State -> target sync is handled by our own subscription.
+	/**
+	 * Reads the bound field on {@link refresh} only when it holds something other than what the
+	 * items show: the store never finds two arrays equal, so an unconditional read would
+	 * re-notify forever.  Silent: no `change`, and no undo step.
+	 */
+	protected override readBinding() {
 		const binding = this.opts.binding
-		this.opts.binding = undefined
-		super.refresh(this.state.value)
-		this.opts.binding = binding
-		return this
+		if (!binding) return
+
+		const next = binding.target[binding.key]
+		if (!Array.isArray(next) || JSON.stringify(next) === this.#rendered) return
+
+		this._recreateItems(next)
+		this.state.set(next)
 	}
 
 	dispose(): void {

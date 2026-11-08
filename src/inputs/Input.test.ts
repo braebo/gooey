@@ -180,6 +180,17 @@ describe('refresh() re-reads a bound field, resettable or not', () => {
 			read: (i: any) => [i.value.map((s: any) => s.color)],
 			want: [['#ff0000', '#0000ff']],
 		},
+		{
+			kind: 'array',
+			bind: (t: any, o: object) => gooey.bindArray(t, 'v', o),
+			from: [1, 2],
+			to: [3, 4, 5],
+			read: (i: any) => [i.value, i.items.map((item: any) => item.value)],
+			want: [
+				[3, 4, 5],
+				[3, 4, 5],
+			],
+		},
 	]
 
 	for (const { kind, bind, from, to, read, want } of kinds) {

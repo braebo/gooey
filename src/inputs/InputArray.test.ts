@@ -43,6 +43,33 @@ describe('InputArray', () => {
 		expect(input.items.length).toBe(3)
 	})
 
+	test('refresh() re-reads a bound array changed in place, silently', () => {
+		const target = { arr: [1, 2] }
+		const input = gooey.bindArray(target, 'arr')
+		let changes = 0
+		input.on('change', () => changes++)
+		const steps = gooey._undoManager.stack.length
+
+		target.arr.push(3)
+		input.refresh()
+
+		expect(input.items.map(item => item.value)).toEqual([1, 2, 3])
+		expect(changes).toBe(0)
+		expect(gooey._undoManager.stack.length).toBe(steps)
+	})
+
+	test('an item edit on a bound array keeps the item inputs', () => {
+		const target = { arr: ['a', 'b'] }
+		const input = gooey.bindArray(target, 'arr')
+		const first = input.items[0]
+
+		;(first as InputText).set('z')
+		input.refresh()
+
+		expect(input.items[0]).toBe(first)
+		expect(target.arr).toEqual(['z', 'b'])
+	})
+
 	test('maxItems caps rendered items without truncating the value', () => {
 		const input = gooey.addArray('capped', [1, 2, 3, 4, 5], { maxItems: 2 })
 		expect(input.items.length).toBe(2)
