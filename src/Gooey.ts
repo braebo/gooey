@@ -912,6 +912,9 @@ export class Gooey {
 				// }, { labelKey: 'title' })
 			})
 
+			// The panel's own setting, like the mode buttons beside it: undo is for the person's values.
+			themeInput._undoable = false
+
 			// By title: the option is the theme as it was when the select was built, and a
 			// consumer may have replaced that theme in `themes` since (a live-synced palette).
 			themeInput.on('change', v => {

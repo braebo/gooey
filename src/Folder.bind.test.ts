@@ -11,6 +11,7 @@ import { InputNumber } from './inputs/InputNumber'
 import { InputArray } from './inputs/InputArray'
 import { InputColor } from './inputs/InputColor'
 import { InputText } from './inputs/InputText'
+import { Color } from './shared/color/color'
 import { Folder } from './Folder'
 import { Gooey } from './Gooey'
 
@@ -128,6 +129,28 @@ describe('bind() on a string field says what runtime builds', () => {
 
 		expectTypeOf(folders).toEqualTypeOf<{ f: { folder: Folder; subFolders: {} } }>()
 		expect(Object.keys(folders)).toEqual(['f'])
+	})
+
+	test("a nested folder's inputs hold its inputs only; its Folder is in folders", () => {
+		const { inputs, folders } = gooey.addMany({ a: { n: 1 } })
+
+		expectTypeOf(inputs.a).toEqualTypeOf<{ n: InputNumber }>()
+		expect(Object.keys(inputs.a)).toEqual(['n'])
+		expect(folders.a.folder).toBeInstanceOf(Folder)
+	})
+
+	test('a Color is a color input, and a plain { r, g, b } is a folder of numbers', () => {
+		const { inputs, folders } = gooey.addMany({
+			c: new Color('#ff0000'),
+			rgb: { r: 255, g: 0, b: 0 },
+		})
+
+		expectTypeOf(inputs.c).toEqualTypeOf<InputColor>()
+		expectTypeOf(inputs.rgb.r).toEqualTypeOf<InputNumber>()
+		expectTypeOf(folders).toEqualTypeOf<{ rgb: { folder: Folder; subFolders: {} } }>()
+		expect(inputs.c).toBeInstanceOf(InputColor)
+		expect(inputs.rgb.r).toBeInstanceOf(InputNumber)
+		expect(Object.keys(folders)).toEqual(['rgb'])
 	})
 
 	test('addMany() on a plain string field is typed as either, like add()', () => {
@@ -323,6 +346,24 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 		})
 		expectTypeOf(ok.inputs.nums).toEqualTypeOf<InputArray<number>>()
 		expect(ok.inputs.sel.value).toBe('a')
+	})
+
+	test('an array of { label, value, ...more } is data, an InputArray, and binds', () => {
+		const rows = () => ({ rows: [{ label: 'one', value: 1, note: 'x' }] })
+
+		const added = gooey.addMany(rows()).inputs.rows
+		expectTypeOf(added).toEqualTypeOf<
+			InputArray<{ label: string; value: number; note: string }>
+		>()
+		expect(added).toBeInstanceOf(InputArray)
+
+		const bound = gooey.bindMany(rows()).inputs.rows
+		expect(bound).toBeInstanceOf(InputArray)
+	})
+
+	test('an any[] field binds; nothing is known about its items', () => {
+		const target = { list: [1, 2] as any[] }
+		expect(gooey.bindMany(target).inputs.list).toBeInstanceOf(InputArray)
 	})
 
 	test('the options bag takes a mutable options array for an inline select', () => {

@@ -11,7 +11,7 @@ import type {
 import type { ColorFormat } from './shared/color/types/colorFormat'
 import type { ColorValue } from './shared/color/color'
 import type { LabeledOption, Option } from './controllers/Select'
-import type { ColorObject } from './shared/color/types/objects'
+import type { Color } from './shared/color/color'
 import type { ColorString } from './shared/color/types/strings'
 import type { ToolbarButtonConfig } from './svg/ToolbarButton'
 import type { GooeyOptions, GooeyPreset } from './Gooey'
@@ -261,12 +261,14 @@ export type InferInputs<TTarget> =
 					? InputNumber
 					: TTarget[K] extends boolean
 						? InputSwitch
-						: TTarget[K] extends ColorString | ColorObject
+						: TTarget[K] extends ColorString | Color
 							? InputColor
 							: TTarget[K] extends string
 								? InferStringInput<TTarget[K]>
-								: TTarget[K] extends readonly LabeledOption<infer U>[]
-									? InputSelect<ItemValue<TTarget[K], U>>
+								: IsLabeledOptions<TTarget[K]> extends true
+									? TTarget[K] extends readonly LabeledOption<infer U>[]
+										? InputSelect<ItemValue<TTarget[K], U>>
+										: never
 									: TTarget[K] extends {
 												value: infer V
 												options: infer O extends readonly unknown[]
@@ -277,24 +279,38 @@ export type InferInputs<TTarget> =
 											: TTarget[K] extends () => void
 												? InputButton
 												: TTarget[K] extends object
-													? InferInputs<TTarget[K]> & {
-															folder: Folder
-														}
+													? InferInputs<TTarget[K]>
 													: never
 			}
 		: never
 
 /**
+ * Whether `_walk` reads an array as a select's options: its items are labeled options with no
+ * other key, as `isLabeledOption` checks.  An array of `{ label, value, ...more }` is data, an
+ * {@link InputArray}, and so is an empty one or an `any[]`, whose items nothing is known about.
+ */
+type IsLabeledOptions<A> = A extends readonly (infer U)[]
+	? 0 extends 1 & U
+		? false
+		: [U] extends [LabeledOption<any>]
+			? [Exclude<keyof U, 'label' | 'value'>] extends [never]
+				? true
+				: false
+			: false
+	: false
+
+/**
  * The keys of a target whose values {@link Folder.addMany|`addMany`} and
- * {@link Folder.bindMany|`bindMany`} turn into folders: the nested objects that aren't a color, an
- * array, or an inline `{ value, options }` select.
+ * {@link Folder.bindMany|`bindMany`} turn into folders: the nested objects that aren't a
+ * {@link Color}, an array, or an inline `{ value, options }` select.  A plain `{ r, g, b }` is a
+ * folder: `_walk` builds a color from a `Color` instance only.
  */
 export type FolderKeys<T> = {
 	[K in keyof T]-?: T[K] extends
 		| number
 		| boolean
 		| string
-		| ColorObject
+		| Color
 		| readonly unknown[]
 		| ((...args: any[]) => any)
 		| { value: unknown; options: readonly unknown[] }
@@ -317,13 +333,11 @@ type UnbindableLabeledOptions =
  * one, but a bound select writes its pick to the field, and here the field is the options.
  */
 export type BindableTarget<T> = {
-	[K in keyof T]: T[K] extends readonly never[]
-		? T[K]
-		: T[K] extends readonly LabeledOption<any>[]
-			? UnbindableLabeledOptions
-			: K extends FolderKeys<T>
-				? BindableTarget<T[K]>
-				: T[K]
+	[K in keyof T]: IsLabeledOptions<T[K]> extends true
+		? UnbindableLabeledOptions
+		: K extends FolderKeys<T>
+			? BindableTarget<T[K]>
+			: T[K]
 }
 
 /**

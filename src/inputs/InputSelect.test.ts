@@ -317,6 +317,19 @@ describe('undo', () => {
 		expect(um.stack).toHaveLength(0)
 	})
 
+	test("the panel's theme picker records nothing, like the mode buttons beside it", () => {
+		um.clear()
+		const theme = [...gui.folder.allInputs.values()].find(
+			i => i.__type === 'InputSelect' && i.title === 'theme',
+		) as InputSelect<any>
+		expect(theme).toBeDefined()
+
+		const other = theme.options.find(o => o.label !== theme.selected.value.label)!
+		theme.set(other.value)
+		expect(theme.selected.value.label).toBe(other.label)
+		expect(um.stack).toHaveLength(0)
+	})
+
 	test('set() from code is an undo step, like the other inputs; a refresh is not', () => {
 		um.clear()
 		const target = { mode: 'a' }

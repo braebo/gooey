@@ -418,8 +418,8 @@ The `addMany` method takes two arguments:
 
 It returns an object with two properties:
 
-1. `folders`: An array of `Folder` instances created from the object's nested objects, if any.
-2. `inputs`: An array of `Input` instances created from the object's primitive values.
+1. `folders`: The `Folder` made for each nested object, keyed like the target: `folders.a.folder`, with the folders nested in it under `folders.a.subFolders`.
+2. `inputs`: The inputs, keyed like the target: `inputs.a.b` is the input for `target.a.b`.
 
 Let's look at an example to see how this works in practice.
 
