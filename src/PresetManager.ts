@@ -4,6 +4,7 @@ import type { PersistedValue } from './shared/persist'
 import type { Folder, FolderOptions } from './Folder'
 import type { Gooey, GooeyPreset } from './Gooey'
 import type { State } from './shared/state'
+import type { Commit } from './UndoManager'
 
 import { RenameSVG } from './svg/RenameSVG'
 import { persist } from './shared/persist'
@@ -497,7 +498,9 @@ export class PresetManager {
 				first = false
 				return
 			}
+			if (this._replaying) return
 			this._log.fn('_presetsInput.on(change)').debug({ value, this: this })
+			if (!this._refreshing) this._recordPick(value)
 			this.gooey.load(value)
 			this.activePreset.set(value)
 			this._refreshInputs()
@@ -751,6 +754,43 @@ export class PresetManager {
 	}
 
 	/**
+	 * `true` while {@link _refresh} moves the preset menu to the active preset: that change still
+	 * loads it, but it's the manager's bookkeeping (a save, a rename, a delete), not a person's pick.
+	 */
+	private _refreshing = false
+
+	/**
+	 * `true` while an undo or redo puts a pick back, so the menu's change doesn't load over it.
+	 */
+	private _replaying = false
+
+	/**
+	 * Records a person's pick in the preset menu as one undo step: undo brings back the values and
+	 * the active preset from before it, unsaved changes included, and redo the pick.
+	 */
+	private _recordPick(value: GooeyPreset) {
+		type Pick = { state: GooeyPreset; active: GooeyPreset }
+		const from: Pick = { state: this.gooey.save('__undo__'), active: this.activePreset.value }
+		const to: Pick = { state: value, active: value }
+
+		this.gooey._undoManager.commit({
+			target: this._presetsInput,
+			from,
+			to,
+			setter: ({ state, active }: Pick) => {
+				this._replaying = true
+				try {
+					this.gooey.load(state)
+					this.activePreset.set(active)
+					this._refresh()
+				} finally {
+					this._replaying = false
+				}
+			},
+		} as unknown as Commit)
+	}
+
+	/**
 	 * Refresh the presets input.
 	 */
 	private _refresh() {
@@ -758,7 +798,12 @@ export class PresetManager {
 
 		this._presetsInput.options = this.presets.value.map(o => ({ label: o.title, value: o }))
 		const activePreset = this.activePreset.value
-		this._presetsInput.select({ label: activePreset.title, value: activePreset })
+		this._refreshing = true
+		try {
+			this._presetsInput.select({ label: activePreset.title, value: activePreset })
+		} finally {
+			this._refreshing = false
+		}
 
 		this._refreshInputs()
 	}

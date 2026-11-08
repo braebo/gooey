@@ -5,7 +5,6 @@ import type { FolderOptions, FolderPreset } from './Folder'
 import type { ResizableOptions } from './shared/resizable'
 import type { DraggableOptions } from './shared/draggable'
 import type { Placement } from './shared/place'
-import type { Commit } from './UndoManager'
 
 import theme_default from './styles/themes/vanilla'
 import theme_scout from './styles/themes/scout'
@@ -28,7 +27,6 @@ import { create } from './shared/create'
 import { isEditableTextTarget } from './shared/keys'
 import { place } from './shared/place'
 import { Folder } from './Folder'
-import { o } from './shared/l'
 
 //#region Types ························································································¬
 
@@ -812,6 +810,10 @@ export class Gooey {
 
 	/**
 	 * Loads a given preset into the gooey, updating all inputs.
+	 *
+	 * A load records no undo step, and the inputs' own commits as it sets them are dropped until
+	 * the microtask after.  A person's pick in the preset menu is the undoable load, and the
+	 * {@link PresetManager} records it.
 	 */
 	load(preset: GooeyPreset | Record<string, any>) {
 		this._log.fn('load').debug({ preset })
@@ -819,48 +821,11 @@ export class Gooey {
 		// todo - this isn't working, it's being unset immediately somewhere...
 		this.dirty = false
 
-		this._lockCommits(preset as GooeyPreset)
-		this.folder.load(preset.data)
-		Promise.resolve().then(() => this._unlockCommits())
-	}
-
-	private _undoLock = false
-	private _lockCommit: { from: GooeyPreset | undefined } = { from: undefined }
-
-	/**
-	 * Commits a change to the input's value to the undo manager.
-	 */
-	private _commit(commit: Partial<Commit>) {
-		if (this._undoLock) {
-			this._log.fn('commit').debug('LOCKED: prevented commit while locked')
-			return
-		}
-		this._log.fn('commit').debug('commited', commit)
-		this._undoManager?.commit(commit as Commit)
-	}
-
-	/**
-	 * Prevents the input from registering undo history, storing the initial
-	 * for the eventual commit in {@link _unlockCommits}.
-	 */
-	private _lockCommits = (from: GooeyPreset) => {
 		this._undoManager.lockedExternally = true
-		this._lockCommit.from = from
-		this._log.fn(o('lock')).debug('commit', { from, lockCommit: this._lockCommit })
-	}
-
-	/**
-	 * Unlocks commits and saves the current commit stored in lock.
-	 */
-	private _unlockCommits = (commit?: Partial<Commit>) => {
-		commit ??= {}
-		commit.target ??= this as any
-		commit.from ??= this._lockCommit.from
-
-		this._undoManager.lockedExternally = false
-		this._commit(commit)
-
-		this._log.fn(o('unlock')).debug('commit', { commit, lockCommit: this._lockCommit })
+		this.folder.load(preset.data)
+		Promise.resolve().then(() => {
+			this._undoManager.lockedExternally = false
+		})
 	}
 
 	private _loadFonts() {
