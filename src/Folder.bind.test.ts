@@ -61,19 +61,28 @@ describe('bind() on a string field says what runtime builds', () => {
 		expect(gooey.add('loose', loose)).toBeInstanceOf(InputColor)
 	})
 
-	test('addMany() on a plain string is typed as either, like add()', () => {
+	test('addMany() types an inline string by its literal, like add()', () => {
 		const { inputs } = gooey.addMany({
 			bg: '#ff0000',
 			name: 'gooey',
 			nested: { fg: '#00ff00' },
 		})
 
-		expectTypeOf(inputs.bg).toEqualTypeOf<InputText | InputColor>()
-		expectTypeOf(inputs.name).toEqualTypeOf<InputText | InputColor>()
-		expectTypeOf(inputs.nested.fg).toEqualTypeOf<InputText | InputColor>()
+		expectTypeOf(inputs.bg).toEqualTypeOf<InputColor>()
+		expectTypeOf(inputs.name).toEqualTypeOf<InputText>()
+		expectTypeOf(inputs.nested.fg).toEqualTypeOf<InputColor>()
 		expect(inputs.bg).toBeInstanceOf(InputColor)
 		expect(inputs.name).toBeInstanceOf(InputText)
 		expect(inputs.nested.fg).toBeInstanceOf(InputColor)
+	})
+
+	test('addMany() on a plain string field is typed as either, like add()', () => {
+		const target: { bg: string } = { bg: '#ff0000' }
+
+		const { inputs } = gooey.addMany(target)
+
+		expectTypeOf(inputs.bg).toEqualTypeOf<InputText | InputColor>()
+		expect(inputs.bg).toBeInstanceOf(InputColor)
 	})
 
 	test('addMany() on a color-typed field is an InputColor', () => {
@@ -124,5 +133,77 @@ describe('bind* siblings accept only the field type they bind', () => {
 		expectTypeOf(() => gooey.bindButtonGrid(target, 'items')).toBeFunction()
 		// @ts-expect-error - an option outside the field's type
 		expectTypeOf(() => gooey.bindSelect(target, 'mode', { options: ['blue'] })).toBeFunction()
+	})
+})
+
+describe('addMany() and bindMany() on inline selects and arrays', () => {
+	const inline = () => ({
+		sel: { value: 'a', options: ['a', 'b'] },
+		lab: {
+			value: 1,
+			options: [
+				{ label: 'one', value: 1 },
+				{ label: 'two', value: 2 },
+			],
+		},
+		arr: [1, 2],
+	})
+
+	test('an inline select or array is typed by its widened items, like add()', () => {
+		const added = gooey.addMany({
+			sel: { value: 'a', options: ['a', 'b'] },
+			lab: {
+				value: 1,
+				options: [
+					{ label: 'one', value: 1 },
+					{ label: 'two', value: 2 },
+				],
+			},
+			arr: [1, 2],
+		}).inputs
+		const bound = gooey.bindMany({
+			sel: { value: 'a', options: ['a', 'b'] },
+			lab: {
+				value: 1,
+				options: [
+					{ label: 'one', value: 1 },
+					{ label: 'two', value: 2 },
+				],
+			},
+			arr: [1, 2],
+		}).inputs
+
+		for (const inputs of [added, bound]) {
+			expectTypeOf(inputs.sel).toEqualTypeOf<InputSelect<string>>()
+			expectTypeOf(inputs.lab).toEqualTypeOf<InputSelect<number>>()
+			expectTypeOf(inputs.arr).toEqualTypeOf<InputArray<number>>()
+			expect(inputs.sel).toBeInstanceOf(InputSelect)
+			expect(inputs.lab).toBeInstanceOf(InputSelect)
+			expect(inputs.arr).toBeInstanceOf(InputArray)
+		}
+		expect(added.lab.value).toBe(1)
+	})
+
+	test('a declared select or array keeps its item type', () => {
+		type Mode = 'light' | 'dark'
+		const target: { mode: { value: Mode; options: Mode[] }; modes: Mode[] } = {
+			mode: { value: 'light', options: ['light', 'dark'] },
+			modes: ['light'],
+		}
+
+		for (const { inputs } of [gooey.addMany(target), gooey.bindMany(target)]) {
+			expectTypeOf(inputs.mode).toEqualTypeOf<InputSelect<Mode>>()
+			expectTypeOf(inputs.modes).toEqualTypeOf<InputArray<Mode>>()
+		}
+	})
+
+	test('the options bag takes a mutable options array for an inline select', () => {
+		const { inputs } = gooey.addMany(inline(), {
+			sel: { __type: 'SelectInputOptions', options: ['a', 'b', 'c'] },
+			arr: { title: 'numbers' },
+		})
+
+		expectTypeOf(inputs.sel).toEqualTypeOf<InputSelect<string>>()
+		expect(inputs.sel).toBeInstanceOf(InputSelect)
 	})
 })
