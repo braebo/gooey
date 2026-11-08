@@ -256,33 +256,41 @@ type ManyOptions<TTarget, TOptions> = ManyControls<TTarget> &
  */
 export type InferInputs<TTarget> =
 	TTarget extends Record<string, any>
-		? {
-				-readonly [K in keyof TTarget]: TTarget[K] extends number
-					? InputNumber
-					: TTarget[K] extends boolean
-						? InputSwitch
-						: TTarget[K] extends ColorString | Color
-							? InputColor
-							: TTarget[K] extends string
-								? InferStringInput<TTarget[K]>
-								: IsLabeledOptions<TTarget[K]> extends true
-									? TTarget[K] extends readonly LabeledOption<infer U>[]
-										? InputSelect<ItemValue<TTarget[K], U>>
-										: never
-									: TTarget[K] extends {
-												value: infer V
-												options: infer O extends readonly unknown[]
-										  }
-										? InputSelect<SelectValue<V, O>>
-										: TTarget[K] extends readonly (infer U)[]
-											? InputArray<ItemValue<TTarget[K], U>>
-											: TTarget[K] extends () => void
-												? InputButton
-												: TTarget[K] extends object
-													? InferInputs<TTarget[K]>
-													: never
-			}
+		? { -readonly [K in keyof TTarget]: FieldInput<TTarget, K> }
 		: never
+
+/**
+ * The input {@link InferInputs} gives a target's field.  A `null` or `undefined` in the field's
+ * type says nothing about its input: a nullish field binds through its `value` option, which
+ * {@link InferTargetOptions} types as the rest of the field's type, so a `number | null` field
+ * gets an {@link InputNumber}.  A field typed only `null` or `undefined` could be any input.
+ */
+type FieldInput<TTarget, K extends keyof TTarget> = [NonNullable<TTarget[K]>] extends [never]
+	? ValidInput
+	: NonNullable<TTarget[K]> extends number
+		? InputNumber
+		: NonNullable<TTarget[K]> extends boolean
+			? InputSwitch
+			: NonNullable<TTarget[K]> extends ColorString | Color
+				? InputColor
+				: NonNullable<TTarget[K]> extends string
+					? InferStringInput<NonNullable<TTarget[K]>>
+					: IsLabeledOptions<NonNullable<TTarget[K]>> extends true
+						? NonNullable<TTarget[K]> extends readonly LabeledOption<infer U>[]
+							? InputSelect<ItemValue<NonNullable<TTarget[K]>, U>>
+							: never
+						: NonNullable<TTarget[K]> extends {
+									value: infer V
+									options: infer O extends readonly unknown[]
+							  }
+							? InputSelect<SelectValue<V, O>>
+							: NonNullable<TTarget[K]> extends readonly (infer U)[]
+								? InputArray<ItemValue<NonNullable<TTarget[K]>, U>>
+								: NonNullable<TTarget[K]> extends () => void
+									? InputButton
+									: NonNullable<TTarget[K]> extends object
+										? InferInputs<NonNullable<TTarget[K]>>
+										: never
 
 /**
  * Whether `_walk` reads an array as a select's options: its items are labeled options with no

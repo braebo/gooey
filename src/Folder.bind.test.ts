@@ -1,4 +1,5 @@
 import type { ButtonGridArrays } from './inputs/InputButtonGrid'
+import type { ValidInput } from './inputs/Input'
 import type { HexString } from './shared/color/types/strings'
 
 import { describe, expect, expectTypeOf, test } from 'vitest'
@@ -379,14 +380,44 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 
 	test('a null or undefined field binds through its value option', () => {
 		const target: { n: number; z: number | null; u?: string } = { n: 1, z: null, u: undefined }
-		// A nullable field's input types as `never` today, so the inputs are read untyped.
-		const { inputs } = gooey.bindMany(target, { z: { value: 3 }, u: { value: 'hi' } }) as any
+		const { inputs } = gooey.bindMany(target, { z: { value: 3 }, u: { value: 'hi' } })
 
-		expect([inputs.z.value, inputs.u.value]).toEqual([3, 'hi'])
+		expectTypeOf(inputs.z).toEqualTypeOf<InputNumber>()
+		expectTypeOf(inputs.u).toEqualTypeOf<InputText | InputColor | undefined>()
+		expect([inputs.z.value, inputs.u?.value]).toEqual([3, 'hi'])
 		expect(target).toEqual({ n: 1, z: 3, u: 'hi' })
 
 		inputs.z.set(4)
 		expect(target.z).toBe(4)
+	})
+
+	test('a nullable field types as the input the rest of its type builds', () => {
+		type Target = {
+			n: number | null
+			s: string | undefined
+			on: boolean | null
+			arr: number[] | null
+			sel: { value: 'a' | 'b'; options: ('a' | 'b')[] } | undefined
+			f: { m: number | null } | null
+			nothing: null
+		}
+		const { inputs } = gooey.addMany({} as Target)
+
+		expectTypeOf(inputs.n).toEqualTypeOf<InputNumber>()
+		expectTypeOf(inputs.s).toEqualTypeOf<InputText | InputColor>()
+		expectTypeOf(inputs.on).toEqualTypeOf<InputSwitch>()
+		expectTypeOf(inputs.arr).toEqualTypeOf<InputArray<number>>()
+		expectTypeOf(inputs.sel).toEqualTypeOf<InputSelect<'a' | 'b'>>()
+		expectTypeOf(inputs.f).toEqualTypeOf<{ m: InputNumber }>()
+		// A field that's only ever null says nothing about its input; its value option decides.
+		expectTypeOf(inputs.nothing).toEqualTypeOf<ValidInput>()
+
+		// A nullable field's value option is the rest of its type.
+		const nullable = { z: null } as { z: number | null }
+		expectTypeOf(() =>
+			// @ts-expect-error a number | null field binds through a number
+			gooey.bindMany(nullable, { z: { value: 'three' } }),
+		).toBeFunction()
 	})
 
 	test('a target bindMany refuses throws before any of it is built', () => {
