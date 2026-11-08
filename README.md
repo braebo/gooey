@@ -141,7 +141,7 @@ Use [`addMany`](#addmany) to create multiple inputs at once:
 gooey.addMany({
 	stuff: true,
 	more_stuff: {
-		like_colors: '#4aa7ff' as const,
+		like_colors: '#4aa7ff',
 		or_buttons: () => alert('thanks!'),
 	},
 })
@@ -435,9 +435,9 @@ This will result in an `InputNumber`, and a `Folder` titled `myFolder` containin
 
 ```typescript
 inputs.myNumber  // -> InputNumber
-inputs.myColor   // -> InputColor
+inputs.myFolder.myColor // -> InputColor
 
-folders.myFolder // -> Folder
+folders.myFolder.folder // -> Folder
 ```
 
 Suppose we want to configure the `min` and `max` options for `myNumber`.  To do this, we can specify them in the second argument:

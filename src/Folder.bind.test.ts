@@ -11,6 +11,7 @@ import { InputNumber } from './inputs/InputNumber'
 import { InputArray } from './inputs/InputArray'
 import { InputColor } from './inputs/InputColor'
 import { InputText } from './inputs/InputText'
+import { Folder } from './Folder'
 import { Gooey } from './Gooey'
 
 const gooey = new Gooey({ title: 'bind', storage: false })
@@ -74,6 +75,22 @@ describe('bind() on a string field says what runtime builds', () => {
 		expect(inputs.bg).toBeInstanceOf(InputColor)
 		expect(inputs.name).toBeInstanceOf(InputText)
 		expect(inputs.nested.fg).toBeInstanceOf(InputColor)
+	})
+
+	test("the README's addMany() example, as written", () => {
+		const { inputs, folders } = gooey.addMany({
+			myNumber: 5,
+			myFolder: {
+				myColor: '#4aa7ff',
+			},
+		})
+
+		expectTypeOf(inputs.myNumber).toEqualTypeOf<InputNumber>()
+		expectTypeOf(inputs.myFolder.myColor).toEqualTypeOf<InputColor>()
+		expectTypeOf(folders.myFolder.folder).toEqualTypeOf<Folder>()
+		expect(inputs.myNumber).toBeInstanceOf(InputNumber)
+		expect(inputs.myFolder.myColor).toBeInstanceOf(InputColor)
+		expect(folders.myFolder.folder).toBeInstanceOf(Folder)
 	})
 
 	test('addMany() on a plain string field is typed as either, like add()', () => {
@@ -213,6 +230,27 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 		expectTypeOf(
 			() => gooey.addMany({ sel: { value: 'a', options: [] } }).inputs.sel,
 		).returns.toEqualTypeOf<InputSelect<string>>()
+	})
+
+	test("bindMany() binds an inline select to its config's value, the value addMany gives", () => {
+		const target = inline()
+		const { inputs } = gooey.bindMany(target)
+
+		expect(inputs.sel.value).toBe('a')
+		expect(inputs.lab.value).toBe(1)
+		// Titled by the field, not the `value` key it binds, so each keeps its own presetId.
+		expect(inputs.sel.title).toBe('sel')
+		expect(inputs.sel.id).not.toBe(inputs.lab.id)
+
+		inputs.sel.value = 'b'
+		inputs.lab.value = 2
+		expect(target.sel).toEqual({ value: 'b', options: ['a', 'b'] })
+		expect(target.lab.value).toBe(2)
+		expect(target.lab.options).toHaveLength(2)
+
+		target.sel.value = 'a'
+		inputs.sel.refresh()
+		expect(inputs.sel.value).toBe('a')
 	})
 
 	test('the options bag takes a mutable options array for an inline select', () => {

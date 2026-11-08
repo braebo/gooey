@@ -1665,13 +1665,15 @@ export class Folder {
 			if (typeof value === 'object' && value !== null) {
 				if ('value' in value && 'options' in value && Array.isArray(value.options)) {
 					//? InputSelect ({ value: T, options: T[] } shape)
+					// Bound to the config's own `value`, so a pick writes `target[key].value` and the
+					// options stay on the target.
 					input =
 						mode === 'bind'
-							? folder.bindSelect(
-									target,
-									key as keyof T,
-									{ ...inputOptions, options: value.options } as any,
-								)
+							? folder.bindSelect(value, 'value', {
+									title: key,
+									...inputOptions,
+									options: value.options,
+								} as any)
 							: folder.addSelect(key, value as any)
 				} else if ('options' in inputOptions) {
 					//? InputSelect (options in inputOptions)
