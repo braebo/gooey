@@ -42,22 +42,21 @@ type Prev = [never, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] // Infinite recursion prev
 
 /**
  * @internal
- * Unrolls a {@link ThemeVars} object into a flat object of strongly inferred CSS variables
- * where the last key in each branch is concatenated with an underscore `_` to the preceding
- * fragment(s), while all other keys are concatenated with a hyphen `-`.
+ * Unrolls a {@link StructuredVars} object into the union of its flat keys, the way
+ * {@link destructureVars} builds them at runtime: the last key in each branch is concatenated
+ * with an underscore `_` to the preceding fragment(s), while all other keys are concatenated
+ * with a hyphen `-`.  A leaf at the top level is its key alone.
  */
-type AccumulateKeys<T, Prefix extends string = '', Depth extends number = 10> = Depth extends 0
+type AccumulateKeys<T, Path extends string = '', Depth extends number = 10> = Depth extends 0
 	? never
 	: T extends object
 		? {
 				[K in keyof T]: K extends string
 					? T[K] extends Record<string, any>
-						? `${Prefix}${K}-` extends `${infer Rest}-`
-							? AccumulateKeys<T[K], `${Rest}-`, Prev[Depth]>
-							: never
-						: `${Prefix}${K}` extends `${infer Rest}`
-							? `${Rest}_${K}`
-							: never
+						? AccumulateKeys<T[K], Path extends '' ? K : `${Path}-${K}`, Prev[Depth]>
+						: Path extends ''
+							? K
+							: `${Path}_${K}`
 					: never
 			}[keyof T]
 		: ''
@@ -67,7 +66,10 @@ type FlattenStructuredVars<T, P extends string> = {
 }
 
 /**
- * Converts a {@link ThemeVars} object into a flat object of CSS variables.
+ * The CSS variables a {@link StructuredVars} object flattens to, by full name
+ * (`--<prefix>-<name>`).  Pass it one mode (a {@link ThemeVars}' `base`, `light` or `dark`), or a
+ * union of them: passed a whole {@link ThemeVars}, every name would carry its mode, which the
+ * {@link Themer} never writes.
  */
 export type DestructuredVars<
 	Obj extends StructuredVars,
@@ -75,12 +77,13 @@ export type DestructuredVars<
 > = FlattenStructuredVars<Obj, Prefix>
 
 /**
- * Converts a {@link ThemeVars} object into a flat object of CSS variables.
+ * Converts a {@link StructuredVars} object into a flat object keyed by each variable's name
+ * without its `--<prefix>-` (which the {@link Themer} adds when it applies them).
  * @example
  * ```ts
- * const vars = { root: { header: { width: '1rem' }, // etc... }
+ * const vars = { root: { header: { width: '1rem' } }, opacity: '0.5' }
  *
- * destructureVars(vars) // { '--root-header_width': '1rem' }
+ * destructureVars(vars, 'gooey') // { 'root-header_width': '1rem', opacity: '0.5' }
  * ```
  */
 export function destructureVars<const Obj extends StructuredVars, const Prefix extends string>(
@@ -101,7 +104,7 @@ export function destructureVars<const Obj extends StructuredVars, const Prefix e
 
 	destructure(vars)
 
-	return flatVars as Partial<DestructuredVars<Obj, Prefix>>
+	return flatVars as Record<AccumulateKeys<Obj>, string>
 }
 
 /**

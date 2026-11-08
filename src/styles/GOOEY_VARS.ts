@@ -4,7 +4,14 @@ import type { ExtendedVars } from './themer/types'
 import { destructureVars } from '../shared/css-custom-properties'
 import defaultTheme from './themes/vanilla'
 
-export type GooeyCoreVars = DestructuredVars<typeof GUI_VARS_STRUCTURED, typeof VAR_PREFIX>
+/**
+ * The core CSS variables gooey's themer writes, by name (`--gooey-folder-header_color`), across
+ * the `base`, `light` and `dark` modes.
+ */
+export type GooeyCoreVars = DestructuredVars<
+	(typeof GUI_VARS_STRUCTURED)[keyof typeof GUI_VARS_STRUCTURED],
+	typeof VAR_PREFIX
+>
 
 export const VAR_PREFIX = 'gooey' as const
 
@@ -31,7 +38,7 @@ const GUI_VARS_UTILITY = {
 	},
 } as const satisfies ExtendedVars['utility']
 
-const GUI_VARS_STRUCTURED: ThemeVars = {
+const GUI_VARS_STRUCTURED = {
 	base: {
 		root: {
 			// `width` / `min-width` / `max-width` / `max-height` are not theme vars -- no theme or

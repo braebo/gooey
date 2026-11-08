@@ -2,12 +2,13 @@ import { entries } from "./object.js";
 
 //#region src/shared/css-custom-properties.ts
 /**
-* Converts a {@link ThemeVars} object into a flat object of CSS variables.
+* Converts a {@link StructuredVars} object into a flat object keyed by each variable's name
+* without its `--<prefix>-` (which the {@link Themer} adds when it applies them).
 * @example
 * ```ts
-* const vars = { root: { header: { width: '1rem' }, // etc... }
+* const vars = { root: { header: { width: '1rem' } }, opacity: '0.5' }
 *
-* destructureVars(vars) // { '--root-header_width': '1rem' }
+* destructureVars(vars, 'gooey') // { 'root-header_width': '1rem', opacity: '0.5' }
 * ```
 */
 function destructureVars(vars, _prefix) {
