@@ -305,6 +305,28 @@ export type FolderKeys<T> = {
 }[keyof T]
 
 /**
+ * Why {@link Folder.bindMany|`bindMany`} refuses a field: the type a bare labeled-options array is
+ * checked against, so the error names it.
+ */
+type UnbindableLabeledOptions =
+	'bindMany() has no field to write a pick to in a bare labeled-options array: bind { value, options } instead, or addMany() it'
+
+/**
+ * A {@link Folder.bindMany|`bindMany`} target, with each bare labeled-options array in it (nested
+ * folders included) swapped for {@link UnbindableLabeledOptions}.  `addMany` builds a select from
+ * one, but a bound select writes its pick to the field, and here the field is the options.
+ */
+export type BindableTarget<T> = {
+	[K in keyof T]: T[K] extends readonly never[]
+		? T[K]
+		: T[K] extends readonly LabeledOption<any>[]
+			? UnbindableLabeledOptions
+			: K extends FolderKeys<T>
+				? BindableTarget<T[K]>
+				: T[K]
+}
+
+/**
  * The folders {@link Folder.addMany|`addMany`} and {@link Folder.bindMany|`bindMany`} build, keyed
  * like the target: each nested object's `folder`, and the folders nested in it under `subFolders`,
  * so a folder or input named `folder` can't collide with it.
@@ -1592,14 +1614,14 @@ export class Folder {
 		const TOptions extends InferTargetOptions<T> = InferTargetOptions<T>,
 		const TInputs extends InferInputs<T> = InferInputs<T>,
 	>(
-		target: T,
+		target: T & BindableTarget<T>,
 		options?: ManyOptions<T, TOptions>,
 	): { inputs: TInputs; folders: InferFolders<T> } {
 		this._log.fn('bindMany').debug({ target, options }, this)
 
 		const maxSize = options?.maxSize ?? Folder._DEFAULT_MAX_SIZE
 		return this._walk(
-			target,
+			target as T,
 			{ ...(((options as any) || undefined) ?? {}), maxSize },
 			this,
 			new Set(),
@@ -1712,17 +1734,16 @@ export class Folder {
 				} else if (Array.isArray(value)) {
 					if (value.length > 0 && isLabeledOption(value[0])) {
 						//? InputSelect (array of labeled options) - treat as { value, options } shape
-						input =
-							mode === 'bind'
-								? folder.bindSelect(
-										target,
-										key as keyof T,
-										{ ...inputOptions, options: value } as any,
-									)
-								: folder.addSelect(key, {
-										value: value[0].value,
-										options: value,
-									} as any)
+						// A bound select writes its pick to the field, and this field is the options.
+						if (mode === 'bind') {
+							throw new Error(
+								`bindMany(): "${key}" is an array of labeled options, which has no field to write a pick to. Bind { value, options } instead, or addMany() it.`,
+							)
+						}
+						input = folder.addSelect(key, {
+							value: value[0].value,
+							options: value,
+						} as any)
 					} else if ('options' in inputOptions) {
 						//? InputSelect (explicit options provided)
 						input =

@@ -2870,7 +2870,7 @@ gui.bindGradient(theme, 'usage')
 
 ###### target
 
-`T`
+`T` & `BindableTarget`\<`T`\>
 
 ###### options?
 
@@ -4774,7 +4774,7 @@ gui.bindGradient(theme, 'usage')
 
 ###### target
 
-`T`
+`T` & `BindableTarget`\<`T`\>
 
 ###### options?
 

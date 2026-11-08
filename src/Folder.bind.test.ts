@@ -290,6 +290,41 @@ describe('addMany() and bindMany() on inline selects and arrays', () => {
 		expect(inputs.sel.value).toBe('a')
 	})
 
+	test('a bare labeled-options array is a select in addMany, and refused by bindMany', () => {
+		const labeled = () => ({
+			arr: [
+				{ label: 'one', value: 1 },
+				{ label: 'two', value: 2 },
+			],
+		})
+
+		const added = gooey.addMany(labeled()).inputs.arr
+		expectTypeOf(added).toEqualTypeOf<InputSelect<number>>()
+		expect(added.value).toBe(1)
+
+		// There's no field to write the pick to, so a bind would write it over the options.
+		// @ts-expect-error - a bare labeled-options array can't be bound
+		expectTypeOf(() => gooey.bindMany(labeled())).toBeFunction()
+		// @ts-expect-error - nor one in a nested folder
+		expectTypeOf(() => gooey.bindMany({ f: labeled() })).toBeFunction()
+		const declared: { arr: { label: string; value: number }[] } = labeled()
+		// @ts-expect-error - nor a declared one
+		expectTypeOf(() => gooey.bindMany(declared)).toBeFunction()
+
+		const target = labeled()
+		expect(() => gooey.bindMany(target as any)).toThrow(/labeled options/)
+		expect(target.arr).toHaveLength(2)
+
+		// An empty array, a plain array and an inline select still bind.
+		const ok = gooey.bindMany({
+			empty: [] as number[],
+			nums: [1, 2],
+			sel: { value: 'a', options: ['a', 'b'] },
+		})
+		expectTypeOf(ok.inputs.nums).toEqualTypeOf<InputArray<number>>()
+		expect(ok.inputs.sel.value).toBe('a')
+	})
+
 	test('the options bag takes a mutable options array for an inline select', () => {
 		const { inputs } = gooey.addMany(inline(), {
 			sel: { __type: 'SelectInputOptions', options: ['a', 'b', 'c'] },
