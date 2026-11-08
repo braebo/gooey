@@ -70,7 +70,7 @@ declare class InputSelect<TValueType extends ValidInputValue = any> extends Inpu
    */
   selectController: Select<TValueType>;
   /**
-   * The currently selected option as a labeled option.
+   * The option the input was created on, which the dirty check compares {@link selected} to.
    */
   labeledSelection: LabeledOption<TValueType>;
   private _log;
@@ -88,6 +88,11 @@ declare class InputSelect<TValueType extends ValidInputValue = any> extends Inpu
    */
   set(v: TValueType): void;
   /**
+   * Whether a pick or a {@link set} records an undo step.  The preset menu records its own.
+   * @internal
+   */
+  _undoable: boolean;
+  /**
    * Selects the given {@link LabeledOption} and updates the ui.
    * Use this when you have the full labeled option.
    */
@@ -95,6 +100,11 @@ declare class InputSelect<TValueType extends ValidInputValue = any> extends Inpu
   enable(): this;
   disable(): this;
   refresh: () => this;
+  /**
+   * Reads the bound field into {@link selected}, which `state` follows, so a write to the target
+   * from outside gooey lands in the menu too.  Silent: no `change`, and no undo step.
+   */
+  protected readBinding(): void;
   dispose(): void;
 }
 //#endregion

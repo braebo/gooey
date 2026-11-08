@@ -53,7 +53,7 @@ var InputSelect = class extends Input {
 		v ??= [];
 		this.#options = toFn(v);
 		this.selectController.clear();
-		for (const option of fromState(this.#options())) this.selectController.add(option);
+		for (const option of this.options) this.selectController.add(option);
 	}
 	/**
 	* The options array of valid values for this select input.
@@ -70,7 +70,7 @@ var InputSelect = class extends Input {
 	*/
 	#stopPropagation = true;
 	/**
-	* The currently selected option as a labeled option.
+	* The option the input was created on, which the dirty check compares {@link selected} to.
 	*/
 	labeledSelection;
 	_log;
@@ -149,18 +149,16 @@ var InputSelect = class extends Input {
 			this.#stopPropagation = true;
 			this.select(v$1);
 		});
-		this.listen(this.selectController.element, "preview", () => {
-			this.emit("preview");
+		this.selectController.on("preview", (v$1) => this._evm.emit("preview", v$1));
+		this.selectController.on("open", () => {
+			this.#gestureFrom = this.selected.value;
+			this._evm.emit("open");
 		});
-		this.listen(this.selectController.element, "open", () => {
-			this.emit("open");
+		this.selectController.on("close", () => {
+			queueMicrotask(() => this.#endGesture());
+			this._evm.emit("close");
 		});
-		this.listen(this.selectController.element, "close", () => {
-			this.emit("close");
-		});
-		this.listen(this.selectController.element, "cancel", () => {
-			this.emit("cancel");
-		});
+		this.selectController.on("cancel", () => this._evm.emit("cancel"));
 		this._dirty = () => this.selected.value.label !== this.labeledSelection.label;
 		this._log.fn("constructor").debug({ this: this });
 	}
@@ -252,7 +250,36 @@ var InputSelect = class extends Input {
 	* This accepts the raw value and finds the corresponding option.
 	*/
 	set(v) {
+		const from = this.selected.value;
 		this.value = v;
+		const to = this.selected.value;
+		if (this._undoable && to.label !== from.label) this.commit({
+			from: from.value,
+			to: to.value
+		});
+	}
+	/**
+	* Whether a pick or a {@link set} records an undo step.  The preset menu records its own.
+	* @internal
+	*/
+	_undoable = true;
+	/**
+	* The option the open menu was opened over, or `null` while it's closed.
+	*/
+	#gestureFrom = null;
+	/**
+	* An open menu is one gesture: hovers preview options without an undo step, and closing commits
+	* whatever it landed on.  A cancel lands back on {@link #gestureFrom}, so it commits nothing.
+	*/
+	#endGesture() {
+		const from = this.#gestureFrom;
+		this.#gestureFrom = null;
+		const to = this.selected.value;
+		if (!from || !this._undoable || to.label === from.label) return;
+		this.commit({
+			from: from.value,
+			to: to.value
+		});
 	}
 	/**
 	* Selects the given {@link LabeledOption} and updates the ui.
@@ -288,10 +315,25 @@ var InputSelect = class extends Input {
 		if (!this.labeledSelection) throw new Error("Failed to find labeled selection.");
 		const newOptions = this.options.filter((o) => !this.selectController.options.some((oo) => oo.label === o.label));
 		for (const option of newOptions) this.selectController.add(option);
-		this.selectController.select(this.labeledSelection, false);
-		super.refresh();
+		this.readBinding();
+		this.selectController.select(this.selected.value, false);
+		super.refresh(this.selected.value.value);
 		return this;
 	};
+	/**
+	* Reads the bound field into {@link selected}, which `state` follows, so a write to the target
+	* from outside gooey lands in the menu too.  Silent: no `change`, and no undo step.
+	*/
+	readBinding() {
+		if (!this.opts.binding) return;
+		const v = fromState(this.targetValue);
+		if (this.selected.value.value === v) return;
+		const vStr = JSON.stringify(v);
+		const option = this.options.find((o) => o.value === v) ?? this.options.find((o) => JSON.stringify(o.value) === vStr);
+		if (!option || option.label === this.selected.value.label) return;
+		this.#stopPropagation = true;
+		this.selected.set(option);
+	}
 	dispose() {
 		super.dispose();
 	}

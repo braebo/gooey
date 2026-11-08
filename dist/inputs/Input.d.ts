@@ -232,6 +232,11 @@ declare abstract class Input<TValueType extends ValidInputValue = ValidInputValu
    */
   private lockCommit;
   /**
+   * How many {@link refresh}es have emitted, so a refresh can tell its read of the binding
+   * re-entered it.
+   */
+  private _refreshes;
+  /**
    * The input's {@link EventManager}.
    */
   protected _dirty: () => boolean;

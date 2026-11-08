@@ -88,6 +88,12 @@ var InputButton = class extends Input {
 		super.refresh();
 		return this;
 	}
+	/**
+	* A bound button's field is its click handler, and its state is the {@link ButtonController},
+	* so there's nothing to read back.  The base read would set the function as state, and a
+	* function never compares equal in the store, so each read would re-run this refresh.
+	*/
+	readBinding() {}
 	dispose() {
 		this.button.dispose();
 		super.dispose();

@@ -5,6 +5,7 @@ import { EventManager } from "../shared/EventManager.js";
 import { keys, values } from "../shared/object.js";
 import { toFn } from "../shared/toFn.js";
 import { create } from "../shared/create.js";
+import { titleText } from "../shared/titleText.js";
 
 //#region src/inputs/Input.ts
 const INPUT_TYPE_MAP = Object.freeze({
@@ -78,6 +79,11 @@ var Input = class Input {
 	*/
 	lockCommit = {};
 	/**
+	* How many {@link refresh}es have emitted, so a refresh can tell its read of the binding
+	* re-entered it.
+	*/
+	_refreshes = 0;
+	/**
 	* The input's {@link EventManager}.
 	*/
 	_dirty;
@@ -134,7 +140,7 @@ var Input = class Input {
 		this.elements.title = create("div", {
 			classes: ["gooey-input-title"],
 			parent: this.elements.container,
-			innerHTML: this.title.replaceAll(/-|_/g, " ")
+			innerHTML: titleText(this.title)
 		});
 		this.elements.content = create("div", {
 			classes: ["gooey-input-content"],
@@ -218,7 +224,7 @@ var Input = class Input {
 	}
 	set title(v) {
 		this._title = v;
-		this.elements.title.innerHTML = v.replaceAll(/-|_/g, " ");
+		this.elements.title.innerHTML = titleText(v);
 	}
 	/**
 	* The main Element.  Usually a container div for the rest of the Input's
@@ -383,9 +389,12 @@ var Input = class Input {
 	refresh(v = this.state.value) {
 		this._refreshDisabled();
 		this._refreshHidden();
-		if (!this.opts.resettable) return this;
+		const refreshes = this._refreshes;
+		const before = this.state.value;
 		this.readBinding();
-		this.elements.resetBtn.classList.toggle("dirty", this._dirty());
+		if (this._refreshes !== refreshes || this.state.value !== before) return this;
+		if (this.opts.resettable) this.elements.resetBtn.classList.toggle("dirty", this._dirty());
+		this._refreshes++;
 		this._evm.emit("refresh", v);
 		return this;
 	}

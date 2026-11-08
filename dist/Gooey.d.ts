@@ -460,23 +460,12 @@ declare class Gooey {
   id?: string, version?: string): GooeyPreset;
   /**
    * Loads a given preset into the gooey, updating all inputs.
+   *
+   * A load records no undo step, and the inputs' own commits as it sets them are dropped until
+   * the microtask after.  A person's pick in the preset menu is the undoable load, and the
+   * {@link PresetManager} records it.
    */
   load(preset: GooeyPreset | Record<string, any>): void;
-  private _undoLock;
-  private _lockCommit;
-  /**
-   * Commits a change to the input's value to the undo manager.
-   */
-  private _commit;
-  /**
-   * Prevents the input from registering undo history, storing the initial
-   * for the eventual commit in {@link _unlockCommits}.
-   */
-  private _lockCommits;
-  /**
-   * Unlocks commits and saves the current commit stored in lock.
-   */
-  private _unlockCommits;
   private _loadFonts;
   private _createThemer;
   private _createSettingsButton;

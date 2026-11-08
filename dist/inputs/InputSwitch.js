@@ -85,11 +85,7 @@ var InputSwitch = class extends Input {
 			this: this
 		});
 		if (typeof v === "boolean") {
-			this.undoManager?.commit({
-				target: this,
-				from: this.state.value,
-				to: v
-			});
+			this.commit({ to: v });
 			this.state.set(v);
 		} else throw new Error(`InputBoolean.set() received an invalid value: ${JSON.stringify(v)} (${typeof v})`);
 		this.emit("change", v);

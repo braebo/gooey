@@ -64,6 +64,11 @@ type SelectElements = {
 interface SelectInputEvents<T> {
   change: LabeledOption<T>;
   refresh: void;
+  /**
+   * The pointer moved onto an option while the dropdown is open, which selects it until a pick
+   * or a cancel ends the gesture.
+   */
+  preview: LabeledOption<T>;
   open: void;
   close: void;
   cancel: void;
@@ -166,7 +171,8 @@ declare class Select<T> {
    */
   refresh: () => this;
   /**
-   * Toggles the dropdown's visibility.
+   * Toggles the dropdown's visibility.  Closing it this way is a cancel, as Escape is: a hover's
+   * preview is put back.
    */
   toggle: () => void;
   /**

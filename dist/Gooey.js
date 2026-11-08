@@ -4,7 +4,6 @@ import scout_default from "./styles/themes/scout.js";
 import flat_default from "./styles/themes/flat.js";
 import gooey_css_default from "./styles/gooey-css.js";
 import { nanoid } from "./shared/nanoid.js";
-import { o } from "./shared/l.js";
 import { Logger } from "./shared/logger.js";
 import { select } from "./shared/select.js";
 import { persist } from "./shared/persist.js";
@@ -429,53 +428,23 @@ var Gooey = class Gooey {
 	}
 	/**
 	* Loads a given preset into the gooey, updating all inputs.
+	*
+	* A load records no undo step, and the inputs' own commits as it sets them are dropped until
+	* the microtask after.  A person's pick in the preset menu is the undoable load, and the
+	* {@link PresetManager} records it.
 	*/
 	load(preset) {
 		this._log.fn("load").debug({ preset });
 		this.dirty = false;
-		this._lockCommits(preset);
-		this.folder.load(preset.data);
-		Promise.resolve().then(() => this._unlockCommits());
-	}
-	_undoLock = false;
-	_lockCommit = { from: void 0 };
-	/**
-	* Commits a change to the input's value to the undo manager.
-	*/
-	_commit(commit) {
-		if (this._undoLock) {
-			this._log.fn("commit").debug("LOCKED: prevented commit while locked");
-			return;
-		}
-		this._log.fn("commit").debug("commited", commit);
-		this._undoManager?.commit(commit);
-	}
-	/**
-	* Prevents the input from registering undo history, storing the initial
-	* for the eventual commit in {@link _unlockCommits}.
-	*/
-	_lockCommits = (from) => {
 		this._undoManager.lockedExternally = true;
-		this._lockCommit.from = from;
-		this._log.fn(o("lock")).debug("commit", {
-			from,
-			lockCommit: this._lockCommit
-		});
-	};
-	/**
-	* Unlocks commits and saves the current commit stored in lock.
-	*/
-	_unlockCommits = (commit) => {
-		commit ??= {};
-		commit.target ??= this;
-		commit.from ??= this._lockCommit.from;
-		this._undoManager.lockedExternally = false;
-		this._commit(commit);
-		this._log.fn(o("unlock")).debug("commit", {
-			commit,
-			lockCommit: this._lockCommit
-		});
-	};
+		try {
+			this.folder.load(preset.data);
+		} finally {
+			Promise.resolve().then(() => {
+				this._undoManager.lockedExternally = false;
+			});
+		}
+	}
 	_loadFonts() {
 		new FontFace("fredoka", `url(${encodeURI?.("https://cdn.jsdelivr.net/fontsource/fonts/fredoka:vf@latest/latin-wdth-normal.woff2")})`, {
 			style: "normal",
@@ -513,12 +482,26 @@ var Gooey = class Gooey {
 		else finalThemer = new Themer(this.wrapper, themerOptions);
 		const uiFolder = folder.addFolder("ui", Object.assign({}, GUI_DEFAULTS.settingsFolder.uiFolder, this._settingsFolderOpts?.uiFolder, { presetId: "gooey_settings__ui_folder" }));
 		if (folder) {
-			uiFolder.addSelect("theme", {
+			const themeInput = uiFolder.addSelect("theme", {
 				value: finalThemer.theme.value,
 				options: finalThemer.themes.value
-			}).on("change", (v) => {
+			});
+			themeInput._undoable = false;
+			themeInput.on("change", (v) => {
+				if (v.title === finalThemer.theme.value.title) return;
 				finalThemer.theme.set(finalThemer.getTheme(v.title) ?? v);
 			});
+			const showActive = () => {
+				const title = finalThemer.theme.value.title;
+				if (themeInput.selected.value.label === title) return;
+				const option = themeInput.options.find((o) => o.label === title);
+				if (option) themeInput.select(option);
+			};
+			uiFolder.evm.add(finalThemer.themes.subscribe((themes) => {
+				themeInput.options = themes;
+				showActive();
+			}));
+			uiFolder.evm.add(finalThemer.theme.subscribe(showActive));
 			const modeButtons = uiFolder.addButtonGrid("mode", [[
 				"light",
 				"dark",

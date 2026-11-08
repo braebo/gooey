@@ -19,6 +19,7 @@ var PresetManager = class {
 	_version;
 	_defaultPresetId = "gooey-default-preset";
 	_defaultPresetTitle = "default";
+	/** What the preset menu opened over, until a pick or a cancel ends the gesture. */
 	_presetSnapshot;
 	_presetsInput;
 	_manageInput;
@@ -331,6 +332,7 @@ var PresetManager = class {
 			value: this.activePreset.value,
 			options: this.presets.value
 		});
+		this._presetsInput._undoable = false;
 		let first = true;
 		this._presetsInput.on("change", (value) => {
 			if (first) {
@@ -341,25 +343,32 @@ var PresetManager = class {
 				first = false;
 				return;
 			}
+			if (this._replaying) return;
 			this._log.fn("_presetsInput.on(change)").debug({
 				value,
 				this: this
 			});
+			if (this._clicking && !this._refreshing) {
+				this._recordPick(this._presetSnapshot ?? this._pickState(), value);
+				this._presetSnapshot = void 0;
+			}
 			this.gooey.load(value);
 			this.activePreset.set(value);
 			this._refreshInputs();
 		});
-		this._presetsInput.on("open", () => {
-			this._log.fn("_presetsInput.on(open)").debug();
-			this._presetSnapshot = this.gooey.save("__snapshot__");
+		const menu = this._presetsInput.selectController;
+		menu.on("open", () => {
+			this._log.fn("menu.on(open)").debug();
+			this._presetSnapshot = this._pickState();
 		});
-		this._presetsInput.on("cancel", () => {
-			this._log.fn("_presetsInput.on(cancel)").debug();
-			if (this._presetSnapshot) {
-				this.gooey.load(this._presetSnapshot);
-				this._refreshInputs();
-			}
+		menu.on("cancel", () => {
+			this._log.fn("menu.on(cancel)").debug();
+			const snapshot = this._presetSnapshot;
+			this._presetSnapshot = void 0;
+			if (snapshot) this._restore(snapshot);
 		});
+		this._presetsInput.listen(menu.elements.dropdown, "click", () => this._clicking = true, { capture: true });
+		this._presetsInput.listen(menu.elements.dropdown, "click", () => this._clicking = false);
 		const newPresetButton = new SaveSVG();
 		newPresetButton.element.tooltip = new Tooltip(newPresetButton.element, {
 			text: "Save",
@@ -534,6 +543,55 @@ var PresetManager = class {
 		});
 	}
 	/**
+	* `true` while {@link _refresh} moves the preset menu to the active preset: that change still
+	* loads it, but it's the manager's bookkeeping (a save, a rename, a delete), not a person's pick.
+	*/
+	_refreshing = false;
+	/**
+	* `true` while an undo, a redo or a cancel puts a state back, so the menu's change doesn't
+	* load the active preset over it.
+	*/
+	_replaying = false;
+	/**
+	* `true` while a click on one of the menu's options is dispatched: the one change a person's
+	* pick makes, where a hover's or a cancel's change is a preview.
+	*/
+	_clicking = false;
+	/** The values and the active preset as they stand. */
+	_pickState() {
+		return {
+			state: this.gooey.save("__undo__"),
+			active: this.activePreset.value
+		};
+	}
+	/** Puts back a {@link _pickState}: its values, its active preset, and the menu on it. */
+	_restore({ state: state$1, active }) {
+		this._replaying = true;
+		try {
+			this.gooey.load(state$1);
+			this.activePreset.set(active);
+			this._refresh();
+		} finally {
+			this._replaying = false;
+		}
+	}
+	/**
+	* Records a person's pick in the preset menu as one undo step: undo brings back the values and
+	* the active preset from before it, unsaved changes included, and redo the pick.
+	*/
+	_recordPick(from, value) {
+		if (from.active.id === value.id && JSON.stringify(from.state.data) === JSON.stringify(value.data)) return;
+		this.gooey._undoManager.commit({
+			target: this._presetsInput,
+			from,
+			to: {
+				state: value,
+				active: value
+			},
+			setter: (pick) => this._restore(pick)
+		});
+	}
+	/**
 	* Refresh the presets input.
 	*/
 	_refresh() {
@@ -543,10 +601,15 @@ var PresetManager = class {
 			value: o
 		}));
 		const activePreset = this.activePreset.value;
-		this._presetsInput.select({
-			label: activePreset.title,
-			value: activePreset
-		});
+		this._refreshing = true;
+		try {
+			this._presetsInput.select({
+				label: activePreset.title,
+				value: activePreset
+			});
+		} finally {
+			this._refreshing = false;
+		}
 		this._refreshInputs();
 	}
 	dispose() {

@@ -37,10 +37,17 @@ declare class InputArray<T = any> extends Input<T[], ArrayInputOptions<T>, Array
   constructor(options: Partial<ArrayInputOptions<T>>, folder: Folder);
   private _createArrayItems;
   private _createItemInput;
+  /** The array as it stands, with one item swapped. */
+  private _withItem;
   private _updateArrayItem;
   set: (v: T[]) => this;
   private _recreateItems;
-  refresh: () => this;
+  /**
+   * Reads the bound field on {@link refresh} only when it holds something other than what the
+   * items show: the store never finds two arrays equal, so an unconditional read would
+   * re-notify forever.  Silent: no `change`, and no undo step.
+   */
+  protected readBinding(): void;
   dispose(): void;
 }
 //#endregion

@@ -1,10 +1,9 @@
 import { State } from "./shared/state.js";
 import { Tooltip } from "./shared/Tooltip.js";
 import { EventCallback, EventManager } from "./shared/EventManager.js";
-import { ColorObject } from "./shared/color/types/objects.js";
 import { ColorString } from "./shared/color/types/strings.js";
 import { ColorFormat } from "./shared/color/types/colorFormat.js";
-import { ColorValue } from "./shared/color/color.js";
+import { Color, ColorValue } from "./shared/color/color.js";
 import { LabeledOption, Option } from "./controllers/Select.js";
 import { ToolbarButton, ToolbarButtonConfig } from "./svg/ToolbarButton.js";
 import { InputSwitch, SwitchInputOptions } from "./inputs/InputSwitch.js";
@@ -18,7 +17,7 @@ import { ElementContent, ElementInputOptions, InputElement } from "./inputs/Inpu
 import { BezierInputOptions, BezierString, BezierValue, InputBezier } from "./inputs/InputBezier.js";
 import { GradientInputOptions, GradientStopLike, InputGradient } from "./inputs/InputGradient.js";
 import { ButtonGridArrays, ButtonGridInputOptions, InputButtonGrid } from "./inputs/InputButtonGrid.js";
-import { InputOptions, InputPreset, ValidInput, ValidInputValue } from "./inputs/Input.js";
+import { InputOptions, InputPreset, ValidInput } from "./inputs/Input.js";
 import { Gooey } from "./Gooey.js";
 
 //#region src/Folder.d.ts
@@ -29,6 +28,22 @@ import { Gooey } from "./Gooey.js";
  * string like `'#ff0000'` builds an {@link InputColor} — so its input is either.
  */
 type InferStringInput<T extends string> = string extends T ? InputText | InputColor : InputText;
+/**
+ * The value type of an array's items, for the input it builds.  {@link Folder.addMany|`addMany`}
+ * and {@link Folder.bindMany|`bindMany`} infer their target `const`, so an inline string keeps
+ * the literal that tells a color from text; the same inference makes an inline array a readonly
+ * tuple of literals, whose items {@link Widen} back to what a mutable array holds (`[1, 2]` holds
+ * numbers, as it does for {@link Folder.add|`add`}).  An array declared `T[]` or `readonly T[]`
+ * keeps its item type; a declared `as const` tuple reads as inline and widens too.
+ */
+type ItemValue<TArray extends readonly unknown[], TItem> = TArray extends unknown[] ? TItem : number extends TArray['length'] ? TItem : Widen<TItem>;
+/**
+ * The value type of a `{ value, options }` select: its labeled options' values, or its value and
+ * plain options.  With no options, the value alone.
+ */
+type SelectValue<V$1, O$1 extends readonly unknown[]> = [O$1[number]] extends [never] ? ItemValue<O$1, V$1> : O$1 extends readonly LabeledOption<unknown>[] ? ItemValue<O$1, O$1[number]['value']> : ItemValue<O$1, V$1 | O$1[number]>;
+/** A `const`-inferred type as plain inference would have it: literals widened, arrays mutable. */
+type Widen<T> = T extends string ? string : T extends number ? number : T extends boolean ? boolean : T extends ((...args: any[]) => any) ? T : T extends readonly (infer U)[] ? Widen<U>[] : T extends object ? { -readonly [K in keyof T]: Widen<T[K]> } : T;
 /**
  * Resolves the provided value to the corresponding {@link InputOptions} type associated with the type
  * based on what type of {@link InputOptions.value|`value`} property it expects.
@@ -63,10 +78,10 @@ type InferInput<TValueType> = TValueType extends number ? InputNumber : TValueTy
  * }
  * ```
  */
-type InferTargetOptions<TTarget> = { [K in keyof TTarget]?: TTarget[K] extends LabeledOption<infer U>[] ? Partial<SelectInputOptions<U>> : TTarget[K] extends LabeledOption<infer U> ? Partial<SelectInputOptions<U>> : TTarget[K] extends {
+type InferTargetOptions<TTarget> = { [K in keyof TTarget]?: TTarget[K] extends readonly LabeledOption<infer U>[] ? Partial<SelectInputOptions<ItemValue<TTarget[K], U>>> : TTarget[K] extends LabeledOption<infer U> ? Partial<SelectInputOptions<U>> : TTarget[K] extends {
   value: infer V;
-  options: Array<infer V>;
-} ? Partial<SelectInputOptions<V>> : TTarget[K] extends Array<infer U> ? Partial<ArrayInputOptions<U>> : TTarget[K] extends Function ? Partial<ButtonInputOptions> : TTarget[K] extends ColorFormat ? Partial<ColorInputOptions> : TTarget[K] extends object ? InferTargetOptions<TTarget[K]> & {
+  options: infer O extends readonly unknown[];
+} ? Partial<SelectInputOptions<SelectValue<V, O>>> : TTarget[K] extends readonly (infer U)[] ? Partial<ArrayInputOptions<ItemValue<TTarget[K], U>>> : TTarget[K] extends Function ? Partial<ButtonInputOptions> : TTarget[K] extends ColorFormat ? Partial<ColorInputOptions> : TTarget[K] extends object ? InferTargetOptions<TTarget[K]> & {
   folderOptions?: Partial<FolderOptions>;
 } : Partial<InferOptions<TTarget[K]>> };
 /**
@@ -106,20 +121,64 @@ type ManyOptions<TTarget, TOptions> = ManyControls<TTarget> & (string extends ke
  * {@link Folder.addMany|`addMany`} or {@link Folder.bindMany|`bindMany`}.
  * @template TTarget - The target object being used to generate inputs.
  */
-type InferInputs<TTarget> = TTarget extends Record<string, any> ? { [K in keyof TTarget]: TTarget[K] extends number ? InputNumber : TTarget[K] extends boolean ? InputSwitch : TTarget[K] extends ColorString | ColorObject ? InputColor : TTarget[K] extends string ? InferStringInput<TTarget[K]> : TTarget[K] extends LabeledOption<infer U>[] ? InputSelect<U> : TTarget[K] extends {
-  value: infer V;
-  options: Array<infer V>;
-} ? InputSelect<V> : TTarget[K] extends Array<infer U> ? InputArray<U> : TTarget[K] extends (() => void) ? InputButton : TTarget[K] extends object ? InferInputs<TTarget[K]> & {
-  folder: Folder;
-} : never } : never;
+type InferInputs<TTarget> = TTarget extends Record<string, any> ? { -readonly [K in keyof TTarget]: FieldInput<TTarget, K> } : never;
 /**
- * Given a target object, recursively resolves all keys that are objects into a union of all
- * object keys.
+ * The input {@link InferInputs} gives a target's field.  A `null` or `undefined` in the field's
+ * type says nothing about its input: its `value` option builds it (both verbs refuse it without),
+ * typed by {@link InferTargetOptions} as the rest of the field's type, so a `number | null` field
+ * gets an {@link InputNumber}.  A field typed only `null` or `undefined` could be any input.
  */
-type FolderKeys<T> = { [K in keyof T]: T[K] extends ValidInputValue ? K : never }[keyof T];
-type InferFolders<T> = T extends object ? { [K in FolderKeys<T>]: InferFolders<T[K]> & {
+type FieldInput<TTarget, K$1 extends keyof TTarget> = [NonNullable<TTarget[K$1]>] extends [never] ? ValidInput : NonNullable<TTarget[K$1]> extends number ? InputNumber : NonNullable<TTarget[K$1]> extends boolean ? InputSwitch : NonNullable<TTarget[K$1]> extends ColorString | Color ? InputColor : NonNullable<TTarget[K$1]> extends string ? InferStringInput<NonNullable<TTarget[K$1]>> : IsLabeledOptions<NonNullable<TTarget[K$1]>> extends true ? NonNullable<TTarget[K$1]> extends readonly LabeledOption<infer U>[] ? InputSelect<ItemValue<NonNullable<TTarget[K$1]>, U>> : never : NonNullable<TTarget[K$1]> extends {
+  value: infer V;
+  options: infer O extends readonly unknown[];
+} ? InputSelect<SelectValue<V, O>> : NonNullable<TTarget[K$1]> extends readonly (infer U)[] ? InputArray<ItemValue<NonNullable<TTarget[K$1]>, U>> : NonNullable<TTarget[K$1]> extends (() => void) ? InputButton : NonNullable<TTarget[K$1]> extends object ? InferInputs<NonNullable<TTarget[K$1]>> : never;
+/**
+ * Whether `_walk` reads an array as a select's options: its items are labeled options with no
+ * other key, as `isLabeledOption` checks.  An array of `{ label, value, ...more }` is data, an
+ * {@link InputArray}, and so is an empty one or an `any[]`, whose items nothing is known about.
+ */
+type IsLabeledOptions<A> = A extends readonly (infer U)[] ? 0 extends 1 & U ? false : [U] extends [LabeledOption<any>] ? [Exclude<keyof U, 'label' | 'value'>] extends [never] ? true : false : false : false;
+/**
+ * The keys of a target whose values {@link Folder.addMany|`addMany`} and
+ * {@link Folder.bindMany|`bindMany`} turn into folders: the nested objects that aren't a
+ * {@link Color}, an array, or an inline `{ value, options }` select.  A plain `{ r, g, b }` is a
+ * folder: `_walk` builds a color from a `Color` instance only.
+ */
+type FolderKeys<T> = { [K in keyof T]-?: T[K] extends number | boolean | string | Color | readonly unknown[] | ((...args: any[]) => any) | {
+  value: unknown;
+  options: readonly unknown[];
+} ? never : T[K] extends object ? K : never }[keyof T];
+/**
+ * Why {@link Folder.bindMany|`bindMany`} refuses a field: the type a bare labeled-options array is
+ * checked against, so the error names it.
+ */
+type UnbindableLabeledOptions = 'bindMany() has no field to write a pick to in a bare labeled-options array: bind { value, options } instead, or addMany() it';
+/**
+ * A {@link Folder.bindMany|`bindMany`} target, with each bare labeled-options array in it (nested
+ * folders included) swapped for {@link UnbindableLabeledOptions}.  `addMany` builds a select from
+ * one, but a bound select writes its pick to the field, and here the field is the options.
+ */
+type BindableTarget<T, TSkipped extends PropertyKey = never> = { [K in keyof T]: K extends TSkipped ? T[K] : IsLabeledOptions<T[K]> extends true ? UnbindableLabeledOptions : K extends FolderKeys<T> ? BindableTarget<T[K]> : T[K] };
+/**
+ * The keys at the top of a {@link Folder.bindMany|`bindMany`} target that `_walk` never reaches:
+ * those its `exclude` names, and those an `include` leaves out.  An index signature's keys can't be
+ * listed, so an `include` lifts nothing there.
+ */
+type SkippedKeys<T, TExclude, TInclude> = TExclude | ([TInclude] extends [never] ? never : string extends keyof T ? never : Exclude<keyof T, TInclude>);
+/**
+ * The folders {@link Folder.addMany|`addMany`} and {@link Folder.bindMany|`bindMany`} build, keyed
+ * like the target: each nested object's `folder`, and the folders nested in it under `subFolders`,
+ * so a folder or input named `folder` can't collide with it.
+ * @example
+ * ```ts
+ * const { folders } = gooey.addMany({ a: { b: { n: 1 } } })
+ * folders.a.subFolders.b.folder // -> Folder
+ * ```
+ */
+type InferFolders<T> = { -readonly [K in FolderKeys<T>]: {
   folder: Folder;
-} } : never;
+  subFolders: InferFolders<T[K]>;
+} };
 interface FolderOptions {
   __type?: 'FolderOptions';
   /**
@@ -487,9 +546,9 @@ declare class Folder {
     value: T;
     options: Array<Option<T>>;
   }): InputSelect<T>;
-  add<T, O extends {
+  add<T, O$1 extends {
     options: Array<any>;
-  }>(title: string, initialValue: T, options: O): InputSelect<T>;
+  }>(title: string, initialValue: T, options: O$1): InputSelect<T>;
   add<T extends boolean>(title: string, initialValue: T, options?: SwitchInputOptions): InputSwitch;
   add<T extends number>(title: string, initialValue: T, options?: NumberInputOptions): InputNumber;
   add<T extends ColorFormat>(title: string, initialValue: T, options?: ColorInputOptions): InputColor;
@@ -523,6 +582,11 @@ declare class Folder {
    * Takes an object and generates a set of inputs based on the object's keys and values.  Any
    * nested objects will result in child folders being created.  Options can be passed to
    * customize the inputs generated, and to exclude/include specific keys.
+   *
+   * A `null` or `undefined` field says nothing about its input, so its `value` option builds it
+   * (`{ count: { value: 0 } }` for a `number | undefined` field).  A null or undefined field with
+   * no `value` option throws, before any input is built, as it does in
+   * {@link Folder.bindMany|`bindMany`}.
    * @param target - The object to generate inputs from.
    * @param options - Options to customize the inputs generated, as well as `include` and
    * `exclude` arrays to omit certain keys.
@@ -542,11 +606,42 @@ declare class Folder {
    * folderOptions: title: 'My Folder' }}, // optional folder controls
    * })
    */
-  addMany<T extends object, const TOptions extends InferTargetOptions<T> = InferTargetOptions<T>, const TInputs extends InferInputs<T> = InferInputs<T>>(target: T, options?: ManyOptions<T, TOptions>): {
+  addMany<const T extends object, const TOptions extends InferTargetOptions<T> = InferTargetOptions<T>, const TInputs extends InferInputs<T> = InferInputs<T>>(target: T, options?: ManyOptions<T, TOptions>): {
     folders: InferFolders<T>;
     inputs: TInputs;
   };
-  bindMany<const T extends object, const TOptions extends InferTargetOptions<T> = InferTargetOptions<T>, const TInputs extends InferInputs<T> = InferInputs<T>>(target: T, options?: ManyOptions<T, TOptions>): {
+  /**
+   * Binds an input to each of a target object's keys, the way {@link Folder.addMany|`addMany`}
+   * adds them, so a change writes back to the target.  Nested objects become child folders.
+   *
+   * A bare array of labeled options (`[{ label, value }, …]`) is refused, by type and at runtime:
+   * a bound select writes its pick to the field, and that field holds the options.  Bind an inline
+   * `{ value, options }` instead, or {@link Folder.addMany|`addMany`} it.  A `null` or `undefined`
+   * field with no `value` option is refused too, at runtime only, since its type can't say what it
+   * holds; with one, the option is written to the field and builds its input.  A key that
+   * `exclude` names, or that an `include` leaves out, is never walked, so it isn't refused.  A
+   * refused target throws before any input is built.
+   *
+   * Inside a generic function the target's type is still open, so the refusal can't be checked
+   * and the call doesn't compile.  Pass the type and cast the target to get past it:
+   * ```ts
+   * function bindAll<V extends { n: number }>(v: { x: V; list: V[] }) {
+   * 	return gui.bindMany<typeof v>(v as any)
+   * }
+   * ```
+   * @param target - The object to bind inputs to.
+   * @param options - Options for the inputs, keyed like the target, plus `include`, `exclude`
+   * and `maxSize`.
+   * @example
+   * ```ts
+   * const params = { speed: 1, color: '#ff0000', shape: { sides: 3 } }
+   * const { inputs, folders } = gui.bindMany(params, { speed: { min: 0, max: 10 } })
+   * ```
+   */
+  bindMany<const T extends object, const TOptions extends InferTargetOptions<T> = InferTargetOptions<T>, const TInputs extends InferInputs<T> = InferInputs<T>, const TExclude extends InferTargetKeys<T> = never, const TInclude extends InferTargetKeys<T> = never>(target: T & BindableTarget<T, SkippedKeys<T, TExclude, TInclude>>, options?: ManyOptions<T, TOptions> & {
+    exclude?: [TExclude] extends [never] ? InferTargetKeys<T>[] : readonly TExclude[];
+    include?: [TInclude] extends [never] ? InferTargetKeys<T>[] : readonly TInclude[];
+  }): {
     inputs: TInputs;
     folders: InferFolders<T>;
   };

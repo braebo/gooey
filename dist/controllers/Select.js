@@ -56,6 +56,7 @@ let Select = class Select$1 {
 	_evm = new EventManager([
 		"change",
 		"refresh",
+		"preview",
 		"cancel",
 		"open",
 		"close"
@@ -75,7 +76,8 @@ let Select = class Select$1 {
 		if (options?.title) this._log = new Logger(`Select ${options.title}`, { fg: "burlywood" });
 		else this._log = new Logger("Select", { fg: "blueviolet" });
 		this._selected = this._currentSelection = this.initialValue = this._opts.selected;
-		this.options = this.initialOptions = this._opts.options;
+		this.initialOptions = this._opts.options;
+		this.options = [];
 		const container = create("div", {
 			classes: ["gooey-controller-select-container"],
 			parent: options.container
@@ -96,7 +98,7 @@ let Select = class Select$1 {
 			dropdown: create("div", { classes: ["gooey-controller-select-dropdown"] }),
 			options: []
 		};
-		for (const option of this.options) this.add(option);
+		for (const option of this.initialOptions) this.add(option);
 		this.disabled = this._opts.disabled;
 		this._log.fn("constructor").debug({
 			opts: this._opts,
@@ -143,6 +145,7 @@ let Select = class Select$1 {
 			element: el
 		});
 		this.elements.options.push(el);
+		this.options.push(opt);
 		this._log.fn("add").debug({
 			option,
 			added: this.optionMap.get(id),
@@ -228,14 +231,13 @@ let Select = class Select$1 {
 		return this;
 	};
 	/**
-	* Toggles the dropdown's visibility.
+	* Toggles the dropdown's visibility.  Closing it this way is a cancel, as Escape is: a hover's
+	* preview is put back.
 	*/
 	toggle = () => {
 		this._log.fn("toggle").debug({ this: this });
-		if (this.expanded) {
-			this._evm.emit("cancel");
-			this.close();
-		} else this.open();
+		if (this.expanded) this._cancel();
+		else this.open();
 	};
 	/**
 	* Shows the dropdown.
@@ -261,6 +263,7 @@ let Select = class Select$1 {
 						element
 					}, this);
 					this.select(option);
+					this._evm.emit("preview", option);
 				};
 				this._evm.listen(element, "mouseenter", select, {}, "dropdown");
 			}

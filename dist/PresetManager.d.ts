@@ -46,6 +46,7 @@ declare class PresetManager {
   private _version;
   private _defaultPresetId;
   private _defaultPresetTitle;
+  /** What the preset menu opened over, until a pick or a cancel ends the gesture. */
   private _presetSnapshot?;
   private _presetsInput;
   private _manageInput;
@@ -96,6 +97,30 @@ declare class PresetManager {
   private _handleKeydown;
   private _validateVersion;
   private _refreshInputs;
+  /**
+   * `true` while {@link _refresh} moves the preset menu to the active preset: that change still
+   * loads it, but it's the manager's bookkeeping (a save, a rename, a delete), not a person's pick.
+   */
+  private _refreshing;
+  /**
+   * `true` while an undo, a redo or a cancel puts a state back, so the menu's change doesn't
+   * load the active preset over it.
+   */
+  private _replaying;
+  /**
+   * `true` while a click on one of the menu's options is dispatched: the one change a person's
+   * pick makes, where a hover's or a cancel's change is a preview.
+   */
+  private _clicking;
+  /** The values and the active preset as they stand. */
+  private _pickState;
+  /** Puts back a {@link _pickState}: its values, its active preset, and the menu on it. */
+  private _restore;
+  /**
+   * Records a person's pick in the preset menu as one undo step: undo brings back the values and
+   * the active preset from before it, unsaved changes included, and redo the pick.
+   */
+  private _recordPick;
   /**
    * Refresh the presets input.
    */

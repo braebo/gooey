@@ -8,6 +8,7 @@ import { isObject } from "./shared/is.js";
 import { EventManager } from "./shared/EventManager.js";
 import { toFn } from "./shared/toFn.js";
 import { create } from "./shared/create.js";
+import { titleText } from "./shared/titleText.js";
 import { InputSwitch } from "./inputs/InputSwitch.js";
 import { InputButton } from "./inputs/InputButton.js";
 import { isLabeledOption } from "./controllers/Select.js";
@@ -30,6 +31,12 @@ import "./Gooey.js";
 import { BROWSER, DEV } from "esm-env";
 
 //#region src/Folder.ts
+/**
+* The runtime twin of {@link UnbindableLabeledOptions}, for a target cast past it.
+*/
+function unbindableLabeledOptions(key) {
+	return /* @__PURE__ */ new Error(`bindMany(): "${key}" is an array of labeled options, which has no field to write a pick to. Bind { value, options } instead, or addMany() it.`);
+}
 const FOLDER_DEFAULTS = Object.freeze({
 	presetId: "",
 	title: "",
@@ -250,28 +257,15 @@ var Folder = class Folder {
 	set title(v) {
 		if (v === this._title) return;
 		this._title = v;
-		this.elements.title.animate({
+		const title = this.elements.title;
+		title.textContent = titleText(v);
+		if (title.isConnected && !this.hidden && title.checkVisibility?.() !== false) title.animate([{
 			opacity: 0,
-			transform: "translateY(-0.33rem)"
-		}, {
+			transform: "translateY(.33rem)"
+		}, {}], {
 			duration: 75,
-			easing: "ease-out",
-			fill: "forwards"
-		}).onfinish = () => {
-			this.elements.title.innerHTML = v.replaceAll(/-|_/g, " ");
-			this.elements.title.animate([{
-				opacity: 0,
-				transform: "translateY(.33rem)"
-			}, {
-				opacity: 1,
-				transform: "translateY(0rem)"
-			}], {
-				delay: 0,
-				duration: 75,
-				easing: "ease-in",
-				fill: "forwards"
-			});
-		};
+			easing: "ease-in"
+		});
 	}
 	/**
 	* Whether the folder is visible.
@@ -542,7 +536,7 @@ var Folder = class Folder {
 				parts.unshift(folder.title);
 				folder = folder.parentFolder;
 			}
-			parts.unshift(this.root.title);
+			parts.unshift(this.root.presetId ?? this.root.title);
 		}
 		id ??= [...parts, ...identifiers].join("__");
 		let i = 0;
@@ -721,6 +715,11 @@ var Folder = class Folder {
 	* Takes an object and generates a set of inputs based on the object's keys and values.  Any
 	* nested objects will result in child folders being created.  Options can be passed to
 	* customize the inputs generated, and to exclude/include specific keys.
+	*
+	* A `null` or `undefined` field says nothing about its input, so its `value` option builds it
+	* (`{ count: { value: 0 } }` for a `number | undefined` field).  A null or undefined field with
+	* no `value` option throws, before any input is built, as it does in
+	* {@link Folder.bindMany|`bindMany`}.
 	* @param target - The object to generate inputs from.
 	* @param options - Options to customize the inputs generated, as well as `include` and
 	* `exclude` arrays to omit certain keys.
@@ -746,23 +745,55 @@ var Folder = class Folder {
 			options
 		}, this);
 		const maxSize = options?.maxSize ?? Folder._DEFAULT_MAX_SIZE;
-		return this._walk(target, {
+		const opts = {
 			...(options || void 0) ?? {},
 			maxSize
-		}, this, /* @__PURE__ */ new Set(), "add");
+		};
+		this._walk(target, opts, this, /* @__PURE__ */ new Set(), "add", true);
+		return this._walk(target, opts, this, /* @__PURE__ */ new Set(), "add");
 	}
+	/**
+	* Binds an input to each of a target object's keys, the way {@link Folder.addMany|`addMany`}
+	* adds them, so a change writes back to the target.  Nested objects become child folders.
+	*
+	* A bare array of labeled options (`[{ label, value }, …]`) is refused, by type and at runtime:
+	* a bound select writes its pick to the field, and that field holds the options.  Bind an inline
+	* `{ value, options }` instead, or {@link Folder.addMany|`addMany`} it.  A `null` or `undefined`
+	* field with no `value` option is refused too, at runtime only, since its type can't say what it
+	* holds; with one, the option is written to the field and builds its input.  A key that
+	* `exclude` names, or that an `include` leaves out, is never walked, so it isn't refused.  A
+	* refused target throws before any input is built.
+	*
+	* Inside a generic function the target's type is still open, so the refusal can't be checked
+	* and the call doesn't compile.  Pass the type and cast the target to get past it:
+	* ```ts
+	* function bindAll<V extends { n: number }>(v: { x: V; list: V[] }) {
+	* 	return gui.bindMany<typeof v>(v as any)
+	* }
+	* ```
+	* @param target - The object to bind inputs to.
+	* @param options - Options for the inputs, keyed like the target, plus `include`, `exclude`
+	* and `maxSize`.
+	* @example
+	* ```ts
+	* const params = { speed: 1, color: '#ff0000', shape: { sides: 3 } }
+	* const { inputs, folders } = gui.bindMany(params, { speed: { min: 0, max: 10 } })
+	* ```
+	*/
 	bindMany(target, options) {
 		this._log.fn("bindMany").debug({
 			target,
 			options
 		}, this);
 		const maxSize = options?.maxSize ?? Folder._DEFAULT_MAX_SIZE;
-		return this._walk(target, {
+		const opts = {
 			...(options || void 0) ?? {},
 			maxSize
-		}, this, /* @__PURE__ */ new Set(), "bind");
+		};
+		this._walk(target, opts, this, /* @__PURE__ */ new Set(), "bind", true);
+		return this._walk(target, opts, this, /* @__PURE__ */ new Set(), "bind");
 	}
-	_walk(target, options, folder, seen, mode, _count = { value: 0 }) {
+	_walk(target, options, folder, seen, mode, dry = false, _count = { value: 0 }) {
 		const result = {
 			inputs: {},
 			folders: {}
@@ -772,7 +803,7 @@ var Folder = class Folder {
 		seen.add(target);
 		for (let [key, value] of Object.entries(target)) {
 			if (_count.value >= maxSize) {
-				this._log.fn("_walk").warn(`Reached maxSize limit (${maxSize}). Stopping processing.`, `Skipped properties: ${Object.keys(target).join(", ")}`);
+				if (!dry) this._log.fn("_walk").warn(`Reached maxSize limit (${maxSize}). Stopping processing.`, `Skipped properties: ${Object.keys(target).join(", ")}`);
 				break;
 			}
 			if (Array.isArray(options["exclude"]) && options["exclude"].includes(key) || Array.isArray(options["include"]) && !options["include"].includes(key)) continue;
@@ -780,23 +811,28 @@ var Folder = class Folder {
 			const keyOptions = options[key];
 			const inputOptions = isObject(keyOptions) && !Array.isArray(keyOptions) ? keyOptions : {};
 			let folderOptions = {};
-			if (value === null) {
-				const hasValue = "value" in inputOptions;
-				if (hasValue) value = inputOptions["value"];
-				if (!hasValue && mode === "bind") {
-					console.error(`bindMany() error: target object's key "${key}" is \`${value}\`, and no valid initial "value" option was provided.`, {
-						key,
-						value,
-						inputOptions
-					});
-					throw new Error("Invalid binding.");
+			if (value == null) {
+				if (inputOptions["value"] == null) throw new Error(`${mode}Many(): "${key}" is \`${value}\`, which says nothing about its input. Give it a "value" option.`, { cause: {
+					key,
+					value,
+					inputOptions
+				} });
+				value = inputOptions["value"];
+				if (mode === "bind" && !dry) target[key] = value;
+			}
+			if (dry) {
+				if (typeof value === "object" && value !== null && !("value" in value && "options" in value && Array.isArray(value.options)) && !("options" in inputOptions) && !isColor(value)) {
+					if (!Array.isArray(value)) this._walk(value, {
+						...inputOptions,
+						maxSize
+					}, folder, seen, mode, dry, _count);
+					else if (mode === "bind" && value.length > 0 && isLabeledOption(value[0])) throw unbindableLabeledOptions(key);
 				}
+				_count.value++;
+				continue;
 			}
-			if (value === void 0) {
-				value = "undefined";
-				this._log.fn("_walk").debug(`Converting undefined to string for property: ${key}`);
-			}
-			if (typeof value === "object" && value !== null) if ("value" in value && "options" in value && Array.isArray(value.options)) input = mode === "bind" ? folder.bindSelect(target, key, {
+			if (typeof value === "object" && value !== null) if ("value" in value && "options" in value && Array.isArray(value.options)) input = mode === "bind" ? folder.bindSelect(value, "value", {
+				title: key,
 				...inputOptions,
 				options: value.options
 			}) : folder.addSelect(key, value);
@@ -805,14 +841,13 @@ var Folder = class Folder {
 				title: key,
 				...inputOptions
 			}) : folder.addColor(key, value, inputOptions);
-			else if (Array.isArray(value)) if (value.length > 0 && isLabeledOption(value[0])) input = mode === "bind" ? folder.bindSelect(target, key, {
-				...inputOptions,
-				options: value
-			}) : folder.addSelect(key, {
-				value: value[0].value,
-				options: value
-			});
-			else if ("options" in inputOptions) input = mode === "bind" ? folder.bindSelect(target, key, inputOptions) : folder.addSelect(key, target[key], inputOptions);
+			else if (Array.isArray(value)) if (value.length > 0 && isLabeledOption(value[0])) {
+				if (mode === "bind") throw unbindableLabeledOptions(key);
+				input = folder.addSelect(key, {
+					value: value[0].value,
+					options: value
+				});
+			} else if ("options" in inputOptions) input = mode === "bind" ? folder.bindSelect(target, key, inputOptions) : folder.addSelect(key, target[key], inputOptions);
 			else input = mode === "bind" ? folder.bindArray(target, key, inputOptions) : folder.addArray(key, value, inputOptions);
 			else {
 				if ("folderOptions" in inputOptions) folderOptions = inputOptions["folderOptions"];
@@ -821,7 +856,7 @@ var Folder = class Folder {
 				const res = this._walk(value, {
 					...inputOptions,
 					maxSize
-				}, newFolder, seen, mode, _count);
+				}, newFolder, seen, mode, dry, _count);
 				input = res.inputs;
 				result.folders[key] = {
 					folder: newFolder,
@@ -1200,7 +1235,7 @@ var Folder = class Folder {
 		const title = create("div", {
 			parent: header,
 			classes: ["gooey-title"],
-			innerHTML: this.title.replaceAll(/-|_/g, " ")
+			textContent: titleText(this.title)
 		});
 		const toolbar = create("div", {
 			parent: header,
