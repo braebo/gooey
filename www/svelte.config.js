@@ -3,7 +3,7 @@ import { getHighlighterInstance } from './src/lib/highlighter/highlight.js'
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import { sveltePreprocess } from 'svelte-preprocess'
 import postcssConfig from './postcss.config.js'
-import adapter from '@sveltejs/adapter-auto'
+import adapter from '@sveltejs/adapter-cloudflare'
 import MagicString from 'magic-string'
 import {
 	processCodeblockSync,

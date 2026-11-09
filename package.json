@@ -39,6 +39,7 @@
 		"build:watch": "tsdown --watch ./src",
 		"build:all": "bun run build && bun run build:www",
 		"build:www": "cd www && bun i && bun run build",
+		"build:site": "bun run build:www",
 		"check": "tsc --noEmit",
 		"check:all": "bun check && bun check:www",
 		"check:www": "cd www && bun check",

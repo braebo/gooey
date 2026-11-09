@@ -4,6 +4,7 @@ functions
 
 package
 .vercel
+.wrangler
 dist
 
 .env
