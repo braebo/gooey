@@ -1,5 +1,5 @@
 import type { WindowInstance, WindowManagerOptions } from './shared/WindowManager'
-import type { Theme, ThemeMode } from './styles/themer/types'
+import type { ThemeDefinition, ThemeMode } from './styles/themer/types'
 import type { ThemerOptions } from './styles/themer/Themer'
 import type { FolderOptions, FolderPreset } from './Folder'
 import type { ResizableOptions } from './shared/resizable'
@@ -87,7 +87,7 @@ export interface GooeyOptions {
 	 * The themes available to the gooey.
 	 * @defaultValue [ {@link theme_default|default}, {@link theme_flat|flat}, {@link theme_scout|scout} ]
 	 */
-	themes: Theme[]
+	themes: ThemeDefinition[]
 
 	/**
 	 * The initial {@link Themer.mode|theme mode}.

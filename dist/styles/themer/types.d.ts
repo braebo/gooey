@@ -73,6 +73,7 @@ type Theme<T extends ExtendedVars = Record<string, any>> = {
    */
   resolved?: boolean;
 };
+type ThemeColors = BaseColors & ModeColors;
 interface BaseColors {
   [key: string]: string;
   'theme-a': string;
@@ -101,5 +102,5 @@ interface ModeColors {
   'fg-e': string;
 }
 //#endregion
-export { ColorTheme, ExtendedVars, ModeColors, Theme, ThemeDefinition, ThemeMode, ThemeTitle, VariableDefinition };
+export { BaseColors, ColorDefinition, ColorTheme, ExtendedVars, ModeColors, Theme, ThemeColors, ThemeDefinition, ThemeMode, ThemeTitle, ThemeVariant, VariableDefinition };
 //# sourceMappingURL=types.d.ts.map

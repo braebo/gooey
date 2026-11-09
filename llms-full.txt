@@ -3480,7 +3480,7 @@ The PresetManager instance for the gooey.
 
 ##### themer
 
-> **themer**: `Themer`
+> **themer**: [`Themer`](#themer-2)
 
 ##### windowManager?
 
@@ -5600,7 +5600,7 @@ Logs any args as well as any logs in the current buffer.
 A gooey window that edits the [targetGooey](#targetgooey)'s themes.
 
 Edits land on a working copy of the active theme and preview live on every gooey the
-themer styles.  Saving writes the copy into Themer.userThemes, which persists it.
+themer styles.  Saving writes the copy into [Themer.userThemes](#userthemes), which persists it.
 A theme from code is never overwritten: saving one stores an edited copy beside it, since
 the code is its record.
 
@@ -5660,7 +5660,7 @@ Whether the draft has edits that aren't saved.
 
 > **get** **isUserTheme**(): `boolean`
 
-Whether the theme being edited is one of the Themer.userThemes.
+Whether the theme being edited is one of the [Themer.userThemes](#userthemes).
 
 ###### Returns
 
@@ -5670,11 +5670,11 @@ Whether the theme being edited is one of the Themer.userThemes.
 
 ###### Get Signature
 
-> **get** **themer**(): `Themer`
+> **get** **themer**(): [`Themer`](#themer-2)
 
 ###### Returns
 
-`Themer`
+[`Themer`](#themer-2)
 
 ##### vars
 
@@ -5752,7 +5752,7 @@ Drops unsaved edits.
 
 > **save**(): [`ThemeEditor`](#themeeditor)
 
-Stores the draft in Themer.userThemes.  A user theme is updated in place (and
+Stores the draft in [Themer.userThemes](#userthemes).  A user theme is updated in place (and
 renamed, if the title field changed); a theme from code is stored as a copy.
 
 ###### Returns
@@ -5791,7 +5791,7 @@ The theme's var group, i.e. `color` or `core`.
 
 ###### mode
 
-keyof `VariableDefinition`
+keyof [`VariableDefinition`](#variabledefinition)
 
 `base`, `dark`, or `light`.
 
@@ -6375,6 +6375,155 @@ Dispose of the instance and all windows.
 
 ## Interfaces
 
+### BaseColors
+
+#### Indexable
+
+> \[`key`: `string`\]: `string`
+
+#### Properties
+
+##### dark-a
+
+> **dark-a**: `string`
+
+##### dark-b
+
+> **dark-b**: `string`
+
+##### dark-c
+
+> **dark-c**: `string`
+
+##### dark-d
+
+> **dark-d**: `string`
+
+##### dark-e
+
+> **dark-e**: `string`
+
+##### light-a
+
+> **light-a**: `string`
+
+##### light-b
+
+> **light-b**: `string`
+
+##### light-c
+
+> **light-c**: `string`
+
+##### light-d
+
+> **light-d**: `string`
+
+##### light-e
+
+> **light-e**: `string`
+
+##### theme-a
+
+> **theme-a**: `string`
+
+***
+
+### ColorDefinition
+
+All themes come with a default color definition that can be overridden with partials.
+
+All shades have light and dark variants, allowing all other colors to adapt to the mode.
+
+The `light` and `dark` variables are automatically generated from the `base` colors
+if not overridden manually.
+
+#### Extends
+
+- [`VariableDefinition`](#variabledefinition)
+
+#### Properties
+
+##### base
+
+> **base**: [`BaseColors`](#basecolors)
+
+Variables applied to all modes.
+
+###### Overrides
+
+[`VariableDefinition`](#variabledefinition).[`base`](#base-2)
+
+##### dark
+
+> **dark**: `Partial`\<[`ModeColors`](#modecolors)\> & `Record`\<`string`, `string`\>
+
+Optional dark-mode overrides.
+
+###### Overrides
+
+[`VariableDefinition`](#variabledefinition).[`dark`](#dark-2)
+
+##### light
+
+> **light**: `Partial`\<[`ModeColors`](#modecolors)\> & `Record`\<`string`, `string`\>
+
+Optional light-mode overrides.
+
+###### Overrides
+
+[`VariableDefinition`](#variabledefinition).[`light`](#light-2)
+
+***
+
+### ColorTheme
+
+A collection of css custom properties that can be added to [theme vars](#vars-3).
+
+#### Remarks
+
+Defining `base`, then adding mode-specific overrides, is the intended
+pattern for defining themes, as `dark` and `light` are typically an
+optional `Partial` of `base`.
+
+#### Extends
+
+- [`VariableDefinition`](#variabledefinition)
+
+#### Properties
+
+##### base
+
+> **base**: [`BaseColors`](#basecolors)
+
+Variables applied to all modes.
+
+###### Overrides
+
+[`VariableDefinition`](#variabledefinition).[`base`](#base-2)
+
+##### dark
+
+> **dark**: [`ModeColors`](#modecolors) & `Record`\<`string`, `string`\>
+
+Optional dark-mode overrides.
+
+###### Overrides
+
+[`VariableDefinition`](#variabledefinition).[`dark`](#dark-2)
+
+##### light
+
+> **light**: [`ModeColors`](#modecolors) & `Record`\<`string`, `string`\>
+
+Optional light-mode overrides.
+
+###### Overrides
+
+[`VariableDefinition`](#variabledefinition).[`light`](#light-2)
+
+***
+
 ### GooeyElements
 
 #### Properties
@@ -6589,7 +6738,7 @@ An offset to apply to the initial position of the gooey.
 
 > `optional` **parentGooey?**: [`Gooey`](#gooey-1)
 
-Another [Gooey](#gooey-1) to share a [WindowManager](#windowmanager-1) and Themer with.  Child
+Another [Gooey](#gooey-1) to share a [WindowManager](#windowmanager-1) and [Themer](#themer-2) with.  Child
 gooeys stack against their parent instead of floating in a z-order of their own, and
 follow its theme.  Each still keeps its own [storage](#storage) key, so
 position and size persist per window.
@@ -6689,7 +6838,7 @@ follows the parent's theme.
 
 > **themeMode**: `"light"` \| `"dark"` \| `"system"`
 
-The initial Themer.mode\|theme mode.
+The initial [theme mode](#mode-1).
 
 ###### Default
 
@@ -6699,7 +6848,7 @@ The initial Themer.mode\|theme mode.
 
 ##### themes
 
-> **themes**: `Theme`[]
+> **themes**: [`ThemeDefinition`](#themedefinition)[]
 
 The themes available to the gooey.
 
@@ -14405,6 +14554,56 @@ The title of the logger.  Prepended to all logs.
 
 ***
 
+### ModeColors
+
+#### Indexable
+
+> \[`key`: `string`\]: `string`
+
+#### Properties
+
+##### bg-a
+
+> **bg-a**: `string`
+
+##### bg-b
+
+> **bg-b**: `string`
+
+##### bg-c
+
+> **bg-c**: `string`
+
+##### bg-d
+
+> **bg-d**: `string`
+
+##### bg-e
+
+> **bg-e**: `string`
+
+##### fg-a
+
+> **fg-a**: `string`
+
+##### fg-b
+
+> **fg-b**: `string`
+
+##### fg-c
+
+> **fg-c**: `string`
+
+##### fg-d
+
+> **fg-d**: `string`
+
+##### fg-e
+
+> **fg-e**: `string`
+
+***
+
 ### ModelContext
 
 The `document.modelContext` surface gooey uses.  The real object has more on it
@@ -14445,6 +14644,340 @@ The `document.modelContext` surface gooey uses.  The real object has more on it
 ###### Returns
 
 `unknown`
+
+***
+
+### Themer
+
+The `Themer` class manages multiple customizable themes.  These themes
+can be applied globally to the document, or scoped to a specific node.
+
+A [Theme](#theme-5) is a collection of CSS custom properties, most
+importantly, shades / colors.  Themes can be created as JavaScript
+objects or JSON in the form of a [ThemeDefinition](#themedefinition), which is
+just a Partial<[Theme](#theme-5)> run through resolveTheme to
+generate `theme.colors.dark` and `theme.colors.light` variants from
+`theme.colors.base`.  This can be extended arbitrarily (// todo //).
+
+It can be used to store, retrieve, create, and apply themes. It can
+apply themes to either the root document, or a specific node and
+its children. Each [ThemeDefinition](#themedefinition) has light and dark
+variants (auto-generated if not specified), and the active
+variant isdetermined by the current [ThemeMode](#thememode-1),
+which can be set to 'light', 'dark', or 'system'.
+
+#### Example
+
+```ts
+import { Themer } from 'gooey'
+import my_theme from './themes/my_theme'
+
+const themer = new Themer('document', { theme: my_theme, themes: [my_theme], mode: 'dark' })
+
+themer.mode.set('light')
+themer.create({ ...my_theme, title: 'my_theme_2' })
+```
+
+#### Properties
+
+##### activeThemeTitle
+
+> **activeThemeTitle**: `PrimitiveState`\<`string`\>
+
+The title of the currently active [theme](#theme-3).
+
+When [ThemerOptions.persistent](#persistent) is `true`, this value is
+saved to localStorage and used to restore the theme on page load.
+
+##### mode
+
+> **mode**: `UnionState`\<`"light"` \| `"dark"` \| `"system"`\>
+
+The current mode ('light', 'dark', or 'system').
+
+When this state value is re-assigned with `mode.set`, the current theme
+is automatically updated.
+
+When [ThemerOptions.persistent](#persistent) is `true`, this value is saved
+to localStorage and used to restore the mode on page load.
+
+##### node
+
+> **node**: `HTMLElement`
+
+The first target — every target gets the theme's css vars and the `theme` / `mode`
+attributes on each apply; [attach](#attach) adds more.
+
+##### theme
+
+> **theme**: `PrimitiveState`\<[`Theme`](#theme-5)\>
+
+The currently active theme.  When `theme.set` is called, the new theme
+passed in is automatically applied.
+
+##### themes
+
+> **themes**: `ArrayState`\<[`Theme`](#theme-5)\>
+
+All themes available to the themer — [ThemerOptions.themes](#themes-2) plus [userThemes](#userthemes).
+
+##### userThemes
+
+> **userThemes**: `ArrayState`\<[`Theme`](#theme-5)\>
+
+Themes added at runtime with [create](#create-1).  Persisted under `<key>::themes` when
+[ThemerOptions.persistent](#persistent), and merged over the code's themes by title on load.
+Code themes are never stored — their source is their record.
+
+#### Accessors
+
+##### activeMode
+
+###### Get Signature
+
+> **get** **activeMode**(): `"light"` \| `"dark"`
+
+The current mode, taking into account the system preferences.
+
+###### Returns
+
+`"light"` \| `"dark"`
+
+##### modeColors
+
+###### Get Signature
+
+> **get** **modeColors**(): [`ModeColors`](#modecolors)
+
+The active theme's variables based on the current mode.
+
+###### Returns
+
+[`ModeColors`](#modecolors)
+
+#### Methods
+
+##### applyTheme()
+
+> **applyTheme**(`targets?`): [`Themer`](#themer-2) \| `undefined`
+
+Applies the current theme to every target (or just the ones given).
+
+###### Parameters
+
+###### targets?
+
+`HTMLElement`[] = `...`
+
+###### Returns
+
+[`Themer`](#themer-2) \| `undefined`
+
+##### attach()
+
+> **attach**(`target`): [`Themer`](#themer-2)
+
+Adds a target and applies the current theme to it now.
+
+###### Parameters
+
+###### target
+
+`HTMLElement`
+
+###### Returns
+
+[`Themer`](#themer-2)
+
+##### clear()
+
+> **clear**(): `void`
+
+Resets to the default theme, 'system' mode, and no other themes; forgets [userThemes](#userthemes).
+
+###### Returns
+
+`void`
+
+##### create()
+
+> **create**(`newTheme`, `options?`): [`Themer`](#themer-2)
+
+Adds a new theme to the Themer and to [userThemes](#userthemes).
+
+###### Parameters
+
+###### newTheme
+
+[`Theme`](#theme-5)
+
+The theme to add.
+
+**Remarks**
+
+If a theme with the same title already exists, its title
+will be incremented with a number suffix (i.e. `my-theme (1)`).
+
+###### options?
+
+###### overwrite?
+
+`boolean`
+
+Whether to overwrite an existing theme with the same title,
+or increment the title with a number suffix.
+
+**Default**
+
+```ts
+false
+```
+
+###### Returns
+
+[`Themer`](#themer-2)
+
+##### delete()
+
+> **delete**(`themeOrTitle`): [`Themer`](#themer-2)
+
+###### Parameters
+
+###### themeOrTitle
+
+`string` \| [`Theme`](#theme-5)
+
+###### Returns
+
+[`Themer`](#themer-2)
+
+##### detach()
+
+> **detach**(`target`): [`Themer`](#themer-2)
+
+Stops theming a target.  Its vars and attributes stay as they were until something
+else writes them.
+
+###### Parameters
+
+###### target
+
+`HTMLElement`
+
+###### Returns
+
+[`Themer`](#themer-2)
+
+##### dispose()
+
+> **dispose**(): `void`
+
+###### Returns
+
+`void`
+
+##### getTheme()
+
+> **getTheme**(`themeTitle`): [`Theme`](#theme-5) \| `undefined`
+
+Resolves a [Theme](#theme-5) by title.
+
+###### Parameters
+
+###### themeTitle
+
+`string`
+
+###### Returns
+
+[`Theme`](#theme-5) \| `undefined`
+
+##### init()
+
+> **init**(): [`Themer`](#themer-2) \| `undefined`
+
+###### Returns
+
+[`Themer`](#themer-2) \| `undefined`
+
+***
+
+### ThemerOptions
+
+Options for the [Themer](#themer-2) class.
+
+#### Properties
+
+##### autoInit
+
+> **autoInit**: `boolean`
+
+Whether to automatically initialize the theme.
+
+###### Default
+
+```ts
+true
+```
+
+##### localStorageKey?
+
+> `optional` **localStorageKey?**: `string`
+
+The localStorage key prefix for the persisted title and mode.
+
+###### Default
+
+```ts
+undefined
+```
+
+##### mode?
+
+> `optional` **mode?**: [`ThemeMode`](#thememode-1)
+
+##### persistent
+
+> **persistent**: `boolean`
+
+Whether to persist the active theme title and mode in localStorage.
+Needs a [localStorageKey](#localstoragekey); without one nothing persists.
+
+###### Default
+
+```ts
+true
+```
+
+##### theme
+
+> **theme**: [`ThemeDefinition`](#themedefinition)
+
+The default theme to use.
+
+###### Default
+
+```ts
+A theme titled 'default'.
+```
+
+##### themes
+
+> **themes**: [`ThemeDefinition`](#themedefinition)[]
+
+Resolved on construction, so a [ThemeDefinition](#themedefinition) (light / dark derived from base) is enough.
+
+##### vars?
+
+> `optional` **vars?**: [`ExtendedVars`](#extendedvars)
+
+Additional variables to apply to the theme.
+
+###### Default
+
+```ts
+{}
+```
 
 ***
 
@@ -14628,6 +15161,43 @@ undefined
 > **text**: `string` \| (() => `string`)
 
 The text to display in the tooltip.  Can be a string, number, or a function that returns a string or number.
+
+***
+
+### VariableDefinition
+
+A collection of css custom properties that can be added to [theme vars](#vars-3).
+
+#### Remarks
+
+Defining `base`, then adding mode-specific overrides, is the intended
+pattern for defining themes, as `dark` and `light` are typically an
+optional `Partial` of `base`.
+
+#### Extended by
+
+- [`ColorDefinition`](#colordefinition)
+- [`ColorTheme`](#colortheme)
+
+#### Properties
+
+##### base
+
+> **base**: `Record`\<`string`, `string`\>
+
+Variables applied to all modes.
+
+##### dark
+
+> **dark**: `Record`\<`string`, `string`\>
+
+Optional dark-mode overrides.
+
+##### light
+
+> **light**: `Record`\<`string`, `string`\>
+
+Optional light-mode overrides.
 
 ***
 
@@ -15267,6 +15837,18 @@ The element or mount function to render in the input's content area.
 
 ***
 
+### ExtendedVars
+
+> **ExtendedVars** = `object`
+
+Arbitrary variables that can be added to a theme.
+
+#### Index Signature
+
+\[`key`: `string`\]: `Partial`\<[`VariableDefinition`](#variabledefinition)\>
+
+***
+
 ### GradientInputOptions
 
 > **GradientInputOptions** = `InputOptions`\<[`GradientValue`](#gradientvalue)\> & `object`
@@ -15625,6 +16207,92 @@ The maximum number of characters that can be entered.
 
 ***
 
+### Theme
+
+> **Theme**\<`T`\> = `object`
+
+A fully resolved theme with all variables applied.
+
+#### Type Parameters
+
+##### T
+
+`T` *extends* [`ExtendedVars`](#extendedvars) = `Record`\<`string`, `any`\>
+
+#### Properties
+
+##### prefix
+
+> **prefix**: `string`
+
+##### title
+
+> **title**: `string`
+
+##### vars
+
+> **vars**: `object` & `{ [key in keyof T]: VariableDefinition }`
+
+###### Type Declaration
+
+###### color
+
+> **color**: [`ColorTheme`](#colortheme)
+
+***
+
+### ThemeColors
+
+> **ThemeColors** = [`BaseColors`](#basecolors) & [`ModeColors`](#modecolors)
+
+***
+
+### ThemeDefinition
+
+> **ThemeDefinition**\<`T`\> = `object`
+
+The minimum required definition for a theme.
+
+#### Type Parameters
+
+##### T
+
+`T` *extends* [`ExtendedVars`](#extendedvars) = `Record`\<`string`, `any`\>
+
+#### Properties
+
+##### prefix?
+
+> `optional` **prefix?**: `string`
+
+##### title
+
+> **title**: `string`
+
+##### vars
+
+> **vars**: `T` & `object`
+
+###### Type Declaration
+
+###### color
+
+> **color**: [`ColorDefinition`](#colordefinition)
+
+***
+
+### ThemeMode
+
+> **ThemeMode** = [`ThemeVariant`](#themevariant) \| `"system"`
+
+***
+
+### ThemeVariant
+
+> **ThemeVariant** = `"light"` \| `"dark"`
+
+***
+
 ### WindowInstanceOptions
 
 > **WindowInstanceOptions** = `Partial`\<[`WindowManagerOptions`](#windowmanageroptions)\> & `object`
@@ -15785,7 +16453,7 @@ The default values for [GooeyOptions](#gooeyoptions).
 
 ##### themes
 
-> `readonly` **themes**: \[`Theme`, `Theme`, `Theme`\]
+> `readonly` **themes**: \[[`Theme`](#theme-5), [`Theme`](#theme-5), [`Theme`](#theme-5)\]
 
 ##### title
 

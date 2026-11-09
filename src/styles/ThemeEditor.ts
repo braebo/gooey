@@ -12,6 +12,8 @@ import { entries } from '../shared/object'
 import { Logger } from '../shared/logger'
 import { Gooey, type GooeyOptions, type GooeyOptionsInternal } from '../Gooey'
 
+const TITLE = 'Theme Editor'
+
 /**
  * A gooey window that edits the {@link targetGooey}'s themes.
  *
@@ -74,7 +76,7 @@ export class ThemeEditor {
 
 		// Its own storage key under the target's -- never the target's own options.
 		this.gooey = new Gooey({
-			title: 'Theme Editor',
+			title: TITLE,
 			container: targetGooey.container,
 			storage: opts.storage ? { key: opts.storage.key } : false,
 			_windowManager: targetGooey.windowManager,
@@ -120,7 +122,9 @@ export class ThemeEditor {
 
 		this.folder.evm.add(
 			this.themer.theme.subscribe(t => {
-				this.gooey.folder.title = `${opts?.title} · ${t.title}`
+				// Names itself and the theme it edits, never the target's title: beside the target
+				// the editor would read as a second copy of it.
+				this.gooey.folder.title = `${TITLE} · ${t.title}`
 				// The draft previewing its own edits.
 				if (t === this._draft) return
 				this.#load(t)

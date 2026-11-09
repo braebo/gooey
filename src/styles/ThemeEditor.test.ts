@@ -24,6 +24,13 @@ function setup(storage: Gooey['opts']['storage'] | { key: string } = false) {
 }
 
 describe('ThemeEditor', () => {
+	test("its title names itself and the theme it edits, never the target's title", () => {
+		const { editor, themer } = setup()
+		expect(editor.gooey.folder.title).toBe(`Theme Editor · ${themer.theme.value.title}`)
+		editor.select('flat')
+		expect(editor.gooey.folder.title).toBe('Theme Editor · flat')
+	})
+
 	test('builds a folder per var group', async () => {
 		const { editor } = setup()
 		await tick()

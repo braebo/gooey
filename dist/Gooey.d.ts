@@ -3,7 +3,7 @@ import { Folder, FolderOptions, FolderPreset } from "./Folder.js";
 import { ValidInput } from "./inputs/Input.js";
 import { Placement } from "./shared/place.js";
 import { WindowInstance, WindowManager } from "./shared/WindowManager.js";
-import { Theme } from "./styles/themer/types.js";
+import { Theme, ThemeDefinition } from "./styles/themer/types.js";
 import { PresetManager } from "./PresetManager.js";
 import { Themer } from "./styles/themer/Themer.js";
 
@@ -55,7 +55,7 @@ interface GooeyOptions {
    * The themes available to the gooey.
    * @defaultValue [ {@link theme_default|default}, {@link theme_flat|flat}, {@link theme_scout|scout} ]
    */
-  themes: Theme[];
+  themes: ThemeDefinition[];
   /**
    * The initial {@link Themer.mode|theme mode}.
    * @default 'dark'

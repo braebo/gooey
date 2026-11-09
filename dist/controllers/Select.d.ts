@@ -180,6 +180,16 @@ declare class Select<T> {
    */
   open: () => void;
   /**
+   * Carries a consumer's var overrides on `.gooey-root` onto the dropdown.
+   *
+   * The dropdown mounts on the wrapper, outside `.gooey-root` (whose `contain: content` would
+   * clip it), so a var set on the root never reaches it by inheritance.  Only a var whose value
+   * on the root differs from the wrapper's (an override) is copied; the rest stay inherited
+   * from the wrapper, so a theme switched while the dropdown is open (the theme picker's hover
+   * preview) still recolors it.
+   */
+  private _inheritRootVars;
+  /**
    * Positions the dropdown to the selected element.
    */
   updatePosition: () => void;

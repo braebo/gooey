@@ -33,7 +33,7 @@ function resolveTheme(def, vars = {}) {
 	};
 	return {
 		title: def.title,
-		prefix: def.prefix || "fractils",
+		prefix: def.prefix || "gooey",
 		vars: deepMergeOpts([
 			{ color },
 			vars,

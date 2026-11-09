@@ -11,6 +11,21 @@ export { Folder } from './Folder'
 
 export { ThemeEditor } from './styles/ThemeEditor'
 
+export type { Themer, ThemerOptions } from './styles/themer/Themer'
+export type {
+	Theme,
+	ThemeDefinition,
+	ThemeMode,
+	ThemeVariant,
+	ThemeColors,
+	ColorDefinition,
+	ColorTheme,
+	BaseColors,
+	ModeColors,
+	VariableDefinition,
+	ExtendedVars,
+} from './styles/themer/types'
+
 export type {
 	WebMCPOptions,
 	WebMCPHandle,

@@ -345,3 +345,24 @@ describe('undo', () => {
 		expect(target.mode).toBe('a')
 	})
 })
+
+describe('dropdown', () => {
+	test("an open dropdown carries a var override set on .gooey-root, and only the overrides", () => {
+		const gui = g.addGooey()
+		const css = document.createElement('style')
+		css.textContent = '.gooey-root { --gooey-bg-b: rgb(255, 105, 180); }'
+		document.head.append(css)
+
+		const select = gui.addSelect('shape', 'circle', { options: ['circle', 'square'] })
+		const { dropdown } = select.selectController.elements
+		select.selectController.open()
+
+		expect(getComputedStyle(dropdown).getPropertyValue('--gooey-bg-b').trim()).toBe('rgb(255, 105, 180)')
+		// A var nobody overrode stays inherited from the wrapper, so a live theme switch still reaches it.
+		expect(dropdown.style.getPropertyValue('--gooey-bg-a')).toBe('')
+
+		select.selectController.close()
+		css.remove()
+		gui.dispose()
+	})
+})

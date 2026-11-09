@@ -245,6 +245,7 @@ let Select = class Select$1 {
 	open = () => {
 		this.expanded = true;
 		this._opts.input.folder.gooey.wrapper.appendChild(this.elements.dropdown);
+		this._inheritRootVars();
 		this.elements.dropdown.classList.add("expanded");
 		this.elements.selected.classList.add("active");
 		this.updatePosition();
@@ -274,6 +275,30 @@ let Select = class Select$1 {
 			this.elements.dropdown.style.pointerEvents = "all";
 		}, 200);
 	};
+	/**
+	* Carries a consumer's var overrides on `.gooey-root` onto the dropdown.
+	*
+	* The dropdown mounts on the wrapper, outside `.gooey-root` (whose `contain: content` would
+	* clip it), so a var set on the root never reaches it by inheritance.  Only a var whose value
+	* on the root differs from the wrapper's (an override) is copied; the rest stay inherited
+	* from the wrapper, so a theme switched while the dropdown is open (the theme picker's hover
+	* preview) still recolors it.
+	*/
+	_inheritRootVars() {
+		const gooey = this._opts.input.folder.gooey;
+		if (!gooey || !globalThis.window) return;
+		const { wrapper } = gooey;
+		const root = getComputedStyle(gooey.element);
+		const base = getComputedStyle(wrapper);
+		const style = this.elements.dropdown.style;
+		for (let i = 0; i < wrapper.style.length; i++) {
+			const name = wrapper.style[i];
+			if (!name.startsWith("--")) continue;
+			const value = root.getPropertyValue(name);
+			if (value !== base.getPropertyValue(name)) style.setProperty(name, value);
+			else style.removeProperty(name);
+		}
+	}
 	/**
 	* Positions the dropdown to the selected element.
 	*/

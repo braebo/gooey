@@ -5,6 +5,7 @@ import { isColor } from "../shared/color/color.js";
 import { Gooey } from "../Gooey.js";
 
 //#region src/styles/ThemeEditor.ts
+const TITLE = "Theme Editor";
 /**
 * A gooey window that edits the {@link targetGooey}'s themes.
 *
@@ -55,7 +56,7 @@ var ThemeEditor = class {
 		if (!targetGooey.themer) throw new Error("Themer not found.");
 		const opts = targetGooey.opts;
 		this.gooey = new Gooey({
-			title: "Theme Editor",
+			title: TITLE,
 			container: targetGooey.container,
 			storage: opts.storage ? { key: opts.storage.key } : false,
 			_windowManager: targetGooey.windowManager,
@@ -95,7 +96,7 @@ var ThemeEditor = class {
 			this.#syncTitle();
 		}));
 		this.folder.evm.add(this.themer.theme.subscribe((t) => {
-			this.gooey.folder.title = `${opts?.title} · ${t.title}`;
+			this.gooey.folder.title = `${TITLE} · ${t.title}`;
 			if (t === this._draft) return;
 			this.#load(t);
 		}));

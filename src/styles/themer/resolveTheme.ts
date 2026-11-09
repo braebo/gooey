@@ -37,7 +37,7 @@ export function resolveTheme(def: ThemeDefinition, vars: ExtendedVars = {}) {
 
 	const theme: Theme = {
 		title: def.title,
-		prefix: def.prefix || 'fractils',
+		prefix: def.prefix || 'gooey',
 		vars: deepMergeOpts([{ color }, vars, def.vars]) as Theme['vars'],
 		resolved: true,
 	}

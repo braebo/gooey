@@ -24,7 +24,8 @@ interface ThemerOptions {
    * @default A theme titled 'default'.
    */
   theme: ThemeDefinition;
-  themes: Array<Theme>;
+  /** Resolved on construction, so a {@link ThemeDefinition} (light / dark derived from base) is enough. */
+  themes: Array<ThemeDefinition>;
   mode?: ThemeMode;
   /**
    * The localStorage key prefix for the persisted title and mode.
@@ -169,5 +170,5 @@ declare class Themer {
   dispose(): void;
 }
 //#endregion
-export { Themer };
+export { Themer, ThemerOptions };
 //# sourceMappingURL=Themer.d.ts.map
