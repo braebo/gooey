@@ -34,7 +34,7 @@
 
 <div class="br-lg"></div>
 
-<div class="example">
+<div class="example landing">
 	<!-- shiki-start
 ```ts
 const themes = gooey.themer.themes.value
@@ -120,5 +120,17 @@ shiki-end -->
 
 			font-size: var(--font-sm);
 		}
+	}
+
+	/* The code takes the width its lines need and the live pane the rest, instead of a 50/50
+	   split that wrapped the example's longest line on a wide screen. */
+	.landing :global(.code-window) {
+		flex: 0 1 auto;
+		width: auto;
+	}
+
+	.landing :global(.live-example) {
+		flex: 1 1 0;
+		min-width: 16rem;
 	}
 </style>

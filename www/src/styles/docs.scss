@@ -79,10 +79,21 @@ body {
 			outline-offset: -1px;
 		}
 
+		// border-box: with content-box, width: 100% plus the 1rem padding ran 2rem past the
+		// window's overflow: hidden, clipping each line's end and the scrollbar.
+		// pre-wrap: a long line wraps inside the pane instead of hiding behind a scrollbar
+		// that macOS and iOS don't show until you scroll.
 		pre {
+			box-sizing: border-box;
 			width: 100%;
 
 			background: light-dark(var(--h-light-bg), var(--h-dark-bg));
+
+			&,
+			code {
+				white-space: pre-wrap;
+				overflow-wrap: break-word;
+			}
 
 			&:first-of-type {
 				padding: 1rem;

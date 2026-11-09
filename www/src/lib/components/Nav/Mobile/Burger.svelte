@@ -69,16 +69,18 @@
 		--pattyDur: 0.75s;
 		--bunDur: 0.5s;
 	}
+	/* Top-right, in the header row: the logo and home link hold the left corner, and the theme
+	   controls that sit here on desktop are hidden on mobile. */
 	.burger {
+		box-sizing: border-box;
 		position: fixed;
 		z-index: 30;
-		bottom: 0.5rem;
-		left: 1rem;
+		top: 0.25rem;
+		right: 0.5rem;
 
-		width: 50px;
-		height: 50px;
-		padding: 5px;
-		margin: auto;
+		width: 2.5rem;
+		height: 2.5rem;
+		padding: 4px;
 
 		border-radius: 100%;
 
