@@ -4,7 +4,7 @@
 	import type { Tab } from '$lib/components/Code.svelte'
 
 	// import { importMode, IMPORT_MODES } from '$lib/data/importMode.svelte'
-	import { installer } from './install-commands/installer.svelte'
+	import { installer, getImport } from './install-commands/installer.svelte'
 	import Code from '$lib/components/Code.svelte'
 	import H from '$lib/components/H.svelte'
 
@@ -39,11 +39,9 @@
 	$effect(() => {
 		if (installer.current) {
 			if (first) {
-				if (span) span.innerText = `'${installer.current}'`
+				if (span) span.innerText = `'${getImport(installer.current)}'`
 				first = false
-				console.warn('first')
 			} else {
-				console.log('animate')
 				animate()
 			}
 		}
@@ -70,7 +68,7 @@
 
 		await anim.finished
 
-		div.innerText = `'${installer.current}'`
+		div.innerText = `'${getImport(installer.current)}'`
 
 		anim = div.animate(
 			[

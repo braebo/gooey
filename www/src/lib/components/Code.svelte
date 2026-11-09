@@ -275,7 +275,7 @@
 			</div>
 		{/if}
 
-		{#if highlightedText}1
+		{#if highlightedText}
 			<pre class="shiki-wrapper">{@html highlightedText}</pre>
 		{:else if text}
 			<pre class="shiki-wrapper">{text}</pre>

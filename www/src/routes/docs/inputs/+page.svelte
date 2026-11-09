@@ -1,5 +1,6 @@
 <script>
 	import H from '$lib/components/H.svelte'
+	import Bezier from './Bezier.svelte'
 	import Button from './Button.svelte'
 	import ButtonGrid from './ButtonGrid.svelte'
 	import Color from './Color.svelte'
@@ -26,6 +27,8 @@
 <Color />
 
 <Gradient />
+
+<Bezier />
 
 <Select />
 

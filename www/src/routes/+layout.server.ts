@@ -5,7 +5,9 @@ export function load({ locals, depends, url }) {
 	depends('routes')
 
 	switch (url.pathname) {
-		case '/':
+		case '/': {
+			redirect(307, '/docs')
+		}
 		case '/demos': {
 			redirect(307, '/demos/goo')
 		}

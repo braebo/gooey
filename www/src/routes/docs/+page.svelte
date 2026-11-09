@@ -12,16 +12,8 @@
 	const example = (g: Gooey) => {
 		const themes = g.themer.themes.value
 		const theme = g.addSelect('theme', { options: themes, value: themes[0] })
-		// const theme = g.addSelect('theme', g.themer.theme.value, { options: g.themer.themes.value })
-		// const theme = g.addSelect('theme', g.themer.theme.value, { options: g.themer.themes.value })
-		// const theme = g.addSelect('theme', { options: g.themer.themes.value, initialValue: g.themer.theme.value })
-		theme.on('change', v => {
-			console.log('v', v)
-			g.themer.theme.set(v)
-		})
+		theme.on('change', v => g.themer.theme.set(v))
 	}
-
-	console.log('example.toString()', example.toString())
 </script>
 
 <Hero />
@@ -45,12 +37,14 @@
 <div class="example">
 	<!-- shiki-start
 ```ts
-{example.toString()}
+const themes = gooey.themer.themes.value
+const theme = gooey.addSelect('theme', { options: themes, value: themes[0] })
+theme.on('change', v => gooey.themer.theme.set(v))
 ```
 shiki-end -->
 
 	<LiveExample
-		title="add"
+		title="theme"
 		onMount={example}
 		position="center"
 	/>
@@ -59,7 +53,7 @@ shiki-end -->
 <div class="info-wrapper">
 	<div class="description em">
 		<span bind:this={infoEl}>
-			See <a href="#add">add</a>
+			See <a href="/docs/getting-started#basics">add</a>
 		</span>
 	</div>
 

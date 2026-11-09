@@ -26,6 +26,20 @@ export function getCmd(mode: Installer) {
 	}
 }
 
+/** The module specifier an `import` uses after installing with `mode`. */
+export function getImport(mode: Installer) {
+	switch (mode) {
+		case 'NPM':
+		case 'PNPM':
+		case 'BUN':
+			return 'gooey'
+		case 'JSR':
+			return '@braebo/gooey'
+		case 'CDN':
+			return 'https://esm.sh/gooey'
+	}
+}
+
 export function getLib(mode: Installer) {
 	switch (mode) {
 		case 'NPM':

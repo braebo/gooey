@@ -85,7 +85,12 @@ const config = {
 		}),
 		vitePreprocess(),
 	],
-	kit: { adapter: adapter() },
+	kit: {
+		adapter: adapter(),
+		// The site imports the package it documents from the repo root (its built dist), so a fresh
+		// clone builds without a hand-made node_modules/gooey link.
+		alias: { gooey: '..' },
+	},
 	vitePlugin: {
 		inspector: {
 			toggleButtonPos: 'bottom-left',

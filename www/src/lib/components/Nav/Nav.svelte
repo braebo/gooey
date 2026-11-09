@@ -33,6 +33,8 @@
 		'/docs/inputs#text',
 		'/docs/inputs#textarea',
 		'/docs/inputs#color',
+		'/docs/inputs#gradient',
+		'/docs/inputs#bezier',
 		'/docs/inputs#select',
 		'/docs/inputs#button',
 		'/docs/inputs#buttongrid',
@@ -44,9 +46,7 @@
 	const pageRoutes = $page.data.routes || []
 
 	// prettier-ignore
-	const routes = [
-		...pageRoutes,
-
+	const plannedRoutes = [
 		'/docs/getting-started#install',
 		'/docs/getting-started#import',
 		'/docs/getting-started#basics',
@@ -67,8 +67,16 @@
 		'/docs/persistence/presets',
 		'/docs/persistence/history',
 
-		'/docs/theming/themes',
-		'/docs/theming/builder',
+		'/docs/theming#themes',
+		'/docs/theming#mode',
+		'/docs/theming#variables',
+		'/docs/theming#editor',
+	]
+
+	// A planned link shows once its page exists, so the nav (and the prerender crawl) never hits a 404.
+	const routes = [
+		...pageRoutes,
+		...plannedRoutes.filter(r => (pageRoutes as string[]).includes(r.split('#')[0])),
 	]
 
 	if (DEV) {

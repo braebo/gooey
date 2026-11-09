@@ -58,7 +58,7 @@ export async function getHighlighterInstance() {
 			// loadWasm: getWasm, // Object literal may only specify known properties, and 'loadWasm' does not exist in type 'HighlighterCoreOptions<false>'.ts(2353)
 			themes: [dark, light],
 			langs: [svelte, typescript, json],
-			engine: createOnigurumaEngine()
+			engine: createOnigurumaEngine(import('shiki/wasm')),
 		})
 		return highlighterInstance
 	} else {
