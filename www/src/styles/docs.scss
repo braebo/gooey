@@ -311,6 +311,8 @@ body {
 	.docs-page {
 		width: 100%;
 		max-width: 100%;
+		// Clears the fixed logo and menu button, which otherwise sit on the page's title.
+		padding-top: 3rem;
 
 		section.section {
 			padding: 1rem 0;

@@ -87,9 +87,9 @@ const config = {
 	],
 	kit: {
 		adapter: adapter(),
-		// The site imports the package it documents from the repo root (its built dist), so a fresh
-		// clone builds without a hand-made node_modules/gooey link.
-		alias: { gooey: '..' },
+		// The site imports the package it documents from its source, the way the demos do, so dev and
+		// a production build run the same code and a fresh clone needs no node_modules/gooey link.
+		alias: { gooey: '../src/index.ts' },
 	},
 	vitePlugin: {
 		inspector: {

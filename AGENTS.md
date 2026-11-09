@@ -7,3 +7,4 @@
 - `www/` demos import gooey from `src/`, never the published `gooey` package — the two classes differ structurally and svelte-check rejects the mix.
 - `skills/gooey/SKILL.md` names paths inside the published package; a change to the README or the `dist/inputs` layout updates it in the same commit.
 - An API or README change reruns `bun run llms` in the same commit.
+- A push to `main` deploys `www/` to Cloudflare Pages (gooey.braebo.dev), whose dashboard runs `bun install --frozen-lockfile`, then `pnpm build:site`, and serves `www/.svelte-kit/cloudflare` on the Node in `.node-version`; `build:site` is that entry point, so it keeps its name.
