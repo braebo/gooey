@@ -154,7 +154,11 @@ export const localStorageStore = <T>(
 		}
 
 		if (localValue === null) {
-			set(initial)
+			// Nothing stored: back to the initial value, but not into storage.  Writing it would
+			// store a default nobody picked, and it would then win over the next load's default
+			// (a `themeMode` changed in code never applied).  Only a `set` is a value worth keeping.
+			currentValue = initial
+			setStore(initial)
 		} else {
 			try {
 				const parsed = deserialize(localValue)

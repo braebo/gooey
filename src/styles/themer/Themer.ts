@@ -195,9 +195,17 @@ export class Themer {
 			if (theme) this.theme.set(theme)
 		}
 
-		this.mode = state(opts.mode ?? 'system', {
+		const codeMode = opts.mode ?? 'system'
+		this.mode = state(codeMode, {
 			key: key && key + '::mode',
 		})
+
+		// A stored mode that isn't one (a `null`) threw on first paint, before the panel's own mode
+		// buttons existed to fix it.  Forget it, and the code's mode applies.
+		if (!['light', 'dark', 'system'].includes(this.mode.value)) {
+			this.mode.set(codeMode)
+			if (key) globalThis.localStorage?.removeItem(key + '::mode')
+		}
 
 		this._prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
 
@@ -209,7 +217,9 @@ export class Themer {
 		this.#addSub(this.theme, v => {
 			this._log.fn(o('theme.subscribe')).debug({ v, this: this })
 			if (this._initialized) {
-				this.activeThemeTitle.set(v.title)
+				// Only a switch is stored: the same theme re-set (an OS light/dark flip under 'system')
+				// would otherwise store the code's default title, and a later `theme` option never applies.
+				if (v.title !== this.activeThemeTitle.value) this.activeThemeTitle.set(v.title)
 				this.applyTheme()
 			}
 		})
