@@ -247,7 +247,7 @@ describe('resizable object form', () => {
 		const key = windowOf(probe)!.resizableInstance!.opts.localStorageKey!
 		probe.dispose()
 
-		localStorage.setItem(key, JSON.stringify({ width: 200, height: 280 }))
+		localStorage.setItem(key, JSON.stringify({ width: 200, height: 280, picked_height: true }))
 
 		const gooey = make(opts)
 

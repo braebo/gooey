@@ -117,7 +117,7 @@ describe('resize', () => {
 
 		window.resize({ width: 240, height: 180 })
 
-		expect(window.size.value).toEqual({ width: 240, height: 0 })
+		expect(window.size.value).toEqual({ width: 240, height: 0, picked_height: false })
 	})
 
 	test('clamps to the bounds', () => {
@@ -148,6 +148,7 @@ describe('resize', () => {
 		expect(JSON.parse(localStorage.getItem('test-wm::wm::inspector::size')!)).toEqual({
 			width: 240,
 			height: 0,
+			picked_height: false,
 		})
 	})
 })

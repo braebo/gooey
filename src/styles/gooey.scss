@@ -354,6 +354,10 @@
 	--gooey-root_min-width: 20rem;
 	--gooey-root_max-width: 35rem;
 	--gooey-root_max-height: 90vh;
+
+	--gooey-tier-rest: 0.4;
+	--gooey-tier-area: 0.75;
+	--gooey-tier-on: 1;
 }
 
 .gooey-root {
@@ -790,6 +794,33 @@ $icon-height: 0.9rem;
 	}
 }
 
+// Toolbar controls: rest (dim) → header hover (area) → control hover (on).
+.gooey-toolbar .gooey-toolbar-item:where(button),
+.gooey-search-button,
+.gooey-settings-button,
+.gooey-close-button {
+	opacity: var(--gooey-tier-rest);
+	background: transparent;
+	transition-property: color, opacity, background;
+	transition-duration: var(--gooey-transition-duration);
+
+	.gooey-header:hover &,
+	.gooey-header:focus-within & {
+		opacity: var(--gooey-tier-area);
+	}
+
+	&:where(:hover, :focus-visible),
+	&.open,
+	&[aria-expanded='true'] {
+		opacity: var(--gooey-tier-on);
+		background: var(--gooey-bg-b);
+	}
+
+	&:active {
+		background: transparent;
+	}
+}
+
 //·· Search ························································¬
 
 //? Search Container
@@ -811,10 +842,6 @@ $icon-height: 0.9rem;
 }
 
 //? Search Button
-
-.gooey-header:hover .gooey-search-button {
-	opacity: 1;
-}
 
 .gooey-search-button {
 	contain: strict;
@@ -857,29 +884,24 @@ $icon-height: 0.9rem;
 
 .gooey-search-button {
 	color: var(--gooey-toolbar-icon-dim_color);
-	opacity: 0;
-}
-.gooey-search-button:hover {
-	color: var(--gooey-fg-e);
-	opacity: 1;
 
-	transition-duration: 0.15s;
-}
-.gooey-search-button:active {
-	transition-duration: 0.05s;
+	&:hover {
+		color: var(--gooey-fg-e);
+		transition-duration: 0.15s;
+	}
 
-	background: transparent;
-	color: var(--gooey-fg-d);
-	opacity: 1;
-
-	scale: 0.9;
+	&:active {
+		transition-duration: 0.05s;
+		color: var(--gooey-fg-d);
+		scale: 0.9;
+	}
 }
 
 //- Search Active
 
 .gooey-search-container.active .gooey-search-button {
 	color: var(--gooey-bg-e);
-	opacity: 1;
+	opacity: var(--gooey-tier-on);
 
 	path {
 		transform: translate(-10%, 10%) scale(0);
