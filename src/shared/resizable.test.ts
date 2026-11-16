@@ -50,7 +50,7 @@ describe('resize', () => {
 
 		expect(node.offsetWidth).toBe(240)
 		expect(node.offsetHeight).toBe(180)
-		expect(resizable.size.value).toEqual({ width: 240, height: 0, picked_height: false })
+		expect(resizable.size.value).toEqual({ width: 240, height: 0 })
 	})
 
 	test('an omitted dimension is left alone', () => {
@@ -107,11 +107,7 @@ describe('resize', () => {
 
 		resizable.resize({ width: 240, height: 180 })
 
-		expect(JSON.parse(localStorage.getItem(key)!)).toEqual({
-			width: 240,
-			height: 0,
-			picked_height: false,
-		})
+		expect(JSON.parse(localStorage.getItem(key)!)).toEqual({ width: 240, height: 0 })
 	})
 
 	test('fires `onResize` and the `resize` event', () => {
@@ -181,42 +177,6 @@ function dragGrabber(resizable: Resizable, side: string, clientX: number, client
 }
 
 describe('stored height', () => {
-	test('ignores stored height without picked_height', () => {
-		const bounds = createBounds()
-		const node = createNode(bounds)
-		const key = 'resizable-test::stale-h'
-		localStorage.setItem(key, JSON.stringify({ width: 880, height: 700 }))
-
-		createResizable(node, bounds, {
-			localStorageKey: key,
-			sides: ['left', 'right', 'bottom'],
-			corners: [],
-		})
-
-		expect(node.style.width).toBe('880px')
-		// The node's own 100px stays; the stale 700 from storage never lands.
-		expect(node.style.height).toBe('100px')
-	})
-
-	test('applies stored height when picked_height is set', () => {
-		const bounds = createBounds()
-		const node = createNode(bounds)
-		const key = 'resizable-test::picked-h'
-		localStorage.setItem(
-			key,
-			JSON.stringify({ width: 880, height: 700, picked_height: true }),
-		)
-
-		createResizable(node, bounds, {
-			localStorageKey: key,
-			sides: ['left', 'right', 'bottom'],
-			corners: [],
-		})
-
-		expect(node.style.width).toBe('880px')
-		expect(node.style.height).toBe('700px')
-	})
-
 	test('a horizontal drag does not persist height', () => {
 		const bounds = createBounds()
 		const node = createNode(bounds)
@@ -248,8 +208,6 @@ describe('stored height', () => {
 		dragGrabber(resizable, 'bottom', bottom.x + bottom.width / 2, bottom.bottom + 50)
 
 		expect(resizable.size.value.height).toBeGreaterThan(100)
-		const stored = JSON.parse(localStorage.getItem(key)!)
-		expect(stored.height).toBe(resizable.size.value.height)
-		expect(stored.picked_height).toBe(true)
+		expect(JSON.parse(localStorage.getItem(key)!).height).toBe(resizable.size.value.height)
 	})
 })

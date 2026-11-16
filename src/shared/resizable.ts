@@ -19,14 +19,6 @@ export interface VirtualRect {
 	bottom: number
 }
 
-/** Size persisted to local storage by {@link Resizable}. */
-export interface ResizableStoredSize {
-	width: number
-	height: number
-	/** Set when the user resizes on a top or bottom grabber; omit for width-only history. */
-	picked_height?: boolean
-}
-
 /**
  * The sides of an element that can be resized by the {@link resizable} action.
  */
@@ -201,7 +193,7 @@ export class Resizable {
 
 	bounds: HTMLElement
 	obstacleEls: HTMLElement[]
-	size: State<ResizableStoredSize>
+	size: State<{ width: number; height: number }>
 
 	#activeGrabber: HTMLElement | null = null
 	#listeners: (() => void)[] = []
@@ -249,27 +241,19 @@ export class Resizable {
 		this.generateStyles()
 
 		let { width, height } = options?.initialSize ?? {}
-		let picked_height = false
 
 		if (this.opts.localStorageKey) {
 			try {
 				// const size = this.size.value
-				let size = JSON.parse(
-					localStorage.getItem(this.opts.localStorageKey) ?? '{}',
-				) as Partial<ResizableStoredSize>
+				let size = JSON.parse(localStorage.getItem(this.opts.localStorageKey) ?? '{}')
 
 				if (size) {
-					if (typeof size.width === 'number' && size.width > 0) {
+					if (size.width > 0) {
 						width = size.width
 					}
 
-					if (
-						size.picked_height &&
-						typeof size.height === 'number' &&
-						size.height > 0
-					) {
+					if (size.height > 0) {
 						height = size.height
-						picked_height = true
 					}
 				}
 			} catch (e) {
@@ -293,7 +277,7 @@ export class Resizable {
 		width ??= this.node.offsetWidth
 		height ??= 0
 
-		this.size = state({ width, height, picked_height }, { key: this.opts.localStorageKey })
+		this.size = state({ width, height }, { key: this.opts.localStorageKey })
 
 		node.dispatchEvent(new CustomEvent('resize'))
 
@@ -546,11 +530,7 @@ export class Resizable {
 
 		const measured = { width: this.node.offsetWidth, height: this.node.offsetHeight }
 
-		this.size.set({
-			width: measured.width,
-			height: this.size.value.height,
-			picked_height: this.size.value.picked_height,
-		})
+		this.size.set({ width: measured.width, height: this.size.value.height })
 		this.opts.onResize(measured)
 
 		this.#log.fn('resize').debug('Resized to:', measured)
@@ -603,15 +583,8 @@ export class Resizable {
 		this.node.dispatchEvent(new CustomEvent('resize'))
 
 		const measured = { width: this.node.offsetWidth, height: this.node.offsetHeight }
-		const stored: ResizableStoredSize = {
-			width: measured.width,
-			height: this.size.value.height,
-			picked_height: this.size.value.picked_height,
-		}
-		if (side!.match(/top|bottom/)) {
-			stored.height = measured.height
-			stored.picked_height = true
-		}
+		const stored = { width: measured.width, height: this.size.value.height }
+		if (side!.match(/top|bottom/)) stored.height = measured.height
 
 		this.size.set(stored)
 
