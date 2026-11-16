@@ -99,8 +99,10 @@ const localStorageStore = (key, initial, options) => {
 				key
 			});
 		}
-		if (localValue === null) set(initial);
-		else try {
+		if (localValue === null) {
+			currentValue = initial;
+			setStore(initial);
+		} else try {
 			const parsed = deserialize(localValue);
 			setStore(parsed);
 			currentValue = parsed;

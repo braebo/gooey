@@ -207,3 +207,113 @@ describe('draggable: false / resizable: false', () => {
 		expect(n.value).toBe(1)
 	})
 })
+
+describe('resizable object form', () => {
+	test('adds a bottom grabber when sides include bottom', () => {
+		const gooey = make({
+			title: 'tall',
+			storage: false,
+			resizable: {
+				sides: ['left', 'right', 'bottom'],
+				corners: ['bottom-left', 'bottom-right'],
+			},
+		})
+
+		expect(windowOf(gooey)?.resizableInstance?.opts.sides).toContain('bottom')
+		expect(windowOf(gooey)?.resizableInstance?.opts.corners).toEqual([
+			'bottom-left',
+			'bottom-right',
+		])
+	})
+
+	test('`true` keeps left/right grabbers only', () => {
+		const gooey = make({ title: 'wide', storage: false, resizable: true })
+
+		expect(windowOf(gooey)?.resizableInstance?.opts.sides).toEqual(['right', 'left'])
+		expect(windowOf(gooey)?.resizableInstance?.opts.corners).toEqual([])
+	})
+
+	test('restores stored height when a vertical grabber exists', () => {
+		const opts = {
+			title: 'persist-h',
+			storage: { key: 'persist-h', size: true, position: false },
+			resizable: {
+				sides: ['left', 'right', 'bottom'],
+				corners: ['bottom-left', 'bottom-right'],
+			},
+		} as const satisfies Partial<GooeyOptions>
+
+		const probe = new Gooey(opts)
+		const key = windowOf(probe)!.resizableInstance!.opts.localStorageKey!
+		probe.dispose()
+
+		localStorage.setItem(key, JSON.stringify({ width: 200, height: 280 }))
+
+		const gooey = make(opts)
+
+		expect(gooey.folder.element.style.height).toBe('280px')
+	})
+
+	test('width-only storage leaves height unset on reload', () => {
+		const opts = {
+			title: 'persist-w',
+			storage: { key: 'persist-w', size: true, position: false },
+			resizable: {
+				sides: ['left', 'right', 'bottom'],
+				corners: ['bottom-left', 'bottom-right'],
+			},
+		} as const satisfies Partial<GooeyOptions>
+
+		const probe = new Gooey(opts)
+		const key = windowOf(probe)!.resizableInstance!.opts.localStorageKey!
+		probe.dispose()
+
+		localStorage.setItem(key, JSON.stringify({ width: 200, height: 0 }))
+
+		const gooey = make(opts)
+
+		expect(gooey.folder.element.style.height).toBe('')
+	})
+})
+
+describe('onClose', () => {
+	test('renders one close button that calls the callback', async () => {
+		let closed = 0
+		const gooey = make({ title: 'closable', storage: false, onClose: () => closed++ })
+
+		expect(gooey.folder.elements.toolbar.closeButton).toBeTruthy()
+		expect(gooey.folder.element.querySelectorAll('.gooey-close-button')).toHaveLength(1)
+
+		await userEvent.click(gooey.folder.elements.toolbar.closeButton!)
+
+		expect(closed).toBe(1)
+	})
+
+	test('omits the close button when onClose is not given', () => {
+		const gooey = make({ title: 'open', storage: false })
+
+		expect(gooey.folder.elements.toolbar.closeButton).toBeUndefined()
+		expect(gooey.folder.element.querySelector('.gooey-close-button')).toBeNull()
+	})
+
+	test('close stays rightmost when a host appends toolbar buttons later', () => {
+		const gooey = make({ title: 'closable', storage: false, onClose: () => {} })
+		const toolbar = gooey.folder.elements.toolbar.container
+		const hostButton = document.createElement('button')
+		hostButton.className = 'gooey-toolbar-item'
+		toolbar.appendChild(hostButton)
+
+		const close = gooey.folder.elements.toolbar.closeButton!
+		expect(hostButton.getBoundingClientRect().left).toBeLessThan(close.getBoundingClientRect().left)
+	})
+})
+
+describe('terminal icon removed', () => {
+	test('no folder has a terminal icon', () => {
+		const gooey = make({ title: 'clean', storage: false })
+		gooey.addFolder('child', {})
+
+		expect(gooey.folder.element.querySelector('.gooey-terminal-icon')).toBeNull()
+		expect(document.querySelector('.gooey-terminal-icon')).toBeNull()
+	})
+})

@@ -367,6 +367,9 @@ declare class Folder {
       settingsButton?: HTMLButtonElement & {
         tooltip?: Tooltip;
       };
+      closeButton?: HTMLButtonElement & {
+        tooltip?: Tooltip;
+      };
     };
   };
   /**

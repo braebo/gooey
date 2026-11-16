@@ -50,7 +50,7 @@ describe('resize', () => {
 
 		expect(node.offsetWidth).toBe(240)
 		expect(node.offsetHeight).toBe(180)
-		expect(resizable.size.value).toEqual({ width: 240, height: 180 })
+		expect(resizable.size.value).toEqual({ width: 240, height: 0 })
 	})
 
 	test('an omitted dimension is left alone', () => {
@@ -107,7 +107,7 @@ describe('resize', () => {
 
 		resizable.resize({ width: 240, height: 180 })
 
-		expect(JSON.parse(localStorage.getItem(key)!)).toEqual({ width: 240, height: 180 })
+		expect(JSON.parse(localStorage.getItem(key)!)).toEqual({ width: 240, height: 0 })
 	})
 
 	test('fires `onResize` and the `resize` event', () => {
@@ -155,5 +155,59 @@ describe('resize', () => {
 		const resizable = createResizable(node, bounds)
 
 		expect(() => resizable.resize({ width: NaN })).toThrow()
+	})
+})
+
+function dragGrabber(resizable: Resizable, side: string, clientX: number, clientY: number) {
+	const grabber = resizable.node.querySelector(`[data-side="${side}"]`) as HTMLElement
+	const box = grabber.getBoundingClientRect()
+	grabber.dispatchEvent(
+		new PointerEvent('pointerdown', {
+			bubbles: true,
+			clientX: box.x + box.width / 2,
+			clientY: box.y + box.height / 2,
+			pointerId: 1,
+			button: 0,
+		}),
+	)
+	document.dispatchEvent(
+		new PointerEvent('pointermove', { bubbles: true, clientX, clientY, pointerId: 1 }),
+	)
+	document.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 1 }))
+}
+
+describe('stored height', () => {
+	test('a horizontal drag does not persist height', () => {
+		const bounds = createBounds()
+		const node = createNode(bounds)
+		const key = 'resizable-test::stored-h'
+		const resizable = createResizable(node, bounds, {
+			localStorageKey: key,
+			sides: ['left', 'right', 'bottom'],
+			corners: [],
+		})
+
+		const right = resizable.node.querySelector('[data-side="right"]')!.getBoundingClientRect()
+		dragGrabber(resizable, 'right', right.right + 40, right.y + right.height / 2)
+
+		expect(resizable.size.value.height).toBe(0)
+		expect(JSON.parse(localStorage.getItem(key)!).height).toBe(0)
+	})
+
+	test('a bottom drag persists the picked height', () => {
+		const bounds = createBounds()
+		const node = createNode(bounds)
+		const key = 'resizable-test::stored-h-drag'
+		const resizable = createResizable(node, bounds, {
+			localStorageKey: key,
+			sides: ['left', 'right', 'bottom'],
+			corners: [],
+		})
+
+		const bottom = resizable.node.querySelector('[data-side="bottom"]')!.getBoundingClientRect()
+		dragGrabber(resizable, 'bottom', bottom.x + bottom.width / 2, bottom.bottom + 50)
+
+		expect(resizable.size.value.height).toBeGreaterThan(100)
+		expect(JSON.parse(localStorage.getItem(key)!).height).toBe(resizable.size.value.height)
 	})
 })

@@ -114,7 +114,16 @@ var Themer = class {
 			const theme = this.themes.value.find((t) => t.title === storedTitle);
 			if (theme) this.theme.set(theme);
 		}
-		this.mode = state(opts.mode ?? "system", { key: key && key + "::mode" });
+		const codeMode = opts.mode ?? "system";
+		this.mode = state(codeMode, { key: key && key + "::mode" });
+		if (![
+			"light",
+			"dark",
+			"system"
+		].includes(this.mode.value)) {
+			this.mode.set(codeMode);
+			if (key) globalThis.localStorage?.removeItem(key + "::mode");
+		}
 		this._prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
 		this._prefersDark.addEventListener("change", this.#handlePrefChange);
 		this._unsubs.push(() => this._prefersDark.removeEventListener("change", this.#handlePrefChange));
@@ -124,7 +133,7 @@ var Themer = class {
 				this: this
 			});
 			if (this._initialized) {
-				this.activeThemeTitle.set(v.title);
+				if (v.title !== this.activeThemeTitle.value) this.activeThemeTitle.set(v.title);
 				this.applyTheme();
 			}
 		});

@@ -32,6 +32,9 @@ import { Folder } from './Folder'
 
 type GooeyTheme = 'vanilla' | 'flat' | 'scout' | (string & {})
 
+/** Sides and corners passed through to the root window's resize grabbers. */
+export type GooeyResizableOptions = Partial<Pick<ResizableOptions, 'sides' | 'corners'>>
+
 export interface GooeyElements {
 	root: HTMLElement
 	container: HTMLElement
@@ -70,10 +73,19 @@ export interface GooeyOptions {
 	draggable: boolean
 
 	/**
-	 * Whether the gooey is resizable.
+	 * Whether the gooey is resizable. `true` and `false` enable or disable resizing with the
+	 * default left/right grabbers. An object enables resizing and lets you override
+	 * {@link GooeyResizableOptions.sides|sides} and {@link GooeyResizableOptions.corners|corners}
+	 * on those grabbers.
 	 * @default true
 	 */
-	resizable: boolean
+	resizable: boolean | GooeyResizableOptions
+
+	/**
+	 * Called when the root window's close button is clicked. When omitted, no close button is
+	 * shown.
+	 */
+	onClose?: () => void
 
 	/**
 	 * The title of the theme to use for the gooey.  To add your own themes,
@@ -605,6 +617,13 @@ export class Gooey {
 			updateIcon = settingsButton.updateIcon
 		}
 
+		if (opts.onClose) {
+			this.folder.elements.toolbar.closeButton = this._createCloseButton(
+				this.folder.elements.toolbar.container,
+				opts.onClose,
+			)
+		}
+
 		let settingsFolderClosed = GUI_DEFAULTS.settingsFolder.closed
 		// Use localstorage, if enabled.
 		if (typeof opts.storage === 'object' && opts.storage.closed !== false) {
@@ -1005,6 +1024,36 @@ export class Gooey {
 		return { button, updateIcon }
 	}
 
+	private _createCloseButton(parent: HTMLElement, onClose: () => void): HTMLButtonElement {
+		const button = create('button', {
+			parent,
+			classes: ['gooey-toolbar-item', 'gooey-close-button', 'gooey-cancel'],
+			innerHTML: /*html*/ `
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="18" y1="6" x2="6" y2="18"></line>
+					<line x1="6" y1="6" x2="18" y2="18"></line>
+				</svg>
+			`.replaceAll(/\t|\n/g, ''),
+			tooltip: {
+				text: 'close',
+				// The header's last item: a tooltip to the right would leave the window.
+				placement: 'top',
+				delay: 250,
+				delayOut: 0,
+				hideOnClick: true,
+				style: this._getStyles,
+			},
+		})
+
+		button.addEventListener('click', e => {
+			e.stopPropagation()
+			e.preventDefault()
+			onClose()
+		})
+
+		return button
+	}
+
 	private _createPresetManager(settingsFolder: Folder): PresetManager {
 		const { presets, defaultPreset, storage } = this.opts
 		let localStorageKey: string | undefined
@@ -1075,8 +1124,10 @@ export class Gooey {
 		}
 
 		let resizeOpts = undefined as Partial<ResizableOptions> | undefined
-		if (this.opts.resizable) {
+		const resizable = this.opts.resizable
+		if (resizable) {
 			resizeOpts = Object.assign({}, GUI_WINDOWMANAGER_DEFAULTS.resizable)
+			if (typeof resizable === 'object') Object.assign(resizeOpts, resizable)
 			resizeOpts.bounds = this.container
 
 			resizeOpts.localStorageKey =
@@ -1232,6 +1283,8 @@ export class Gooey {
 	dispose = (): void => {
 		this._log.fn('dispose').debug(this)
 		removeEventListener('keydown', this._handleUndoRedo)
+		this.folder?.elements.toolbar.closeButton?.remove()
+		if (this.folder) this.folder.elements.toolbar.closeButton = undefined
 		if (this._isThemerOwner) {
 			this.themer?.dispose()
 		} else {

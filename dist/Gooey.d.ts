@@ -1,6 +1,7 @@
 import { UndoManager } from "./UndoManager.js";
 import { Folder, FolderOptions, FolderPreset } from "./Folder.js";
 import { ValidInput } from "./inputs/Input.js";
+import { ResizableOptions } from "./shared/resizable.js";
 import { Placement } from "./shared/place.js";
 import { WindowInstance, WindowManager } from "./shared/WindowManager.js";
 import { Theme, ThemeDefinition } from "./styles/themer/types.js";
@@ -9,6 +10,8 @@ import { Themer } from "./styles/themer/Themer.js";
 
 //#region src/Gooey.d.ts
 type GooeyTheme = 'vanilla' | 'flat' | 'scout' | (string & {});
+/** Sides and corners passed through to the root window's resize grabbers. */
+type GooeyResizableOptions = Partial<Pick<ResizableOptions, 'sides' | 'corners'>>;
 interface GooeyElements {
   root: HTMLElement;
   container: HTMLElement;
@@ -40,10 +43,18 @@ interface GooeyOptions {
    */
   draggable: boolean;
   /**
-   * Whether the gooey is resizable.
+   * Whether the gooey is resizable. `true` and `false` enable or disable resizing with the
+   * default left/right grabbers. An object enables resizing and lets you override
+   * {@link GooeyResizableOptions.sides|sides} and {@link GooeyResizableOptions.corners|corners}
+   * on those grabbers.
    * @default true
    */
-  resizable: boolean;
+  resizable: boolean | GooeyResizableOptions;
+  /**
+   * Called when the root window's close button is clicked. When omitted, no close button is
+   * shown.
+   */
+  onClose?: () => void;
   /**
    * The title of the theme to use for the gooey.  To add your own themes,
    * use {@link GooeyOptions.themes|themes}.  Ignored under {@link parentGooey} — a child
@@ -469,6 +480,7 @@ declare class Gooey {
   private _loadFonts;
   private _createThemer;
   private _createSettingsButton;
+  private _createCloseButton;
   private _createPresetManager;
   /**
    * Writes {@link GooeyOptions.width|width} and the sizing limits onto `.gooey-root`.  An

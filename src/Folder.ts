@@ -50,7 +50,6 @@ import { state, type State } from './shared/state'
 import { isLabeledOption } from './controllers/Select'
 import { EventManager } from './shared/EventManager'
 import { ToolbarButton } from './svg/ToolbarButton'
-import { TerminalSvg } from './svg/TerminalSvg'
 import { Search } from './toolbar/Search'
 import { titleText } from './shared/titleText'
 import { create } from './shared/create'
@@ -530,6 +529,7 @@ export interface FolderElements {
 	toolbar: {
 		container: HTMLElement
 		settingsButton?: HTMLButtonElement & { tooltip?: Tooltip }
+		closeButton?: HTMLButtonElement & { tooltip?: Tooltip }
 	}
 }
 
@@ -681,6 +681,7 @@ export class Folder {
 		toolbar: {
 			container: HTMLElement
 			settingsButton?: HTMLButtonElement & { tooltip?: Tooltip }
+			closeButton?: HTMLButtonElement & { tooltip?: Tooltip }
 		}
 	}
 
@@ -2489,10 +2490,6 @@ export class Folder {
 	//#region Graphics ···········································································¬
 
 	private async _createGraphics(headerless = false): Promise<void> {
-		setTimeout(() => {
-			new TerminalSvg(this)
-		}, 10)
-
 		if (this.isRootFolder()) return
 		this._log.fn('createGraphics').debug({ this: this })
 

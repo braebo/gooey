@@ -25,7 +25,6 @@ import { InputButtonGrid } from "./inputs/InputButtonGrid.js";
 import { animateConnector, createFolderConnector, createFolderSvg } from "./svg/createFolderSVG.js";
 import { composedPathContains } from "./shared/cancelClassFound.js";
 import { ToolbarButton } from "./svg/ToolbarButton.js";
-import { TerminalSvg } from "./svg/TerminalSvg.js";
 import { Search } from "./toolbar/Search.js";
 import "./Gooey.js";
 import { BROWSER, DEV } from "esm-env";
@@ -1258,9 +1257,6 @@ var Folder = class Folder {
 		};
 	}
 	async _createGraphics(headerless = false) {
-		setTimeout(() => {
-			new TerminalSvg(this);
-		}, 10);
 		if (this.isRootFolder()) return;
 		this._log.fn("createGraphics").debug({ this: this });
 		if (!this.isRootFolder()) {

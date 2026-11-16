@@ -135,8 +135,8 @@ declare class Tooltip {
   set text(text: string | (() => string));
   get style(): StyleDefinition | undefined;
   set style(style: Partial<Record<JavascriptStyleProperty, string> | undefined> | (() => StyleDefinition | undefined));
-  get placement(): "top" | "bottom" | "left" | "right";
-  set placement(v: "top" | "bottom" | "left" | "right");
+  get placement(): "top" | "right" | "bottom" | "left";
+  set placement(v: "top" | "right" | "bottom" | "left");
   get offsetX(): string;
   set offsetX(v: string);
   get offsetY(): string;

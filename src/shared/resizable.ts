@@ -275,7 +275,7 @@ export class Resizable {
 		}
 
 		width ??= this.node.offsetWidth
-		height ??= this.node.offsetHeight
+		height ??= 0
 
 		this.size = state({ width, height }, { key: this.opts.localStorageKey })
 
@@ -493,6 +493,9 @@ export class Resizable {
 	 * ignored unless a grabber could have changed it -- i.e. a vertical
 	 * {@link ResizableOptions.sides|side} or any {@link ResizableOptions.corners|corner}.
 	 *
+	 * Persists only the new width in {@link size}; stored height is the user's vertical drag
+	 * pick (see {@link onMove}), not a programmatic layout height.
+	 *
 	 * @example
 	 * ```ts
 	 * resizable.resize({ width: 400 })
@@ -525,12 +528,12 @@ export class Resizable {
 
 		this.node.dispatchEvent(new CustomEvent('resize'))
 
-		const size = { width: this.node.offsetWidth, height: this.node.offsetHeight }
+		const measured = { width: this.node.offsetWidth, height: this.node.offsetHeight }
 
-		this.size.set(size)
-		this.opts.onResize(size)
+		this.size.set({ width: measured.width, height: this.size.value.height })
+		this.opts.onResize(measured)
 
-		this.#log.fn('resize').debug('Resized to:', size)
+		this.#log.fn('resize').debug('Resized to:', measured)
 
 		return this
 	}
@@ -579,15 +582,13 @@ export class Resizable {
 
 		this.node.dispatchEvent(new CustomEvent('resize'))
 
-		this.size.set({
-			width: this.node.offsetWidth,
-			height: this.node.offsetHeight,
-		})
+		const measured = { width: this.node.offsetWidth, height: this.node.offsetHeight }
+		const stored = { width: measured.width, height: this.size.value.height }
+		if (side!.match(/top|bottom/)) stored.height = measured.height
 
-		this.opts.onResize({
-			width: this.node.offsetWidth,
-			height: this.node.offsetHeight,
-		})
+		this.size.set(stored)
+
+		this.opts.onResize(measured)
 	}
 
 	onUp = () => {

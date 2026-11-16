@@ -279,6 +279,7 @@ var Gooey = class Gooey {
 			this.folder.elements.toolbar.settingsButton = settingsButton.button;
 			updateIcon = settingsButton.updateIcon;
 		}
+		if (opts.onClose) this.folder.elements.toolbar.closeButton = this._createCloseButton(this.folder.elements.toolbar.container, opts.onClose);
 		let settingsFolderClosed = GUI_DEFAULTS.settingsFolder.closed;
 		if (typeof opts.storage === "object" && opts.storage.closed !== false) settingsFolderClosed = this._closedMap.value["gooey_settings"] ?? true;
 		else if (settingsOpts?.closed) settingsFolderClosed = settingsOpts.closed;
@@ -550,6 +551,36 @@ var Gooey = class Gooey {
 			updateIcon
 		};
 	}
+	_createCloseButton(parent, onClose) {
+		const button = create("button", {
+			parent,
+			classes: [
+				"gooey-toolbar-item",
+				"gooey-close-button",
+				"gooey-cancel"
+			],
+			innerHTML: `
+				<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<line x1="18" y1="6" x2="6" y2="18"></line>
+					<line x1="6" y1="6" x2="18" y2="18"></line>
+				</svg>
+			`.replaceAll(/\t|\n/g, ""),
+			tooltip: {
+				text: "close",
+				placement: "top",
+				delay: 250,
+				delayOut: 0,
+				hideOnClick: true,
+				style: this._getStyles
+			}
+		});
+		button.addEventListener("click", (e) => {
+			e.stopPropagation();
+			e.preventDefault();
+			onClose();
+		});
+		return button;
+	}
 	_createPresetManager(settingsFolder) {
 		const { presets, defaultPreset, storage } = this.opts;
 		let localStorageKey;
@@ -595,8 +626,10 @@ var Gooey = class Gooey {
 			if (storageOpts && storageOpts.position === false) dragOpts.localStorageKey = void 0;
 		}
 		let resizeOpts = void 0;
-		if (this.opts.resizable) {
+		const resizable = this.opts.resizable;
+		if (resizable) {
 			resizeOpts = Object.assign({}, GUI_WINDOWMANAGER_DEFAULTS.resizable);
+			if (typeof resizable === "object") Object.assign(resizeOpts, resizable);
 			resizeOpts.bounds = this.container;
 			resizeOpts.localStorageKey = storageOpts && storageOpts.key ? storageOpts.key : void 0;
 			if (storageOpts && storageOpts.size === false) resizeOpts.localStorageKey = void 0;
@@ -704,6 +737,8 @@ var Gooey = class Gooey {
 	dispose = () => {
 		this._log.fn("dispose").debug(this);
 		removeEventListener("keydown", this._handleUndoRedo);
+		this.folder?.elements.toolbar.closeButton?.remove();
+		if (this.folder) this.folder.elements.toolbar.closeButton = void 0;
 		if (this._isThemerOwner) this.themer?.dispose();
 		else this.themer?.detach(this.wrapper);
 		if (this._isWindowManagerOwner) this.windowManager?.dispose();

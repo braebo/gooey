@@ -124,7 +124,7 @@ var Resizable = class {
 		if (width && width >= 0) node.style.width = width + "px";
 		if (height && height >= 0 && this.#canResizeY) node.style.height = height + "px";
 		width ??= this.node.offsetWidth;
-		height ??= this.node.offsetHeight;
+		height ??= 0;
 		this.size = state({
 			width,
 			height
@@ -271,6 +271,9 @@ var Resizable = class {
 	* ignored unless a grabber could have changed it -- i.e. a vertical
 	* {@link ResizableOptions.sides|side} or any {@link ResizableOptions.corners|corner}.
 	*
+	* Persists only the new width in {@link size}; stored height is the user's vertical drag
+	* pick (see {@link onMove}), not a programmatic layout height.
+	*
 	* @example
 	* ```ts
 	* resizable.resize({ width: 400 })
@@ -285,13 +288,16 @@ var Resizable = class {
 		if (typeof target.width === "number") this.resizeX(this.rect.left + target.width);
 		if (typeof target.height === "number" && this.#canResizeY) this.resizeY(this.rect.top + target.height);
 		this.node.dispatchEvent(new CustomEvent("resize"));
-		const size = {
+		const measured = {
 			width: this.node.offsetWidth,
 			height: this.node.offsetHeight
 		};
-		this.size.set(size);
-		this.opts.onResize(size);
-		this.#log.fn("resize").debug("Resized to:", size);
+		this.size.set({
+			width: measured.width,
+			height: this.size.value.height
+		});
+		this.opts.onResize(measured);
+		this.#log.fn("resize").debug("Resized to:", measured);
 		return this;
 	}
 	/**
@@ -333,14 +339,17 @@ var Resizable = class {
 				break;
 		}
 		this.node.dispatchEvent(new CustomEvent("resize"));
-		this.size.set({
+		const measured = {
 			width: this.node.offsetWidth,
 			height: this.node.offsetHeight
-		});
-		this.opts.onResize({
-			width: this.node.offsetWidth,
-			height: this.node.offsetHeight
-		});
+		};
+		const stored = {
+			width: measured.width,
+			height: this.size.value.height
+		};
+		if (side.match(/top|bottom/)) stored.height = measured.height;
+		this.size.set(stored);
+		this.opts.onResize(measured);
 	};
 	onUp = () => {
 		this.#cleanupGrabListener?.();

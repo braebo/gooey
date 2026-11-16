@@ -165,6 +165,9 @@ declare class Resizable {
    * ignored unless a grabber could have changed it -- i.e. a vertical
    * {@link ResizableOptions.sides|side} or any {@link ResizableOptions.corners|corner}.
    *
+   * Persists only the new width in {@link size}; stored height is the user's vertical drag
+   * pick (see {@link onMove}), not a programmatic layout height.
+   *
    * @example
    * ```ts
    * resizable.resize({ width: 400 })
