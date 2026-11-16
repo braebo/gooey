@@ -779,6 +779,15 @@ $icon-height: 0.9rem;
 	svg {
 		max-height: 1rem;
 	}
+
+	&:where(button) {
+		outline: none;
+
+		&:focus-visible {
+			outline: 1px solid var(--gooey-theme-a);
+			outline-offset: 2px;
+		}
+	}
 }
 
 //·· Search ························································¬
@@ -819,6 +828,11 @@ $icon-height: 0.9rem;
 
 	transition-duration: 0.5s;
 	transition-property: color, opacity;
+
+	&:focus-visible {
+		outline: 1px solid var(--gooey-theme-a);
+		outline-offset: 2px;
+	}
 
 	svg {
 		pointer-events: none;
