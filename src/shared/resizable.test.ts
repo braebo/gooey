@@ -50,7 +50,7 @@ describe('resize', () => {
 
 		expect(node.offsetWidth).toBe(240)
 		expect(node.offsetHeight).toBe(180)
-		expect(resizable.size.value).toEqual({ width: 240, height: 0 })
+		expect(resizable.size.value).toEqual({ width: 240, height: 0, pinned: false })
 	})
 
 	test('an omitted dimension is left alone', () => {
@@ -107,7 +107,7 @@ describe('resize', () => {
 
 		resizable.resize({ width: 240, height: 180 })
 
-		expect(JSON.parse(localStorage.getItem(key)!)).toEqual({ width: 240, height: 0 })
+		expect(JSON.parse(localStorage.getItem(key)!)).toEqual({ width: 240, height: 0, pinned: false })
 	})
 
 	test('fires `onResize` and the `resize` event', () => {
@@ -209,5 +209,68 @@ describe('stored height', () => {
 
 		expect(resizable.size.value.height).toBeGreaterThan(100)
 		expect(JSON.parse(localStorage.getItem(key)!).height).toBe(resizable.size.value.height)
+	})
+
+	test('a bottom drag pins; a reload keeps it; a double-click on the edge unpins', () => {
+		const bounds = createBounds()
+		const key = 'resizable-test::pin'
+		const opts = { localStorageKey: key, sides: ['left', 'right', 'bottom'], corners: [] }
+		const node = createNode(bounds)
+		const resizable = createResizable(node, bounds, opts)
+
+		const bottom = resizable.node.querySelector('[data-side="bottom"]')!.getBoundingClientRect()
+		dragGrabber(resizable, 'bottom', bottom.x + bottom.width / 2, bottom.bottom + 50)
+		expect(resizable.size.value.pinned).toBe(true)
+		expect(node.hasAttribute('data-height-pinned')).toBe(true)
+		const picked = resizable.size.value.height
+		resizable.dispose()
+
+		const again = createNode(bounds)
+		again.style.height = ''
+		const reloaded = createResizable(again, bounds, opts)
+		expect(again.style.height).toBe(`${picked}px`)
+
+		const grabber = again.querySelector('[data-side="bottom"]') as HTMLElement
+		const press = () =>
+			grabber.dispatchEvent(
+				new PointerEvent('pointerdown', { bubbles: true, clientX: 5, clientY: 5, pointerId: 1 }),
+			)
+		press()
+		document.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 1 }))
+		press()
+		expect(again.style.height).toBe('')
+		expect(reloaded.size.value).toMatchObject({ height: 0, pinned: false })
+		expect(again.hasAttribute('data-height-pinned')).toBe(false)
+	})
+
+	test('a corner drag that only widens does not pin', () => {
+		const bounds = createBounds()
+		const node = createNode(bounds)
+		const resizable = createResizable(node, bounds, {
+			localStorageKey: 'resizable-test::corner',
+			sides: ['left', 'right', 'bottom'],
+			corners: ['bottom-right'],
+		})
+		const box = resizable.node.querySelector('[data-side="bottom-right"]')!.getBoundingClientRect()
+		dragGrabber(resizable, 'bottom-right', box.x + box.width / 2 + 60, box.y + box.height / 2)
+		expect(resizable.size.value.pinned).toBeFalsy()
+		expect(resizable.size.value.height).toBe(0)
+	})
+
+	test('a height saved before pinning existed loads unpinned', () => {
+		const bounds = createBounds()
+		const key = 'resizable-test::legacy'
+		localStorage.setItem(key, JSON.stringify({ width: 200, height: 900 }))
+		const node = createNode(bounds)
+		node.style.height = ''
+		const resizable = createResizable(node, bounds, {
+			localStorageKey: key,
+			sides: ['left', 'right', 'bottom'],
+			corners: [],
+		})
+		expect(node.style.height).toBe('')
+		expect(node.style.width).toBe('200px')
+		expect(JSON.parse(localStorage.getItem(key)!)).toMatchObject({ width: 200, height: 0, pinned: false })
+		expect(resizable.size.value.pinned).toBe(false)
 	})
 })

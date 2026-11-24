@@ -66,8 +66,23 @@ var Resizable = class {
 	disabled;
 	bounds;
 	obstacleEls;
+	/**
+	* `height` is only his when `pinned`: a vertical drag that changed the height sets both, a
+	* double-click on a top or bottom edge ({@link unpin}) clears both and the element goes back
+	* to the height its content gives it.  A stored size with no `pinned` is unpinned, so heights
+	* saved before pinning existed never hold an element tall.
+	*/
 	size;
 	#activeGrabber = null;
+	/** The node's height at the grab, so a drag that never changes it never pins. */
+	#grabHeight = 0;
+	#heightMoved = false;
+	#lastEdgeGrab = {
+		side: "",
+		at: 0,
+		x: 0,
+		y: 0
+	};
 	#listeners = [];
 	/** The instance's own `<style>` in `document.head`, removed on dispose. */
 	#styleEl;
@@ -105,7 +120,7 @@ var Resizable = class {
 			let size = JSON.parse(localStorage.getItem(this.opts.localStorageKey) ?? "{}");
 			if (size) {
 				if (size.width > 0) width = size.width;
-				if (size.height > 0) height = size.height;
+				if (size.pinned === true && size.height > 0) height = size.height;
 			}
 		} catch (e) {
 			this.#log.fn("constructor").error({
@@ -127,8 +142,18 @@ var Resizable = class {
 		height ??= 0;
 		this.size = state({
 			width,
-			height
+			height,
+			pinned: height > 0 && this.#canResizeY
 		}, { key: this.opts.localStorageKey });
+		{
+			const v = this.size.value;
+			if (!(v.pinned === true && v.height > 0) && (v.height !== 0 || v.pinned !== false)) this.size.set({
+				width: v.width,
+				height: 0,
+				pinned: false
+			});
+		}
+		this.#listeners.push(this.size.subscribe(() => this.#markPinned()));
 		node.dispatchEvent(new CustomEvent("resize"));
 		this.createGrabbers();
 		const boundsObserver = new ResizeObserver(this.#fitBounds);
@@ -175,6 +200,30 @@ var Resizable = class {
 		document.body.classList.add(this.opts.classes.active);
 		this.obstacleEls = select(this.opts.obstacles);
 		const side = this.#activeGrabber.dataset["side"];
+		if (side === "top" || side === "bottom") {
+			const last = this.#lastEdgeGrab;
+			const again = last.side === side && e.timeStamp - last.at < 400 && Math.hypot(e.clientX - last.x, e.clientY - last.y) < 6;
+			this.#lastEdgeGrab = again ? {
+				side: "",
+				at: 0,
+				x: 0,
+				y: 0
+			} : {
+				side,
+				at: e.timeStamp,
+				x: e.clientX,
+				y: e.clientY
+			};
+			if (again) {
+				e.preventDefault();
+				e.stopPropagation();
+				this.#endGrab();
+				this.unpin();
+				return;
+			}
+		}
+		this.#grabHeight = this.node.offsetHeight;
+		this.#heightMoved = false;
 		if (side.match(/top/)) this.clickOffset.y = e.clientY - this.rect.top;
 		if (side.match(/bottom/)) this.clickOffset.y = e.clientY - this.rect.bottom;
 		if (side.match(/left/)) this.clickOffset.x = e.clientX - this.rect.left;
@@ -293,8 +342,8 @@ var Resizable = class {
 			height: this.node.offsetHeight
 		};
 		this.size.set({
-			width: measured.width,
-			height: this.size.value.height
+			...this.size.value,
+			width: measured.width
 		});
 		this.opts.onResize(measured);
 		this.#log.fn("resize").debug("Resized to:", measured);
@@ -344,17 +393,46 @@ var Resizable = class {
 			height: this.node.offsetHeight
 		};
 		const stored = {
-			width: measured.width,
-			height: this.size.value.height
+			...this.size.value,
+			width: measured.width
 		};
-		if (side.match(/top|bottom/)) stored.height = measured.height;
+		if (side.match(/top|bottom/) && Math.abs(measured.height - this.#grabHeight) >= 1) this.#heightMoved = true;
+		if (this.#heightMoved && side.match(/top|bottom/)) {
+			stored.height = measured.height;
+			stored.pinned = true;
+		}
 		this.size.set(stored);
 		this.opts.onResize(measured);
 	};
-	onUp = () => {
+	/**
+	* Drops his height: the inline height goes, the stored one too, and the element is back to
+	* what its content gives it.  Width is untouched.
+	*/
+	unpin() {
+		this.node.style.height = "";
+		this.size.set({
+			...this.size.value,
+			height: 0,
+			pinned: false
+		});
+		this.node.dispatchEvent(new CustomEvent("resize"));
+		this.opts.onResize({
+			width: this.node.offsetWidth,
+			height: this.node.offsetHeight
+		});
+	}
+	/** `data-height-pinned` on the node lets css show a mark while his height is in force. */
+	#markPinned() {
+		this.node.toggleAttribute("data-height-pinned", this.size.value.pinned === true);
+	}
+	/** Clears the grab's classes and its move listener. */
+	#endGrab() {
 		this.#cleanupGrabListener?.();
 		document.body.classList.remove(this.opts.classes.active);
 		this.#activeGrabber?.classList.remove(this.opts.classes.active);
+	}
+	onUp = () => {
+		this.#endGrab();
 		this.node.dispatchEvent(new CustomEvent("release"));
 	};
 	/**

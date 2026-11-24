@@ -98,6 +98,12 @@ interface ResizableOptions {
     height?: number;
   };
 }
+interface ResizableSize {
+  width: number;
+  height: number;
+  /** His height is in force (see {@link Resizable.size}); absent means unpinned. */
+  pinned?: boolean;
+}
 /**
  * Makes an element resizable by dragging its edges.  For the
  * svelte-action version, see {@link resizable}.
@@ -139,10 +145,13 @@ declare class Resizable {
   disabled: boolean;
   bounds: HTMLElement;
   obstacleEls: HTMLElement[];
-  size: State<{
-    width: number;
-    height: number;
-  }>;
+  /**
+   * `height` is only his when `pinned`: a vertical drag that changed the height sets both, a
+   * double-click on a top or bottom edge ({@link unpin}) clears both and the element goes back
+   * to the height its content gives it.  A stored size with no `pinned` is unpinned, so heights
+   * saved before pinning existed never hold an element tall.
+   */
+  size: State<ResizableSize>;
   constructor(node: HTMLElement, options?: Partial<ResizableOptions>);
   get boundsRect(): DOMRect;
   createGrabbers(): void;
@@ -182,6 +191,11 @@ declare class Resizable {
    * This is where all the resizing logic happens.
    */
   onMove: (e: PointerEvent) => void;
+  /**
+   * Drops his height: the inline height goes, the stored one too, and the element is back to
+   * what its content gives it.  Width is untouched.
+   */
+  unpin(): void;
   onUp: () => void;
   /**
    * Creates the global stylesheet (but only once).
