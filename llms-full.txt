@@ -1598,6 +1598,16 @@ All HTMLElements that make up the folder's UI.
 
 > **toolbar**: `object`
 
+###### toolbar.closeButton?
+
+> `optional` **closeButton?**: `HTMLButtonElement` & `object`
+
+###### Type Declaration
+
+###### tooltip?
+
+> `optional` **tooltip?**: [`Tooltip`](#tooltip)
+
 ###### toolbar.container
 
 > **container**: `HTMLElement`
@@ -6734,6 +6744,17 @@ An offset to apply to the initial position of the gooey.
 { x: 0, y: 0 }
 ```
 
+##### onClose?
+
+> `optional` **onClose?**: () => `void`
+
+Called when the root window's close button is clicked. When omitted, no close button is
+shown.
+
+###### Returns
+
+`void`
+
 ##### parentGooey?
 
 > `optional` **parentGooey?**: [`Gooey`](#gooey-1)
@@ -6781,9 +6802,12 @@ Presets to make available in the gooey.
 
 ##### resizable
 
-> **resizable**: `boolean`
+> **resizable**: `boolean` \| `Partial`\<`Pick`\<`ResizableOptions`, `"sides"` \| `"corners"`\>\>
 
-Whether the gooey is resizable.
+Whether the gooey is resizable. `true` and `false` enable or disable resizing with the
+default left/right grabbers. An object enables resizing and lets you override
+GooeyResizableOptions.sides\|sides and GooeyResizableOptions.corners\|corners
+on those grabbers.
 
 ###### Default
 
