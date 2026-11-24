@@ -963,6 +963,13 @@ input.gooey-search-input {
 		color: var(--gooey-toolbar-icon_color);
 	}
 
+	// Never a ring on the gear: keyboard focus reads as the hover color instead, so it stays
+	// visible without outlining the icon (beats `.gooey-toolbar-item:where(button):focus-visible`).
+	&:focus-visible {
+		outline: none;
+		color: var(--gooey-toolbar-icon_color);
+	}
+
 	.gear,
 	.dot-left,
 	.dot-center,
