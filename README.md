@@ -551,6 +551,8 @@ voice.on('change', () => knob.refresh())
 
 The select dropdown portals to `<body>` at `z-index: 100` — a host panel at or above that hides its own open dropdowns.
 
+If your page puts its own CSS in cascade layers, declare gooey's first — `@layer gooey-reset, reset, globals;` — so your button and input rules reach gooey's controls (gooey's class rules still win, being unlayered). Undeclared, `gooey-reset` lands after your layers and its `all: revert` voids them. A page without layers needs nothing.
+
 `registerWebMCP(gui)` registers one WebMCP tool per input plus a `<prefix>.state` reader, and unregisters on `dispose()`.
 
 <br>
