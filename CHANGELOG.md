@@ -1,5 +1,11 @@
 # gooey
 
+## 0.6.1
+
+### Patch Changes
+
+- The stylesheet's reset now sits in a `gooey-reset` cascade layer; the rest stays unlayered. A page that layers its own globals declares `gooey-reset` first (`@layer gooey-reset, reset, globals;`) so its button and input rules reach gooey's controls while gooey's class rules still win. A page with no layers sees no change. ([`8231369`](https://github.com/braebo/gooey/commit/82313694175532ed746a91b2e8c288c03e074971))
+
 ## 0.6.0
 
 ### Minor Changes
