@@ -1,5 +1,11 @@
 # gooey
 
+## 0.6.2
+
+### Patch Changes
+
+- The title-bar buttons (settings, close, search) carry an `aria-label`, so a screen reader and a phone-width caption rule have a name to read. ([`24d737e`](https://github.com/braebo/gooey/commit/24d737e1d71f9cb7fac82d8fb28191599ef0ce83))
+
 ## 0.6.1
 
 ### Patch Changes
