@@ -23,11 +23,13 @@ var Search = class {
 				"gooey-search-input",
 				"gooey-cancel"
 			],
+			attributes: { "aria-label": this.defaultTooltipText },
 			parent: container
 		});
 		this._evm.listen(input, "input", (e) => this.search(e.target.value));
 		const button = create("button", {
 			classes: ["gooey-search-button", "gooey-cancel"],
+			attributes: { "aria-label": this.defaultTooltipText },
 			parent: container
 		});
 		this.tooltip = new Tooltip(button, {

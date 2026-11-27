@@ -31,12 +31,14 @@ export class Search {
 
 		const input = create('input', {
 			classes: ['gooey-controller-text', 'gooey-search-input', 'gooey-cancel'],
+			attributes: { 'aria-label': this.defaultTooltipText },
 			parent: container,
 		})
 		this._evm.listen(input, 'input', e => this.search(e.target.value))
 
 		const button = create('button', {
 			classes: ['gooey-search-button', 'gooey-cancel'],
+			attributes: { 'aria-label': this.defaultTooltipText },
 			parent: container,
 		})
 
